@@ -4,3 +4,6 @@ Platform for blockchain-based micropayments and tipping for content creators. En
 A ChainWorks project by Adam D.
 ## Test SSH
 Udało się połączyć przez SSH!
+## Dokumentacja
+- [Poradnik Rejestracji Twórców](docs/registration-guide.md)
+
