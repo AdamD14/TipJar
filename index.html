@@ -1,6 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TipJar Logo</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #fff;
+        }
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .text {
+            font-family: Arial, sans-serif;
+            font-size: 36px;
+            font-weight: bold;
+            color: #0056D2;
+            margin-top: 10px;
+        }
+    </style>
+</head>
 <body>
-  <h1>TipJar działa!</h1>
+    <div class="logo-container">
+        <svg width="150" height="150" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
+            <!-- Słoik -->
+            <path d="M40 20 H110 V30 H40 V20 Z M40 30 C40 30 30 40 30 60 C30 90 30 110 40 130 H110 C120 110 120 90 120 60 C120 40 110 30 110 30" 
+                  stroke="#0056D2" stroke-width="5" fill="none"/>
+            
+            <!-- Znak plus -->
+            <path d="M130 20 H150 M140 10 V30" stroke="#FFC107" stroke-width="5" fill="none"/>
+        </svg>
+        <div class="text">TipJar</div>
+    </div>
 </body>
 </html>
