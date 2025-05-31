@@ -1,37 +1,43 @@
-// backend/src/main.ts
+// TipJar/backend/src/main.ts
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ValidationPipe, Logger } from '@nestjs/common'; // Dodaj import Logger
+import { AppModule } from './app.module'; // <<< UPEWNIJ SIĘ, ŻE IMPORTUJESZ I UŻYWASZ AppModule
+import { ValidationPipe, Logger, HttpException, HttpStatus } from '@nestjs/common';
+import rateLimit from 'express-rate-limit';
+// import { PrismaService } from './prisma/prisma.service'; // Niepotrzebne tutaj, jeśli używasz enableShutdownHooks
 
 async function bootstrap() {
-  const logger = new Logger('Bootstrap'); // Utwórz instancję Loggera
-  const app = await NestFactory.create(AppModule);
+  const logger = new Logger('Bootstrap');
+  const app = await NestFactory.create(AppModule); // <<< UŻYJ AppModule
 
-  // Ustaw globalny prefix dla wszystkich endpointów API, np. /api/v1
   app.setGlobalPrefix('api/v1');
 
-  // Włącz globalną walidację dla DTOs używając ValidationPipe
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // Automatycznie usuwa właściwości, które nie są zdefiniowane w DTO
-      transform: true, // Automatycznie transformuje przychodzący payload do instancji DTO (np. string do number)
-      forbidNonWhitelisted: true, // Rzuca błąd, jeśli w payloadzie są właściwości nie zdefiniowane w DTO
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
       transformOptions: {
-        enableImplicitConversion: true, // Umożliwia transformację typów na podstawie metadanych TypeScript
+        enableImplicitConversion: true,
       },
     }),
   );
 
-  // Włącz CORS (Cross-Origin Resource Sharing)
-  // To jest kluczowe, aby frontend (działający na innym porcie/domenie) mógł komunikować się z backendem
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000', // URL Twojego frontendu (z .env)
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    credentials: true, // Pozwala na przesyłanie ciasteczek i nagłówków autoryzacyjnych
+    credentials: true,
   });
 
-  const port = process.env.BACKEND_PORT || 3001; // Port z .env
+  // Rate Limiting
+  const authRateLimiter = rateLimit({ /* ... konfiguracja ... */ });
+  app.use('/api/v1/auth/login', authRateLimiter);
+  // ... inne limitery ...
+
+  app.enableShutdownHooks(); // Ważne dla PrismaService.onModuleDestroy i innych lifecycle hooks
+
+  const port = parseInt(process.env.BACKEND_PORT || '3001', 10);
   await app.listen(port);
-  logger.log(`Backend TipJar działa na porcie: ${port}`); // Użyj loggera NestJS
+  logger.log(`Backend TipJar jest uruchomiony i nasłuchuje na porcie: ${port}`);
+  logger.log(`Dostępny pod adresem: http://localhost:${port}/api/v1`);
 }
 bootstrap();
