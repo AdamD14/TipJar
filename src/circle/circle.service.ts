@@ -18,22 +18,23 @@ import {
 
   // Typy dla portfeli
   CreateWalletsInput,
-  Wallet, // Reprezentuje pojedynczy portfel w odpowiedziach
+  Wallet,
   AccountType,
   WalletMetadata,
-  Wallets, // Odpowiedź z listą portfeli (zawiera `wallets: Wallet[]`)
+  // Wallets, // Typ dla odpowiedzi z listą portfeli (zawiera `wallets: Wallet[]`)
 
   // Typy dla transakcji/transferów
-  CreateTransferTransactionInput, // Typ dla żądania utworzenia transferu
+  CreateTransferTransactionInput,
   FeeLevel,
   Blockchain,
+  TokenBlockchain, // Importujemy, aby użyć w rzutowaniu typu
   TransactionState,
-  Transaction, // Typ dla obiektu transakcji w odpowiedziach (np. z getTransaction)
+  Transaction,
   GetTransactionInput,
   // TransactionResponse, // Całościowy typ odpowiedzi dla getTransaction, zawiera `transaction: Transaction`
-  FeeConfiguration, // Używane w CreateTransferTransactionInput dla 'fee'
-  TokenInfo,        // Używane w CreateTransferTransactionInput (zawiera tokenId lub tokenAddress+blockchain)
-  WithIdempotencyKey, // Używane w CreateTransferTransactionInput
+  FeeConfiguration, 
+  TokenInfo,        // Unia: TokenIdInput | TokenAddressAndBlockchainInput
+  // WithIdempotencyKey, // Jest częścią CreateTransferTransactionInput przez dziedziczenie
 
   // Typy dla sald
   GetWalletTokenBalanceInput,
@@ -41,11 +42,13 @@ import {
   Balance,  // Typ dla pojedynczego salda w tablicy Balances.tokenBalances
   // TokenResponse, // Typ dla obiektu `token` wewnątrz `Balance`
 
-} from '@circle-fin/developer-controlled-wallets'; // Główny import
+} from '@circle-fin/developer-controlled-wallets';
 
 import { randomUUID } from 'crypto';
-import { PrismaService } from '../../prisma/prisma.service'; // Poprawiona ścieżka
-import { UserRole, User as UserModelPrisma } from '../../generated/prisma'; // Poprawiona ścieżka
+// === POPRAWIONA ŚCIEŻKA IMPORTU PRISMASERVICE ===
+import { PrismaService } from '../prisma/prisma.service'; 
+// ==============================================
+import { UserRole, User as UserModelPrisma } from '../../generated/prisma'; // Upewnij się, że ta ścieżka jest poprawna
 
 @Injectable()
 export class CircleService implements OnModuleInit {
@@ -54,7 +57,7 @@ export class CircleService implements OnModuleInit {
 
   constructor(
     private configService: ConfigService,
-    private prisma: PrismaService,
+    private prisma: PrismaService, 
   ) {}
 
   async onModuleInit() {
@@ -118,14 +121,14 @@ export class CircleService implements OnModuleInit {
       walletSetId: walletSetId,
       blockchains: [defaultBlockchain],
       count: 1,
-      accountType: AccountType.Sca, // Używamy enuma AccountType.Sca
-      metadata: [metadataForWallet], // CreateWalletsInput oczekuje tablicy WalletMetadata[]
+      accountType: AccountType.Sca,
+      metadata: [metadataForWallet],
     };
 
     this.logger.debug(`Calling Circle API to create wallet (payload w/o sensitive): ${JSON.stringify({ ...createWalletsPayload, entitySecretCiphertext: undefined})}`);
     try {
       const response = await this.circleClient.createWallets(createWalletsPayload);
-      const createdWallet = response?.data?.wallets?.[0]; // response.data jest typu Wallets, które zawiera wallets: Wallet[]
+      const createdWallet = response?.data?.wallets?.[0];
 
       if (!createdWallet || !createdWallet.id || !createdWallet.address) {
         this.logger.error(`Invalid response from Circle SDK (wallet creation) for ${tipJarUserId}: ${JSON.stringify(response?.data)}`);
@@ -151,8 +154,8 @@ export class CircleService implements OnModuleInit {
     tipJarUserId: string,
     destinationAddressString: string,
     amountString: string,
-    blockchain: Blockchain,
-    tokenId: string, // To jest Circle Token ID (UUID) lub adres kontraktu tokenu
+    blockchain: Blockchain, 
+    tokenId: string,
   ): Promise<{ circleTransactionId: string; status: TransactionState; txHash?: string }> {
     this.logger.log(`Initiate withdrawal: UserID ${tipJarUserId}, Amount ${amountString} USDC, To ${destinationAddressString} on ${blockchain}`);
     const user = await this.prisma.user.findUnique({
@@ -172,17 +175,21 @@ export class CircleService implements OnModuleInit {
 
     const idempotencyKey = randomUUID();
     
-    // Przygotowanie TokenInfo - SDK wymaga albo tokenId albo tokenAddress + blockchain
-    const tokenInfo: TokenInfo = tokenId.includes('-') // Proste sprawdzenie czy to UUID (Circle Token ID)
+    const tokenInfo: TokenInfo = tokenId.includes('-') // Sprawdzenie, czy tokenId to UUID Circle, czy adres kontraktu
       ? { tokenId: tokenId } 
-      : { tokenAddress: tokenId, blockchain: blockchain };
+      : { 
+          tokenAddress: tokenId, 
+          // Rzutowanie typu. Upewnij się, że `blockchain` (typu `Blockchain`) 
+          // zawiera wartość kompatybilną z `TokenBlockchain` oczekiwanym przez SDK.
+          blockchain: blockchain as unknown as TokenBlockchain 
+        };
 
     const transferRequestPayload: CreateTransferTransactionInput = {
       idempotencyKey,
       walletId: sourceWalletId,
       destinationAddress: destinationAddressString,
-      amount: [amountString], // Zgodnie z .d.ts: 'amount' (singular) jest typu string[]
-      ...tokenInfo, // Dołącz tokenId LUB tokenAddress i blockchain
+      amount: [amountString], // `amount` (singular) jest typu string[] zgodnie z .d.ts
+      ...tokenInfo, // Dołącza tokenId LUB tokenAddress i blockchain
       fee: {
         type: 'level',
         config: {
@@ -194,7 +201,7 @@ export class CircleService implements OnModuleInit {
     this.logger.debug(`Calling Circle API (withdrawal): ${JSON.stringify(transferRequestPayload)}`);
     try {
       const response = await this.circleClient.createTransaction(transferRequestPayload);
-      const txData = response?.data; // Typ CreateTransferTransactionForDeveloperResponseData
+      const txData = response?.data; 
       if (!txData || !txData.id || !txData.state) {
         this.logger.error(`Invalid Circle SDK response (withdrawal) for ${sourceWalletId}: ${JSON.stringify(response?.data)}`);
         throw new InternalServerErrorException('Nie udało się zainicjować wypłaty - błąd SDK.');
@@ -219,8 +226,7 @@ export class CircleService implements OnModuleInit {
     try {
       const requestPayload: GetWalletTokenBalanceInput = {
         id: walletId,
-        // tokenAddresses i name są opcjonalne do filtrowania, jeśli potrzebne
-        // tokenAddresses: tokenIdToFilter && !tokenIdToFilter.includes('-') ? [tokenIdToFilter] : undefined,
+        // tokenAddresses: tokenIdToFilter && !tokenIdToFilter.includes('-') ? [tokenIdToFilter] : undefined, // Opcjonalne filtrowanie
       };
       
       const response = await this.circleClient.getWalletTokenBalance(requestPayload);
@@ -231,13 +237,13 @@ export class CircleService implements OnModuleInit {
         return 0;
       }
 
-      let targetBalanceEntry: Balance | undefined;
+      let targetBalanceEntry: Balance | undefined; // Typ Balance
       if (tokenIdToFilter) {
         targetBalanceEntry = balancesData.tokenBalances.find(tb => 
             tb.token?.id === tokenIdToFilter || 
             tb.token?.tokenAddress?.toLowerCase() === tokenIdToFilter.toLowerCase()
         );
-      } else {
+      } else { // Domyślnie szukaj USDC lub weź pierwszy
         targetBalanceEntry = balancesData.tokenBalances.find(tb => tb.token?.symbol === 'USDC') || balancesData.tokenBalances[0];
       }
       
@@ -262,7 +268,7 @@ export class CircleService implements OnModuleInit {
     destinationCircleWalletId: string,
     amountNetString: string,
     blockchain: Blockchain,
-    tokenId: string, // Circle Token ID (UUID) lub adres kontraktu
+    tokenId: string,
     tipJarPlatformFeeString: string,
     originalTipAmountString: string,
   ): Promise<{ circleTransactionId: string; status: TransactionState; txHash?: string }> {
@@ -286,9 +292,12 @@ export class CircleService implements OnModuleInit {
     const destinationBlockchainAddress = destinationWalletRecord.mainWalletAddress;
     const idempotencyKey = randomUUID();
     
-    const tokenInfo: TokenInfo = tokenId.includes('-') // Proste sprawdzenie czy to UUID
+    const tokenInfo: TokenInfo = tokenId.includes('-')
       ? { tokenId: tokenId }
-      : { tokenAddress: tokenId, blockchain: blockchain };
+      : { 
+          tokenAddress: tokenId, 
+          blockchain: blockchain as unknown as TokenBlockchain // Rzutowanie typu
+        };
 
     const transferRequestPayload: CreateTransferTransactionInput = {
       idempotencyKey,
@@ -332,7 +341,7 @@ export class CircleService implements OnModuleInit {
     try {
       const requestPayload: GetTransactionInput = { id: circleTransactionId };
       const response = await this.circleClient.getTransaction(requestPayload);
-      const transactionDetails = response?.data?.transaction; // response.data jest typu TransactionResponse
+      const transactionDetails = response?.data?.transaction; // response.data to TransactionResponse, transaction to Transaction
 
       if (!transactionDetails) {
         this.logger.warn(`No details for CircleTxID: ${circleTransactionId}. Response: ${JSON.stringify(response?.data)}`);

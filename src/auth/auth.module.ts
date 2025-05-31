@@ -4,11 +4,16 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UsersModule } from '../users/users.module'; // Założenie: UsersModule istnieje i eksportuje UsersService
-import { CircleModule } from '../circle/circle.module'; // Założenie: CircleModule istnieje i eksportuje CircleService
-import { MailerModule } from '@nestjs-modules/mailer'; // Dla wysyłki emaili (konfiguracja poniżej lub w AppModule)
-import { RedisModule } from '../shared/redis/redis.module'; // Założenie: RedisModule istnieje i eksportuje klienta Redis
+import { ConfigModule, ConfigService } from '@nestjs/config'; // ConfigModule jest tu potrzebny dla MailerModule i JwtModule
+import { UsersModule } from '../users/users.module';
+import { CircleModule } from '../circle/circle.module';
+import { RedisModule } from '../shared/redis/redis.module';
+
+// === UPEWNIJ SIĘ, ŻE TEN IMPORT JEST OBECNY ===
+import { MailerModule } from '@nestjs-modules/mailer';
+// Jeśli używasz szablonów Handlebars, dodaj też:
+// import { join } from 'path';
+// import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 // Import strategii Passport
 import { LocalStrategy } from './strategies/local.strategy';
@@ -20,13 +25,12 @@ import { SiweVerifier } from './strategies/siwe.verifier';
 
 @Module({
   imports: [
+    ConfigModule, // Potrzebny, aby ConfigService był dostępny dla useFactory
     forwardRef(() => UsersModule),
-    ConfigModule, // Dostęp do zmiennych .env
-    PassportModule.register({ defaultStrategy: 'jwt' }), // Domyślna strategia dla @UseGuards(AuthGuard())
-    JwtModule.registerAsync({ // Dynamiczna konfiguracja JwtModule
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        // Domyślna konfiguracja, np. dla Access Token, ale można ją nadpisać przy sign()
         secret: configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
         signOptions: {
           expiresIn: configService.get<string>('JWT_ACCESS_TOKEN_EXPIRATION_TIME', '15m'),
@@ -34,29 +38,40 @@ import { SiweVerifier } from './strategies/siwe.verifier';
       }),
       inject: [ConfigService],
     }),
-    // MailerModule powinien być skonfigurowany, najlepiej globalnie w AppModule
-    // Jeśli nie, to tutaj:
-    // MailerModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   useFactory: async (config: ConfigService) => ({
-    //     transport: {
-    //       host: config.get('MAIL_HOST'),
-    //       port: config.get('MAIL_PORT'),
-    //       secure: config.get('MAIL_SECURE') === 'true', // true dla portu 465, false dla innych
-    //       auth: {
-    //         user: config.get('MAIL_USER'),
-    //         pass: config.get('MAIL_PASS'),
-    //       },
-    //     },
-    //     defaults: {
-    //       from: `"${config.get('MAIL_FROM_NAME')}" <${config.get('MAIL_FROM_ADDRESS')}>`,
-    //     },
-    //     // template: { dir: join(__dirname, 'templates'), adapter: new HandlebarsAdapter(), options: { strict: true } },
-    //   }),
-    //   inject: [ConfigService],
-    // }),
-    CircleModule, // Zakładając, że CircleModule jest @Global lub eksportuje CircleService
-    RedisModule,  // Zakładając, że RedisModule jest @Global lub eksportuje klienta Redis
+
+    // === ODKOMENTUJ I SKONFIGURUJ MailerModule TUTAJ ===
+    MailerModule.forRootAsync({
+      imports: [ConfigModule], // MailerModule również potrzebuje ConfigService
+      useFactory: async (config: ConfigService) => ({
+        transport: {
+          host: config.get<string>('MAIL_HOST', 'smtp.example.com'),
+          port: parseInt(config.get<string>('MAIL_PORT', '587'), 10),
+          secure: config.get<string>('MAIL_SECURE', 'false') === 'true', // false dla portu 587 (STARTTLS), true dla 465
+          auth: {
+            user: config.get<string>('MAIL_USER'),
+            pass: config.get<string>('MAIL_PASS'),
+          },
+          // Możesz potrzebować dodatkowych opcji dla swojego dostawcy SMTP, np. dla Gmaila:
+          // service: 'gmail', 
+        },
+        defaults: {
+          from: `"${config.get<string>('MAIL_FROM_NAME', 'TipJar')}" <${config.get<string>('MAIL_FROM_ADDRESS', 'noreply@tipjar.com')}>`,
+        },
+        // Opcjonalnie, jeśli chcesz używać szablonów email (np. Handlebars)
+        // template: {
+        //   dir: join(__dirname, '..', '..', 'templates', 'email'), // Ścieżka do folderu z szablonami
+        //   adapter: new HandlebarsAdapter(),
+        //   options: {
+        //     strict: true,
+        //   },
+        // },
+      }),
+      inject: [ConfigService],
+    }),
+    // ====================================================
+
+    CircleModule, // Zakładając, że jest @Global lub poprawnie skonfigurowany
+    RedisModule,  // Zakładając, że jest @Global lub poprawnie skonfigurowany
   ],
   controllers: [AuthController],
   providers: [
@@ -67,16 +82,7 @@ import { SiweVerifier } from './strategies/siwe.verifier';
     GoogleStrategy,
     TwitchStrategy,
     SiweVerifier,
-    // Jeśli Redis nie jest w module, można go dostarczyć bezpośrednio:
-    // {
-    //   provide: 'REDIS_CLIENT',
-    //   useFactory: async (configService: ConfigService) => {
-    //     const client = createClient({ url: configService.get('REDIS_URL') });
-    //     await client.connect();
-    //     return client;//   },
-    //   inject: [ConfigService],
-    // },
   ],
-  exports: [AuthService, JwtModule], // JwtModule, aby inne moduły mogły weryfikować tokeny (jeśli potrzebne)
+  exports: [AuthService, JwtModule],
 })
 export class AuthModule {}
