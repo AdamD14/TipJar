@@ -1,0 +1,136 @@
+// TipJar/backend/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+  // Upewnij się, że ta ścieżka jest poprawna dla Twojego projektu.
+  // Jeśli schema.prisma jest w TipJar/backend/prisma/,
+  // to output "../generated/prisma" umieści klienta w TipJar/backend/generated/prisma/.
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // Pobiera URL bazy danych ze zmiennej środowiskowej
+}
+
+// --- Enumy ---
+
+enum UserRole {
+  FAN
+  CREATOR
+  ADMIN // Potencjalna rola dla panelu administracyjnego
+}
+
+enum TipStatus {
+  PENDING    // Oczekuje na przetworzenie (np. płatność fiat, potwierdzenie blockchain)
+  PROCESSING // W trakcie przetwarzania
+  COMPLETED  // Zakończony sukcesem, środki u twórcy
+  FAILED     // Nieudany
+  REFUNDED   // Zwrócony (jeśli taka opcja będzie)
+}
+
+// --- Modele Danych ---
+
+model User {
+  id                          String    @id @default(uuid())
+  email                       String?   @unique // Opcjonalny, np. dla kont SIWE bez emaila; normalizuj do lowercase w logice serwisu
+  password                    String?   // Zhashowane hasło; opcjonalne dla logowań OAuth/SIWE
+  displayName                 String    // Nazwa wyświetlana, wymagana
+  avatarUrl                   String?   // URL do awatara
+  role                        UserRole  @default(FAN)
+
+  // Flagi statusu konta i weryfikacji
+  isActive                    Boolean   @default(true)   // Czy konto jest aktywne (może być false do czasu weryfikacji email)
+  isEmailVerified             Boolean   @default(false)  // Czy email został zweryfikowany
+  emailVerificationToken      String?   @unique          // Token do weryfikacji emaila
+  emailVerificationTokenExpiresAt DateTime? // Opcjonalna data wygaśnięcia tokenu weryfikacyjnego
+
+  currentHashedRefreshToken   String?   @db.Text         // Zhashowany refresh token JWT
+
+  // Powiązanie z portfelem Circle
+  circleWalletId              String?   @unique          // ID portfela w systemie Circle
+  mainWalletAddress           String?   @unique          // Główny adres blockchain tego portfela Circle
+  isCircleSetupComplete       Boolean   @default(false)  // Czy konfiguracja portfela Circle została zakończona
+
+  createdAt                   DateTime  @default(now())
+  updatedAt                   DateTime  @updatedAt
+
+  // Relacje
+  socialConnections           SocialConnection[] // Połączenia z kontami społecznościowymi (OAuth, SIWE)
+  profile                     Profile?           // Profil twórcy (jeśli user jest CREATOR)
+  tipsSent                    Tip[]              @relation("TipsSentByFan")     // Napiwki wysłane przez tego fana
+  tipsReceived                Tip[]              @relation("TipsReceivedByCreator") // Napiwki otrzymane przez tego twórcę
+}
+
+model SocialConnection {
+  id         String   @id @default(cuid())
+  provider   String   // Nazwa dostawcy (np. "google", "twitch", "siwe")
+  providerId String   // Unikalne ID użytkownika u dostawcy (np. Google ID, adres portfela SIWE)
+
+  userId String   // ID użytkownika w TipJar, do którego to połączenie należy
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade) // Relacja z User
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([provider, providerId]) // Zapewnia, że każde połączenie provider+providerId jest unikalne
+  @@index([userId])                // Indeks dla szybszego wyszukiwania połączeń użytkownika
+}
+
+model Profile {
+  id        String  @id @default(uuid())
+  userId    String  @unique // Relacja jeden-do-jednego z User
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  bio       String? @db.Text // Dłuższy opis/bio twórcy
+  bannerUrl String? // URL do zdjęcia bannera na profilu
+  
+  customTipJarUrlSuffix String? @unique // Np. to co po tipjar.com/@ - jeśli inne niż displayName
+
+  acceptsTips Boolean @default(true) // Czy twórca aktualnie akceptuje napiwki
+  
+  // Linki do zewnętrznych profili społecznościowych twórcy (prosta implementacja)
+  websiteUrl String?
+  twitterUrl String?
+  youtubeUrl String?
+  // ... inne platformy
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tip {
+  id            String    @id @default(uuid())
+  amount        Decimal   // Kwota napiwku brutto (przed prowizją TipJar)
+  currency      String    @default("USDC") // Waluta napiwku
+  
+  message       String?   @db.Text // Wiadomość od fana (opcjonalna)
+  isAnonymous   Boolean   @default(false) // Czy napiwek jest anonimowy
+
+  status        TipStatus @default(PENDING) // Status napiwku
+
+  // Kto wysłał napiwek (Fan)
+  fanId         String?   // Opcjonalne, jeśli napiwek od niezarejestrowanego gościa
+  fan           User?     @relation("TipsSentByFan", fields: [fanId], references: [id], onDelete: SetNull)
+
+  // Kto otrzymał napiwek (Twórca)
+  creatorId     String
+  creator       User      @relation("TipsReceivedByCreator", fields: [creatorId], references: [id], onDelete: Cascade) // Rozważ onDelete: Restrict jeśli nie chcesz usuwać napiwków po usunięciu twórcy
+
+  // Informacje o transakcjach i płatnościach
+  blockchainTransactionHash String? @unique // Hash transakcji blockchain (jeśli napiwek był bezpośrednio on-chain od fana)
+  circleTransferId          String? @unique // ID transferu w systemie Circle
+  paymentGatewayChargeId    String? @unique // ID płatności z bramki fiat
+
+  // Prowizje i kwoty
+  platformFeeAmount         Decimal?  // Kwota prowizji pobrana przez TipJar
+  netAmountForCreator       Decimal?  // Kwota netto, która trafiła do twórcy
+  
+  createdAt     DateTime  @default(now())
+  processedAt   DateTime? // Kiedy napiwek został finalnie przetworzony
+  updatedAt     DateTime  @updatedAt
+
+  @@index([fanId])
+  @@index([creatorId])
+  @@index([status])
+}
