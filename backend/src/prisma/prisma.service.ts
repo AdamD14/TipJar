@@ -1,5 +1,5 @@
 // TipJar/backend/src/prisma/prisma.service.ts
-import { Injectable, OnModuleInit, OnModuleDestroy, INestApplication } from '@nestjs/common';
+import { Injectable, OnModuleInit, OnModuleDestroy, INestApplication, Logger } from '@nestjs/common';
 // Importuj PrismaClient z poprawnie wygenerowanej lokalizacji
 // Zakładając, że schema.prisma jest w backend/prisma/ a output klienta to ../generated/prisma
 // to klient jest w backend/generated/prisma
@@ -7,6 +7,7 @@ import { PrismaClient } from '../../generated/prisma';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+  private readonly logger = new Logger(PrismaService.name);
   constructor() {
     super({
       // Opcjonalnie: możesz tutaj skonfigurować logowanie zapytań Prisma
@@ -26,9 +27,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     // To jest dobre miejsce, aby upewnić się, że połączenie z bazą danych działa przy starcie aplikacji.
     try {
       await this.$connect();
-      console.log('Successfully connected to the database (Prisma)');
+      this.logger.log('Successfully connected to the database (Prisma)');
     } catch (error) {
-      console.error('Failed to connect to the database (Prisma)', error);
+      this.logger.error('Failed to connect to the database (Prisma)', error.stack);
       // Możesz zdecydować, czy aplikacja powinna się zatrzymać, jeśli nie może połączyć się z bazą
       // process.exit(1); 
     }
@@ -37,7 +38,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   async onModuleDestroy() {
     // Zamknij połączenie, gdy aplikacja jest zamykana
     await this.$disconnect();
-    console.log('Disconnected from the database (Prisma)');
+    this.logger.log('Disconnected from the database (Prisma)');
   }
 
   // Opcjonalnie: Hook dla graceful shutdown (zalecane)
