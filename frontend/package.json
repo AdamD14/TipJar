@@ -1,57 +1,31 @@
 {
-  "name": "@chainsafe/circle-react-elements",
-  "version": "0.1.2",
-  "description": "ChainSafe React Elements powered by Circle Web3 Services",
-  "keywords": [
-    "react",
-    "components",
-    "circle",
-    "usdc",
-    "stablecoins",
-    "programmable wallets"
-  ],
-  "homepage": "https://github.com/ChainSafe/web3-circle-libs#readme",
-  "bugs": {
-    "url": "https://github.com/ChainSafe/web3-circle-libs/issues"
-  },
-  "license": "MIT",
-  "author": "ChainSafe",
-  "contributors": [
-    "ChainSafe <info@chainsafe.io>"
-  ],
-  "files": [
-    "dist"
-  ],
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": "./dist/index.js",
-    "./styles": "./dist/styles.css"
-  },
+  "name": "tipjar-playground",
+  "private": true,
+  "version": "0.1.0",
+  "description": "A playground for TipJar.plus React components",
   "type": "module",
   "scripts": {
+    "dev": "vite",
     "build": "tsc && vite build",
     "watch": "tsc --watch",
-    "clean": "rm -rf dist",
-    "prepare": "npm run clean && npm run build"
+    "clean": "rm -rf dist"
   },
-  "peerDependencies": {
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.513.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
     "@tailwindcss/postcss": "^4",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "autoprefixer": "^10.4.20",
-    "typescript": "^5",
-    "vite": "^5.4.14"
-  },
-  "dependencies": {
-    "@circle-fin/developer-controlled-wallets": "^7.1.0",
-    "@circle-libs/react-elements": "^0.1.2",
-    "clsx": "^2.1.1",
-    "lucide-react": "^0.513.0"
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.4",
+    "typescript": "^5.5.2",
+    "vite": "^5.3.1"
   }
 }
+
