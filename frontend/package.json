@@ -11,6 +11,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "@chainsafe/circle-react-elements": "^0.1.2",
+    "@circle-fin/developer-controlled-wallets": "^7.1.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.513.0",
     "react": "^18.3.1",

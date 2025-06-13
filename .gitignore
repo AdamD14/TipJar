@@ -1,3 +1,11 @@
+<<<<<<< ours
+=======
+# compiled output
+/dist
+**/node_modules
+/build
+
+>>>>>>> theirs
 # Logs
 logs
 *.log
