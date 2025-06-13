@@ -1,6 +1,7 @@
-@import "tailwindcss/preflight";    /* Zastępuje preflight i dodaje inne style bazowe */
-/* @tailwind components; */
-/* @tailwind utilities; */
+@import 'tailwindcss/preflight'; /* Zastępuje preflight i dodaje inne style bazowe */
+@import '@chainsafe/circle-react-elements/styles.css';
+@tailwind components;
+@tailwind utilities;
 
 /* Twoje style globalne możesz dodać poniżej */
 
