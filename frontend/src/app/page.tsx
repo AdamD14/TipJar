@@ -1,16 +1,74 @@
-import React from 'react';
+'use client';
 
-export default function HomePage() {
+import { CreateWalletSet } from '@/components/CreateWalletSet';
+import { ElementsWalletSet, WalletSetDetails } from '@chainsafe/circle-react-elements';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+
+interface ApiResponse {
+  success: boolean;
+  data?: ElementsWalletSet[];
+  error?: unknown;
+}
+
+export default function WalletSets() {
+  const [walletSets, setWalletSets] = useState<ElementsWalletSet[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchWalletSets = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const response = await fetch('/api/wallet-sets');
+      const data: ApiResponse = await response.json();
+
+      if (!data.success) {
+        throw new Error(
+          typeof data.error === 'string' ? data.error : 'Failed to fetch wallet sets',
+        );
+      }
+
+      setWalletSets(data.data || []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchWalletSets();
+  }, []);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-tipjar-turquoise-darker">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-tipjar-gold font-heading">
-          Witaj w TipJar.plus!
-        </h1>
-        <p className="mt-4 text-lg text-tipjar-gray-light font-sans">
-          Strona w budowie.
-        </p>
-      </div>
-    </main>
+    <div className="p-8 max-w-2xl mx-auto space-y-8">
+      <h1>Wallet Sets</h1>
+      <CreateWalletSet onSuccess={fetchWalletSets} />
+
+      {isLoading ? (
+        <p>Loading wallet sets...</p>
+      ) : error ? (
+        <div className="border p-2 text-red-600">{error}</div>
+      ) : (
+        <div>
+          <h2 className="mb-4">Your Wallet Sets</h2>
+          {walletSets.length === 0 ? (
+            <p>No wallet sets found.</p>
+          ) : (
+            <div className="space-y-4">
+              {walletSets.map((walletSet) => (
+                <div key={walletSet.id} className="border rounded p-4">
+                  <WalletSetDetails walletSet={walletSet} />
+                  <Link href={`/wallets/${walletSet.id}`} className="text-blue-500 hover:underline">
+                    Show Wallets
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
