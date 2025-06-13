@@ -6,5 +6,6 @@ A ChainWorks project by Adam D.
 Udało się połączyć przez SSH!
 ## Dokumentacja
 - [Poradnik Rejestracji Twórców](docs/registration-guide.md)
--[tipjar] docs/tipjar.md  Dokument ten przedstawił pełne spojrzenie na projekt TipJar – od koncepcji, poprzez szczegółową specyfikację funkcjonalną, po techniczną architekturę systemu i jego implementację. TipJar ma potencjał stać się przełomowym narzędziem dla twórców treści, łącząc świat mikropłatności z nowoczesną technologią blockchain w sposób niewidoczny dla końcowego użytkownika (ukryta złożoność, przyjazny UX).
+- [Specyfikacja projektu](docs/tipjar.md)
+- [Integracja z Gas Station i Paymaster](docs/gas-station-paymaster.md)
 
