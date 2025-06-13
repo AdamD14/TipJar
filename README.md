@@ -31,6 +31,21 @@
 $ npm install
 ```
 
+Copy the provided `.env.example` to `.env` and adjust values if necessary:
+
+```bash
+cp .env.example .env
+```
+
+Key environment variables used by the application include:
+
+- `DATABASE_URL` – connection string to the PostgreSQL database
+- `MAIL_HOST` – SMTP server used for sending emails
+- `FRONTEND_URL` – URL of the frontend application (for CORS and redirects)
+- `CIRCLE_API_KEY` – API key for the Circle wallet service
+
+To run the backend you also need a PostgreSQL database and a Redis server.
+
 ## Compile and run the project
 
 ```bash
