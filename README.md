@@ -31,20 +31,31 @@
 $ npm install
 ```
 
-Copy the provided `.env.example` to `.env` and adjust values if necessary:
+## Uruchomienie Projektu (Setup)
+
+### Backend Setup
+
+Skopiuj dołączony plik `.env.example` do pliku `.env` i w razie potrzeby dostosuj wartości:
 
 ```bash
 cp .env.example .env
 ```
 
-Key environment variables used by the application include:
+Kluczowe zmienne środowiskowe używane przez aplikację to:
 
-- `DATABASE_URL` – connection string to the PostgreSQL database
-- `MAIL_HOST` – SMTP server used for sending emails
-- `FRONTEND_URL` – URL of the frontend application (for CORS and redirects)
-- `CIRCLE_API_KEY` – API key for the Circle wallet service
+- `DATABASE_URL` – connection string do bazy danych PostgreSQL
+- `FRONTEND_URL` – URL aplikacji frontendowej (dla CORS i przekierowań)
+- `CIRCLE_API_KEY` – Klucz API do usług portfelowych Circle
 
-To run the backend you also need a PostgreSQL database and a Redis server.
+Do uruchomienia backendu potrzebujesz również bazy danych PostgreSQL. W naszym projekcie używamy do tego celu Dockera, zgodnie z konfiguracją w pliku `docker-compose.yml`.
+
+### Frontend Setup
+
+Aby zainstalować wszystkie zależności projektu frontendowego, przejdź do folderu `frontend` i uruchom polecenie:
+
+```bash
+npm install
+```
 
 ## Compile and run the project
 
