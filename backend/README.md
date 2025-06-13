@@ -27,8 +27,10 @@
 
 ## Project setup
 
+Run the following from the `backend` directory to install the Node.js dependencies:
+
 ```bash
-$ npm install
+npm install
 ```
 
 ## Compile and run the project
