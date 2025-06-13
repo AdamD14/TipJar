@@ -31,6 +31,14 @@
 $ npm install
 ```
 
+## Frontend setup
+
+If you are working on the optional `frontend` folder, note that certain
+packages such as `@chainsafe/circle-react-elements` require Tailwind CSS 4.x.
+If you see an `ERESOLVE unable to resolve dependency tree` error during
+installation, update `tailwindcss` to a 4.x version or run npm with
+`--legacy-peer-deps`.
+
 ## Compile and run the project
 
 ```bash
