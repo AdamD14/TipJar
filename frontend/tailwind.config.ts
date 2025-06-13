@@ -9,15 +9,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        teal: {
-          100: '#E6FFFA',
-          800: '#1D4044',
-          900: '#1A373A',
-        },
-        yellow: {
-          400: '#FBBF24',
-          500: '#F59E0B',
-        },
+        'tipjar-turquoise': '#2dd4bf',
+        'tipjar-turquoise-dark': '#14b8a6',
+        'tipjar-turquoise-darker': '#0f766e',
+        'tipjar-gold': '#facc15',
+        'tipjar-gold-dark': '#ca8a04',
+        'tipjar-gray-light': '#f3f4f6',
+      },
+      fontFamily: {
+        heading: ['var(--font-montserrat)'],
+        sans: ['var(--font-open-sans)'],
       },
     },
   },

@@ -1,24 +1,28 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import '@/styles/globals.css';
-import { Header } from '@/components/layout/Header';
+import { Montserrat, Open_Sans } from 'next/font/google';
+import './globals.css';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const montserrat = Montserrat({
+  subsets: ['latin', 'latin-ext'],
+  variable: '--font-montserrat',
+  display: 'swap',
+});
+
+const openSans = Open_Sans({
+  subsets: ['latin', 'latin-ext'],
+  variable: '--font-open-sans',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
-  title: 'TipJar - Wspieraj Twórców',
-  description: 'Platforma mikropłatności Web3 dla twórców treści.',
+  title: 'TipJar - Wspieraj Twórców w USDC',
+  description: 'Platforma mikropłatności i napiwków dla twórców treści.',
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pl">
-      <body className={`${inter.variable} font-sans bg-teal-900`}>
-        <Header />
+    <html lang="pl" className={`${montserrat.variable} ${openSans.variable} antialiased`}>
+      <body className="bg-tipjar-turquoise-dark text-tipjar-gray-light font-sans">
         <main>{children}</main>
       </body>
     </html>

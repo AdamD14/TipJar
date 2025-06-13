@@ -1,58 +1,65 @@
 'use client';
-import * as React from 'react';
-import { Slot } from '@radix-ui/react-slot';
-import { cva, type VariantProps } from 'class-variance-authority';
-import { clsx } from 'clsx';
-import { Loader2 } from 'lucide-react';
+import React from 'react';
+import { motion } from 'framer-motion';
 
-const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-lg text-sm font-semibold ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
-  {
-    variants: {
-      variant: {
-        primary: 'bg-yellow-500 text-teal-900 shadow-md hover:bg-yellow-400 active:scale-[0.98]',
-        secondary: 'border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500/10 active:bg-yellow-500/20',
-        destructive: 'bg-red-600 text-white hover:bg-red-700',
-        link: 'text-yellow-400 underline-offset-4 hover:underline',
-      },
-      size: {
-        default: 'h-11 px-6 py-2',
-        sm: 'h-9 rounded-md px-4',
-        lg: 'h-12 rounded-md px-8 text-base',
-        icon: 'h-10 w-10',
-      },
-    },
-    defaultVariants: {
-      variant: 'primary',
-      size: 'default',
-    },
-  }
-);
-
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-  asChild?: boolean;
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'ghost' | 'outline';
+  size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, isLoading = false, children, ...props }, ref) => {
-    const Comp = asChild ? Slot : 'button';
+const Button: React.FC<ButtonProps> = ({ children, className = '', variant = 'primary', size = 'md', isLoading = false, disabled, ...props }) => {
+  const baseStyle = 'font-heading font-semibold rounded-lg transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-tipjar-turquoise-dark focus:ring-tipjar-gold-dark disabled:opacity-50 disabled:cursor-not-allowed';
 
-    return (
-      <Comp
-        className={clsx(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        disabled={isLoading || props.disabled}
-        {...props}
-      >
-        {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-        {children}
-      </Comp>
-    );
+  let variantStyle = '';
+  switch (variant) {
+    case 'primary':
+      variantStyle = 'bg-tipjar-gold text-tipjar-turquoise-dark hover:bg-tipjar-gold-dark';
+      break;
+    case 'secondary':
+      variantStyle = 'bg-tipjar-turquoise text-tipjar-gold hover:bg-tipjar-turquoise-dark';
+      break;
+    case 'ghost':
+      variantStyle = 'bg-transparent text-tipjar-gold hover:bg-tipjar-gold/10';
+      break;
+    case 'outline':
+      variantStyle = 'bg-transparent text-tipjar-gold border-2 border-tipjar-gold hover:bg-tipjar-gold hover:text-tipjar-turquoise-dark';
+      break;
   }
-);
-Button.displayName = 'Button';
 
-export { Button, buttonVariants };
+  let sizeStyle = '';
+  switch (size) {
+    case 'sm':
+      sizeStyle = 'py-1 px-3 text-sm';
+      break;
+    case 'md':
+      sizeStyle = 'py-2 px-5 text-base';
+      break;
+    case 'lg':
+      sizeStyle = 'py-3 px-7 text-lg';
+      break;
+  }
+
+  return (
+    <motion.button
+      className={`${baseStyle} ${variantStyle} ${sizeStyle} ${className}`}
+      disabled={disabled || isLoading}
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.98 }}
+      {...props}
+    >
+      {isLoading ? (
+        <span className="flex items-center justify-center">
+          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Ładowanie...
+        </span>
+      ) : (
+        children
+      )}
+    </motion.button>
+  );
+};
+export default Button;
