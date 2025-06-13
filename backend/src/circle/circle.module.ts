@@ -1,8 +1,11 @@
-import { Module } from '@nestjs/common';
+import { Module, Global } from '@nestjs/common';
 import { CircleService } from './circle.service';
+import { ConfigModule } from '@nestjs/config';
 
+@Global()
 @Module({
+  imports: [ConfigModule],
   providers: [CircleService],
-  exports: [CircleService], // ważne, żeby AuthModule mógł go wstrzykiwać
+  exports: [CircleService],
 })
 export class CircleModule {}

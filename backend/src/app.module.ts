@@ -14,7 +14,7 @@ import { PrismaModule } from './prisma/prisma.module';   // Twój moduł Prisma
 import { AuthModule } from './auth/auth.module';       // Twój moduł Auth
 import { UsersModule } from './users/users.module';     // Twój moduł Users
 import { CircleModule } from './circle/circle.module';   // Twój moduł Circle
-// import { TipsModule } from './tips/tips.module';    // W przyszłości, moduł Napiwków
+import { TipsModule } from './tips/tips.module';    // Moduł Napiwków
 import { RedisModule } from './shared/redis/redis.module'; // Załóżmy, że masz ten moduł i jest on @Global
 
 @Module({
@@ -64,7 +64,7 @@ import { RedisModule } from './shared/redis/redis.module'; // Załóżmy, że ma
     AuthModule,    // AuthModule będzie teraz mógł importować MailerModule (bez .forRootAsync)
     UsersModule,
     CircleModule,
-    // TipsModule,
+    TipsModule,
   ],
   controllers: [AppController], // Jeśli masz AppController
   providers: [AppService],   // Jeśli masz AppService
