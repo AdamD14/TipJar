@@ -2,10 +2,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  // Upewnij się, że ta ścieżka jest poprawna dla Twojego projektu.
-  // Jeśli schema.prisma jest w TipJar/backend/prisma/,
-  // to output "../generated/prisma" umieści klienta w TipJar/backend/generated/prisma/.
-  output   = "../generated/prisma"
+  // Ta konfiguracja użyje domyślnej, standardowej ścieżki (node_modules/@prisma/client)
 }
 
 datasource db {
