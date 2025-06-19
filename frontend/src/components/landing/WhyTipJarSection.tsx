@@ -1,18 +1,18 @@
-// frontend/src/components/landing/WhyTipJarSection.tsx
+// src/components/landing/WhyTipJarSection.tsx
 'use client';
 
 import { motion } from 'framer-motion';
-import { Coins, CreditCard, ShieldCheck, Zap } from 'lucide-react';
+import { Coins, CreditCard, Zap } from 'lucide-react';
 import Image from 'next/image';
 
 const features = [
   {
-    icon: <Coins size={56} className="text-tipjar-gold" />, // Lekko powiększamy ikony dla lepszej równowagi wizualnej
+    icon: <Coins size={56} className="text-tipjar-gold" />,
     title: 'Via Crypto',
     description: '(MIN 2% PLATFORM FEE)',
   },
   {
-    icon: <CreditCard size={56} className="text-tipjar-gold" />, // Lekko powiększamy ikony
+    icon: <CreditCard size={56} className="text-tipjar-gold" />,
     title: 'Fiat-Easy',
     description: 'Google Pay, Revolut & bank',
   },
@@ -22,7 +22,7 @@ const features = [
     description: 'Secure, backed by Circle.com',
   },
   {
-    icon: <Zap size={56} className="text-tipjar-gold" />, // Lekko powiększamy ikony
+    icon: <Zap size={56} className="text-tipjar-gold" />,
     title: 'Instant Payouts',
     description: 'Crypto, USD, EUR & local currency',
   },
@@ -45,11 +45,9 @@ export function WhyTipJarSection() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              {/* === POPRAWIONY FRAGMENT PONIŻEJ === */}
               <div className="mb-4 flex h-20 w-20 items-center justify-center">
                 {feature.icon}
               </div>
-              {/* ===================================== */}
               <h3 className="text-2xl font-heading text-white mb-2">
                 {feature.title}
               </h3>
