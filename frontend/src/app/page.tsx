@@ -3,12 +3,6 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 
-const SocialIcon = ({ children, href }: { children: React.ReactNode; href: string }) => (
-  <a href={href} target="_blank" rel="noopener noreferrer" className="text-[#b0c4de] hover:text-white transition-colors">
-    {children}
-  </a>
-);
-
 const PaymentIcon = ({ children, name }: { children: React.ReactNode; name: string }) => (
   <div title={name} className="bg-white bg-opacity-10 h-8 w-12 rounded-md flex items-center justify-center text-white p-1">
     {children}
@@ -157,8 +151,7 @@ export default function Page() {
             </div>
           </section>
 
-          {/* Reszta sekcji: Why TipJar, Start Building, Social Proof */}
-          {/* (można skopiować z poprzedniego pliku bez zmian, bo nie zawierała <img>) */}
+          {/* TODO: Insert remaining sections (WhyTipJarSection, etc.) */}
         </main>
       </div>
     </div>
