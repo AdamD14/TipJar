@@ -1,13 +1,15 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
-import { Header } from '@/components/layout/Header';
+import type { Metadata } from "next";
+import { Montserrat } from "next/font/google";
+import "./globals.css";
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 
 export const metadata: Metadata = {
-  title: 'TipJar - Wspieraj Twórców',
-  description: 'Platforma mikropłatności Web3 dla twórców treści.',
+  title: "TipJar+ | Mikropłatności dla Twórców",
+  description: "Platforma do mikropłatności dla twórców internetowych.",
 };
 
 export default function RootLayout({
@@ -17,9 +19,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pl">
-      <body className={`${inter.variable} font-sans bg-teal-900`}>
-        <Header />
-        <main>{children}</main>
+      <body className={`${montserrat.className} bg-[#0d2f3f] text-white antialiased`}>
+        {children}
       </body>
     </html>
   );
