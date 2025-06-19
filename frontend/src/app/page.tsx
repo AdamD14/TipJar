@@ -3,11 +3,6 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 
-const SocialIcon = ({ children, href }: { children: React.ReactNode; href: string }) => (
-  <a href={href} target="_blank" rel="noopener noreferrer" className="text-[#b0c4de] hover:text-white transition-colors">
-    {children}
-  </a>
-);
 
 const PaymentIcon = ({ children, name }: { children: React.ReactNode; name: string }) => (
   <div title={name} className="bg-white bg-opacity-10 h-8 w-12 rounded-md flex items-center justify-center text-white p-1">
@@ -43,30 +38,47 @@ export default function Page() {
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/assets/back.png')" }}>
       <style dangerouslySetInnerHTML={{ __html: `
-        input[type=range]::-webkit-slider-thumb {
-          -webkit-appearance: none;
-          appearance: none;
-          width: 20px;
-          height: 20px;
-          background: #FFD700;
-          cursor: pointer;
-          border-radius: 50%;
-          border: 2px solid #0f3a4d;
-        }
-        input[type=range]::-moz-range-thumb {
-          width: 20px;
-          height: 20px;
-          background: #FFD700;
-          cursor: pointer;
-          border-radius: 50%;
-          border: 2px solid #0f3a4d;
-        }
-      `}} />
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #FFD700;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid #0f3a4d;
+  }
+  input[type=range]::-webkit-slider-runnable-track {
+    height: 6px;
+    background: linear-gradient(90deg, #ffd700 0%, #ffe066 100%);
+    border-radius: 8px;
+  }
+  input[type=range']:focus {
+    outline: none;
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #FFD700;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid #0f3a4d;
+  }
+  input[type=range]::-moz-range-track {
+    height: 6px;
+    background: linear-gradient(90deg, #ffd700 0%, #ffe066 100%);
+    border-radius: 8px;
+  }
+  input[type=range]::-ms-fill-lower,
+  input[type=range]::-ms-fill-upper {
+    background: #FFD700;
+  }
+`}} />
       <div className="absolute inset-0 bg-[#0d2f3f] bg-opacity-40"></div>
 
       {/* Obrazy dekoracyjne */}
-      <Image src="/assets/icon_tipjar1.png" alt="deco" width={256} height={256} className="absolute top-1/4 left-0 opacity-10 -translate-x-1/3 z-0" />
-      <Image src="/assets/logo_usdc_1.png" alt="deco 2" width={192} height={192} className="absolute bottom-1/4 left-0 opacity-5 -translate-x-1/4 z-0" />
+      <Image src="/assets/icon_tipjar1.png" alt="deco" width={256} height={256} className="absolute left-2/3 -translate-x-1/3 top-20 -translate-y-16 opacity-50 pointer-events-none z-0"  />
+      <Image src="/assets/logo_usdc_1.png" alt="deco 2" width={480} height={480} className="absolute left-1/2 opacity-30 -translate-x-1/3 top-20 -translate-y-3/2" />
 
       <div className="relative z-10 flex flex-col min-h-screen container mx-auto px-6 py-8">
         {/* 1. Navigation Header */}
@@ -112,12 +124,19 @@ export default function Page() {
             </div>
 
             {/* Prawa kolumna: Przykładowy profil twórcy */}
-            <div className="hidden lg:flex justify-end pt-24">
-              <div className="bg-[#0f3a4d] rounded-2xl p-4 w-full max-w-sm border border-white border-opacity-10 shadow-2xl backdrop-blur-sm">
-                <div className="relative -mt-20 flex justify-center">
-                  <Image src="/assets/ja1.png" alt="Avatar Twórcy" width={160} height={160} className="bg-[#0f3a4d] rounded-full border-4 border-[#FFD700] object-cover" />
-                </div>
-                <div className="text-center mt-4">
+            <div className="hidden lg:flex justify-end pt-20">
+              <div className="bg-[#0f3a4d] rounded-2xl p-1 w-full max-w-xs border border-white border-opacity-10 shadow-2xl backdrop-blur-sm">
+               <div className="flex justify-center relative -mt-16 shadow-xl">
+  <div className="w-[180px] h-[180px] rounded-full overflow-hidden border-4 border-[#FFD700] bg-[#0f3a4d] flex items-center justify-center">
+    <Image
+      src="/assets/we.png"
+      alt="Avatar Twórcy"
+      width={200}
+      height={200}
+      className="object-cover w-50 h-50" />
+  </div>
+</div>
+                <div className="text-center mt-1">
                   <h3 className="text-2xl font-bold">@AdamDuda</h3>
                   <div className="flex justify-center items-center gap-2 mt-1">
                     <span className="text-sm text-[#b0c4de]">tipjar.plus/@AdamDuda</span>
@@ -130,38 +149,47 @@ export default function Page() {
                     </button>
                   </div>
                 </div>
-                <div className="text-center mt-4 px-2">
+                <div className="text-center mt-2 px-1">
                   <p className="text-sm text-[#b0c4de] max-w-xs mx-auto">
-                    Founder of TipJar+ - built together with a team of AI agents. Advocate of freedom, decentralization, and blockchain technology. Web3 & AI pro user. Paleo-contact believer.
+                    Founder of tipjar+ - built together with a team of AI agents. Advocate of freedom, decentralization, and blockchain technology. Web3 & AI pro user. Paleo-contact believer.
                   </p>
                 </div>
-                <div className="mt-6 px-2">
+                <div className="mt-2 px-2">
                   <input 
                     type="range" 
                     min="0.1" 
-                    max="25" 
+                    max="20" 
                     step="0.1" 
                     value={tipAmount}
                     onChange={(e) => setTipAmount(parseFloat(e.target.value))}
-                    className="w-full h-2 rounded-lg appearance-none cursor-pointer"
+                    className="w-full h-2 rounded-lg {
+    border-radius: 0.5rem /* 8px */;appearance-none cursor-pointer"
                     style={sliderBackground}
                   />
-                  <div className="text-sm text-[#b0c4de] text-center mt-2 font-bold">
-                    ${tipAmount.toFixed(2)} USDC
-                  </div>
+                  
                 </div>
-                <div className="mt-4 grid grid-cols-4 gap-2 px-2">
+                <div className="mt-2 grid grid-cols-4 gap-2 px-2">
                   <button onClick={() => setTipAmount(1)} className={`py-2 rounded-lg text-sm transition-colors ${tipAmount === 1 ? 'bg-[#FFD700] text-gray-900 font-bold' : 'bg-white bg-opacity-10 text-white hover:bg-opacity-20'}`}>$1</button>
                   <button onClick={() => setTipAmount(2)} className={`py-2 rounded-lg text-sm transition-colors ${tipAmount === 2 ? 'bg-[#FFD700] text-gray-900 font-bold' : 'bg-white bg-opacity-10 text-white hover:bg-opacity-20'}`}>$2</button>
                   <button onClick={() => setTipAmount(5)} className={`py-2 rounded-lg text-sm transition-colors ${tipAmount === 5 ? 'bg-[#FFD700] text-gray-900 font-bold' : 'bg-white bg-opacity-10 text-white hover:bg-opacity-20'}`}>$5</button>
                   <button onClick={() => setTipAmount(10)} className={`py-2 rounded-lg text-sm transition-colors ${tipAmount === 10 ? 'bg-[#FFD700] text-gray-900 font-bold' : 'bg-white bg-opacity-10 text-white hover:bg-opacity-20'}`}>$10</button>
                 </div>
-                <div className="text-center mt-4">
-                  <a href="#" className="w-full font-bold bg-[#FFD700] text-gray-900 py-3 px-6 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-400/50 block text-lg">
-                    Tip ${tipAmount.toFixed(2)}
-                  </a>
-                </div>
-                <div className="mt-4 flex justify-center items-center gap-2">
+               <div className="text-center mt-2">
+  <a
+    href="#"
+    className="w-full font-bold bg-[#FFD700] text-gray-900 py-2 px-4 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-400/50 block text-lg inline-flex items-center justify-center gap-2"
+  >
+    Tip ${tipAmount.toFixed(2)}
+    <Image
+      src="/assets/logo_usdc_1.png"
+      width={40}
+      height={40}
+      className="object-cover opacity-70"
+      alt=""
+    />
+  </a>
+</div>
+                <div className="mt-2 flex justify-center items-center gap-2">
                   <PaymentIcon name="Google Pay">G</PaymentIcon>
                   <PaymentIcon name="Apple Pay"></PaymentIcon>
                   <PaymentIcon name="Revolut">R</PaymentIcon>
@@ -187,7 +215,7 @@ export default function Page() {
     </div>
 
     <p className="text-lg text-[#b0c4de] mb-6">
-      Whether you're a streamer, educator, or meme legend — TipJar+ gives you a modern, customizable Web3 page to collect tips in minutes.
+      Whether you&#39;re a streamer, educator, or meme legend — TipJar+ gives you a modern, customizable Web3 page to collect tips in minutes.
     </p>
     
     <div className="bg-white bg-opacity-5 p-6 rounded-lg border border-white border-opacity-10 mb-8">
