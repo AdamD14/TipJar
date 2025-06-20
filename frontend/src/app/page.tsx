@@ -11,6 +11,11 @@ const PaymentIcon = ({ children, name }: { children: React.ReactNode; name: stri
   </div>
 );
 
+const HowItWorksPaymentIcon = ({ children, name }: { children: React.ReactNode; name: string }) => (
+    <div title={name} className="bg-white bg-opacity-5 h-8 w-12 rounded-md flex items-center justify-center text-white p-1 transition-transform hover:scale-110">
+      {children}
+    </div>
+  );
 
 export default function Page() {
   const [tipAmount, setTipAmount] = useState(10);
@@ -245,9 +250,9 @@ export default function Page() {
                 </div>
                 
                 <div className="bg-[#0f3a4d] p-8 rounded-2xl text-center text-white border-2 border-yellow-400 pulsing-glow transform transition-transform duration-500 hover:scale-105 my-8">
-                    <h3 className="text-3xl font-bold mb-4 text-yellow-400">ULTRA-LOW FEES & Direct Support</h3>
+                    <h3 className="text-3xl font-bold mb-4 text-yellow-400">LOW FEES & Direct Support</h3>
                     <p className="text-lg text-gray-200 max-w-3xl mx-auto">
-                        A simple, flat <strong className="text-yellow-400">2% service fee</strong> ensures creators receive the majority of their earnings. Creators receive tips directly from their fans, eliminating intermediaries and maximizing earnings.
+                        A simple, flat <strong className="text-yellow-400">3.5% service fee</strong> ensures creators receive the majority of their earnings. Creators receive tips directly from their fans, eliminating intermediaries and maximizing earnings.
                     </p>
                 </div>
 
@@ -266,44 +271,47 @@ export default function Page() {
 
           <section id="how-it-works" className="py-20">
             <h2 className="text-4xl font-bold text-center text-white mb-12">How it works?</h2>
-            <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10">
+            <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-24">
               
               {/* For Fans Column */}
               <div className="bg-white bg-opacity-5 p-8 rounded-xl border border-white border-opacity-10">
                 <h3 className="text-3xl font-bold text-center text-yellow-400 mb-8">For Fans</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div className="flex flex-col items-center text-center">
                         <img src="/assets/regi.png" alt="Register Icon" className="h-40 w-50 mb-4" />
                         <h4 className="text-xl font-semibold mb-2">Sign Up (Optional)</h4>
                         <p className="text-[#b0c4de] text-sm">Use email, Google, Twitch, or MetaMask. Registration isn&#39;t required to send tips.</p>
                     </div>
-
                     <div className="flex flex-col items-center text-center">
                         <img src="/assets/opup.png" alt="Fund your tips icon" className="h-40 w-50 mb-4" />
                         <h4 className="text-xl font-semibold mb-2">Fund Your Tips</h4>
-                        <p className="text-[#b0c4de] text-sm mb-3">Top up with USDC via crypto or your favorite payment method.</p>
-                        
+                        <p className="text-[#b0c4de] text-sm mb-3">Top up with USDC using crypto or your preferred payment method.</p>
+                        <div className="grid grid-cols-3 gap-2 w-full max-w-[200px]">
+                            <HowItWorksPaymentIcon name="Google Pay"><img src="/assets/Google_Pay_Logo.svg" alt="Google Pay" className="h-full"/></HowItWorksPaymentIcon>
+                            <HowItWorksPaymentIcon name="Apple Pay"><img src="/assets/Apple_Pay_Mark_RGB.svg" alt="Apple Pay" className="h-full"/></HowItWorksPaymentIcon>
+                            <HowItWorksPaymentIcon name="Revolut"><svg className="h-3" viewBox="0 0 182 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M130.614 0H123.505V39.664H130.614V0Z"/><path d="M181.076 10.5555V16.7106H173.725V30.5541C173.725 31.7085 173.972 32.711 174.353 33.1078C174.768 33.5415 175.485 33.7611 176.484 33.7611H181.076V39.9161H174.8C172.036 39.9161 169.959 39.23 168.626 37.8765C167.292 36.5241 166.616 34.4755 166.616 31.7873V2.53058H173.725V10.5555H181.076Z"/><path d="M75.2146 31.9437L82.5652 10.5547H90.0337L79.4226 39.6643H71.0067L60.3955 10.5547H67.8641L75.2146 31.9437Z"/><path d="M154.199 29.9025C154.749 28.5835 155.028 26.9802 155.028 25.1374V10.5555H162.138V39.6639H155.898L155.261 36.2704C154.421 37.224 153.348 38.0744 152.067 38.8017C150.664 39.5969 148.824 40 146.601 40C145.058 40 143.579 39.7808 142.204 39.3479C140.821 38.9127 139.582 38.1736 138.521 37.1503C137.46 36.1257 136.606 34.7456 135.985 33.049C135.364 31.3575 135.05 29.2241 135.05 26.7089V10.5555H142.159V25.9231C142.159 28.5697 142.667 30.5867 143.67 31.9174C144.662 33.2341 146.195 33.9022 148.228 33.9022C149.648 33.9022 150.875 33.5618 151.872 32.891C152.87 32.2201 153.652 31.2144 154.199 29.9025Z"/><path fillRule="evenodd" clipRule="evenodd" d="M112.637 12.0906C110.397 10.8484 107.737 10.2191 104.731 10.2191C101.763 10.2191 99.1123 10.8484 96.8534 12.0902C94.5918 13.3351 92.8149 15.0932 91.5716 17.3156C90.3302 19.536 89.7009 22.1677 89.7009 25.1374C89.7009 28.0707 90.3302 30.684 91.5716 32.9044C92.8141 35.126 94.5915 36.8837 96.8534 38.1286C99.1123 39.3703 101.763 39.9996 104.731 39.9996C107.737 39.9996 110.397 39.3703 112.637 38.1282C114.88 36.8841 116.648 35.1263 117.891 32.9043C119.132 30.6827 119.762 28.0694 119.762 25.1374C119.762 22.1688 119.132 19.5371 117.891 17.3155C116.647 15.0928 114.88 13.3347 112.637 12.0906ZM108.882 32.8894C107.736 33.6352 106.34 34.0136 104.732 34.0136C103.16 34.0136 101.773 33.6352 100.608 32.8891C99.442 32.1421 98.5272 31.0878 97.8889 29.7551C97.2479 28.4212 96.9224 26.8677 96.9224 25.1374C96.9224 23.3714 97.2475 21.809 97.8889 20.4931C98.5269 19.1784 99.4424 18.1237 100.61 17.358C101.774 16.593 103.161 16.2052 104.732 16.2052C106.339 16.2052 107.735 16.593 108.88 17.3572C110.029 18.1233 110.936 19.1784 111.575 20.4935C112.216 21.8125 112.541 23.375 112.541 25.1375C112.541 26.8639 112.216 28.4177 111.575 29.7551C110.936 31.0882 110.03 32.1425 108.882 32.8894Z"/><path d="M0 9.78894H7.3882V39.6643H0V9.78894Z"/><path d="M30.5573 11.4973C30.5573 5.15798 25.395 0.000427246 19.0494 0.000427246H0V6.38053H18.1437C21.0154 6.38053 23.3941 8.63663 23.4467 11.4095C23.4729 12.7979 22.9519 14.1082 21.9795 15.0991C21.0067 16.0903 19.707 16.6365 18.3197 16.6365H11.2519C11.0009 16.6365 10.7966 16.8404 10.7966 17.0913V22.7618C10.7966 22.8582 10.8264 22.9504 10.8825 23.028L22.8743 39.6645H31.6524L19.6328 22.9825C25.6859 22.6786 30.5573 17.5928 30.5573 11.4973Z"/><path fillRule="evenodd" clipRule="evenodd" d="M45.7645 10.2191C48.6201 10.2191 51.1471 10.7916 53.2754 11.9212C55.4032 13.0508 57.0955 14.676 58.3051 16.7514C59.51 18.8244 60.1404 21.3052 60.1785 24.1255C60.1785 24.5427 60.1683 24.9559 60.1506 25.3696C60.1299 25.7942 60.082 26.2165 60.0075 26.6262L59.9836 26.7568H38.6284V26.9905C38.7017 28.4855 39.0444 29.8026 39.6466 30.8973C40.2465 31.9881 41.1127 32.8444 42.2203 33.4431C43.3335 34.0454 44.6207 34.3508 46.046 34.3508C47.7276 34.3508 49.1792 33.9446 50.3609 33.144C51.4619 32.3994 52.2171 31.3466 52.6064 30.0143L52.6398 29.8998H59.7096L59.6708 30.0903C59.3101 31.8767 58.5729 33.5188 57.4802 34.9707C56.3298 36.4982 54.7908 37.7322 52.9056 38.6383C51.0209 39.5421 48.8259 40 46.3816 40C43.3006 40 40.5939 39.3801 38.3374 38.1572C36.0766 36.9343 34.3083 35.1855 33.0822 32.9596C31.8589 30.7388 31.239 28.1263 31.239 25.1943C31.239 22.1858 31.8495 19.5356 33.054 17.3172C34.2597 15.0936 35.9798 13.3351 38.1661 12.0914C40.3489 10.8488 42.9053 10.2191 45.7645 10.2191ZM52.9323 21.7235C52.6551 19.8779 51.8995 18.4252 50.6848 17.403C49.4297 16.3475 47.7931 15.8123 45.8205 15.8123C44.6536 15.8123 43.5538 16.0621 42.552 16.5542C41.5514 17.0447 40.712 17.7457 40.0568 18.6381C39.4322 19.4889 39.0346 20.526 38.8738 21.7235H52.9323Z"/></svg></HowItWorksPaymentIcon>
+                            <HowItWorksPaymentIcon name="Bank"><img src="/assets/bank-svgrepo-com.svg" alt="Bank" className="h-full"/></HowItWorksPaymentIcon>
+                            <HowItWorksPaymentIcon name="Metamask"><img src="/assets/MetaMask-icon-fox.svg" alt="Metamask" className="h-full"/></HowItWorksPaymentIcon>
+                            <HowItWorksPaymentIcon name="WalletConnect"><img src="/assets/wc.svg" alt="WalletConnect" className="h-full"/></HowItWorksPaymentIcon>
+                        </div>
                     </div>
-
                     <div className="flex flex-col items-center text-center">
                         <img src="/assets/explore.png" alt="Tip" className="h-40 w-50 mb-4" />
                         <h4 className="text-xl font-semibold mb-2">Explore!</h4>
                         <p className="text-[#b0c4de] text-sm">Discover Web3-world skills.</p>
                     </div>
- <div className="flex flex-col items-center text-center">
+                    <div className="flex flex-col items-center text-center">
                         <img src="/assets/tipit3.png" alt="Tip" className="h-40 w-50 mb-4" />
                         <h4 className="text-xl font-semibold mb-2">Support!</h4>
                         <p className="text-[#b0c4de] text-sm">Real people real value.</p>
                     </div>
- <div className="flex flex-col items-center text-center">
+                    <div className="flex flex-col items-center text-center">
                         <img src="/assets/beapart.png" alt="Tip" className="h-40 w-50 mb-4" />
                         <h4 className="text-xl font-semibold mb-2">Enjoy the journey!</h4>
                         <p className="text-[#b0c4de] text-sm">Fuel the movement</p>
                     </div>
-
-
                     <div className="flex flex-col items-center text-center">
-                        <img src="/assets/getaccess.png" alt="Enjoy" className="h-40 w-50 mb-4" />
+                        <img src="/assets/getaa.png" alt="Enjoy" className="h-40 w-50 mb-4" />
                         <h4 className="text-xl font-semibold mb-2">Contribute to the culture,</h4>
                         <p className="text-[#b0c4de] text-sm">be part of the style.</p>
                     </div>
@@ -312,31 +320,80 @@ export default function Page() {
 
               {/* For Creators Column */}
               <div className="bg-white bg-opacity-5 p-8 rounded-xl border border-white border-opacity-10">
-                <h3 className="text-3xl font-bold mb-6 text-center text-yellow-400">For Creators</h3>
-                <div className="text-center text-[#b0c4de]">
-                    <p>Content for this section is coming soon.</p>
+                <h3 className="text-3xl font-bold text-center text-yellow-400 mb-8">For Creators</h3>
+                <div className="grid grid-cols-3 sm:grid-cols-2 gap-3">
+                    <div className="flex flex-col items-center text-center">
+                        <img src="/assets/ful.png" alt="ful" className="h-40 w-50 mb-4" />
+                        <h4 className="text-xl font-semibold mb-2"></h4>
+                        <p className="text-[#b0c4de] text-sm">Editable avatar, bio, animated/static cover. No third-party integrations — 100% creator-owned space</p> </div>
+                     <div className="flex flex-col items-center text-center">
+                        <img src="/assets/real.png" alt="Fund your tips icon" className="h-40 w-50 mb-4" />
+                        <h4 className="text-xl font-semibold mb-2"></h4>
+                        <p className="text-[#b0c4de] text-sm">Goal tracking that shows real impact, subscriptions that build loyalty and community</p>
+                    </div>
+                     <div className="flex flex-col items-center text-center">
+                        <img src="/assets/moder.png" alt="Tip" className="h-40 w-50 mb-4" />
+                        <h4 className="text-xl font-semibold mb-2"></h4>
+                        <p className="text-[#b0c4de] text-sm">Clean Web3 UI with responsive layout, hover effects, microanimations, color themes, works out of the box - no coding needed.</p>
+                    </div>
+                    <div className="flex flex-col items-center text-center">
+                        <img src="/assets/fle.png" alt="Tip" className="h-40 w-50 mb-4" />
+                        <h4 className="text-xl font-semibold mb-2"></h4>
+                        <p className="text-[#b0c4de] text-sm">One-time tips with custom presets (e.g. “🍕 Buy me pizza”), fundraising goals with progress bars and deadlines, monthly subscriptions with customizable tiers (e.g. $5/month)</p>
+                    </div>
+                    <div className="flex flex-col items-center text-center">
+                        <img src="/assets/zero.png" alt="Tip" className="h-40 w-50 mb-4" />
+                        <h4 className="text-xl font-semibold mb-2"></h4>
+                        <p className="text-[#b0c4de] text-sm">No login required, no crypto wallet needed — built-in on-ramp, instant access via sharable links and QR codes.</p>
+                    </div>
+                     <div className="flex flex-col items-center text-center">
+                        <img src="/assets/easy.png" alt="Tip" className="h-40 w-50 mb-4" />
+                        <h4 className="text-xl font-semibold mb-2"></h4>
+                        <p className="text-[#b0c4de] text-sm">Shareable widget (iframe), QR code, dynamic OpenGraph cards, social links: X, Instagram, YouTube, Discord, Telegram, perfect for bios, stories, and link-in-bio tools.</p>
+                    </div>
                 </div>
               </div>
             </div>
           </section>
+ {/* Sekcja "Start Building..." */}
+                    <section className="py-20 text-left">
+                       <div className="max-w-4xl mx-auto">
+                            <h2 className="text-4xl font-bold mb-6">🌍 Start Building Your Page with tipjar+</h2>
+                            <p className="text-lg text-[#b0c4de] mb-6">Accept tips in USDC — instantly, globally, and without borders.</p>
+                            
+                            <p className="text-lg text-[#b0c4de] mb-6">
+                                Support from fans via crypto, Google Pay, Apple Pay, bank transfer, PayPal, and Revolut has never been faster or more accessible.
+                            </p>
 
-          <section id="start-building" className="py-20 text-left">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-4xl font-bold mb-6">🌍 Start Building</h2>
-              <p className="text-lg text-[#b0c4de] mb-6">Accept tips in USDC — instantly, globally, and without borders. Support from fans via crypto, Google Pay, Apple Pay, bank transfer, PayPal, and Revolut has never been faster or more accessible.</p>
-              <div className="bg-white bg-opacity-10 p-6 rounded-lg mb-8">
-                <p className="text-xl font-semibold text-center">💡 No bank accounts. No delays. No restrictions.</p>
-              </div>
-              <div className="bg-white bg-opacity-5 p-6 rounded-lg border border-white border-opacity-10 mb-8">
-                <p className="text-lg text-[#b0c4de] mb-4">🪙 Powered by Circle.com, every contribution lands in your USDC wallet — a fully reserved, dollar-pegged stablecoin trusted by millions worldwide.</p>
-                <ul className="space-y-2 text-lg text-white">
-                  <li className="flex items-center"><span className="text-green-400 mr-2">✅</span> Over $200B processed</li>
-                  <li className="flex items-center"><span className="text-green-400 mr-2">✅</span> Regulated infrastructure</li>
-                  <li className="flex items-center"><span className="text-green-400 mr-2">✅</span> Backed 1:1 with USD in cash and short-term U.S. Treasuries</li>
-                </ul>
-              </div>
-            </div>
-          </section>
+                            <div className="bg-white bg-opacity-10 p-6 rounded-lg mb-8">
+                                <p className="text-xl font-semibold text-center">💡 No bank accounts. No delays. No restrictions.</p>
+                            </div>
+
+                            <p className="text-lg text-[#b0c4de] mb-6">
+                                Whether you&#39;re a streamer, educator, or meme legend — TipJar+ gives you a modern, customizable Web3 page to collect tips in minutes.
+                            </p>
+                            
+                            <div className="bg-white bg-opacity-5 p-6 rounded-lg border border-white border-opacity-10 mb-8">
+                                <p className="text-lg text-[#b0c4de] mb-4">🪙 Powered by Circle.com, every contribution lands in your USDC wallet — a fully reserved, dollar-pegged stablecoin trusted by millions worldwide.</p>
+                                <ul className="space-y-2 text-lg text-white">
+                                    <li className="flex items-center"><span className="text-green-400 mr-2">✅</span> Over $200B processed</li>
+                                    <li className="flex items-center"><span className="text-green-400 mr-2">✅</span> Regulated infrastructure</li>
+                                    <li className="flex items-center"><span className="text-green-400 mr-2">✅</span> Backed 1:1 with USD in cash and short-term U.S. Treasuries</li>
+                                </ul>
+                            </div>
+                            
+                            <p className="text-lg text-[#b0c4de] font-bold mb-4">💸 PAYOUTS AVAILABLE IN: USDC, USD, EURO AND YOUR LOCAL CURRENCY.</p>
+
+                            <p className="text-lg text-[#b0c4de] mb-8">
+                                Circle enables seamless conversion from USDC into over 80+ fiat currencies — including PLN, GBP, CHF, AUD, CAD, MXN, JPY, SEK, NOK, CZK, and many more.
+                                Funds can be withdrawn via SWIFT, SEPA, or local banking rails, depending on your region.
+                            </p>
+
+                            <p className="text-lg text-[#b0c4de]">
+                                📲 Share your tipjar+ via QR code, widget, smart link, or image — and start receiving tips anytime, anywhere.
+                            </p>
+                       </div>
+                    </section>
 
           <section id="explore" className="py-20">
              <h2 className="text-4xl font-bold text-center text-white mb-12">Explore Creators</h2>
