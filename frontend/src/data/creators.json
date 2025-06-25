@@ -1,0 +1,12 @@
+{
+  "adamgiry": {
+    "name": "Adam Giry",
+    "avatar": "/assets/avatar_adam.png",
+    "goal": {
+      "title": "New Album Production",
+      "target": 500,
+      "current": 320
+    },
+    "bio": "Web3 music artist. Powered by TipJar+. No middlemen. Just music."
+  }
+}
