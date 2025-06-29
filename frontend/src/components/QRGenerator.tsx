@@ -1,27 +1,22 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import dynamic from "next/dynamic";
+import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
 
-// Uproszczona wersja bez shadcn/ui (Tailwind only)
-
-// Typ ref‑a wystawiany przez react‑qrcode‑logo
-type QRCodeHandle = {
-  download: (type?: "png" | "svg", fileName?: string) => void;
-};
-
-// Lazy‑load komponent, aby ominąć SSR
-const QRCode = dynamic(() => import("react-qrcode-logo").then(m => m.QRCode), {
+// Lazy‑load komponent QRCode
+const QRCode = dynamic(() => import('react-qrcode-logo').then(m => m.QRCode), {
   ssr: false,
 });
 
-export default function QRGenerator() {
-  const [profileUrl, setProfileUrl] = useState("");
-  const [qrValue, setQrValue] = useState<string>();
-  const [fgColor, setFgColor] = useState("#000000");
-  const [bgColor, setBgColor] = useState("#ffffff");
-  const [isTransparent, setIsTransparent] = useState(true);
+type QRCodeHandle = {
+  download: (type?: 'png' | 'svg', fileName?: string) => void;
+};
 
+export default function QRGenerator() {
+  const [profileUrl, setProfileUrl] = useState('');
+  const [qrValue, setQrValue] = useState<string>();
+  const [fgColor, setFgColor] = useState('#003737');
+  const [bgColor, setBgColor] = useState('#ffffff');
   let qrInstance: QRCodeHandle | null = null;
 
   const handleGenerate = () => {
@@ -30,7 +25,7 @@ export default function QRGenerator() {
   };
 
   const handleDownload = () => {
-    qrInstance?.download("png", "tipjar-qr");
+    qrInstance?.download('png', 'tipjar-qr');
   };
 
   return (
@@ -42,18 +37,18 @@ export default function QRGenerator() {
         onChange={e => setProfileUrl(e.target.value)}
       />
 
-      <label className="flex items-center gap-2 text-white">
-        <input
-          type="checkbox"
-          checked={isTransparent}
-          onChange={e => setIsTransparent(e.target.checked)}
-        />
-        Transparent background
-      </label>
-
-      {!isTransparent && (
-        <div className="flex flex-col gap-1 w-full text-white">
-          <span>Background color</span>
+      <div className="flex flex-row gap-4 w-full text-white items-center">
+        <div className="flex flex-col text-sm">
+          <span>QR color</span>
+          <input
+            type="color"
+            value={fgColor}
+            onChange={e => setFgColor(e.target.value)}
+            className="h-10 w-20 rounded-md"
+          />
+        </div>
+        <div className="flex flex-col text-sm">
+          <span>Background</span>
           <input
             type="color"
             value={bgColor}
@@ -61,16 +56,6 @@ export default function QRGenerator() {
             className="h-10 w-20 rounded-md"
           />
         </div>
-      )}
-
-      <div className="flex flex-col gap-1 w-full text-white">
-        <span>QR color</span>
-        <input
-          type="color"
-          value={fgColor}
-          onChange={e => setFgColor(e.target.value)}
-          className="h-10 w-20 rounded-md"
-        />
       </div>
 
       <button
@@ -83,7 +68,7 @@ export default function QRGenerator() {
       {qrValue && (
         <>
           <QRCode
-            // @ts-expect-error QRCode ref typing is not compatible
+            // @ts-expect-error QRCode component does not support refs in its type definition
             ref={(instance: QRCodeHandle | null) => {
               qrInstance = instance;
             }}
@@ -91,13 +76,12 @@ export default function QRGenerator() {
             size={220}
             bgColor={bgColor}
             fgColor={fgColor}
-            logoImage="/assets/icon_tipjar1.png"
-            logoWidth={100}
-            logoHeight={100}
-            removeQrCodeBehindLogo
-            logoPadding={4}
-            logoPaddingStyle="circle"
-            ecLevel="H" // Highest error correction
+            logoImage="/assets/tipit.png"
+            logoWidth={80}
+            logoHeight={80}
+            logoPadding={2}
+            logoPaddingStyle="square"
+            ecLevel="H"
             enableCORS
           />
 
