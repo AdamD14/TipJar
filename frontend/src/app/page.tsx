@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useEffect } from 'react';
-import Image from 'next/image';
-import QRGenerator from "@/components/QRGenerator";
+import React, { useState, useEffect } from 'react';
+import QRGenerator from "src/components/QRGenerator";
+import Image from "next/image";
 
 type PaymentIconProps = {
   children: React.ReactNode;
@@ -17,8 +16,8 @@ const PaymentIcon = ({ children, name }: PaymentIconProps) => (
     style={{
       minHeight: 0,
       minWidth: 0,
-      padding: 0,        // <-- jawnie zerujesz padding
-      margin: 0          // <-- jawnie zerujesz margin (na wszelki wypadek)
+      padding: 0,
+      margin: 0
     }}
   >
     {children}
@@ -144,15 +143,17 @@ useEffect(() => {
         }
       `}} />
 
-      <div className="absolute inset-0 bg-[#0d2f3f] bg-opacity-40"></div>
-      <Image
-        src="/assets/logo_usdc_1.png"
-        alt="deco 2"
-        width={480}
-        height={480}
-        className="absolute left-1/2 opacity-30 -translate-x-1/4 top-40 -translate-y-3/2 pointer-events-none"
-        priority
-      />
+      <div className="relative">
+  <Image
+    src="/assets/usdc.png"
+    alt="deco 2"
+    width={640}
+    height={640}
+    className="absolute left-1/2 top-40 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-10"
+    priority
+  />
+  <div className="absolute inset-0 bg-[#0d2f3f] bg-opacity-70"></div>
+</div>
 
       <div className="relative z-10 flex flex-col min-h-screen container mx-auto px-4">
         <header className={`fixed top-0 left-0 right-0 z-50 w-full border-b border-white border-opacity-10 transition-colors duration-300

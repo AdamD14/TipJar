@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/Button';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -45,7 +44,6 @@ export const Header = () => {
           <Link href="/login" className="text-sm font-semibold text-teal-100 hover:text-yellow-400 transition-colors">
             Logowanie
           </Link>
-          <Button>Zarejestruj się</Button>
         </div>
         <div className="md:hidden">
           <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} aria-label="Otwórz menu">
@@ -88,9 +86,7 @@ export const Header = () => {
                   >
                     Logowanie
                   </Link>
-                  <Button onClick={() => setIsMobileMenuOpen(false)} className="w-full">
                     Zarejestruj się
-                  </Button>
                 </div>
               </nav>
             </div>

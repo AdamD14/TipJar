@@ -1,12 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
-import dynamic from 'next/dynamic';
+import React, { useState, Suspense } from 'react';
 
-// Lazy‑load komponent QRCode
-const QRCode = dynamic(() => import('react-qrcode-logo').then(m => m.QRCode), {
-  ssr: false,
-});
+const QRCode = React.lazy(() =>
+  import('react-qrcode-logo').then(m => ({ default: m.QRCode }))
+);
 
 type QRCodeHandle = {
   download: (type?: 'png' | 'svg', fileName?: string) => void;
@@ -66,7 +64,7 @@ export default function QRGenerator() {
       </button>
 
       {qrValue && (
-        <>
+        <Suspense fallback={<div>Loading QR Code...</div>}>
           <QRCode
             // @ts-expect-error QRCode component does not support refs in its type definition
             ref={(instance: QRCodeHandle | null) => {
@@ -91,7 +89,7 @@ export default function QRGenerator() {
           >
             Download QR as PNG
           </button>
-        </>
+        </Suspense>
       )}
     </div>
   );

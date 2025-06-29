@@ -1,6 +1,7 @@
 import { ImageResponse } from '@vercel/og';
 import type { NextRequest } from 'next/server';
 import React from 'react';
+import Image from 'next/image';
 
 export const runtime = 'edge';
 
@@ -13,7 +14,8 @@ export async function GET(req: NextRequest) {
   const avatarSVG = `<svg width="160" height="160" viewBox="0 0 160 160" fill="none"
   xmlns="http://www.w3.org/2000/svg"><circle cx="80" cy="80" r="75"
   stroke="#FFD700" stroke-width="10" fill="none"/></svg>`;
-const avatar = `data:image/svg+xml;utf8,${encodeURIComponent(avatarSVG)}`;
+  const avatar = `data:image/svg+xml;utf8,${encodeURIComponent(avatarSVG)}`;
+
   return new ImageResponse(
     (
       <div style={{
@@ -27,8 +29,9 @@ const avatar = `data:image/svg+xml;utf8,${encodeURIComponent(avatarSVG)}`;
         fontSize: 32,
         fontFamily: 'Inter, sans-serif',
       }}>
-        <img
+        <Image
           src={avatar}
+          alt="Avatar"
           width={160}
           height={160}
           style={{ borderRadius: '50%', marginRight: 40 }}
