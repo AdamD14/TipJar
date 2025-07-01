@@ -1,11 +1,9 @@
 import { ImageResponse } from '@vercel/og';
-import type { NextRequest } from 'next/server';
 import React from 'react';
-import Image from 'next/image';
 
 export const runtime = 'edge';
 
-export async function GET(req: NextRequest) {
+export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
 
   const handle = searchParams.get('handle') ?? 'creator';
@@ -29,7 +27,7 @@ export async function GET(req: NextRequest) {
         fontSize: 32,
         fontFamily: 'Inter, sans-serif',
       }}>
-        <Image
+        <img
           src={avatar}
           alt="Avatar"
           width={160}
@@ -45,6 +43,6 @@ export async function GET(req: NextRequest) {
         </div>
       </div>
     ),
-    { width: 1200, height: 630 },
+    { width: 1200, height: 630 }
   );
 }
