@@ -1,25 +1,19 @@
-import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
-import "./globals.css";
-
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
+import './globals.css';
+import type { Metadata } from 'next';
+import { ReactNode } from 'react';
 
 export const metadata: Metadata = {
-  title: "TipJar+ | Mikropłatności dla Twórców",
-  description: "Platforma do mikropłatności dla twórców internetowych.",
+  title: {
+    default: 'TipJar+',
+    template: '%s | TipJar+',
+  },
+  description: 'Instant micro-payments for your favourite creators',
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="pl">
-      <body className={`${montserrat.className} bg-[#0d2f3f] text-white antialiased`}>
+    <html lang="en" className="font-sans">
+      <body className="min-h-screen bg-[#003737] text-white antialiased">
         {children}
       </body>
     </html>
