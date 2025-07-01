@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import QRGenerator from "src/components/QRGenerator";
+import QRGenerator from "../components/QRGenerator.tsx";
 import Image from "next/image";
 
 type PaymentIconProps = {
