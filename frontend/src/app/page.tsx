@@ -159,7 +159,7 @@ useEffect(() => {
         <header className={`fixed top-0 left-0 right-0 z-50 w-full border-b border-white border-opacity-10 transition-colors duration-300
   ${isScrolled ? 'bg-[#0d2f3f] bg-opacity-95' : 'bg-[#0d2f3f] bg-opacity-30 backdrop-blur-lg'}
 `}>
-          <nav className="grid grid-cols-3 items-center w-full h-15">
+          <nav className="grid grid-cols-3 items-center w-full h-">
             <div className="flex justify-start">
               <a href="#" className="flex items-center space-x-2" aria-label="Strona główna TipJar+">
                 <Image src="/assets/icon_tipjarnone.png" alt="TipJar+ Logo" width={60} height={60} />
@@ -225,7 +225,7 @@ useEffect(() => {
 
 
         <main className="flex-grow">
-          <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start pt-20" style={{ minHeight: 'calc(90vh - 80px)' }}>
+          <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start pt-6" style={{ minHeight: 'calc(90vh - 80px)' }}>
             <div className="text-left pt-20">
               <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
                 Support Creativity,<br />Get Paid Instantly
