@@ -1,4 +1,4 @@
-// app/@[username]/page.tsx
+// app/[username]/page.tsx
 export default function CreatorProfilePage({ params }: { params: { username: string } }) {
   const username = params.username;
   return (
