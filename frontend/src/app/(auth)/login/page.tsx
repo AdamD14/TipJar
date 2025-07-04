@@ -1,148 +1,118 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 
-export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-    try {
-      // TODO: wywołaj tu API logowania
-    } catch {
-      setError('Błąd logowania');
-    } finally {
-      setLoading(false);
-    }
-  };
+export default function AuthPage() {
+  const [tab, setTab] = useState<'login' | 'register'>('login');
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[#003737]">
-      <div className="w-full max-w-md bg-white/10 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-slate-700">
-        {/* Logo */}
+    <main className="min-h-screen flex items-center justify-center bg-[#006D6F]">
+      <div className="w-full max-w-md mx-auto bg-[#004953]/80 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-[#006D6F]/30">
+        {/* Nagłówek z logo i zakładkami */}
         <div className="flex justify-center mb-6">
-          <img src="/assets/tipjar_logo.svg" alt="TipJar+" className="h-10" />
-        </div>
-
-        {/* Taby */}
-        <div className="flex mb-8 bg-[#008080]/20 rounded-lg overflow-hidden">
-          <Link
-            href="/login"
-            className="flex-1 py-3 font-semibold bg-[#FFD700] text-[#003737] text-center"
+          <img src="/assets/tipjar_logo.svg" alt="TipJar+" className="h-10 mr-4" />
+          <button
+            className={`px-4 py-2 font-semibold ${tab === 'login' ? 'text-white' : 'text-[#006D6F]'}`}
+            onClick={() => setTab('login')}
           >
             Zaloguj się
-          </Link>
-          <Link
-            href="/register"
-            className="flex-1 py-3 font-semibold text-white hover:bg-[#008080]/30 text-center"
+          </button>
+          <button
+            className={`px-4 py-2 ml-4 font-semibold ${tab === 'register' ? 'text-white' : 'text-[#006D6F]'}`}
+            onClick={() => setTab('register')}
           >
-            Zarejestruj się
-          </Link>
+            Dołącz do TipJar
+          </button>
         </div>
 
-        {/* Formularz */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* OAuth */}
-          <div className="flex flex-col gap-3">
-            <button
-              type="button"
-              className="flex items-center justify-center gap-3 bg-white/20 hover:bg-white/30 rounded-lg py-2 font-semibold text-white"
-            >
-              <img src="/assets/Google_Pay_Logo.svg" alt="Google" className="h-6" />
-              Kontynuuj przez Google
-            </button>
-            <button
-              type="button"
-              className="flex items-center justify-center gap-3 bg-[#6441a5]/70 hover:bg-[#6441a5]/90 rounded-lg py-2 font-semibold text-white"
-            >
-              <img src="/assets/twitch.svg" alt="Twitch" className="h-6" />
-              Kontynuuj przez Twitch
-            </button>
-          </div>
+        {/* Przyciski logowania społecznościowego */}
+        <div className="space-y-4 mb-4">
+          <button className="w-full py-2 rounded-lg border border-[#36454F] text-white bg-[#36454F]">
+            {/* TODO: ikonka Google */}
+            Kontynuuj z Google
+          </button>
+          <button className="w-full py-2 rounded-lg border border-[#301934] text-white bg-[#301934]">
+            {/* TODO: ikonka Twitch */}
+            Kontynuuj z Twitch
+          </button>
+        </div>
 
-          <div className="text-center my-4 text-[#D3D3D3]">lub</div>
+        {/* Separator */}
+        <div className="flex items-center justify-center my-4">
+          <span className="text-[#36454F]">--- lub ---</span>
+        </div>
 
-          {/* E-mail */}
-          <div>
-            <label className="block mb-2 text-white font-semibold">Email</label>
+        {/* Formularz email/hasło */}
+        <form>
+          <div className="mb-4">
+            <label className="block mb-1 text-white">Email</label>
             <input
               type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-3 rounded-lg bg-[#003737]/60 border border-[#008080]/40 text-white placeholder-gray-300 focus:ring-2 focus:ring-[#FFD700]"
+              className="w-full px-3 py-2 rounded-md bg-[#36454F] text-white placeholder:text-[#94A3B8] border border-[#006D6F]"
+              placeholder="Twój email"
             />
           </div>
-
-          {/* Hasło */}
-          <div className="relative">
-            <label className="block mb-2 text-white font-semibold">Hasło</label>
-            <input
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              className="w-full px-4 py-3 rounded-lg bg-[#003737]/60 border border-[#008080]/40 text-white placeholder-gray-300 focus:ring-2 focus:ring-[#FFD700]"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute top-10 right-3 text-sm text-gray-400"
-            >
-              {showPassword ? 'ukryj' : 'pokaż'}
-            </button>
+          <div className="mb-4">
+            <label className="block mb-1 text-white">Hasło</label>
+            <div className="relative">
+              <input
+                type="password"
+                className="w-full px-3 py-2 rounded-md bg-[#36454F] text-white placeholder:text-[#94A3B8] border border-[#006D6F]"
+                placeholder="Twoje hasło"
+              />
+              {/* TODO: Dodaj funkcję pokaż/ukryj hasło */}
+              <button
+                type="button"
+                className="absolute top-2 right-2 text-white"
+              >
+                Pokaż
+              </button>
+            </div>
           </div>
-
-          {/* Błąd */}
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-
-          {/* Wyślij */}
           <button
             type="submit"
-            disabled={loading}
-            className={`w-full font-bold py-3 rounded-lg mt-2 transition ${
-              loading ? 'bg-[#FFD700]/60 cursor-not-allowed' : 'bg-[#FFD700] hover:scale-105'
-            }`}
+            className="w-full py-2 bg-[#68246D] text-white font-bold rounded-lg"
           >
-            {loading ? 'Logowanie...' : 'Zaloguj się'}
+            {tab === 'login' ? 'Zaloguj się' : 'Zarejestruj'}
           </button>
-
-          {/* Zapomniałeś hasła? */}
-          <div className="flex justify-end text-sm">
-            <Link href="/forgot-password" className="text-[#FFD700] hover:underline">
-              Zapomniałeś hasła?
-            </Link>
-          </div>
-
-          {/* Link do rejestracji */}
-          <div className="text-center text-sm mt-4">
-            <p className="text-white">
-              Nie masz konta?{' '}
-              <Link href="/register" className="text-[#FFD700] hover:underline">
-                Zarejestruj się
-              </Link>
-            </p>
-          </div>
         </form>
 
-        {/* Stopka */}
-        <p className="mt-6 text-center text-xs text-[#D3D3D3]">
-          Korzystając akceptujesz{' '}
-          <Link href="/terms" className="underline">
-            Regulamin
-          </Link>{' '}
-          i{' '}
-          <Link href="/privacy" className="underline">
-            Politykę Prywatności
-          </Link>.
-        </p>
+        {/* Link zapomnianego hasła */}
+        {tab === 'login' && (
+          <div className="text-center mt-4">
+            <a href="#" className="text-[#006D6F] hover:underline">
+              Zapomniałeś hasła?
+            </a>
+          </div>
+        )}
+
+        {/* Linki pomocnicze */}
+        <div className="text-center mt-6 text-sm text-[#94A3B8]">
+          {tab === 'login' ? (
+            <p>
+              Nie masz konta?{' '}
+              <button className="text-[#006D6F] hover:underline" onClick={() => setTab('register')}>
+                Zarejestruj się
+              </button>
+            </p>
+          ) : (
+            <p>
+              Masz już konto?{' '}
+              <button className="text-[#006D6F] hover:underline" onClick={() => setTab('login')}>
+                Zaloguj się
+              </button>
+            </p>
+          )}
+          <p className="mt-2">
+            <a href="#" className="hover:underline">
+              Regulamin
+            </a>{' '}
+            •{' '}
+            <a href="#" className="hover:underline">
+              Polityka Prywatności
+            </a>
+          </p>
+        </div>
       </div>
     </main>
   );
