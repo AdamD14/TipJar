@@ -80,8 +80,6 @@ address, blockquote, center, div, figure, figcaption, footer, form, header, hr, 
 }
 
 /* Inherited from ancestor level 1 (regular) */
- * {
-}
 /* Inherited from ancestor lev
 
 /* Inherited from ancestor level 1 (regular) */
@@ -91,7 +89,6 @@ address, blockquote, center, div, figure, figcaption, footer, form, header, hr, 
   position: relative;
   margin-top: 8px;
 }
-el 2 (user-agent) */
 div {
   display: block;
 }
@@ -108,8 +105,6 @@ address, blockquote, center, div, figure, figcaption, footer, form, header, hr, 
 }
 
 /* Inherited from ancestor level 2 (regular) */
-[data-nextjs-dialog], [data-nextjs-dialog] * {
-}
 
 /* Inherited from ancestor level 2 (regular) */
 [data-nextjs-dialog-content] > [data-nextjs-dialog-body] {
@@ -138,8 +133,6 @@ address, blockquote, center, div, figure, figcaption, footer, form, header, hr, 
 }
 
 /* Inherited from ancestor level 3 (regular) */
-[data-nextjs-dialog], [data-nextjs-dialog] * {
-}
 
 /* Inherited from ancestor level 3 (regular) */
 [data-nextjs-dialog-content] {
@@ -192,8 +185,6 @@ address, blockquote, center, div, figure, figcaption, footer, form, header, hr, 
 }
 
 /* Inherited from ancestor level 4 (regular) */
-[data-nextjs-dialog], [data-nextjs-dialog] * {
-}
 
 /* Inherited from ancestor level 5 (user-agent) */
 div {
@@ -213,8 +204,6 @@ address, blockquote, center, div, figure, figcaption, footer, form, header, hr, 
 
 /* Inherited from ancestor level 5 (regular) */
 [data-nextjs-dialog], [data-nextjs-dialog] * {
-}
-
 /* Inherited from ancestor level 5 (regular) */
 [data-nextjs-dialog-sizer] {
   overflow: hidden;
@@ -252,12 +241,8 @@ address, blockquote, center, div, figure, figcaption, footer, form, header, hr, 
 }
 
 /* Inherited from ancestor level 6 (regular) */
-[data-nextjs-dialog], [data-nextjs-dialog] * {
-}
 
 /* Inherited from ancestor level 6 (regular) */
-.error-overlay-dialog-scroll {
-  overflow-y: auto;
   height: 100%;
   overflow-y: auto;
   height: 100%;
