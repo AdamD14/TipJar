@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 
 export default function AuthPage() {
   const [tab, setTab] = useState<'login' | 'register'>('login');
@@ -9,8 +10,8 @@ export default function AuthPage() {
     <main className="min-h-screen flex items-center justify-center bg-[#006D6F]">
       <div className="w-full max-w-md mx-auto bg-[#004953]/80 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-[#006D6F]/30">
         {/* Nagłówek z logo i zakładkami */}
-        <div className="flex justify-center mb-6">
-          <img src="/assets/tipjar_logo.svg" alt="TipJar+" className="h-10 mr-4" />
+          <Image src="/assets/tipjar_logo.svg" alt="TipJar+" width={40} height={40} className="h-10 mr-4" />
+          <Image src="/assets/tipjar_logo.svg" alt="TipJar+" width={40} height={40} className="h-10 mr-4" />
           <button
             className={`px-4 py-2 font-semibold ${tab === 'login' ? 'text-white' : 'text-[#006D6F]'}`}
             onClick={() => setTab('login')}
@@ -113,7 +114,6 @@ export default function AuthPage() {
             </a>
           </p>
         </div>
-      </div>
     </main>
   );
 }
