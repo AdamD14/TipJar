@@ -1,66 +1,59 @@
 "use client";
-import { useState } from 'react';
-import { Eye, EyeOff, Mail, Lock, Wallet, Users } from 'lucide-react';
+import { useState } from "react";
+import { Eye, EyeOff, Mail, Lock, Wallet } from "lucide-react";
+import { FaTwitch } from "react-icons/fa";
+import { FaGoogle } from "react-icons/fa6";
 
 export default function AuthForm() {
-  const [tab, setTab] = useState('register');
+  const [tab, setTab] = useState<"creator" | "fan">("creator");
   const [showPwd, setShowPwd] = useState(false);
   const [showPwd2, setShowPwd2] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    confirmPassword: ''
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    if (error) setError('');
+    if (error) setError("");
   };
 
   const validateForm = () => {
-    if (!formData.email || !formData.password) {
-      setError('Wszystkie pola są wymagane');
+    if (!formData.email || !formData.password || !formData.confirmPassword) {
+      setError("All fields are required");
       return false;
     }
-    
     if (formData.password.length < 6) {
-      setError('Hasło musi mieć co najmniej 6 znaków');
+      setError("Password must be at least 6 characters");
       return false;
     }
-    
-    if (tab === 'register' && formData.password !== formData.confirmPassword) {
-      setError('Hasła nie są identyczne');
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
       return false;
     }
-    
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      setError('Podaj prawidłowy adres email');
+      setError("Enter a valid email address");
       return false;
     }
-    
     return true;
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
-    
     setLoading(true);
-    setError('');
-    
-    // Simulate API call
+    setError("");
     setTimeout(() => {
       setLoading(false);
-      // Simulate success
-      alert(tab === 'login' ? 'Zalogowano pomyślnie!' : 'Konto zostało utworzone!');
+      alert("Account created!");
     }, 1500);
   };
 
@@ -68,49 +61,50 @@ export default function AuthForm() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      alert(`Logowanie przez ${provider} - funkcja w przygotowaniu`);
+      alert(`Login with ${provider} – coming soon`);
     }, 1000);
   };
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-teal-700 to-purple-900 px-4">
-      <div className="w-full max-w-md bg-teal-900/20 backdrop-blur-md border border-teal-400/20 rounded-2xl shadow-2xl p-8">
-        
+      <div className="w-full max-w-md bg-teal-900/20 backdrop-blur-md border border-teal-400/20 rounded-2xl shadow-2xl p-2">
+
         {/* Logo */}
         <div className="flex justify-center mb-6">
-          <div className="bg-gradient-to-r from-teal-500 to-purple-500 text-white px-6 py-3 rounded-xl font-bold text-xl shadow-lg">
-            TipJar
+          <div className="bg-gradient-to-r from-teal-500 to-purple-500 text-white px-4 py-3/2 rounded-xl font-bold text-xl shadow-lg flex items-center gap-3">
+            <img src="/assets/icon-tipjarnone.svg" alt="TipJar+ icon" className="h-12" draggable={false} />
+            tipjar.plus
           </div>
         </div>
 
         {/* Tab Navigation */}
         <div className="flex mb-6 overflow-hidden rounded-xl border border-teal-400/30 bg-teal-900/20">
           <button
-            className={`flex-1 py-3 font-semibold text-sm sm:text-base transition-all duration-200 ${
-              tab === 'login'
+            className={`flex-1 py-2 font-semibold text-sm sm:text-base transition-all duration-200 ${
+              tab === 'fan'
                 ? 'bg-gradient-to-r from-teal-500 to-purple-500 text-white shadow-lg'
                 : 'text-white hover:bg-teal-500/20'
             }`}
-            onClick={() => setTab('login')}
+            onClick={() => setTab('fan')}
             type="button"
           >
-            Zaloguj się
+            Register as a Fan
           </button>
           <button
-            className={`flex-1 py-3 font-semibold text-sm sm:text-base transition-all duration-200 ${
-              tab === 'register'
+            className={`flex-1 py-2 font-semibold text-sm sm:text-base transition-all duration-200 ${
+              tab === 'creator'
                 ? 'bg-gradient-to-r from-teal-500 to-purple-500 text-white shadow-lg'
                 : 'text-white hover:bg-teal-500/20'
             }`}
-            onClick={() => setTab('register')}
+            onClick={() => setTab('creator')}
             type="button"
           >
-            Zarejestruj się
+            Register as a Creator
           </button>
         </div>
 
         {/* Form */}
-        <form className="space-y-5" onSubmit={handleSubmit}>
+        <form className="space-y-2" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="email" className="block text-white text-sm mb-2 font-medium">
               Email
@@ -125,14 +119,14 @@ export default function AuthForm() {
                 value={formData.email}
                 onChange={handleInputChange}
                 className="w-full bg-slate-900/60 border border-teal-400/40 rounded-lg pl-11 pr-4 py-3 text-white placeholder-gray-300 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all"
-                placeholder="np. jan@tipjar.pl"
+                placeholder="e.g. john@tipjar.plus"
               />
             </div>
           </div>
 
           <div className="relative">
             <label htmlFor="password" className="block text-white text-sm mb-2 font-medium">
-              Hasło
+              Password
             </label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-teal-400 w-5 h-5" />
@@ -144,47 +138,45 @@ export default function AuthForm() {
                 value={formData.password}
                 onChange={handleInputChange}
                 className="w-full bg-slate-900/60 border border-teal-400/40 rounded-lg pl-11 pr-12 py-3 text-white placeholder-gray-300 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all"
-                placeholder="Wpisz hasło"
+                placeholder="Enter your password"
               />
               <button
                 type="button"
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-teal-400 hover:text-teal-300 transition-colors"
                 onClick={() => setShowPwd(!showPwd)}
-                aria-label={showPwd ? 'Ukryj hasło' : 'Pokaż hasło'}
+                aria-label={showPwd ? 'Hide password' : 'Show password'}
               >
                 {showPwd ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
           </div>
 
-          {tab === 'register' && (
+          <div className="relative">
+            <label htmlFor="confirmPassword" className="block text-white text-sm mb-2 font-medium">
+              Repeat password
+            </label>
             <div className="relative">
-              <label htmlFor="confirmPassword" className="block text-white text-sm mb-2 font-medium">
-                Powtórz hasło
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-teal-400 w-5 h-5" />
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type={showPwd2 ? 'text' : 'password'}
-                  required
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  className="w-full bg-slate-900/60 border border-teal-400/40 rounded-lg pl-11 pr-12 py-3 text-white placeholder-gray-300 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all"
-                  placeholder="Powtórz hasło"
-                />
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-teal-400 hover:text-teal-300 transition-colors"
-                  onClick={() => setShowPwd2(!showPwd2)}
-                  aria-label={showPwd2 ? 'Ukryj hasło' : 'Pokaż hasło'}
-                >
-                  {showPwd2 ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-teal-400 w-5 h-5" />
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type={showPwd2 ? 'text' : 'password'}
+                required
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                className="w-full bg-slate-900/60 border border-teal-400/40 rounded-lg pl-11 pr-12 py-3 text-white placeholder-gray-300 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all"
+                placeholder="Repeat your password"
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-teal-400 hover:text-teal-300 transition-colors"
+                onClick={() => setShowPwd2(!showPwd2)}
+                aria-label={showPwd2 ? 'Hide password' : 'Show password'}
+              >
+                {showPwd2 ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
             </div>
-          )}
+          </div>
 
           {error && (
             <div className="text-red-400 text-sm text-center bg-red-900/30 border border-red-500/50 rounded-lg p-3">
@@ -200,105 +192,66 @@ export default function AuthForm() {
             {loading ? (
               <span className="flex items-center justify-center gap-2">
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Ładowanie...
+                Loading...
               </span>
             ) : (
-              tab === 'login' ? 'Zaloguj się' : 'Zarejestruj się'
+              "Register"
             )}
           </button>
-
-          {tab === 'login' && (
-            <div className="text-right text-sm">
-              <button
-                type="button"
-                className="text-teal-400 hover:text-teal-300 hover:underline transition-colors"
-                onClick={() => alert('Funkcja resetowania hasła w przygotowaniu')}
-              >
-                Zapomniałeś hasła?
-              </button>
-            </div>
-          )}
         </form>
 
         {/* Divider */}
-        <div className="my-6 text-center text-white/60 text-sm relative">
+        <div className="my-2 text-center text-white/60 text-sm relative">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-white/20"></div>
           </div>
-          <div className="relative bg-teal-900/60 px-4">lub</div>
+          <div className="relative bg-teal-900/60 px-4">or</div>
         </div>
 
         {/* Social Login */}
         <div className="flex flex-col gap-3">
-          <button 
+          <button
             type="button"
-            onClick={() => handleSocialLogin('Google')}
+            onClick={() => handleSocialLogin("Google")}
             disabled={loading}
             className="flex items-center justify-center gap-3 bg-white/20 hover:bg-white/30 transition-all text-white font-semibold rounded-lg py-3 text-sm border border-white/10 hover:border-white/20 disabled:opacity-60"
           >
-            <Mail className="w-5 h-5" /> Kontynuuj przez Google
+            <FaGoogle className="w-5 h-5" /> Continue with Google
           </button>
-          <button 
+          <button
             type="button"
-            onClick={() => handleSocialLogin('Twitch')}
+            onClick={() => handleSocialLogin("Twitch")}
             disabled={loading}
             className="flex items-center justify-center gap-3 bg-purple-600/70 hover:bg-purple-600/90 transition-all text-white font-semibold rounded-lg py-3 text-sm border border-purple-500/30 hover:border-purple-400/50 disabled:opacity-60"
           >
-            <Users className="w-5 h-5" /> Kontynuuj przez Twitch
+            <FaTwitch className="w-5 h-5" /> Continue with Twitch
           </button>
-          <button 
+          <button
             type="button"
-            onClick={() => handleSocialLogin('Web3')}
+            onClick={() => handleSocialLogin("Web3")}
             disabled={loading}
             className="flex items-center justify-center gap-3 bg-black/40 hover:bg-black/60 transition-all text-white font-semibold rounded-lg py-3 text-sm border border-white/10 hover:border-white/20 disabled:opacity-60"
           >
-            <Wallet className="w-5 h-5" /> Zaloguj przez portfel (Web3)
+            <Wallet className="w-5 h-5" /> Sign up with Wallet (Web3)
           </button>
-        </div>
-
-        {/* Switch tabs */}
-        <div className="text-center mt-6 text-sm text-white/70">
-          {tab === 'login' ? (
-            <>
-              Nie masz konta?{' '}
-              <button
-                type="button"
-                className="text-teal-400 hover:text-teal-300 underline transition-colors"
-                onClick={() => setTab('register')}
-              >
-                Zarejestruj się
-              </button>
-            </>
-          ) : (
-            <>
-              Masz już konto?{' '}
-              <button
-                type="button"
-                className="text-teal-400 hover:text-teal-300 underline transition-colors"
-                onClick={() => setTab('login')}
-              >
-                Zaloguj się
-              </button>
-            </>
-          )}
         </div>
 
         {/* Footer Links */}
         <div className="text-center text-xs mt-4 text-white/50">
-          <button 
+          <button
             type="button"
             className="underline decoration-dotted hover:text-white/80 transition-colors"
-            onClick={() => alert('Regulamin - funkcja w przygotowaniu')}
+            onClick={() => alert("Terms of Service – coming soon")}
           >
-            Regulamin
+            Terms of Service
           </button>
-          {' · '}
-          <button 
+          {" · "}
+          <button
             type="button"
             className="underline decoration-dotted hover:text-white/80 transition-colors"
-            onClick={() => alert('Polityka Prywatności - funkcja w przygotowaniu')}
+            onClick={() => alert("Privacy Policy – coming soon")}
           >
-            Polityka Prywatności
+            Privacy Policy
           </button>
         </div>
       </div>
