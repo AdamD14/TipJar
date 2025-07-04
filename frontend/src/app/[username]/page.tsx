@@ -1,50 +1,57 @@
-import React from "react";
+// app/[username]/page.tsx
 
-/**
- * Dynamic creator profile page.
- * Lives under /app/[username]/page.tsx in the new (App Router) structure.
- *
- * 👉 100 % free of metadata & Head exports – just a plain component that
- *    receives the `username` param from the route and renders some mock UI.
- */
-
-type CreatorProfilePageProps = {
-  params: {
-    username: string;
-  };
+type RouteParams = {
+  username: string;
 };
 
-export default function CreatorProfilePage({ params }: CreatorProfilePageProps) {
+export default function CreatorProfile({
+  params,
+}: {
+  params: RouteParams;
+}) {
   const { username } = params;
 
   return (
-    <main className="min-h-screen font-sans" style={{ backgroundColor: "#F0F4F4" }}>
-      {/* TOP BANNER */}
+    <main
+      className="min-h-screen bg-[#F0F4F4]"
+      style={{ fontFamily: 'Montserrat, sans-serif' }}
+    >
+      {/* górny baner z nazwą twórcy */}
       <section className="bg-[#003737] text-white p-8">
         <h1 className="text-5xl font-bold">@{username}</h1>
+
         <p className="mt-2 text-lg">
-          Welcome to @{username}&apos;s profile! Thank you for your support.
+          Thanks for stopping by&nbsp;
+          <span className="font-semibold">@{username}</span>’s page!
         </p>
 
-        {/* GOAL PROGRESS */}
-        <div className="mt-6 max-w-xl">
-          <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
-            <div className="bg-[#FFD700] h-full" style={{ width: "60%" }} />
+        {/* pasek postępu celu */}
+        <div className="mt-6">
+          <div className="w-full bg-gray-200 h-4 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-[#FFD700] rounded-full"
+              style={{ width: '60%' }}
+            />
           </div>
-          <p className="mt-1">Goal: $5000 (60% reached)</p>
+          <p className="mt-1 text-sm">
+            Goal&nbsp;•&nbsp;$5 000&nbsp;—&nbsp;60 % achieved
+          </p>
         </div>
 
-        <button className="mt-6 bg-[#FFD700] text-[#003737] py-2 px-6 rounded">
-          Send Tip
+        {/* przycisk tipowania */}
+        <button className="mt-6 rounded bg-[#FFD700] px-4 py-2 text-[#003737] font-medium hover:opacity-90">
+          Send tip
         </button>
       </section>
 
-      {/* RECENT SUPPORTERS */}
-      <section className="p-8">
-        <h2 className="text-2xl mb-4 text-[#003737]">Recent Supporters</h2>
-        <ul className="space-y-1 text-gray-800 list-disc pl-5">
+      {/* ostatnie wsparcia */}
+      <section className="p-8 text-gray-800">
+        <h2 className="text-2xl font-semibold mb-4">Recent supporters</h2>
+        <ul className="space-y-1">
           <li>Alice — $50</li>
-          <li>Bob — $20 (Great stream!)</li>
+          <li>
+            Bob — $20&nbsp;<span className="italic text-sm">(“Great stream!”)</span>
+          </li>
           <li>Anonymous — $5</li>
         </ul>
       </section>
