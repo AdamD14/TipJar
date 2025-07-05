@@ -6,24 +6,15 @@ const QRCode = React.lazy(() =>
   import('react-qrcode-logo').then(m => ({ default: m.QRCode }))
 );
 
-type QRCodeHandle = {
-  download: (type?: 'png' | 'svg', fileName?: string) => void;
-};
-
 export default function QRGenerator() {
   const [profileUrl, setProfileUrl] = useState('');
   const [qrValue, setQrValue] = useState<string>();
   const [fgColor, setFgColor] = useState('#003737');
   const [bgColor, setBgColor] = useState('#ffffff');
-  let qrInstance: QRCodeHandle | null = null;
 
   const handleGenerate = () => {
     if (!profileUrl.trim()) return;
     setQrValue(profileUrl.trim());
-  };
-
-  const handleDownload = () => {
-    qrInstance?.download('png', 'tipjar-qr');
   };
 
   return (
@@ -66,10 +57,6 @@ export default function QRGenerator() {
       {qrValue && (
         <Suspense fallback={<div>Loading QR Code...</div>}>
           <QRCode
-            // @ts-expect-error QRCode component does not support refs in its type definition
-            ref={(instance: QRCodeHandle | null) => {
-              qrInstance = instance;
-            }}
             value={qrValue}
             size={220}
             bgColor={bgColor}
@@ -82,13 +69,6 @@ export default function QRGenerator() {
             ecLevel="H"
             enableCORS
           />
-
-          <button
-            onClick={handleDownload}
-            className="w-full mt-4 px-4 py-2 rounded-lg bg-yellow-500 text-black font-semibold hover:bg-yellow-600 transition"
-          >
-            Download QR as PNG
-          </button>
         </Suspense>
       )}
     </div>

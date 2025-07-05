@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Eye, EyeOff, Mail, Lock, Wallet } from "lucide-react";
 import { FaTwitch } from "react-icons/fa";
 import { FaGoogle } from "react-icons/fa6";
-import { supabase } from "../../../lib/supabase";
 
 export default function AuthForm() {
   const [tab, setTab] = useState<"creator" | "fan">("creator");
@@ -52,22 +51,21 @@ export default function AuthForm() {
     if (!validateForm()) return;
     setLoading(true);
     setError("");
+    // Tu podłącz własny backend / API do rejestracji
     setTimeout(() => {
       setLoading(false);
       alert("Account created!");
     }, 1500);
   };
 
-  const handleSocialLogin = async (provider: "google" | "twitch") => {
+  const handleSocialLogin = async (provider: "google" | "twitch" | "web3") => {
     setLoading(true);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${location.origin}/auth/callback`,
-      },
-    });
-    if (error) {
-      setError(error.message);
+    setError("");
+    try {
+      // Tu wywołaj redirect do OAuth Twojego backendu lub zewnętrznej usługi
+      window.location.href = `/api/auth/${provider}`; // przykładowa ścieżka do OAuth
+    } catch (err) {
+      setError("Social login failed");
       setLoading(false);
     }
   };
@@ -235,7 +233,7 @@ export default function AuthForm() {
           </button>
           <button
             type="button"
-            onClick={() => alert('Web3 login not implemented')}
+            onClick={() => handleSocialLogin("web3")}
             disabled={loading}
             className="flex items-center justify-center gap-3 bg-black/40 hover:bg-black/60 transition-all text-white font-semibold rounded-lg py-3 text-sm border border-white/10 hover:border-white/20 disabled:opacity-60"
           >
