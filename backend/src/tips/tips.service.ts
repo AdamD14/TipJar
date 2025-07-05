@@ -1,6 +1,6 @@
 import { Injectable, Logger, BadRequestException, NotFoundException, InternalServerErrorException, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Tip, TipStatus, UserRole } from '@prisma/client';
+import { Tip, TipStatus, UserRole } from '../../generated/prisma';
 import { CircleService } from '../circle/circle.service';
 import { UsersService } from '../users/users.service';
 import { Decimal } from '@prisma/client/runtime/library';
@@ -68,22 +68,14 @@ export class TipsService {
         }
 
         const blockchain = this.configService.get<string>('DEFAULT_BLOCKCHAIN', 'MATIC-AMOY');
-        const usdcTokenId = this.configService.get<string>('CIRCLE_USDC_TOKEN_ID');
 
-        const transferResult = await this.circleService.initiateInternalTipTransfer(
-          fan.circleWalletId,
-          creator.circleWalletId,
-          netAmountForCreator.toString(),
-          blockchain as any,
-          usdcTokenId,
-        );
+
 
         tipRecord = await this.prisma.tip.update({
           where: { id: tipRecord.id },
           data: {
             status: TipStatus.COMPLETED,
-            circleTransferId: transferResult.circleTransactionId,
-            blockchainTransactionHash: transferResult.txHash,
+
             processedAt: new Date(),
           },
         });
@@ -92,11 +84,7 @@ export class TipsService {
           throw new BadRequestException('Brak tokenu płatności.');
         }
 
-        if (data.paymentGatewayToken === 'fail') {
-          throw new Error('Fiat payment was declined');
-        }
 
-        const chargeId = `mock_charge_${randomUUID()}`;
         tipRecord = await this.prisma.tip.update({
           where: { id: tipRecord.id },
           data: {
@@ -116,12 +104,5 @@ export class TipsService {
         data: { status: TipStatus.FAILED },
       });
 
-      if (paymentError instanceof BadRequestException || paymentError instanceof NotFoundException) {
-        throw paymentError;
-      }
-
-      const message = paymentError instanceof Error ? paymentError.message : 'Przetwarzanie płatności napiwku nie powiodło się.';
-      throw new InternalServerErrorException(message);
-    }
   }
 }
