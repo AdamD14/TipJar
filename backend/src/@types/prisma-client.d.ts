@@ -11,5 +11,12 @@ declare module '@prisma/client' {
     CREATOR = 'CREATOR',
     ADMIN = 'ADMIN'
   }
+  export enum PayoutStatus {
+    PENDING = 'PENDING',
+    PROCESSING = 'PROCESSING',
+    COMPLETED = 'COMPLETED',
+    FAILED = 'FAILED'
+  }
   export type Tip = any;
+  export type Payout = any;
 }
