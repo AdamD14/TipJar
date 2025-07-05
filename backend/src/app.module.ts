@@ -9,25 +9,26 @@ import { MailerModule } from '@nestjs-modules/mailer';
 
 // Główne moduły aplikacji
 import { AppController } from './app.controller'; // Zakładając, że masz ten plik
-import { AppService } from './app.service';     // Zakładając, że masz ten plik
-import { PrismaModule } from './prisma/prisma.module';   // Twój moduł Prisma
-import { AuthModule } from './auth/auth.module';       // Twój moduł Auth
-import { UsersModule } from './users/users.module';     // Twój moduł Users
-import { CircleModule } from './circle/circle.module';   // Twój moduł Circle
-import { TipsModule } from './tips/tips.module';    // Moduł Napiwków
+import { AppService } from './app.service'; // Zakładając, że masz ten plik
+import { PrismaModule } from './prisma/prisma.module'; // Twój moduł Prisma
+import { AuthModule } from './auth/auth.module'; // Twój moduł Auth
+import { UsersModule } from './users/users.module'; // Twój moduł Users
+import { CircleModule } from './circle/circle.module'; // Twój moduł Circle
+import { TipsModule } from './tips/tips.module'; // Moduł Napiwków
 import { RedisModule } from './shared/redis/redis.module'; // Załóżmy, że masz ten moduł i jest on @Global
+import { GeneratorModule } from './generator/generator.module';
 
 @Module({
   imports: [
     // 1. ConfigModule jako pierwszy, aby zmienne .env były dostępne wszędzie
     ConfigModule.forRoot({
-      isGlobal: true,      // Udostępnia ConfigService w całej aplikacji
+      isGlobal: true, // Udostępnia ConfigService w całej aplikacji
       envFilePath: '.env', // Ścieżka do pliku .env (z głównego katalogu backendu)
     }),
 
     // 2. Twoje globalne moduły serwisowe
     PrismaModule, // Zakładając, że PrismaModule jest @Global
-    RedisModule,  // Zakładając, że RedisModule jest @Global (potrzebny dla AuthModulex)
+    RedisModule, // Zakładając, że RedisModule jest @Global (potrzebny dla AuthModulex)
 
     // === DODAJ KONFIGURACJĘ MAILERMODULE TUTAJ ===
     MailerModule.forRootAsync({
@@ -61,12 +62,13 @@ import { RedisModule } from './shared/redis/redis.module'; // Załóżmy, że ma
     // ============================================
 
     // 3. Moduły poszczególnych funkcjonalności aplikacji
-    AuthModule,    // AuthModule będzie teraz mógł importować MailerModule (bez .forRootAsync)
+    AuthModule, // AuthModule będzie teraz mógł importować MailerModule (bez .forRootAsync)
     UsersModule,
     CircleModule,
     TipsModule,
+    GeneratorModule,
   ],
   controllers: [AppController], // Jeśli masz AppController
-  providers: [AppService],   // Jeśli masz AppService
+  providers: [AppService], // Jeśli masz AppService
 })
 export class AppModule {}
