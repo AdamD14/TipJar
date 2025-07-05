@@ -40,9 +40,21 @@ export interface Tip {
 
 export interface User {
   id: string;
+  email: string | null;
+  password: string | null;
+  displayName: string;
+  avatarUrl: string | null;
+  role: UserRole;
+  isActive: boolean;
+  isEmailVerified: boolean;
+  emailVerificationToken?: string | null;
+  emailVerificationTokenExpiresAt?: Date | null;
+  currentHashedRefreshToken?: string | null;
   circleWalletId?: string | null;
   mainWalletAddress?: string | null;
-  role: UserRole;
+  isCircleSetupComplete: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface SocialConnection {
