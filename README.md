@@ -59,6 +59,14 @@ $ npm run dev
 $ npm install
 ```
 
+### Konfiguracja środowiska
+
+Skopiuj przykładowy plik zmiennych i uzupełnij wartości przed uruchomieniem serwera:
+
+```bash
+cp backend/.env.example backend/.env
+```
+
 ### Uruchamianie serwera
 
 ```bash
