@@ -19,8 +19,7 @@ npm install
 npm run dev
 ```
 
-## Backend
-Backend oparto o **NestJS**.
+
 
 ```bash
 cd backend
