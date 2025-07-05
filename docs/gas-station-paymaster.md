@@ -39,6 +39,17 @@ Paymaster umożliwia fanom płacenie za gaz w USDC, gdy używają portfeli EOA (
 4. **UserOperation** – przygotowujemy obiekt operacji z zakodowanym `callData` (transfer USDC) i `paymasterData`, po czym wysyłamy go do bundlera.
 5. **Monitoring** – oczekujemy na `UserOperationReceipt`, informując użytkownika o statusie transakcji.
 
+### Endpointy pomocnicze
+
+W katalogu `frontend/src/app/api/paymaster/` znajdują się dwa proste endpointy wykorzystywane przez UI:
+
+```
+GET /api/paymaster/config  – zwraca adresy EntryPoint, Paymaster, USDC oraz URL bundlera.
+GET /api/paymaster/nonce   – generuje kryptograficznie bezpieczny nonce do podpisu.
+```
+
+Oba są ograniczone prostym limiterem do maks. 10 zapytań na minutę z jednego IP.
+
 ## 9.3 Różnice Gas Station vs. Paymaster
 
 | Kategoria | Circle Paymaster (fan z EOA) | Circle Gas Station (operacje TipJar) |
