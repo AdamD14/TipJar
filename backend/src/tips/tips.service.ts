@@ -1,4 +1,12 @@
-import { Injectable, Logger, BadRequestException, NotFoundException, InternalServerErrorException, Inject, forwardRef } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  BadRequestException,
+  NotFoundException,
+  InternalServerErrorException,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Tip, TipStatus, UserRole } from '@prisma/client';
 import { CircleService } from '../circle/circle.service';
@@ -6,6 +14,7 @@ import { UsersService } from '../users/users.service';
 import { Decimal } from '@prisma/client/runtime/library';
 import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
+import { Blockchain } from '@circle-fin/developer-controlled-wallets';
 
 interface ProcessTipData {
   amount: string;
@@ -28,6 +37,17 @@ export class TipsService {
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
   ) {}
+
+  private async processFiatPayment(token: string, amount: string): Promise<string> {
+    if (!token) {
+      throw new BadRequestException('Brak tokenu płatności.');
+    }
+    // In real implementation this would call an external payment processor.
+    if (token.startsWith('fail')) {
+      throw new Error('Payment gateway rejected the charge');
+    }
+    return `mock_charge_${randomUUID()}`;
+  }
 
   async processNewTip(data: ProcessTipData): Promise<Tip> {
     this.logger.log(`Processing new tip: ${JSON.stringify(data)}`);
@@ -61,17 +81,38 @@ export class TipsService {
     });
 
     try {
+      const blockchain = this.configService.get<string>('DEFAULT_BLOCKCHAIN', 'MATIC-AMOY') as Blockchain;
+      const tokenId = this.configService.get<string>('USDC_TOKEN_ID', 'usdc');
+
       if (fanId) {
-        this.logger.warn(`TODO: Implement USDC payment logic for fan [${fanId}]`);
+        const fan = await this.usersService.findOneById(fanId);
+        if (!fan || !fan.circleWalletId) {
+          throw new NotFoundException('Nie znaleziono portfela fana.');
+        }
+        const transfer = await this.circleService.initiateInternalTipTransfer(
+          fan.circleWalletId,
+          creator.circleWalletId,
+          tipAmountDecimal.toString(),
+          blockchain,
+          tokenId,
+        );
         tipRecord = await this.prisma.tip.update({
           where: { id: tipRecord.id },
-          data: { status: TipStatus.COMPLETED, processedAt: new Date() },
+          data: {
+            status: TipStatus.COMPLETED,
+            circleTransferId: transfer.circleTransactionId,
+            processedAt: new Date(),
+          },
         });
       } else {
-        this.logger.warn('TODO: Implement fiat payment processing for guest.');
+        const chargeId = await this.processFiatPayment(data.paymentGatewayToken as string, tipAmountDecimal.toString());
         tipRecord = await this.prisma.tip.update({
           where: { id: tipRecord.id },
-          data: { status: TipStatus.COMPLETED, paymentGatewayChargeId: `mock_charge_${randomUUID()}`, processedAt: new Date() },
+          data: {
+            status: TipStatus.COMPLETED,
+            paymentGatewayChargeId: chargeId,
+            processedAt: new Date(),
+          },
         });
       }
 
@@ -83,6 +124,9 @@ export class TipsService {
         where: { id: tipRecord.id },
         data: { status: TipStatus.FAILED },
       });
+      if (paymentError instanceof BadRequestException || paymentError instanceof NotFoundException) {
+        throw paymentError;
+      }
       throw new InternalServerErrorException('Przetwarzanie płatności napiwku nie powiodło się.');
     }
   }
