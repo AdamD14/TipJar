@@ -15,6 +15,7 @@ import {
   Twitch,
   DollarSign as CryptoIcon,
 } from "lucide-react";
+import { TipModal, TipModalContent } from "@/components/tip";
 
 interface SupportHistoryItem {
   id: number;
@@ -390,94 +391,14 @@ const CreatorProfilePage: FC = () => {
         </div>
       </div>
 
-      {/* Payment Method Modal */}
-      {showPaymentModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div
-            className="rounded-xl p-6 w-full max-w-md"
-            style={{ backgroundColor: "#00695C" }}
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-white">
-                Choose Payment Method
-              </h3>
-              <button
-                onClick={() => setShowPaymentModal(false)}
-                className="text-[#B2DFDB] hover:text-[#FFFFFF]"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            <div className="space-y-3">
-              <button
-                onClick={() => handlePayment("Card")}
-                className="w-full flex items-center justify-between p-4 rounded-lg transition-colors duration-300 bg-[#00796B] text-white hover:bg-[#00897B]"
-              >
-                <div className="flex items-center">
-                  <CreditCard className="w-5 h-5 text-[#FFC107] mr-3" />
-                  <span>Pay with Card</span>
-                </div>
-                <ChevronRight className="w-5 h-5 text-[#B2DFDB]" />
-              </button>
-
-              <button
-                onClick={() => handlePayment("TipJar Wallet")}
-                className="w-full flex items-center justify-between p-4 rounded-lg transition-colors duration-300 bg-[#00796B] text-white hover:bg-[#00897B]"
-              >
-                <div className="flex items-center">
-                  <Wallet className="w-5 h-5 text-[#FFC107] mr-3" />
-                  <span>TipJar Wallet (Balance: 25.50 USDC)</span>
-                </div>
-                <ChevronRight className="w-5 h-5 text-[#B2DFDB]" />
-              </button>
-
-              <button
-                onClick={() => handlePayment("Crypto Wallet")}
-                className="w-full flex items-center justify-between p-4 rounded-lg transition-colors duration-300 bg-[#00796B] text-white hover:bg-[#00897B]"
-              >
-                <div className="flex items-center">
-                  <CryptoIcon className="w-5 h-5 text-[#FFC107] mr-3" />
-                  <span>Connect Crypto Wallet</span>
-                </div>
-                <ChevronRight className="w-5 h-5 text-[#B2DFDB]" />
-              </button>
-            </div>
-
-            <button
-              onClick={() => handlePayment("Final")}
-              className="w-full mt-6 py-3 bg-[#6A1B9A] hover:bg-[#8E24AA] text-white font-bold rounded-lg transition-all duration-300"
-            >
-              Pay ${tipAmount} USDC
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Custom CSS */}
-      <style jsx global>{`
-        input[type="range"]::-webkit-slider-thumb {
-          -webkit-appearance: none;
-          appearance: none;
-          width: 16px;
-          height: 16px;
-          background-color: #ffd700;
-          border-radius: 50%;
-          cursor: grab;
-          margin-top: -5px;
-          box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.5);
-        }
-
-        input[type="range"]::-moz-range-thumb {
-          width: 16px;
-          height: 16px;
-          background-color: #ffd700;
-          border-radius: 50%;
-          cursor: grab;
-          border: none;
-          box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.5);
-        }
-      `}</style>
+      {/* Payment Modal */}
+      <TipModal
+        creator={{ name: "Adam" }}
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+      >
+        <TipModalContent />
+      </TipModal>
     </div>
   );
 };
