@@ -11,13 +11,12 @@ import { JwtService } from '@nestjs/jwt';
 import { SiweVerifier } from './strategies/siwe.verifier'; // Nasz SiweVerifier
 import { User as UserModel, UserRole } from '../../generated/prisma';// Model User i Enum z Prisma
 
-// Załóżmy, że DTOs są zdefiniowane w folderze src/auth/dto/
-// Należy je utworzyć i odkomentować importy oraz użycie.
-// import { RegisterUserDto } from './dto/register-user.dto';
-// import { LoginUserDto } from './dto/login-user.dto';
-// import { SiweRequestNonceDto } from './dto/siwe-request-nonce.dto';
-// import { SiweVerifySignatureDto } from './dto/siwe-verify-signature.dto';
-// import { RefreshTokenDto } from './dto/refresh-token.dto';
+// DTO classes
+import { RegisterUserDto } from './dto/register-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
+import { SiweRequestNonceDto } from './dto/siwe-request-nonce.dto';
+import { SiweVerifySignatureDto } from './dto/siwe-verify-signature.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 
 @Controller('auth') // Globalny prefix /api/v1/auth (zdefiniowany w main.ts)
@@ -70,7 +69,7 @@ export class AuthController {
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   async register(
-    @Body() registerUserDto: any, // TODO: Zastąp 'any' przez faktyczne RegisterUserDto
+    @Body() registerUserDto: RegisterUserDto,
     @Res({ passthrough: true }) response: Response, // passthrough: true, aby NestJS nadal wysłał odpowiedź
   ): Promise<{ message: string; user: Omit<ValidatedUser, 'password' /* jeśli ValidatedUser zawierałoby hasło */> }> {
     this.logger.log(`Registration attempt initiated for email: ${registerUserDto.email}`);
@@ -233,7 +232,7 @@ export class AuthController {
   // --- Endpointy dla SIWE (Sign-In with Ethereum) ---
   @Post('siwe/nonce')
   @HttpCode(HttpStatus.OK)
-  async getSiweNonce(@Body() body: { address: string } /* TODO: Zastąp przez SiweRequestNonceDto */): Promise<{ nonce: string }> {
+  async getSiweNonce(@Body() body: SiweRequestNonceDto): Promise<{ nonce: string }> {
     if (!body.address /* || !isEthereumAddress(body.address) - dodaj walidację przez DTO */) {
       throw new BadRequestException('Adres portfela jest wymagany i musi być poprawny.');
     }
@@ -245,7 +244,7 @@ export class AuthController {
   @Post('siwe/verify')
   @HttpCode(HttpStatus.OK)
   async verifySiweSignature(
-    @Body() siweVerifyDto: any, // TODO: Zastąp przez SiweVerifySignatureDto (message, signature, address)
+    @Body() siweVerifyDto: SiweVerifySignatureDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ message: string; user: ValidatedUser; accessToken: string }> {
     const { message, signature, address } = siweVerifyDto;
