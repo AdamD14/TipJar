@@ -15,6 +15,7 @@ import { AuthModule } from './auth/auth.module';       // Twój moduł Auth
 import { UsersModule } from './users/users.module';     // Twój moduł Users
 import { CircleModule } from './circle/circle.module';   // Twój moduł Circle
 import { TipsModule } from './tips/tips.module';    // Moduł Napiwków
+import { OverlayModule } from './overlay/overlay.module';
 import { RedisModule } from './shared/redis/redis.module'; // Załóżmy, że masz ten moduł i jest on @Global
 
 @Module({
@@ -65,6 +66,7 @@ import { RedisModule } from './shared/redis/redis.module'; // Załóżmy, że ma
     UsersModule,
     CircleModule,
     TipsModule,
+    OverlayModule,
   ],
   controllers: [AppController], // Jeśli masz AppController
   providers: [AppService],   // Jeśli masz AppService
