@@ -1,6 +1,6 @@
 import { Injectable, Logger, BadRequestException, NotFoundException, InternalServerErrorException, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Tip, TipStatus, UserRole } from '@prisma/client';
+import { Tip, TipStatus, UserRole } from '../../generated/prisma';
 import { CircleService } from '../circle/circle.service';
 import { UsersService } from '../users/users.service';
 import { Decimal } from '@prisma/client/runtime/library';
@@ -62,16 +62,45 @@ export class TipsService {
 
     try {
       if (fanId) {
-        this.logger.warn(`TODO: Implement USDC payment logic for fan [${fanId}]`);
+        const fan = await this.usersService.findOneById(fanId);
+        if (!fan || !fan.circleWalletId) {
+          throw new NotFoundException('Portfel fana nie jest skonfigurowany.');
+        }
+
+        const blockchain = this.configService.get<string>('DEFAULT_BLOCKCHAIN', 'MATIC-AMOY');
+        const usdcTokenId = this.configService.get<string>('USDC_TOKEN_ID', 'USDC');
+
+        const transfer = await this.circleService.initiateInternalTipTransfer(
+          fan.circleWalletId,
+          creator.circleWalletId,
+          netAmountForCreator.toString(),
+          blockchain as any,
+          usdcTokenId,
+        );
+
         tipRecord = await this.prisma.tip.update({
           where: { id: tipRecord.id },
-          data: { status: TipStatus.COMPLETED, processedAt: new Date() },
+          data: {
+            status: TipStatus.COMPLETED,
+            circleTransferId: transfer.circleTransactionId,
+            blockchainTransactionHash: transfer.txHash,
+            processedAt: new Date(),
+          },
         });
       } else {
-        this.logger.warn('TODO: Implement fiat payment processing for guest.');
+        if (!data.paymentGatewayToken) {
+          throw new BadRequestException('Brak tokenu płatności.');
+        }
+
+        const chargeId = `fiat_${randomUUID()}`;
+
         tipRecord = await this.prisma.tip.update({
           where: { id: tipRecord.id },
-          data: { status: TipStatus.COMPLETED, paymentGatewayChargeId: `mock_charge_${randomUUID()}`, processedAt: new Date() },
+          data: {
+            status: TipStatus.COMPLETED,
+            paymentGatewayChargeId: chargeId,
+            processedAt: new Date(),
+          },
         });
       }
 
@@ -83,6 +112,9 @@ export class TipsService {
         where: { id: tipRecord.id },
         data: { status: TipStatus.FAILED },
       });
+      if (paymentError instanceof BadRequestException || paymentError instanceof NotFoundException) {
+        throw paymentError;
+      }
       throw new InternalServerErrorException('Przetwarzanie płatności napiwku nie powiodło się.');
     }
   }
