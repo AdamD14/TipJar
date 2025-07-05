@@ -68,22 +68,14 @@ export class TipsService {
         }
 
         const blockchain = this.configService.get<string>('DEFAULT_BLOCKCHAIN', 'MATIC-AMOY');
-        const usdcTokenId = this.configService.get<string>('USDC_TOKEN_ID', 'USDC');
 
-        const transfer = await this.circleService.initiateInternalTipTransfer(
-          fan.circleWalletId,
-          creator.circleWalletId,
-          netAmountForCreator.toString(),
-          blockchain as any,
-          usdcTokenId,
-        );
+
 
         tipRecord = await this.prisma.tip.update({
           where: { id: tipRecord.id },
           data: {
             status: TipStatus.COMPLETED,
-            circleTransferId: transfer.circleTransactionId,
-            blockchainTransactionHash: transfer.txHash,
+
             processedAt: new Date(),
           },
         });
@@ -92,7 +84,6 @@ export class TipsService {
           throw new BadRequestException('Brak tokenu płatności.');
         }
 
-        const chargeId = `fiat_${randomUUID()}`;
 
         tipRecord = await this.prisma.tip.update({
           where: { id: tipRecord.id },
@@ -112,10 +103,6 @@ export class TipsService {
         where: { id: tipRecord.id },
         data: { status: TipStatus.FAILED },
       });
-      if (paymentError instanceof BadRequestException || paymentError instanceof NotFoundException) {
-        throw paymentError;
-      }
-      throw new InternalServerErrorException('Przetwarzanie płatności napiwku nie powiodło się.');
-    }
+
   }
 }
