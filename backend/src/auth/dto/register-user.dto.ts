@@ -1,5 +1,5 @@
 // src/auth/dto/register-user.dto.ts
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, MinLength, IsString } from 'class-validator';
 
 export class RegisterUserDto {
   @IsEmail()
@@ -10,6 +10,7 @@ export class RegisterUserDto {
   password: string;
 
   @IsNotEmpty()
+  @IsString()
   displayName: string;
 
   // Dla przyszłości: rola (opcjonalnie, domyślnie FAN)

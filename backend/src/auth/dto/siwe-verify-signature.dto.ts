@@ -1,5 +1,5 @@
 // src/auth/dto/siwe-verify-signature.dto.ts
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, IsEthereumAddress } from 'class-validator';
 
 export class SiweVerifySignatureDto {
   @IsNotEmpty()
@@ -12,5 +12,6 @@ export class SiweVerifySignatureDto {
 
   @IsNotEmpty()
   @IsString()
+  @IsEthereumAddress()
   address: string;
 }
