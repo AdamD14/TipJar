@@ -219,7 +219,7 @@ export default function AuthForm() {
         <div className="flex flex-col gap-3">
           <button
             type="button"
-            onClick={() => handleSocialLogin("Google")}
+            onClick={() => handleSocialLogin("google")}
             disabled={loading}
             className="flex items-center justify-center gap-3 bg-white/20 hover:bg-white/30 transition-all text-white font-semibold rounded-lg py-3 text-sm border border-white/10 hover:border-white/20 disabled:opacity-60"
           >
@@ -227,7 +227,7 @@ export default function AuthForm() {
           </button>
           <button
             type="button"
-            onClick={() => handleSocialLogin("Twitch")}
+            onClick={() => handleSocialLogin("twitch")}
             disabled={loading}
             className="flex items-center justify-center gap-3 bg-purple-600/70 hover:bg-purple-600/90 transition-all text-white font-semibold rounded-lg py-3 text-sm border border-purple-500/30 hover:border-purple-400/50 disabled:opacity-60"
           >
@@ -235,7 +235,7 @@ export default function AuthForm() {
           </button>
           <button
             type="button"
-            onClick={() => handleSocialLogin("Web3")}
+            onClick={() => alert('Web3 login not implemented')}
             disabled={loading}
             className="flex items-center justify-center gap-3 bg-black/40 hover:bg-black/60 transition-all text-white font-semibold rounded-lg py-3 text-sm border border-white/10 hover:border-white/20 disabled:opacity-60"
           >
