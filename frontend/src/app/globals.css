@@ -1,25 +1,140 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700display=swap");
+@import "tailwindcss";
 
-@import '@chainsafe/circle-react-elements/styles.css';
+/* frontend/src/styles/globals.css */
 
-/* Twoje style globalne możesz dodać poniżej */
+/* Montserrat Variable + Static */
+@font-face {
+  font-family: 'MontserratVariable';
+  src: url('/fonts/Montserrat/Montserrat-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'MontserratVariable';
+  src: url('/fonts/Montserrat/Montserrat-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+/* statyczne kroje Montserrat (opcjonalnie, jeśli używasz konkretnych wag) */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat/static/Montserrat-Thin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat/static/Montserrat-ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat/static/Montserrat-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat/static/Montserrat-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat/static/Montserrat-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat/static/Montserrat-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat/static/Montserrat-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat/static/Montserrat-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+/* wersje italic analogicznie, jeśli potrzebne */
 
-/* Np. jeśli chcesz globalnie zmienić kolor zaznaczenia tekstu */
-::selection {
-  background-color: #FFD700; /* kolor tipjar-gold */
-  color: #006D6D;            /* kolor tipjar-turquoise-dark */
+/* Mukta Malar */
+@font-face {
+  font-family: 'MuktaMalar';
+  src: url('/fonts/Mukta_Malar/MuktaMalar-ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'MuktaMalar';
+  src: url('/fonts/Mukta_Malar/MuktaMalar-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'MuktaMalar';
+  src: url('/fonts/Mukta_Malar/MuktaMalar-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'MuktaMalar';
+  src: url('/fonts/Mukta_Malar/MuktaMalar-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'MuktaMalar';
+  src: url('/fonts/Mukta_Malar/MuktaMalar-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'MuktaMalar';
+  src: url('/fonts/Mukta_Malar/MuktaMalar-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'MuktaMalar';
+  src: url('/fonts/Mukta_Malar/MuktaMalar-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
 }
 
-@layer base {
-  html {
-    font-size: 16px;
-  }
-  body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Inter', sans-serif;
-    background-color: #f8f9fa;
-  }
+/* Roboto Flex (variable) */
+@font-face {
+  font-family: 'RobotoFlex';
+  src: url('/fonts/Roboto_Flex/RobotoFlex-VariableFont_GRAD,XOPQ,XTRA,YOPQ,YTAS,YTDE,YTFI,YTLC,YTUC,opsz,slnt,wdth,wght.ttf')
+       format('truetype');
+  /* ten jeden plik obsłuży wszystkie wagi i style */
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
 }

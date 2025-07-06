@@ -1,25 +1,20 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
-import { Header } from '@/components/layout/Header';
-
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+import type { Metadata } from 'next';
+import { ReactNode } from 'react';
 
 export const metadata: Metadata = {
-  title: 'TipJar - Wspieraj Twórców',
-  description: 'Platforma mikropłatności Web3 dla twórców treści.',
+  title: {
+    default: 'TipJar+',
+    template: '%s | TipJar+',
+  },
+  description: 'Instant micro-payments for your favourite creators',
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="pl">
-      <body className={`${inter.variable} font-sans bg-teal-900`}>
-        <Header />
-        <main>{children}</main>
+    <html lang="en" className="font-sans">
+      <body className="min-h-screen bg-[#003737] text-white antialiased">
+        {children}
       </body>
     </html>
   );

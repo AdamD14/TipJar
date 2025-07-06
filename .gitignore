@@ -1,11 +1,4 @@
-<<<<<<< ours
-=======
-# compiled output
-/dist
-**/node_modules
-/build
 
->>>>>>> theirs
 # Logs
 logs
 *.log
@@ -142,3 +135,4 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+.vercel
