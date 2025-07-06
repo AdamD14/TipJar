@@ -93,6 +93,7 @@ export class TipsService {
         });
       } else {
 
+
         tipRecord = await this.prisma.tip.update({
           where: { id: tipRecord.id },
           data: {
@@ -111,6 +112,15 @@ export class TipsService {
         where: { id: tipRecord.id },
         data: { status: TipStatus.FAILED },
       });
-
+      if (
+        paymentError instanceof BadRequestException ||
+        paymentError instanceof NotFoundException
+      ) {
+        throw paymentError;
+      }
+      throw new InternalServerErrorException(
+        'Przetwarzanie płatności napiwku nie powiodło się.',
+      );
+    }
   }
 }
