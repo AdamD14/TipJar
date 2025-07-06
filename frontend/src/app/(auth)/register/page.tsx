@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Eye, EyeOff, Mail, Lock, Wallet } from "lucide-react";
 import { FaTwitch } from "react-icons/fa";
 import { FaGoogle } from "react-icons/fa6";
+import { supabase } from "../../../lib/supabase";
 
 export default function AuthForm() {
   const [tab, setTab] = useState<"creator" | "fan">("creator");
@@ -57,12 +58,18 @@ export default function AuthForm() {
     }, 1500);
   };
 
-  const handleSocialLogin = (provider: string) => {
+  const handleSocialLogin = async (provider: "google" | "twitch") => {
     setLoading(true);
-    setTimeout(() => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${location.origin}/auth/callback`,
+      },
+    });
+    if (error) {
+      setError(error.message);
       setLoading(false);
-      alert(`Login with ${provider} – coming soon`);
-    }, 1000);
+    }
   };
 
   return (
@@ -212,7 +219,7 @@ export default function AuthForm() {
         <div className="flex flex-col gap-3">
           <button
             type="button"
-            onClick={() => handleSocialLogin("Google")}
+            onClick={() => handleSocialLogin("google")}
             disabled={loading}
             className="flex items-center justify-center gap-3 bg-white/20 hover:bg-white/30 transition-all text-white font-semibold rounded-lg py-3 text-sm border border-white/10 hover:border-white/20 disabled:opacity-60"
           >
@@ -220,7 +227,7 @@ export default function AuthForm() {
           </button>
           <button
             type="button"
-            onClick={() => handleSocialLogin("Twitch")}
+            onClick={() => handleSocialLogin("twitch")}
             disabled={loading}
             className="flex items-center justify-center gap-3 bg-purple-600/70 hover:bg-purple-600/90 transition-all text-white font-semibold rounded-lg py-3 text-sm border border-purple-500/30 hover:border-purple-400/50 disabled:opacity-60"
           >
@@ -228,7 +235,7 @@ export default function AuthForm() {
           </button>
           <button
             type="button"
-            onClick={() => handleSocialLogin("Web3")}
+            onClick={() => alert('Web3 login not implemented')}
             disabled={loading}
             className="flex items-center justify-center gap-3 bg-black/40 hover:bg-black/60 transition-all text-white font-semibold rounded-lg py-3 text-sm border border-white/10 hover:border-white/20 disabled:opacity-60"
           >

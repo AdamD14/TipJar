@@ -11,9 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 import { SiweVerifier } from './strategies/siwe.verifier'; // Nasz SiweVerifier
 import { User as UserModel, UserRole } from '../../generated/prisma';// Model User i Enum z Prisma
 
-// DTO classes
-import { RegisterUserDto } from './dto/register-user.dto';
-import { LoginUserDto } from './dto/login-user.dto';
+
 import { SiweRequestNonceDto } from './dto/siwe-request-nonce.dto';
 import { SiweVerifySignatureDto } from './dto/siwe-verify-signature.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
@@ -133,7 +131,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async refreshToken(
     @Req() req: Request, // Do odczytu ciasteczka refresh_token
-    @Body() body: { refreshToken?: string }, // Alternatywnie, jeśli frontend wysyła w ciele
+    @Body() body: RefreshTokenDto, // Alternatywnie, jeśli frontend wysyła w ciele
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ accessToken: string }> {
     const incomingRefreshToken = req.cookies?.['refresh_token'] || body.refreshToken;
