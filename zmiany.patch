@@ -1,0 +1,23 @@
+diff --git a/frontend/src/components/tip/index.ts b/frontend/src/components/tip/index.ts
+index 2d5a88cf112ee78648a7d5245fc8c0dd014de743..4610289973430e37e732d860548f03a84abb970c 100644
+--- a/frontend/src/components/tip/index.ts
++++ b/frontend/src/components/tip/index.ts
+@@ -1,9 +1,9 @@
+-export { TipModal } from "./TipModal";
+-export { TipModalContent } from "./TipModalContent";
+-export { AmountSlider } from "./AmountSlider";
+-export { QuickTipButtons } from "./QuickTipButtons";
+-export { MessageTextarea } from "./MessageTextarea";
+-export { PaymentMethodSelector } from "./PaymentMethodSelector";
+-export { TipSummary } from "./TipSummary";
+-export { SubmitTipButton } from "./SubmitTipButton";
+-export { TipFeedback } from "./TipFeedback";
++export { TipModal } from "./TipModal.tsx";
++export { TipModalContent } from "./TipModalContent.tsx";
++export { AmountSlider } from "./AmountSlider.tsx";
++export { QuickTipButtons } from "./QuickTipButtons.tsx";
++export { MessageTextarea } from "./MessageTextarea.tsx";
++export { PaymentMethodSelector } from "./PaymentMethodSelector.tsx";
++export { TipSummary } from "./TipSummary.tsx";
++export { SubmitTipButton } from "./SubmitTipButton.tsx";
++export { TipFeedback } from "./TipFeedback.tsx";
