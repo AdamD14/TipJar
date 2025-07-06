@@ -11,10 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 import { SiweVerifier } from './strategies/siwe.verifier'; // Nasz SiweVerifier
 import { User as UserModel, UserRole } from '../../generated/prisma';// Model User i Enum z Prisma
 
-// Załóżmy, że DTOs są zdefiniowane w folderze src/auth/dto/
-// Należy je utworzyć i odkomentować importy oraz użycie.
-import { RegisterUserDto } from './dto/register-user.dto';
-// import { LoginUserDto } from './dto/login-user.dto';
+
 import { SiweRequestNonceDto } from './dto/siwe-request-nonce.dto';
 import { SiweVerifySignatureDto } from './dto/siwe-verify-signature.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
