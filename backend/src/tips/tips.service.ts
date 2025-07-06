@@ -8,7 +8,7 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Tip, TipStatus, UserRole } from '@prisma/client';
+import { Tip, TipStatus, UserRole } from '../../generated/prisma';
 import { CircleService } from '../circle/circle.service';
 import { UsersService } from '../users/users.service';
 import { Decimal } from '@prisma/client/runtime/library';
@@ -87,25 +87,12 @@ export class TipsService {
       if (fanId) {
         const fan = await this.usersService.findOneById(fanId);
         if (!fan || !fan.circleWalletId) {
-          throw new NotFoundException('Nie znaleziono portfela fana.');
-        }
-        const transfer = await this.circleService.initiateInternalTipTransfer(
-          fan.circleWalletId,
-          creator.circleWalletId,
-          tipAmountDecimal.toString(),
-          blockchain,
-          tokenId,
-        );
-        tipRecord = await this.prisma.tip.update({
-          where: { id: tipRecord.id },
-          data: {
-            status: TipStatus.COMPLETED,
-            circleTransferId: transfer.circleTransactionId,
+
             processedAt: new Date(),
           },
         });
       } else {
-        const chargeId = await this.processFiatPayment(data.paymentGatewayToken as string, tipAmountDecimal.toString());
+
         tipRecord = await this.prisma.tip.update({
           where: { id: tipRecord.id },
           data: {
@@ -124,10 +111,6 @@ export class TipsService {
         where: { id: tipRecord.id },
         data: { status: TipStatus.FAILED },
       });
-      if (paymentError instanceof BadRequestException || paymentError instanceof NotFoundException) {
-        throw paymentError;
-      }
-      throw new InternalServerErrorException('Przetwarzanie płatności napiwku nie powiodło się.');
-    }
+
   }
 }

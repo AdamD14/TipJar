@@ -131,3 +131,19 @@ model Tip {
   @@index([creatorId])
   @@index([status])
 }
+
+model OverlaySettings {
+  creatorId              String  @id @unique
+  position               String
+  opacity                Float
+  bgColor                String
+  textColor              String
+  durationSec            Int
+  fontFamily             String
+  entryAnimation         String
+  specialEffectThreshold Int
+  specialEffectType      String
+  soundEffectUrl         String?
+
+  creator User @relation(fields: [creatorId], references: [id])
+}

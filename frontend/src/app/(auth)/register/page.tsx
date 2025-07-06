@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Eye, EyeOff, Mail, Lock, Wallet } from "lucide-react";
 import { FaTwitch } from "react-icons/fa";
 import { FaGoogle } from "react-icons/fa6";
+import { supabase } from "../../../lib/supabase";
 
 export default function AuthForm() {
   const [tab, setTab] = useState<"creator" | "fan">("creator");
@@ -57,12 +58,18 @@ export default function AuthForm() {
     }, 1500);
   };
 
-  const handleSocialLogin = (provider: string) => {
+  const handleSocialLogin = async (provider: "google" | "twitch") => {
     setLoading(true);
-    setTimeout(() => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${location.origin}/auth/callback`,
+      },
+    });
+    if (error) {
+      setError(error.message);
       setLoading(false);
-      alert(`Login with ${provider} – coming soon`);
-    }, 1000);
+    }
   };
 
   return (
