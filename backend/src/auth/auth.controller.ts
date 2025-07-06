@@ -9,12 +9,9 @@ import { Request, Response } from 'express'; // Typy dla Express
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { SiweVerifier } from './strategies/siwe.verifier'; // Nasz SiweVerifier
-import { User as UserModel, UserRole } from '../../generated/prisma';// Model User i Enum z Prisma
+import { User as UserModel, UserRole } from '../../generated/prisma'; // Model User i Enum z Prisma
 
 
-import { SiweRequestNonceDto } from './dto/siwe-request-nonce.dto';
-import { SiweVerifySignatureDto } from './dto/siwe-verify-signature.dto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 
 @Controller('auth') // Globalny prefix /api/v1/auth (zdefiniowany w main.ts)
