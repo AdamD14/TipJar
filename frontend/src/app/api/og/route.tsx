@@ -7,8 +7,8 @@ export const runtime = 'edge'
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
 
-  const handle = searchParams.get('handle') || 'anon'
-  const goal = searchParams.get('goal') || ''
+  const handle = searchParams.get('handle') ?? 'anon'
+  const goal   = searchParams.get('goal')   ?? ''
 
   return new ImageResponse(
     (
@@ -50,6 +50,6 @@ export async function GET(req: NextRequest) {
     {
       width: 1200,
       height: 630,
-    }
+    },
   )
 }

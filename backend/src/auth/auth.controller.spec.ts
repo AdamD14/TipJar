@@ -13,7 +13,7 @@ describe('AuthController', () => {
       controllers: [AuthController],
       providers: [
         { provide: AuthService, useValue: {} },
-        { provide: ConfigService, useValue: { get: () => undefined } },
+
         { provide: JwtService, useValue: {} },
         { provide: SiweVerifier, useValue: {} },
       ],
