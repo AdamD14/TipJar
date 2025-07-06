@@ -11,5 +11,5 @@ declare module '@prisma/client' {
     CREATOR = 'CREATOR',
     ADMIN = 'ADMIN'
   }
-  export type Tip = any;
+
 }
