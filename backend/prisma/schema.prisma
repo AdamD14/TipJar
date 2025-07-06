@@ -26,6 +26,13 @@ enum TipStatus {
   REFUNDED   // Zwrócony (jeśli taka opcja będzie)
 }
 
+enum PayoutStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
 // --- Modele Danych ---
 
 model User {
@@ -146,4 +153,20 @@ model OverlaySettings {
   soundEffectUrl         String?
 
   creator User @relation(fields: [creatorId], references: [id])
+}
+
+model Payout {
+  id                   String       @id @default(uuid())
+  creatorId            String
+  creator              User         @relation(fields: [creatorId], references: [id])
+  amount               Decimal
+  currency             String       @default("USDC")
+  destinationAddress   String
+  circleTransactionId  String?      @unique
+  status               PayoutStatus @default(PENDING)
+  requestedAt          DateTime     @default(now())
+  processedAt          DateTime?
+  failureReason        String?
+
+  @@index([creatorId])
 }

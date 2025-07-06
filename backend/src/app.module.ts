@@ -12,6 +12,12 @@ import { AppController } from './app.controller'; // Zakładając, że masz ten 
 
 import { RedisModule } from './shared/redis/redis.module'; // Załóżmy, że masz ten moduł i jest on @Global
 import { GeneratorModule } from './generator/generator.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { CircleModule } from './circle/circle.module';
+import { TipsModule } from './tips/tips.module';
+import { PayoutsModule } from './payouts/payouts.module';
 
 @Module({
   imports: [
@@ -61,6 +67,7 @@ import { GeneratorModule } from './generator/generator.module';
     UsersModule,
     CircleModule,
     TipsModule,
+    PayoutsModule,
 
   ],
   controllers: [AppController], // Jeśli masz AppController
