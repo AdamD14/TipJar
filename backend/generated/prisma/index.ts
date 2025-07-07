@@ -33,4 +33,6 @@ export type Payout = any;
 export const Prisma = {} as any;
 export namespace Prisma {
   export type UserCreateInput = any;
+  export type OverlaySettingsUncheckedUpdateInput = any;
+  export type OverlaySettingsUncheckedCreateInput = any;
 }
