@@ -81,17 +81,40 @@ export class TipsService {
     });
 
     try {
-      const blockchain = this.configService.get<string>('DEFAULT_BLOCKCHAIN', 'MATIC-AMOY') as Blockchain;
-      const tokenId = this.configService.get<string>('USDC_TOKEN_ID', 'usdc');
+      const blockchain = this.configService.get<string>(
+        'DEFAULT_BLOCKCHAIN',
+        'MATIC-AMOY',
+      ) as Blockchain;
+      const tokenId = this.configService.get<string>('USDC_TOKEN_ID', 'USDC');
 
       if (fanId) {
         const fan = await this.usersService.findOneById(fanId);
         if (!fan || !fan.circleWalletId) {
+          throw new NotFoundException('Portfel fana nie jest skonfigurowany.');
+        }
 
+        const transferResult = await this.circleService.initiateInternalTipTransfer(
+          fan.circleWalletId,
+          creator.circleWalletId,
+          netAmountForCreator.toString(),
+          blockchain,
+          tokenId,
+        );
+
+        tipRecord = await this.prisma.tip.update({
+          where: { id: tipRecord.id },
+          data: {
+            status: TipStatus.COMPLETED,
+            circleTransferId: transferResult.circleTransactionId,
+            blockchainTransactionHash: transferResult.txHash,
             processedAt: new Date(),
           },
         });
       } else {
+        const chargeId = await this.processFiatPayment(
+          data.paymentGatewayToken as string,
+          tipAmountDecimal.toString(),
+        );
 
         tipRecord = await this.prisma.tip.update({
           where: { id: tipRecord.id },
@@ -111,7 +134,11 @@ export class TipsService {
         where: { id: tipRecord.id },
         data: { status: TipStatus.FAILED },
       });
-
+      if (paymentError instanceof BadRequestException || paymentError instanceof NotFoundException) {
+        throw paymentError;
+      }
+      const message = paymentError instanceof Error ? paymentError.message : 'Przetwarzanie płatności napiwku nie powiodło się.';
+      throw new InternalServerErrorException(message);
     }
   }
 }
