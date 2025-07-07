@@ -3,7 +3,7 @@ import { Injectable, OnModuleInit, OnModuleDestroy, INestApplication, Logger } f
 // Importuj PrismaClient z poprawnie wygenerowanej lokalizacji
 // Zakładając, że schema.prisma jest w backend/prisma/ a output klienta to ../generated/prisma
 // to klient jest w backend/generated/prisma
-import { PrismaClient } from '../../generated/prisma';
+import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
