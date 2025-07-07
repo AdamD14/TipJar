@@ -4,7 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
-import { UserRole } from '../../../generated/prisma'; // Zakładając poprawną ścieżkę
+import { UserRole } from '@prisma/client';
 
 export interface JwtRefreshPayload {
   sub: string;
