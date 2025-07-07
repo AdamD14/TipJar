@@ -7,6 +7,11 @@ import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+  declare tip: any;
+  declare user: any;
+  declare payout: any;
+  declare socialConnection: any;
+  declare overlaySettings: any;
   private readonly logger = new Logger(PrismaService.name);
   constructor() {
     super({
