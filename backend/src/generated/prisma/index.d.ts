@@ -24,4 +24,3 @@ declare module '@prisma/client' {
     export type OverlaySettingsUncheckedCreateInput = any
   }
 }
-
