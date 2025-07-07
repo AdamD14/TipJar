@@ -32,7 +32,7 @@ import {
 import { isAxiosError } from 'axios';
 import { randomUUID } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserRole } from '../../generated/prisma';
+import { UserRole } from '@prisma/client';
 
 @Injectable()
 export class CircleService implements OnModuleInit {
