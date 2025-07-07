@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import {
   Search,
   HandCoins,
@@ -17,7 +18,6 @@ import {
 } from 'lucide-react';
 
 export default function Main() {
-  const [isHovered, setIsHovered] = useState(false);
   return (
     <div className="min-h-screen bg-[#006D6D]">
       <nav className="py-4 px-6 flex justify-between items-center bg-[#004C4C]">
@@ -32,15 +32,15 @@ export default function Main() {
           <div className="text-[#FFD700] text-3xl font-bold">TipJar</div>
         </div>
         <div className="hidden md:flex items-center gap-6">
-          <a href="/discover" className="text-white hover:text-[#FFD700] transition-colors">
+          <Link href="/discover" className="text-white hover:text-[#FFD700] transition-colors">
             Discover Creators
-          </a>
-          <a href="/how-it-works" className="text-white hover:text-[#FFD700] transition-colors">
+          </Link>
+          <Link href="/how-it-works" className="text-white hover:text-[#FFD700] transition-colors">
             How it Works
-          </a>
-          <a href="/learn" className="text-white hover:text-[#FFD700] transition-colors">
+          </Link>
+          <Link href="/learn" className="text-white hover:text-[#FFD700] transition-colors">
             Learn
-          </a>
+          </Link>
           <button className="text-white hover:text-[#FFD700] transition-colors">Login</button>
           <button className="bg-[#FFD700] text-[#004C4C] px-6 py-2 rounded-full hover:bg-[#FFE55C] transition-all transform hover:scale-105">
             Sign Up
@@ -70,14 +70,12 @@ export default function Main() {
           <div className="flex flex-col md:flex-row gap-6 justify-center mb-16">
             <button
               className="bg-[#FFD700] text-[#004C4C] px-8 py-4 rounded-full font-bold text-lg hover:bg-[#FFE55C] transition-all transform hover:scale-105"
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
             >
               Register as Creator
             </button>
-            <button className="bg-transparent border-2 border-[#FFD700] text-[#FFD700] px-8 py-4 rounded-full font-bold text-lg hover:bg-[#FFD700] hover:text-[#004C4C] transition-all">
+            <Link href="/discover" className="bg-transparent border-2 border-[#FFD700] text-[#FFD700] px-8 py-4 rounded-full font-bold text-lg hover:bg-[#FFD700] hover:text-[#004C4C] transition-all text-center">
               Discover Creators
-            </button>
+            </Link>
           </div>
 
           <section className="mb-20">
@@ -170,21 +168,21 @@ export default function Main() {
               <div className="text-[#FFD700] text-xl font-bold">TipJar</div>
             </div>
             <div className="flex flex-wrap justify-center gap-6">
-              <a href="/about" className="text-[#FFD700] hover:text-[#FFE55C] transition-colors">
+              <Link href="/about" className="text-[#FFD700] hover:text-[#FFE55C] transition-colors">
                 About
-              </a>
-              <a href="/contact" className="text-[#FFD700] hover:text-[#FFE55C] transition-colors">
+              </Link>
+              <Link href="/contact" className="text-[#FFD700] hover:text-[#FFE55C] transition-colors">
                 Contact
-              </a>
-              <a href="/terms" className="text-[#FFD700] hover:text-[#FFE55C] transition-colors">
+              </Link>
+              <Link href="/terms" className="text-[#FFD700] hover:text-[#FFE55C] transition-colors">
                 Terms
-              </a>
-              <a href="/privacy" className="text-[#FFD700] hover:text-[#FFE55C] transition-colors">
+              </Link>
+              <Link href="/privacy" className="text-[#FFD700] hover:text-[#FFE55C] transition-colors">
                 Privacy
-              </a>
-              <a href="/learn" className="text-[#FFD700] hover:text-[#FFE55C] transition-colors">
+              </Link>
+              <Link href="/learn" className="text-[#FFD700] hover:text-[#FFE55C] transition-colors">
                 Learn
-              </a>
+              </Link>
             </div>
           </div>
         </div>

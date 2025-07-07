@@ -1,7 +1,6 @@
 'use client';
 
-<<<<<<< HEAD
-=======
+
 import React, { useState, useEffect } from 'react';
 import QRGenerator from "../components/QRGenerator.tsx";
 import Image from "next/image";
@@ -601,4 +600,4 @@ useEffect(() => {
     </div>
   );
 }
->>>>>>> a2eb383 (jakotako)
+
