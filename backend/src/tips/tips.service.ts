@@ -8,7 +8,7 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Tip, TipStatus, UserRole } from '../../generated/prisma';
+import { Tip, TipStatus, UserRole } from '@prisma/client';
 import { CircleService } from '../circle/circle.service';
 import { UsersService } from '../users/users.service';
 import { Decimal } from '@prisma/client/runtime/library';

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { OverlaySettings, Prisma } from '../../generated/prisma';
+import { OverlaySettings, Prisma } from '@prisma/client';
 
 @Injectable()
 export class OverlaySettingsService {
