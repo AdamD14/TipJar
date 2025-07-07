@@ -58,17 +58,18 @@ export default function AuthForm() {
     }, 1500);
   };
 
-  const handleSocialLogin = async (provider: "google" | "twitch" | "web3") => {
-    setLoading(true);
-    setError("");
-    try {
-      // Tu wywołaj redirect do OAuth Twojego backendu lub zewnętrznej usługi
-      window.location.href = `/api/auth/${provider}`; // przykładowa ścieżka do OAuth
-    } catch (err) {
-      setError("Social login failed");
-      setLoading(false);
-    }
-  };
+ const handleSocialLogin = async (provider: "google" | "twitch" | "web3") => {
+  setLoading(true);
+  setError("");
+  try {
+    // Tu wywołaj redirect do OAuth Twojego backendu lub zewnętrznej usługi
+    window.location.href = `/api/auth/${provider}`; // przykładowa ścieżka do OAuth
+  } catch {
+    setError("Social login failed");
+    setLoading(false);
+  }
+};
+
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-teal-700 to-purple-900 px-4">
