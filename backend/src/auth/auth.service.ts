@@ -21,7 +21,7 @@ import { UsersService, InternalCreateUserDto, InternalUpdateUserDto } from '../u
 import { CircleService } from '../circle/circle.service';
 
 // Poprawiony import Prisma - dostosuj '../../generated/prisma' do swojej struktury, jeśli potrzeba
-import { User as UserModelPrisma, UserRole, Prisma } from '../../generated/prisma';
+import { User as UserModelPrisma, UserRole, Prisma } from '@prisma/client';
 
 export interface ValidatedUser {
   id: string;

@@ -1,15 +1,29 @@
 // TipJar/backend/src/auth/auth.controller.ts
 import {
-  Controller, Post, Body, UseGuards, Req, Res, Get, Param,
-  HttpCode, HttpStatus, UnauthorizedException, BadRequestException, Logger,
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Req,
+  Res,
+  Get,
+  Param,
+  HttpCode,
+  HttpStatus,
+  UnauthorizedException,
+  BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport'; // Główny AuthGuard z NestJS
 import { AuthService, AuthTokens, ValidatedUser } from './auth.service';
-import { Request, Response } from 'express'; // Typy dla Express
+import { Request, Response, CookieOptions } from 'express'; // Typy dla Express
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { SiweVerifier } from './strategies/siwe.verifier'; // Nasz SiweVerifier
-import { User as UserModel, UserRole } from '../../generated/prisma'; // Model User i Enum z Prisma
+import { RegisterUserDto } from './dto/register-user.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { SiweRequestNonceDto } from './dto/siwe-request-nonce.dto';
+import { SiweVerifySignatureDto } from './dto/siwe-verify-signature.dto';
 
 
 
@@ -17,7 +31,7 @@ import { User as UserModel, UserRole } from '../../generated/prisma'; // Model U
 @Controller('auth') // Globalny prefix /api/v1/auth (zdefiniowany w main.ts)
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
-  private readonly commonCookieOptions; // Opcje dla ciasteczek HttpOnly
+  private readonly commonCookieOptions: CookieOptions; // Opcje dla ciasteczek HttpOnly
 
   constructor(
     private authService: AuthService,
