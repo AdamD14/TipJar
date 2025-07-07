@@ -2,19 +2,16 @@
 
 import React, { useState, FC, ReactNode } from "react";
 import {
-  Users,
-  DollarSign,
   X,
   CreditCard,
   Wallet,
   ChevronRight,
   Twitter,
-  Instagram,
   Youtube,
   Twitch,
-  PlusCircle, // Added back for message field toggle
-  MinusCircle, // Added back for message field toggle
-  Linkedin // Added for social icons
+  PlusCircle,
+  MinusCircle,
+  Linkedin,
 } from "lucide-react";
 
 interface SupportHistoryItem {
