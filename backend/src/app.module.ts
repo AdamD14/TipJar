@@ -9,6 +9,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 
 // Główne moduły aplikacji
 import { AppController } from './app.controller'; // Zakładając, że masz ten plik
+import { AppService } from './app.service';
 
 import { RedisModule } from './shared/redis/redis.module'; // Załóżmy, że masz ten moduł i jest on @Global
 import { GeneratorModule } from './generator/generator.module';

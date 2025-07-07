@@ -5,4 +5,5 @@ class PrismaClient {
 }
 const UserRole = { FAN: 'FAN', CREATOR: 'CREATOR', ADMIN: 'ADMIN' };
 const TipStatus = { PENDING: 'PENDING', PROCESSING: 'PROCESSING', COMPLETED: 'COMPLETED', FAILED: 'FAILED', REFUNDED: 'REFUNDED' };
-module.exports = { PrismaClient, UserRole, TipStatus };
+const PayoutStatus = { PENDING: 'PENDING', PROCESSING: 'PROCESSING', COMPLETED: 'COMPLETED', FAILED: 'FAILED' };
+module.exports = { PrismaClient, UserRole, TipStatus, PayoutStatus };

@@ -11,8 +11,25 @@ export enum UserRole {
   ADMIN = 'ADMIN'
 }
 
+export enum TipStatus {
+  PENDING = 'PENDING',
+  PROCESSING = 'PROCESSING',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+  REFUNDED = 'REFUNDED'
+}
+
+export enum PayoutStatus {
+  PENDING = 'PENDING',
+  PROCESSING = 'PROCESSING',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED'
+}
+
 export type User = any;
 export type SocialConnection = any;
+export type Tip = any;
+export type Payout = any;
 export const Prisma = {} as any;
 export namespace Prisma {
   export type UserCreateInput = any;

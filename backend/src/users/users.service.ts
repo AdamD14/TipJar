@@ -14,7 +14,7 @@ import {
     Prisma, // Potrzebne dla np. Prisma.UserCreateInput
     UserRole, 
     SocialConnection
-} from '../../generated/prisma'; // Zakładając, że klient jest w backend/generated/prisma
+} from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 // Definicja DTO dla tworzenia użytkownika, używana wewnętrznie przez AuthService
 // Upewnij się, że jest wyeksportowana, aby AuthService mógł jej używać.
