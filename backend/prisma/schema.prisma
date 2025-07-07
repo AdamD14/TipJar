@@ -19,11 +19,11 @@ enum UserRole {
 }
 
 enum TipStatus {
-  PENDING    // Oczekuje na przetworzenie (np. płatność fiat, potwierdzenie blockchain)
+  PENDING // Oczekuje na przetworzenie (np. płatność fiat, potwierdzenie blockchain)
   PROCESSING // W trakcie przetwarzania
-  COMPLETED  // Zakończony sukcesem, środki u twórcy
-  FAILED     // Nieudany
-  REFUNDED   // Zwrócony (jeśli taka opcja będzie)
+  COMPLETED // Zakończony sukcesem, środki u twórcy
+  FAILED // Nieudany
+  REFUNDED // Zwrócony (jeśli taka opcja będzie)
 }
 
 enum PayoutStatus {
@@ -36,63 +36,68 @@ enum PayoutStatus {
 // --- Modele Danych ---
 
 model User {
-  id                          String    @id @default(uuid())
-  email                       String?   @unique // Opcjonalny, np. dla kont SIWE bez emaila; normalizuj do lowercase w logice serwisu
-  password                    String?   // Zhashowane hasło; opcjonalne dla logowań OAuth/SIWE
-  displayName                 String    // Nazwa wyświetlana, wymagana
-  avatarUrl                   String?   // URL do awatara
-  role                        UserRole  @default(FAN)
+  id          String   @id @default(uuid())
+  email       String?  @unique // Opcjonalny, np. dla kont SIWE bez emaila; normalizuj do lowercase w logice serwisu
+  password    String? // Zhashowane hasło; opcjonalne dla logowań OAuth/SIWE
+  displayName String // Nazwa wyświetlana, wymagana
+  avatarUrl   String? // URL do awatara
+  role        UserRole @default(FAN)
 
   // Flagi statusu konta i weryfikacji
-  isActive                    Boolean   @default(true)   // Czy konto jest aktywne (może być false do czasu weryfikacji email)
-  isEmailVerified             Boolean   @default(false)  // Czy email został zweryfikowany
-  emailVerificationToken      String?   @unique          // Token do weryfikacji emaila
+  isActive                        Boolean   @default(true) // Czy konto jest aktywne (może być false do czasu weryfikacji email)
+  isEmailVerified                 Boolean   @default(false) // Czy email został zweryfikowany
+  emailVerificationToken          String?   @unique // Token do weryfikacji emaila
   emailVerificationTokenExpiresAt DateTime? // Opcjonalna data wygaśnięcia tokenu weryfikacyjnego
 
-  currentHashedRefreshToken   String?   @db.Text         // Zhashowany refresh token JWT
+  currentHashedRefreshToken String? @db.Text // Zhashowany refresh token JWT
 
   // Powiązanie z portfelem Circle
-  circleWalletId              String?   @unique          // ID portfela w systemie Circle
-  mainWalletAddress           String?   @unique          // Główny adres blockchain tego portfela Circle
-  isCircleSetupComplete       Boolean   @default(false)  // Czy konfiguracja portfela Circle została zakończona
+  circleWalletId        String? @unique // ID portfela w systemie Circle
+  mainWalletAddress     String? @unique // Główny adres blockchain tego portfela Circle
+  isCircleSetupComplete Boolean @default(false) // Czy konfiguracja portfela Circle została zakończona
 
-  createdAt                   DateTime  @default(now())
-  updatedAt                   DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relacje
-  socialConnections           SocialConnection[] // Połączenia z kontami społecznościowymi (OAuth, SIWE)
-  profile                     Profile?           // Profil twórcy (jeśli user jest CREATOR)
-  tipsSent                    Tip[]              @relation("TipsSentByFan")     // Napiwki wysłane przez tego fana
-  tipsReceived                Tip[]              @relation("TipsReceivedByCreator") // Napiwki otrzymane przez tego twórcę
+  socialConnections SocialConnection[] // Połączenia z kontami społecznościowymi (OAuth, SIWE)
+  profile           Profile? // Profil twórcy (jeśli user jest CREATOR)
+  tipsSent          Tip[]              @relation("TipsSentByFan") // Napiwki wysłane przez tego fana
+  tipsReceived      Tip[]              @relation("TipsReceivedByCreator") // Napiwki otrzymane przez tego twórcę
+
+  payouts         Payout[] // relacja 1:N, jeden User może mieć wiele wypłat
+  overlaySettings OverlaySettings? // relacja 1:1, jeden User ma opcjonalnie OverlaySettings
+
+  circleWallet CircleWallet? // relacja 1:1, jeden User ma opcjonalnie CircleWallet
 }
 
 model SocialConnection {
-  id         String   @id @default(cuid())
-  provider   String   // Nazwa dostawcy (np. "google", "twitch", "siwe")
-  providerId String   // Unikalne ID użytkownika u dostawcy (np. Google ID, adres portfela SIWE)
+  id         String @id @default(cuid())
+  provider   String // Nazwa dostawcy (np. "google", "twitch", "siwe")
+  providerId String // Unikalne ID użytkownika u dostawcy (np. Google ID, adres portfela SIWE)
 
-  userId String   // ID użytkownika w TipJar, do którego to połączenie należy
-  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade) // Relacja z User
+  userId String // ID użytkownika w TipJar, do którego to połączenie należy
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade) // Relacja z User
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([provider, providerId]) // Zapewnia, że każde połączenie provider+providerId jest unikalne
-  @@index([userId])                // Indeks dla szybszego wyszukiwania połączeń użytkownika
+  @@index([userId]) // Indeks dla szybszego wyszukiwania połączeń użytkownika
 }
 
 model Profile {
-  id        String  @id @default(uuid())
-  userId    String  @unique // Relacja jeden-do-jednego z User
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(uuid())
+  userId String @unique // Relacja jeden-do-jednego z User
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   bio       String? @db.Text // Dłuższy opis/bio twórcy
   bannerUrl String? // URL do zdjęcia bannera na profilu
-  
+
   customTipJarUrlSuffix String? @unique // Np. to co po tipjar.com/@ - jeśli inne niż displayName
 
   acceptsTips Boolean @default(true) // Czy twórca aktualnie akceptuje napiwki
-  
+
   // Linki do zewnętrznych profili społecznościowych twórcy (prosta implementacja)
   websiteUrl String?
   twitterUrl String?
@@ -104,22 +109,22 @@ model Profile {
 }
 
 model Tip {
-  id            String    @id @default(uuid())
-  amount        Decimal   // Kwota napiwku brutto (przed prowizją TipJar)
-  currency      String    @default("USDC") // Waluta napiwku
-  
-  message       String?   @db.Text // Wiadomość od fana (opcjonalna)
-  isAnonymous   Boolean   @default(false) // Czy napiwek jest anonimowy
+  id       String  @id @default(uuid())
+  amount   Decimal // Kwota napiwku brutto (przed prowizją TipJar)
+  currency String  @default("USDC") // Waluta napiwku
 
-  status        TipStatus @default(PENDING) // Status napiwku
+  message     String? @db.Text // Wiadomość od fana (opcjonalna)
+  isAnonymous Boolean @default(false) // Czy napiwek jest anonimowy
+
+  status TipStatus @default(PENDING) // Status napiwku
 
   // Kto wysłał napiwek (Fan)
-  fanId         String?   // Opcjonalne, jeśli napiwek od niezarejestrowanego gościa
-  fan           User?     @relation("TipsSentByFan", fields: [fanId], references: [id], onDelete: SetNull)
+  fanId String? // Opcjonalne, jeśli napiwek od niezarejestrowanego gościa
+  fan   User?   @relation("TipsSentByFan", fields: [fanId], references: [id], onDelete: SetNull)
 
   // Kto otrzymał napiwek (Twórca)
-  creatorId     String
-  creator       User      @relation("TipsReceivedByCreator", fields: [creatorId], references: [id], onDelete: Cascade) // Rozważ onDelete: Restrict jeśli nie chcesz usuwać napiwków po usunięciu twórcy
+  creatorId String
+  creator   User   @relation("TipsReceivedByCreator", fields: [creatorId], references: [id], onDelete: Cascade) // Rozważ onDelete: Restrict jeśli nie chcesz usuwać napiwków po usunięciu twórcy
 
   // Informacje o transakcjach i płatnościach
   blockchainTransactionHash String? @unique // Hash transakcji blockchain (jeśli napiwek był bezpośrednio on-chain od fana)
@@ -127,12 +132,12 @@ model Tip {
   paymentGatewayChargeId    String? @unique // ID płatności z bramki fiat
 
   // Prowizje i kwoty
-  platformFeeAmount         Decimal?  // Kwota prowizji pobrana przez TipJar
-  netAmountForCreator       Decimal?  // Kwota netto, która trafiła do twórcy
-  
-  createdAt     DateTime  @default(now())
-  processedAt   DateTime? // Kiedy napiwek został finalnie przetworzony
-  updatedAt     DateTime  @updatedAt
+  platformFeeAmount   Decimal? // Kwota prowizji pobrana przez TipJar
+  netAmountForCreator Decimal? // Kwota netto, która trafiła do twórcy
+
+  createdAt   DateTime  @default(now())
+  processedAt DateTime? // Kiedy napiwek został finalnie przetworzony
+  updatedAt   DateTime  @updatedAt
 
   @@index([fanId])
   @@index([creatorId])
@@ -156,17 +161,29 @@ model OverlaySettings {
 }
 
 model Payout {
-  id                   String       @id @default(uuid())
-  creatorId            String
-  creator              User         @relation(fields: [creatorId], references: [id])
-  amount               Decimal
-  currency             String       @default("USDC")
-  destinationAddress   String
-  circleTransactionId  String?      @unique
-  status               PayoutStatus @default(PENDING)
-  requestedAt          DateTime     @default(now())
-  processedAt          DateTime?
-  failureReason        String?
+  id                  String       @id @default(uuid())
+  creatorId           String
+  creator             User         @relation(fields: [creatorId], references: [id])
+  amount              Decimal
+  currency            String       @default("USDC")
+  destinationAddress  String
+  circleTransactionId String?      @unique
+  status              PayoutStatus @default(PENDING)
+  requestedAt         DateTime     @default(now())
+  processedAt         DateTime?
+  failureReason       String?
 
   @@index([creatorId])
+}
+
+model CircleWallet {
+  id     String @id @default(uuid())
+  userId String @unique // Relacja jeden-do-jednego z User
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  circleWalletId    String @unique // ID portfela w systemie Circle
+  mainWalletAddress String @unique // Główny adres blockchain tego portfela Circle
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
