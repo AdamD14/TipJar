@@ -30,6 +30,7 @@ import { SiweVerifySignatureDto } from './dto/siwe-verify-signature.dto';
 @Controller('auth') // Globalny prefix /api/v1/auth (zdefiniowany w main.ts)
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
+  private commonCookieOptions: CookieOptions;
 
 
   constructor(
