@@ -6,6 +6,7 @@ import {
   CreditCard,
   Wallet,
   ChevronRight,
+  ChevronLeft,
   Twitter,
   Youtube,
   Twitch,
@@ -81,11 +82,16 @@ const CreatorProfilePage: FC = () => {
   const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
   const [showMessageField, setShowMessageField] = useState<boolean>(false); // Re-introduced
   const [isGeneratingMessage, setIsGeneratingMessage] = useState<boolean>(false); // Re-introduced
+  const carouselImages = ['/assets/ja1.png', '/assets/ja2.png', '/assets/ja3.png'];
+  const [carouselIndex, setCarouselIndex] = useState<number>(0);
 
 
   const fundingGoal = 1500;
   const currentFunding = 812;
   const fundingProgress = (currentFunding / fundingGoal) * 100;
+
+  const prevImage = () => setCarouselIndex((i) => (i - 1 + carouselImages.length) % carouselImages.length);
+  const nextImage = () => setCarouselIndex((i) => (i + 1) % carouselImages.length);
 
   const handleTipSubmit = () => setShowPaymentModal(true);
 
@@ -105,8 +111,10 @@ const CreatorProfilePage: FC = () => {
         const prompt = "Napisz krótką, pozytywną wiadomość, którą fan mógłby wysłać twórcy treści online. Wiadomość powinna być zachęcająca i zawierać podziękowanie za ich pracę. Niech będzie to tylko jedna, zwięzła fraza.";
         chatHistory.push({ role: "user", parts: [{ text: prompt }] });
         const payload = { contents: chatHistory };
-        // Replace with your actual Gemini API Key
-        const apiKey = ""; // Placeholder for API key
+        const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+        if (!apiKey) {
+            throw new Error('Gemini API key not configured');
+        }
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
         const response = await fetch(apiUrl, {
@@ -150,14 +158,20 @@ const CreatorProfilePage: FC = () => {
         {/* Main Header Card */}
         <div className="bg-gray-900/80 backdrop-blur-sm rounded-3xl p-8 -mt-16 relative z-10 border border-gray-700/50 max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row items-start gap-8">
-            {/* Avatar + nick + social */}
-            <div className="flex flex-col items-center w-28">
-              <div className="relative w-24 h-24 rounded-full p-1 bg-gradient-to-br from-yellow-400 via-yellow-300 to-yellow-500 shadow-[0_0_15px_5px_rgba(255,215,0,0.7)] animate-pulse overflow-hidden">
+            {/* Images carousel + nick + social */}
+            <div className="flex flex-col items-center w-36">
+              <div className="relative w-36 h-24 rounded-xl overflow-hidden shadow-[0_0_15px_5px_rgba(255,215,0,0.7)]">
                 <img
-                  src="https://randomuser.me/api/portraits/men/75.jpg"
-                  alt="Avatar"
-                  className="w-full h-full rounded-full object-cover"
+                  src={carouselImages[carouselIndex]}
+                  alt="Creator work"
+                  className="w-full h-full object-cover"
                 />
+                <button onClick={prevImage} className="absolute left-1 top-1/2 -translate-y-1/2 bg-black/40 text-yellow-200 p-1 rounded-full">
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button onClick={nextImage} className="absolute right-1 top-1/2 -translate-y-1/2 bg-black/40 text-yellow-200 p-1 rounded-full">
+                  <ChevronRight className="w-4 h-4" />
+                </button>
               </div>
               <p className="text-yellow-400 mt-2 font-semibold text-lg">@AdamDuda</p>
               {/* Social Icons */}
