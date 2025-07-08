@@ -174,8 +174,7 @@ const CreatorProfilePage: FC = () => {
         {/* Main Header Card */}
         <div className="bg-gray-900/80 backdrop-blur-sm rounded-3xl p-8 -mt-16 relative z-10 border border-gray-700/50 max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row items-start gap-8">
-            {/* Creator info */}
-            <div className="flex flex-col items-center w-36">
+
               <p className="text-yellow-400 mt-2 font-semibold text-lg">@AdamDuda</p>
               {/* Social Icons */}
               <div className="flex space-x-3 mt-1 text-yellow-400">
