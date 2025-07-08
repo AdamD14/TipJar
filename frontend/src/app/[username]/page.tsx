@@ -107,14 +107,19 @@ const CreatorProfilePage = () => {
   const [showDepositModal, setShowDepositModal] = useState<boolean>(false);
 
   const creatorAvatarUrls = [
-    "public/assets/ja1.png",
-    "public/assets/ja2.png",
-    "public/assets/ja3.png",
+    "/assets/ja1.png",
+    "/assets/ja2.png",
+    "/assets/ja3.png",
   ];
 
   const fundingGoal = 1000;
   const currentFunding = 650;
   const fundingProgress = (currentFunding / fundingGoal) * 100;
+
+  // New state for the preview funding goal
+  const previewFundingGoal = 1000000;
+  const previewCurrentFunding = 1000;
+  const previewFundingProgress = 1; // User requested 1%
 
   useEffect(() => {
     setShowTipPanel(false);
@@ -193,24 +198,24 @@ return (
         </div>
       </div>
 
-      {/* Tip Panel - positioned absolutely within the relative parent (the one containing the background) */}
-      {showTipPanel && (
+      {/* Tip Panel OR Funding Goal Preview */}
+      {showTipPanel ? (
         <div className="absolute top-[256px] right-8 w-96 bg-gray-100 text-gray-900 rounded-xl shadow-lg p-3 z-20">
           <button
             onClick={() => setShowTipPanel(false)}
             className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-1 rounded-full"
           >
-            <X className="w-2 h-2" />
+            <X className="w-5 h-5" />
           </button>
           <div className="mt-2">
             <input type="range" min="0.1" max="20" step="0.1" value={tipAmount} onChange={(e) => setTipAmount(parseFloat(e.target.value))} className="w-full h-[6px] rounded-lg appearance-none cursor-pointer" style={sliderBackground} />
           </div>
-          <div className="mt-2 grid grid-cols-4 gap-2">
+          <div className="mt-1 grid grid-cols-4 gap-2">
             {[1, 2, 5, 10].map((amount) => (
               <button
                 key={amount}
                 onClick={() => setTipAmount(amount)}
-                className={`py-2 rounded-lg text-sm transition-colors ${
+                className={`py-1 rounded-lg text-sm transition-colors ${
                   tipAmount === amount
                     ? 'w-full bg-gradient-to-r from-teal-500 to-purple-500 text-white font-bold py-3 rounded-lg hover:from-teal-600 hover:to-purple-600 hover:scale-[1.02] transform transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none shadow-lg'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -220,8 +225,8 @@ return (
               </button>
             ))}
           </div>
-          <div className="text-center mt-3">
-            <button onClick={() => handlePayment("Direct Tip")} className="w-full font-bold bg-gradient-to-r from-teal-500 to-purple-500 text-white py-3 px-4 rounded-lg transition-all duration-300 hover:from-teal-600 hover:to-purple-600 hover:scale-[1.02] transform transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none shadow-lg inline-flex items-center justify-center gap-2 text-base">
+          <div className="text-center mt-2">
+            <button onClick={() => handlePayment("Direct Tip")} className="w-full font-bold bg-gradient-to-r from-teal-500 to-purple-500 text-white py-2 px-4 rounded-lg transition-all duration-300 hover:from-teal-600 hover:to-purple-600 hover:scale-[1.02] transform transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none shadow-lg inline-flex items-center justify-center gap-2 text-base">
               Tip ${tipAmount.toFixed(2)}
               <img src="/assets/logo_usdc_1.png" width={24} height={24} className="object-cover opacity-80" alt="USDC Logo" />
             </button>
@@ -237,7 +242,7 @@ return (
               <img src="/assets/MetaMask-icon-fox.svg" alt="Metamask" width={24} height={24} className="object-contain"/>
             </PaymentIcon>
             <PaymentIcon name="Revolut">
-              <img src="public/assets/Revolut.svg" alt="Revolut" width={24} height={24} className="object-contain" />
+              <img src="/assets/Revolut.svg" alt="Revolut" width={24} height={24} className="object-contain" />
             </PaymentIcon>
             <PaymentIcon name="WalletConnect">
               <img src="/assets/wc.svg" alt="WalletConnect" width={24} height={24} className="object-contain" />
@@ -245,6 +250,25 @@ return (
             <PaymentIcon name="Bank">
               <img src="/assets/bank-svgrepo-com.svg" alt="Bank" width={24} height={24} className="object-contain"/>
             </PaymentIcon>
+          </div>
+        </div>
+      ) : (
+        <div className="absolute top-[256px] right-8 w-96 bg-gray-100 text-gray-900 rounded-xl shadow-lg p-6 z-20">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Funding Goals</h2>
+          <p className="text-gray-700 mb-4">
+            Your support helps me get my first milion dolar
+          </p>
+          <div className="space-y-6">
+            <div className="max-w-md">
+              <div className="flex justify-between text-sm text-gray-700">
+                <span>First Million Dollar</span>
+                <span>{previewFundingProgress}%</span>
+              </div>
+              <div className="progress-bar mt-1">
+                <div className="progress-fill" style={{ width: `${previewFundingProgress}%`, background: `linear-gradient(90deg, #14b8a6, #8b5cf6)` }}></div>
+              </div>
+              <div className="text-xs text-gray-500 mt-1">${previewCurrentFunding} of ${previewFundingGoal} goal</div>
+            </div>
           </div>
         </div>
       )}
