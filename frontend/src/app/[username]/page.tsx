@@ -146,33 +146,35 @@ const CreatorProfilePage: FC = () => {
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#004D40] via-[#263238] to-[#4A148C]">
       <div className="w-full">
-        {/* Parallax Header */}
+        {/* Parallax Header with carousel */}
         <div
-          className="h-64 md:h-80 bg-cover bg-center rounded-t-3xl"
+          className="relative h-64 md:h-80 bg-cover bg-center rounded-t-3xl"
           style={{
             backgroundImage: "url('/assets/reback.png')",
             backgroundAttachment: 'fixed',
           }}
-        ></div>
+        >
+          <div className="absolute inset-x-0 bottom-4 flex justify-center">
+            <div className="relative w-36 h-24 rounded-xl overflow-hidden shadow-[0_0_15px_5px_rgba(255,215,0,0.7)]">
+              <img
+                src={carouselImages[carouselIndex]}
+                alt="Creator work"
+                className="w-full h-full object-cover"
+              />
+              <button onClick={prevImage} className="absolute left-1 top-1/2 -translate-y-1/2 bg-black/40 text-yellow-200 p-1 rounded-full">
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button onClick={nextImage} className="absolute right-1 top-1/2 -translate-y-1/2 bg-black/40 text-yellow-200 p-1 rounded-full">
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
 
         {/* Main Header Card */}
         <div className="bg-gray-900/80 backdrop-blur-sm rounded-3xl p-8 -mt-16 relative z-10 border border-gray-700/50 max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row items-start gap-8">
-            {/* Images carousel + nick + social */}
-            <div className="flex flex-col items-center w-36">
-              <div className="relative w-36 h-24 rounded-xl overflow-hidden shadow-[0_0_15px_5px_rgba(255,215,0,0.7)]">
-                <img
-                  src={carouselImages[carouselIndex]}
-                  alt="Creator work"
-                  className="w-full h-full object-cover"
-                />
-                <button onClick={prevImage} className="absolute left-1 top-1/2 -translate-y-1/2 bg-black/40 text-yellow-200 p-1 rounded-full">
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <button onClick={nextImage} className="absolute right-1 top-1/2 -translate-y-1/2 bg-black/40 text-yellow-200 p-1 rounded-full">
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
+
               <p className="text-yellow-400 mt-2 font-semibold text-lg">@AdamDuda</p>
               {/* Social Icons */}
               <div className="flex space-x-3 mt-1 text-yellow-400">
