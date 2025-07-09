@@ -169,8 +169,8 @@ return (
         {/* New flex container for the name/buttons and tip panel */}
         <div className="flex-1 flex flex-col md:flex-row justify-between items-start gap-6 mt-32">
           <div className="flex-1 text-center md:text-left">
-            <h1 className="text-3xl font-bold text-gray-900">Alex Creative</h1>
-            <p className="text-gray-600 mt-1">Digital Artist & Streamer</p>
+            <h1 className="text-3xl font-bold text-gray-900">Adam Duda</h1>
+            <p className="text-gray-600 mt-1">Founder of tipjar.plus</p>
             <div className="flex flex-col md:flex-row md:items-start gap-4 mt-3">
               <div className="flex flex-col items-center md:items-start gap-2">
                 <div className="flex items-center text-gray-700">
@@ -329,11 +329,10 @@ return (
               <div className="bg-white rounded-xl shadow-sm p-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">About Me</h2>
                 <p className="text-gray-700 mb-4">
-                  Hey there! I'm Alex, a digital artist and content creator passionate about bringing imaginative worlds to life.
-                  I stream my creative process 3 times a week and share tutorials on YouTube.
+                  Hey there! I'm Adam.
                 </p>
                 <p className="text-gray-700 mb-4">
-                  Your support helps me upgrade my equipment, create more content, and dedicate more time to what I love!
+                  Your supoport is fuel to build that site
                 </p>
 
                 {/* Social Links */}
@@ -360,7 +359,7 @@ return (
               <div className="bg-white rounded-xl shadow-sm p-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">My Content</h2>
                 <p className="text-gray-700 mb-4">
-                  Tutaj znajdziesz moje najnowsze prace, tutoriale i inne treści!
+                  Tutaj bede dzielił się pomysłami na przyszłosc
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div className="bg-gray-100 rounded-lg overflow-hidden shadow-sm">
@@ -373,7 +372,7 @@ return (
                   <div className="bg-gray-100 rounded-lg overflow-hidden shadow-sm">
                     <img src="https://placehold.co/400x250/D0D0D0/333333?text=Tutorial+Video" alt="Tutorial Video" className="w-full h-40 object-cover" />
                     <div className="p-3">
-                      <h4 className="font-semibold text-gray-900">Procreate Basics Tutorial</h4>
+                      <h4 className="font-semibold text-gray-900">Procreate Ba</h4>
                       <p className="text-sm text-gray-600 mt-1">Learn how to get started with Procreate.</p>
                     </div>
                   </div>
