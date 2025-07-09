@@ -17,11 +17,17 @@ import { SiweMessage } from 'siwe';
 import { MailerService } from '@nestjs-modules/mailer';
 import type { RedisClientType } from 'redis';
 
-import { UsersService, InternalCreateUserDto, InternalUpdateUserDto } from '../users/users.service';
+import {
+  UsersService,
+  InternalCreateUserDto,
+  InternalUpdateUserDto,
+} from '../users/users.service'; // Poprawiono formatowanie importu
 import { CircleService } from '../circle/circle.service';
 
-// Poprawiony import Prisma - dostosuj '../../generated/prisma' do swojej struktury, jeśli potrzeba
 import { User as UserModelPrisma, UserRole, Prisma } from '@prisma/client';
+
+// Import DTO dla rejestracji
+import { RegisterUserDto } from './dto/register-user.dto';
 
 export interface ValidatedUser {
   id: string;
@@ -85,15 +91,24 @@ export class AuthService {
     });
 
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-    const updateData: InternalUpdateUserDto = { currentHashedRefreshToken: hashedRefreshToken };
+    const updateData: InternalUpdateUserDto = {
+      currentHashedRefreshToken: hashedRefreshToken,
+    };
     await this.usersService.updateUser(user.id, updateData);
 
     this.logger.log(`Generated new tokens for user ID: ${user.id}`);
     return { accessToken, refreshToken };
   }
 
-  async registerUser(registerDto: any /* TODO: Zastąp przez RegisterUserDto */): Promise<ValidatedUser> {
+  async registerUser(registerDto: RegisterUserDto): Promise<ValidatedUser> {
     this.logger.log(`Attempting to register new user with email: ${registerDto.email}`);
+
+    // Sprawdź, czy użytkownik o podanym emailu już istnieje
+    const existingUser = await this.usersService.findOneByEmail(registerDto.email.toLowerCase());
+    if (existingUser) {
+      throw new ConflictException('Użytkownik o tym adresie email już istnieje.');
+    }
+
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
 
     const createUserData: InternalCreateUserDto = {
@@ -102,27 +117,48 @@ export class AuthService {
       displayName: registerDto.displayName,
       role: registerDto.role || UserRole.FAN,
       isEmailVerified: false,
+      isActive: true,
     };
 
     try {
       const newUserFromDb = await this.usersService.createUser(createUserData);
-      this.logger.log(`User ${newUserFromDb.email} (ID: ${newUserFromDb.id}) registered successfully. Initiating post-registration actions.`);
+      this.logger.log(
+        `User ${newUserFromDb.email} (ID: ${newUserFromDb.id}) registered successfully. Initiating post-registration actions.`,
+      );
 
-      this.circleService.provisionUserWallet(newUserFromDb.id, newUserFromDb.email, newUserFromDb.role)
-        .then(() => this.logger.log(`Circle Wallet provisioning successfully initiated for user ID ${newUserFromDb.id}`))
-        .catch(circleError => this.logger.error(`Failed to initiate Circle Wallet provisioning for user ${newUserFromDb.id}: ${circleError.message}`, circleError.stack));
-      
+      this.circleService
+        .provisionUserWallet(newUserFromDb.id, newUserFromDb.email, newUserFromDb.role)
+        .then(() =>
+          this.logger.log(
+            `Circle Wallet provisioning successfully initiated for user ID ${newUserFromDb.id}`,
+          ),
+        )
+        .catch((circleError) =>
+          this.logger.error(
+            `Failed to initiate Circle Wallet provisioning for user ${newUserFromDb.id}: ${circleError.message}`,
+            circleError.stack,
+          ),
+        );
+
       if (newUserFromDb.email) {
         this.sendVerificationEmail(newUserFromDb)
           .then(() => this.logger.log(`Verification email dispatch initiated for ${newUserFromDb.email}`))
-          .catch(emailError => this.logger.error(`Failed to dispatch verification email to ${newUserFromDb.email}: ${emailError.message}`, emailError.stack));
+          .catch((emailError) =>
+            this.logger.error(
+              `Failed to dispatch verification email to ${newUserFromDb.email}: ${emailError.message}`,
+              emailError.stack,
+            ),
+          );
       }
-      
-      return this.toValidatedUser(newUserFromDb);
 
+      return this.toValidatedUser(newUserFromDb);
     } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        this.logger.warn(`Registration failed: Email ${registerDto.email} already exists (Prisma unique constraint).`);
+        throw new ConflictException('Użytkownik o tym adresie email już istnieje.');
+      }
       if (error instanceof ConflictException) {
-        this.logger.warn(`Registration failed: Email ${registerDto.email} already exists.`);
+        this.logger.warn(`Registration failed: Email ${registerDto.email} already exists (handled by custom exception).`);
         throw error;
       }
       this.logger.error(`Critical error during registration for email ${registerDto.email}: ${error.message}`, error.stack);
@@ -132,7 +168,7 @@ export class AuthService {
 
   async login(user: ValidatedUser): Promise<AuthTokens> {
     if (user.email && !user.isEmailVerified) {
-        this.logger.warn(`Login attempt for unverified email: ${user.email}. User ID: ${user.id}`);
+      this.logger.warn(`Login attempt for unverified email: ${user.email}. User ID: ${user.id}`);
     }
     this.logger.log(`Login successful for user: ${user.email || `ID ${user.id}`}. Generating tokens.`);
     return this.generateTokens(user);
@@ -157,13 +193,15 @@ export class AuthService {
     displayName: string,
     avatarUrl?: string,
   ): Promise<ValidatedUser> {
-    this.logger.debug(`Validating OAuth/SIWE user. Provider: ${provider}, Provider ID (prefix): ${providerId.substring(0,10)}...`);
-    
+    this.logger.debug(`Validating OAuth/SIWE user. Provider: ${provider}, Provider ID (prefix): ${providerId.substring(0, 10)}...`);
+
     const socialConnection = await this.usersService.findSocialConnection(provider, providerId);
     let userFromDb: UserModelPrisma;
 
     if (socialConnection) {
-      this.logger.log(`Found existing user (ID: ${socialConnection.user.id}) via social connection [${provider}: ${providerId.substring(0,10)}...].`);
+      this.logger.log(
+        `Found existing user (ID: ${socialConnection.user.id}) via social connection [${provider}: ${providerId.substring(0, 10)}...].`,
+      );
       userFromDb = socialConnection.user;
     } else {
       let existingUserByEmail: UserModelPrisma | null = null;
@@ -172,7 +210,9 @@ export class AuthService {
       }
 
       if (existingUserByEmail) {
-        this.logger.log(`Existing user found by email [${email}]. Linking [${provider}] social connection to user ID [${existingUserByEmail.id}].`);
+        this.logger.log(
+          `Existing user found by email [${email}]. Linking [${provider}] social connection to user ID [${existingUserByEmail.id}].`,
+        );
         userFromDb = await this.usersService.addSocialConnection(existingUserByEmail.id, provider, providerId);
       } else {
         this.logger.log(`No existing user found by provider ID or email. Creating new user for [${provider}]: ${displayName}.`);
@@ -180,28 +220,48 @@ export class AuthService {
           email: email ? email.toLowerCase() : null,
           displayName: displayName,
           avatarUrl: avatarUrl,
-          role: UserRole.FAN,
+          role: UserRole.FAN, // Domyślnie FAN dla nowych użytkowników OAuth
           provider: provider,
           providerId: providerId,
-          isEmailVerified: provider !== 'siwe' && !!email,
+          isEmailVerified: provider !== 'siwe' && !!email, // Email zweryfikowany, jeśli nie SIWE i email jest obecny
+          isActive: true,
         };
         userFromDb = await this.usersService.createUser(createUserData);
         this.logger.log(`New user (ID: ${userFromDb.id}) created successfully via ${provider}. Initiating post-registration actions.`);
 
-        this.circleService.provisionUserWallet(userFromDb.id, userFromDb.email, userFromDb.role)
-            .then(() => this.logger.log(`Circle Wallet provisioning successfully initiated for new OAuth/SIWE user ID ${userFromDb.id}`))
-            .catch(circleError => this.logger.error(`Failed to initiate Circle Wallet provisioning for new OAuth/SIWE user ${userFromDb.id}: ${circleError.message}`, circleError.stack));
-        
+        this.circleService
+          .provisionUserWallet(userFromDb.id, userFromDb.email, userFromDb.role)
+          .then(() =>
+            this.logger.log(
+              `Circle Wallet provisioning successfully initiated for new OAuth/SIWE user ID ${userFromDb.id}`,
+            ),
+          )
+          .catch((circleError) =>
+            this.logger.error(
+              `Failed to initiate Circle Wallet provisioning for new OAuth/SIWE user ${userFromDb.id}: ${circleError.message}`,
+              circleError.stack,
+            ),
+          );
+
         if (userFromDb.email && !userFromDb.isEmailVerified) {
-            this.sendVerificationEmail(userFromDb)
-                .then(() => this.logger.log(`Verification email dispatch initiated for new OAuth/SIWE user ${userFromDb.email} as it was not auto-verified.`))
-                .catch(emailError => this.logger.error(`Failed to dispatch verification email to new OAuth/SIWE user ${userFromDb.email}: ${emailError.message}`, emailError.stack));
+          this.sendVerificationEmail(userFromDb)
+            .then(() =>
+              this.logger.log(
+                `Verification email dispatch initiated for new OAuth/SIWE user ${userFromDb.email} as it was not auto-verified.`,
+              ),
+            )
+            .catch((emailError) =>
+              this.logger.error(
+                `Failed to dispatch verification email to new OAuth/SIWE user ${userFromDb.email}: ${emailError.message}`,
+                emailError.stack,
+              ),
+            );
         }
       }
     }
     return this.toValidatedUser(userFromDb);
   }
-  
+
   async refreshToken(userId: string, currentRefreshToken: string): Promise<AuthTokens> {
     this.logger.debug(`Attempting to refresh tokens for user ID: ${userId}`);
     const userFromDb = await this.usersService.findOneById(userId);
@@ -210,13 +270,13 @@ export class AuthService {
       this.logger.warn(`Refresh token validation failed: User ${userId} not found or has no stored refresh token.`);
       throw new UnauthorizedException('Dostęp zabroniony.');
     }
-    
+
     const isRefreshTokenMatching = await bcrypt.compare(currentRefreshToken, userFromDb.currentHashedRefreshToken);
     if (!isRefreshTokenMatching) {
       this.logger.warn(`Refresh token validation failed: Provided token does not match stored hash for user ${userId}.`);
       throw new UnauthorizedException('Dostęp zabroniony.');
     }
-    
+
     const validatedUser = this.toValidatedUser(userFromDb);
     this.logger.log(`Refresh token validated for user ${userId}. Generating new access and refresh tokens.`);
     return this.generateTokens(validatedUser);
@@ -226,7 +286,9 @@ export class AuthService {
     const nonce = randomUUID();
     const redisKey = `siwe:nonce:${address.toLowerCase()}`;
     await this.redisClient.set(redisKey, nonce, { EX: this.SIWE_NONCE_TTL_SECONDS });
-    this.logger.log(`Generated SIWE nonce for address ${address}: ${nonce}. Stored in Redis with key ${redisKey} (TTL: ${this.SIWE_NONCE_TTL_SECONDS}s).`);
+    this.logger.log(
+      `Generated SIWE nonce for address ${address}: ${nonce}. Stored in Redis with key ${redisKey} (TTL: ${this.SIWE_NONCE_TTL_SECONDS}s).`,
+    );
     return nonce;
   }
 
@@ -239,7 +301,9 @@ export class AuthService {
       this.logger.log(`SIWE nonce verified and deleted from Redis for address ${address}.`);
       return true;
     }
-    this.logger.warn(`SIWE nonce verification failed for address ${address}. Received: [${receivedNonce}], Stored: [${storedNonce}]`);
+    this.logger.warn(
+      `SIWE nonce verification failed for address ${address}. Received: [${receivedNonce}], Stored: [${storedNonce}]`,
+    );
     return false;
   }
 
@@ -247,19 +311,21 @@ export class AuthService {
     this.logger.debug(`Verifying SIWE message for address from request: ${addressFromRequest}`);
     try {
       const siweMessage = new SiweMessage(message);
-      
+
       const nonceIsValid = await this.verifySiweNonceWithRedis(siweMessage.address.toLowerCase(), siweMessage.nonce);
       if (!nonceIsValid) {
-        this.logger.warn(`SIWE nonce [${siweMessage.nonce}] invalid or expired for address from message [${siweMessage.address}].`);
+        this.logger.warn(
+          `SIWE nonce [${siweMessage.nonce}] invalid or expired for address from message [${siweMessage.address}].`,
+        );
         throw new BadRequestException('Nieprawidłowy lub wygasły nonce SIWE.');
       }
 
       const expectedDomain = this.configService.get<string>('FRONTEND_URL_DOMAIN_FOR_SIWE');
-      const expectedOrigin = this.configService.get<string>('FRONTEND_URL'); 
+      const expectedOrigin = this.configService.get<string>('FRONTEND_URL');
 
       if (expectedDomain && siweMessage.domain !== expectedDomain) {
-          this.logger.error(`SIWE domain mismatch. Expected: [${expectedDomain}], Got: [${siweMessage.domain}]`);
-          throw new BadRequestException('Niezgodność domeny w wiadomości SIWE.');
+        this.logger.error(`SIWE domain mismatch. Expected: [${expectedDomain}], Got: [${siweMessage.domain}]`);
+        throw new BadRequestException('Niezgodność domeny w wiadomości SIWE.');
       }
       if (siweMessage.uri && expectedOrigin && siweMessage.uri !== expectedOrigin) {
         this.logger.error(`SIWE URI mismatch. Expected: [${expectedOrigin}], Got: [${siweMessage.uri}]`);
@@ -271,51 +337,51 @@ export class AuthService {
       });
 
       if (verifiedData.address.toLowerCase() !== addressFromRequest.toLowerCase()) {
-          this.logger.error(`SIWE message address [${verifiedData.address}] does not match address from request [${addressFromRequest}]. Potential tampering.`);
-          throw new BadRequestException('Adres w wiadomości SIWE nie zgadza się z adresem żądania.');
+        this.logger.error(
+          `SIWE message address [${verifiedData.address}] does not match address from request [${addressFromRequest}]. Potential tampering.`,
+        );
+        throw new BadRequestException('Adres w wiadomości SIWE nie zgadza się z adresem żądania.');
       }
 
       this.logger.log(`SIWE signature and message verified successfully for address: ${verifiedData.address}`);
       return verifiedData.address;
-
     } catch (error) {
       this.logger.error(`SIWE verification process failed: ${error.message}`, error.stack);
       if (error instanceof BadRequestException || error instanceof UnauthorizedException) throw error;
       throw new BadRequestException(`Weryfikacja wiadomości SIWE nie powiodła się: ${error.message}`);
     }
   }
-  
+
   async sendVerificationEmail(user: UserModelPrisma): Promise<void> {
     if (!user.email) {
-        this.logger.warn(`Cannot send verification email: User ID ${user.id} has no email address defined.`);
-        return;
+      this.logger.warn(`Cannot send verification email: User ID ${user.id} has no email address defined.`);
+      return;
     }
-    // ZMIANA: this.logger.info -> this.logger.log
     if (user.isEmailVerified && !process.env.ALLOW_RESEND_VERIFICATION_FOR_VERIFIED) {
-        this.logger.log(`Email ${user.email} is already verified for user ID ${user.id}. Skipping verification email.`);
-        return;
+      this.logger.log(`Email ${user.email} is already verified for user ID ${user.id}. Skipping verification email.`);
+      return;
     }
 
     const verificationToken = randomUUID();
-    const updateDto: InternalUpdateUserDto = { 
-        emailVerificationToken: verificationToken,
+    const updateDto: InternalUpdateUserDto = {
+      emailVerificationToken: verificationToken,
     };
     if (!user.isEmailVerified) {
-        updateDto.isEmailVerified = false;
+      updateDto.isEmailVerified = false;
     }
 
     await this.usersService.updateUser(user.id, updateDto);
 
     const frontendUrl = this.configService.get<string>('FRONTEND_URL');
     const verificationUrl = `${frontendUrl}/auth/verify-email?token=${verificationToken}`;
-    
+
     this.logger.log(`Preparing to send verification email to ${user.email} for user ID ${user.id}. URL: ${verificationUrl}`);
 
     try {
-        await this.mailerService.sendMail({
-            to: user.email,
-            subject: `TipJar - Zweryfikuj swój adres email`,
-            html: `
+      await this.mailerService.sendMail({
+        to: user.email,
+        subject: `TipJar - Zweryfikuj swój adres email`,
+        html: `
                 <div style="font-family: Arial, sans-serif; line-height: 1.6;">
                     <h2>Witaj ${user.displayName || user.email}!</h2>
                     <p>Dziękujemy za korzystanie z TipJar! Aby zweryfikować swój adres email, kliknij poniższy link:</p>
@@ -331,31 +397,30 @@ export class AuthService {
                     <hr>
                     <p>Pozdrawiamy serdecznie,<br>Zespół TipJar</p>
                 </div>`,
-        });
-        this.logger.log(`Verification email successfully sent to ${user.email} (User ID: ${user.id}).`);
+      });
+      this.logger.log(`Verification email successfully sent to ${user.email} (User ID: ${user.id}).`);
     } catch (error) {
-        this.logger.error(`Failed to send verification email to ${user.email} (User ID: ${user.id}): ${error.message}`, error.stack);
+      this.logger.error(`Failed to send verification email to ${user.email} (User ID: ${user.id}): ${error.message}`, error.stack);
     }
   }
 
   async verifyEmailToken(token: string): Promise<UserModelPrisma> {
     this.logger.log(`Attempting to verify email with token (prefix): ${token.substring(0, 10)}...`);
-    const userFromDb = await this.usersService.findByEmailVerificationToken(token); 
-    
+    const userFromDb = await this.usersService.findByEmailVerificationToken(token);
+
     if (!userFromDb) {
       this.logger.warn(`Invalid or expired email verification token presented: ${token.substring(0, 10)}...`);
       throw new BadRequestException('Token weryfikacyjny jest nieprawidłowy lub wygasł. Spróbuj ponownie poprosić o link weryfikacyjny.');
     }
     if (userFromDb.isEmailVerified) {
-        // ZMIANA: this.logger.info -> this.logger.log
-        this.logger.log(`Email ${userFromDb.email} for user ID ${userFromDb.id} is already verified.`);
-        return userFromDb; 
+      this.logger.log(`Email ${userFromDb.email} for user ID ${userFromDb.id} is already verified.`);
+      return userFromDb;
     }
 
-    const updateData: InternalUpdateUserDto = { 
-        isEmailVerified: true, 
-        emailVerificationToken: null, 
-        isActive: true, 
+    const updateData: InternalUpdateUserDto = {
+      isEmailVerified: true,
+      emailVerificationToken: null,
+      isActive: true,
     };
     const updatedUser = await this.usersService.updateUser(userFromDb.id, updateData);
     this.logger.log(`Email for user ${userFromDb.email} (ID: ${userFromDb.id}) has been successfully verified.`);
@@ -368,3 +433,4 @@ export class AuthService {
     this.logger.log(`Stored refresh token cleared for user ID: ${userId}.`);
   }
 }
+// End of src/auth/auth.service.ts

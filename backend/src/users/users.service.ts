@@ -9,31 +9,33 @@ import {
 // Poprawiony import PrismaService
 import { PrismaService } from '../prisma/prisma.service';
 // Poprawiony import typów Prisma i dodanie PrismaClientKnownRequestError
-import { 
-    User, 
-    Prisma, // Potrzebne dla np. Prisma.UserCreateInput
-    UserRole, 
-    SocialConnection
+import {
+  User,
+  Prisma, // Potrzebne dla np. Prisma.UserCreateInput
+  UserRole,
+  SocialConnection,
 } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+
 // Definicja DTO dla tworzenia użytkownika, używana wewnętrznie przez AuthService
 // Upewnij się, że jest wyeksportowana, aby AuthService mógł jej używać.
 export interface InternalCreateUserDto {
   email?: string | null;
-  password?: string; 
+  password?: string;
   displayName: string; // Zakładamy, że displayName jest zawsze dostarczane przy tworzeniu
   avatarUrl?: string;
   role?: UserRole;
   isEmailVerified?: boolean;
   provider?: string;
   providerId?: string;
+  isActive?: boolean; // Dodano isActive
 }
 
 // Definicja DTO dla aktualizacji danych użytkownika
 export interface InternalUpdateUserDto {
   displayName?: string;
   avatarUrl?: string;
-  email?: string; 
+  email?: string;
   password?: string; // Nowe, zhashowane hasło
   isEmailVerified?: boolean;
   emailVerificationToken?: string | null;
@@ -56,14 +58,17 @@ export class UsersService {
     const { provider, providerId, ...userData } = data;
     const userEmail = userData.email ? userData.email.toLowerCase() : null;
 
-    this.logger.log(`Attempting to create user. Email: [${userEmail || 'N/A'}], Provider: [${provider || 'N/A'}]`);
+    this.logger.log(`Attempting to create user. Email: [${userEmail || 'N/A'}], ` + `Provider: [${provider || 'N/A'}]`);
 
     if (userEmail) {
       const existingUserByEmail = await this.prisma.user.findUnique({
         where: { email: userEmail },
       });
       if (existingUserByEmail) {
-        this.logger.warn(`User creation failed: Email [${userEmail}] already exists for user ID [${existingUserByEmail.id}].`);
+        this.logger.warn(
+          `User creation failed: Email [${userEmail}] already exists for user ID ` +
+            `[${existingUserByEmail.id}].`,
+        );
         throw new ConflictException(`Użytkownik z adresem email ${userEmail} już istnieje.`);
       }
     }
@@ -73,25 +78,37 @@ export class UsersService {
         where: { provider_providerId: { provider, providerId } },
       });
       if (existingSocialConnection) {
-        this.logger.warn(`User creation failed: Social connection [${provider}: ${providerId.substring(0,10)}...] is already linked to user ID [${existingSocialConnection.userId}].`);
+        this.logger.warn(
+          `User creation failed: Social connection [${provider}: ${providerId.substring(
+            0,
+            10,
+          )}...] is already linked to user ID [${existingSocialConnection.userId}].`,
+        );
         throw new ConflictException(`To konto ${provider} jest już powiązane z innym użytkownikiem.`);
       }
     }
 
     try {
-      const createPayload: Prisma.UserCreateInput = { // Użycie Prisma.UserCreateInput jest poprawne
+      const createPayload: Prisma.UserCreateInput = {
+        // Użycie Prisma.UserCreateInput jest poprawne
         ...userData,
         email: userEmail,
         role: userData.role || UserRole.FAN,
-        isEmailVerified: userData.isEmailVerified === undefined 
-            ? (!!userEmail && provider !== 'siwe' && provider !== undefined) 
+        isEmailVerified:
+          userData.isEmailVerified === undefined
+            ? !!userEmail && provider !== 'siwe' && provider !== undefined
             : userData.isEmailVerified,
-        socialConnections: (provider && providerId) ? {
-          create: [{
-            provider: provider,
-            providerId: providerId,
-          }],
-        } : undefined,
+        socialConnections:
+          provider && providerId
+            ? {
+                create: [
+                  {
+                    provider: provider,
+                    providerId: providerId,
+                  },
+                ],
+              }
+            : undefined,
       };
 
       const user = await this.prisma.user.create({
@@ -101,10 +118,12 @@ export class UsersService {
 
       this.logger.log(`User (ID: ${user.id}, Email: ${user.email || 'N/A'}) created successfully.`);
       if (user.socialConnections && user.socialConnections.length > 0) {
-        this.logger.log(`Associated social connection [${user.socialConnections[0].provider}: ${user.socialConnections[0].providerId.substring(0,10)}...] created for user ID ${user.id}.`);
+        this.logger.log(
+          `Associated social connection [${user.socialConnections[0].provider}: ` +
+            `${user.socialConnections[0].providerId.substring(0, 10)}...] created for user ID ${user.id}.`,
+        );
       }
       return user;
-
     } catch (error) {
       this.logger.error(`Failed to create user (Email: ${userEmail || 'N/A'}): ${error.message}`, error.stack);
       // Poprawione sprawdzanie błędu Prisma
@@ -166,9 +185,9 @@ export class UsersService {
           throw new NotFoundException(`Użytkownik o ID ${id} nie został znaleziony.`);
         }
         if (error.code === 'P2002') {
-            const target = (error.meta?.target as string[])?.join(', ');
-            this.logger.warn(`Update failed for user ID [${id}]: Unique constraint violation on ${target}.`);
-            throw new ConflictException(`Nie można zaktualizować użytkownika. Wartość dla ${target} jest już zajęta.`);
+          const target = (error.meta?.target as string[])?.join(', ');
+          this.logger.warn(`Update failed for user ID [${id}]: Unique constraint violation on ${target}.`);
+          throw new ConflictException(`Nie można zaktualizować użytkownika. Wartość dla ${target} jest już zajęta.`);
         }
       }
       throw new InternalServerErrorException('Wystąpił nieoczekiwany błąd podczas aktualizacji użytkownika.');
@@ -176,7 +195,7 @@ export class UsersService {
   }
 
   async findByEmailVerificationToken(token: string): Promise<User | null> {
-    this.logger.debug(`Finding user by email verification token (prefix): ${token.substring(0,10)}...`);
+    this.logger.debug(`Finding user by email verification token (prefix): ${token.substring(0, 10)}...`);
     const user = await this.prisma.user.findFirst({
       where: {
         emailVerificationToken: token,
@@ -184,12 +203,23 @@ export class UsersService {
         // emailVerificationTokenExpiresAt: { gte: new Date() },
       },
     });
-    if (!user) this.logger.warn(`No active user found for email verification token (prefix): ${token.substring(0,10)}...`);
+    if (!user)
+      this.logger.warn(
+        `No active user found for email verification token (prefix): ${token.substring(0, 10)}...`,
+      );
     return user;
   }
 
-  async findSocialConnection(provider: string, providerId: string): Promise<(SocialConnection & { user: User }) | null> {
-    this.logger.debug(`Finding social connection for provider [${provider}] and provider ID (prefix) [${providerId.substring(0,10)}...]`);
+  async findSocialConnection(
+    provider: string,
+    providerId: string,
+  ): Promise<(SocialConnection & { user: User }) | null> {
+    this.logger.debug(
+      `Finding social connection for provider [${provider}] and provider ID (prefix) [${providerId.substring(
+        0,
+        10,
+      )}]...`,
+    );
     const socialConnection = await this.prisma.socialConnection.findUnique({
       where: {
         provider_providerId: { provider, providerId },
@@ -198,12 +228,21 @@ export class UsersService {
         user: true,
       },
     });
-    if (!socialConnection) this.logger.warn(`Social connection for provider [${provider}] and provider ID (prefix) [${providerId.substring(0,10)}...] not found.`);
+    if (!socialConnection)
+      this.logger.warn(
+        `Social connection for provider [${provider}] and provider ID (prefix) [${providerId.substring(
+          0,
+          10,
+        )}]... not found.`,
+      );
     return socialConnection;
   }
 
   async addSocialConnection(userId: string, provider: string, providerId: string): Promise<User> {
-    this.logger.log(`Attempting to add social connection [${provider}: ${providerId.substring(0,10)}...] to user ID [${userId}]`);
+    this.logger.log(
+      `Attempting to add social connection [${provider}: ${providerId.substring(0, 10)}...] to user ID ` +
+        `[${userId}]`,
+    );
 
     const userExists = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!userExists) {
@@ -212,23 +251,31 @@ export class UsersService {
     }
 
     const existingConnection = await this.prisma.socialConnection.findUnique({
-        where: { provider_providerId: { provider, providerId } },
-        select: { userId: true }
+      where: { provider_providerId: { provider, providerId } },
+      select: { userId: true },
     });
 
     if (existingConnection && existingConnection.userId !== userId) {
-        this.logger.warn(`Social connection [${provider}: ${providerId.substring(0,10)}...] already exists and is linked to a different user ID [${existingConnection.userId}].`);
-        throw new ConflictException(`To konto ${provider} jest już powiązane z innym użytkownikiem TipJar.`);
+      this.logger.warn(
+        `Social connection [${provider}: ${providerId.substring(
+          0,
+          10,
+        )}...] already exists and is linked to a different user ID [${existingConnection.userId}].`,
+      );
+      throw new ConflictException(`To konto ${provider} jest już powiązane z innym użytkownikiem TipJar.`);
     }
     if (existingConnection && existingConnection.userId === userId) {
-        // Poprawka: this.logger.info na this.logger.log
-        this.logger.log(`Social connection [${provider}: ${providerId.substring(0,10)}...] already exists for user ID [${userId}]. No action needed.`);
-        // Zwracamy pełne dane użytkownika, upewniając się, że typ jest poprawny
-        const userWithConnections = await this.findOneById(userId);
-        if (!userWithConnections) { // Mało prawdopodobne, ale dla bezpieczeństwa
-            throw new NotFoundException(`Użytkownik o ID ${userId} nie został znaleziony po ponownym sprawdzeniu.`);
-        }
-        return userWithConnections;
+      this.logger.log(
+        `Social connection [${provider}: ${providerId.substring(0, 10)}...] already exists for user ID ` +
+          `[${userId}]. No action needed.`,
+      );
+      // Zwracamy pełne dane użytkownika, upewniając się, że typ jest poprawny
+      const userWithConnections = await this.findOneById(userId);
+      if (!userWithConnections) {
+        // Mało prawdopodobne, ale dla bezpieczeństwa
+        throw new NotFoundException(`Użytkownik o ID ${userId} nie został znaleziony po ponownym sprawdzeniu.`);
+      }
+      return userWithConnections;
     }
 
     try {
@@ -241,13 +288,16 @@ export class UsersService {
         },
         include: { socialConnections: true },
       });
-      this.logger.log(`Social connection [${provider}: ${providerId.substring(0,10)}...] successfully added to user ID [${userId}].`);
+      this.logger.log(
+        `Social connection [${provider}: ${providerId.substring(0, 10)}...] successfully added to user ID ` +
+          `[${userId}].`,
+      );
       return updatedUser;
     } catch (error) {
       this.logger.error(`Failed to add social connection for user ID [${userId}]: ${error.message}`, error.stack);
       // Poprawione sprawdzanie błędu Prisma
       if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
-         throw new ConflictException('To połączenie społeczne już istnieje lub wystąpił inny konflikt unikalności.');
+        throw new ConflictException('To połączenie społeczne już istnieje lub wystąpił inny konflikt unikalności.');
       }
       throw new InternalServerErrorException('Wystąpił błąd podczas dodawania połączenia społecznego.');
     }

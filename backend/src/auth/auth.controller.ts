@@ -24,14 +24,10 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { SiweRequestNonceDto } from './dto/siwe-request-nonce.dto';
 import { SiweVerifySignatureDto } from './dto/siwe-verify-signature.dto';
 
-
-
-
 @Controller('auth') // Globalny prefix /api/v1/auth (zdefiniowany w main.ts)
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
   private commonCookieOptions: CookieOptions;
-
 
   constructor(
     private authService: AuthService,
@@ -49,18 +45,29 @@ export class AuthController {
   private setAuthCookies(response: Response, tokens: AuthTokens): void {
     response.cookie('access_token', tokens.accessToken, {
       ...this.commonCookieOptions,
-      maxAge: parseInt(this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRATION_SECONDS', '900'), 10) * 1000,
+      maxAge:
+        parseInt(
+          this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRATION_SECONDS', '900'),
+          10,
+        ) * 1000,
     });
     response.cookie('refresh_token', tokens.refreshToken, {
       ...this.commonCookieOptions,
-      maxAge: parseInt(this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRATION_SECONDS', '604800'), 10) * 1000,
+      maxAge:
+        parseInt(
+          this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRATION_SECONDS', '604800'),
+          10,
+        ) * 1000,
       path: '/api/v1/auth/refresh-token',
     });
   }
 
   private clearAuthCookies(response: Response): void {
     response.clearCookie('access_token', this.commonCookieOptions);
-    response.clearCookie('refresh_token', { ...this.commonCookieOptions, path: '/api/v1/auth/refresh-token' });
+    response.clearCookie('refresh_token', {
+      ...this.commonCookieOptions,
+      path: '/api/v1/auth/refresh-token',
+    });
   }
 
   @Post('register')
@@ -125,7 +132,9 @@ export class AuthController {
       }) as { sub: string };
       userIdFromToken = decoded.sub;
     } catch (err) {
-      this.logger.warn('Invalid refresh token presented at /refresh-token endpoint (verification failed). Clearing cookies.');
+      this.logger.warn(
+        'Invalid refresh token presented at /refresh-token endpoint (verification failed). Clearing cookies.',
+      );
       this.clearAuthCookies(response);
       throw new UnauthorizedException('Nieprawidłowy lub wygasły refresh token.');
     }
@@ -167,14 +176,25 @@ export class AuthController {
   async googleAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) response: Response) {
     const user = req.user as ValidatedUser;
     if (!user) {
-      this.logger.error('Google OAuth callback - no user object in request after strategy validation.');
-      response.redirect(`${this.configService.get<string>('FRONTEND_LOGIN_FAILURE_REDIRECT_URL', '/login?error=google_oauth_failed')}`);
+      this.logger.error(
+        'Google OAuth callback - no user object in request after strategy validation.',
+      );
+      response.redirect(
+        `${this.configService.get<string>(
+          'FRONTEND_LOGIN_FAILURE_REDIRECT_URL',
+          '/login?error=google_oauth_failed',
+        )}`,
+      );
       return;
     }
-    this.logger.log(`Google OAuth successful for user: ${user.email} (ID: ${user.id}). Generating tokens and setting cookies.`);
+    this.logger.log(
+      `Google OAuth successful for user: ${user.email} (ID: ${user.id}). Generating tokens and setting cookies.`,
+    );
     const tokens = await this.authService.login(user);
     this.setAuthCookies(response, tokens);
-    response.redirect(this.configService.get<string>('FRONTEND_LOGIN_SUCCESS_REDIRECT_URL', '/dashboard'));
+    response.redirect(
+      this.configService.get<string>('FRONTEND_LOGIN_SUCCESS_REDIRECT_URL', '/dashboard'),
+    );
   }
 
   @Get('twitch')
@@ -188,14 +208,25 @@ export class AuthController {
   async twitchAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) response: Response) {
     const user = req.user as ValidatedUser;
     if (!user) {
-      this.logger.error('Twitch OAuth callback - no user object in request after strategy validation.');
-      response.redirect(`${this.configService.get<string>('FRONTEND_LOGIN_FAILURE_REDIRECT_URL', '/login?error=twitch_oauth_failed')}`);
+      this.logger.error(
+        'Twitch OAuth callback - no user object in request after strategy validation.',
+      );
+      response.redirect(
+        `${this.configService.get<string>(
+          'FRONTEND_LOGIN_FAILURE_REDIRECT_URL',
+          '/login?error=twitch_oauth_failed',
+        )}`,
+      );
       return;
     }
-    this.logger.log(`Twitch OAuth successful for user: ${user.email || `ID ${user.id}`}. Generating tokens and setting cookies.`);
+    this.logger.log(
+      `Twitch OAuth successful for user: ${user.email || `ID ${user.id}`}. Generating tokens and setting cookies.`,
+    );
     const tokens = await this.authService.login(user);
     this.setAuthCookies(response, tokens);
-    response.redirect(this.configService.get<string>('FRONTEND_LOGIN_SUCCESS_REDIRECT_URL', '/dashboard'));
+    response.redirect(
+      this.configService.get<string>('FRONTEND_LOGIN_SUCCESS_REDIRECT_URL', '/dashboard'),
+    );
   }
 
   @Post('siwe/nonce')
@@ -221,7 +252,9 @@ export class AuthController {
     }
     this.logger.log(`SIWE verification attempt for address from request: ${address}`);
     const user = await this.siweVerifier.verifySignatureAndLogin(message, signature, address);
-    this.logger.log(`SIWE Login successful for user ID: ${user.id}. Generating tokens and setting cookies.`);
+    this.logger.log(
+      `SIWE Login successful for user ID: ${user.id}. Generating tokens and setting cookies.`,
+    );
     const tokens = await this.authService.login(user);
     this.setAuthCookies(response, tokens);
     return { message: 'Logowanie SIWE pomyślne.', user, accessToken: tokens.accessToken };
