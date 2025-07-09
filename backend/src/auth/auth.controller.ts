@@ -47,7 +47,10 @@ export class AuthController {
       ...this.commonCookieOptions,
       maxAge:
         parseInt(
-          this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRATION_SECONDS', '900'),
+          this.configService.get<string>(
+            'JWT_ACCESS_TOKEN_EXPIRATION_SECONDS',
+            '900',
+          ),
           10,
         ) * 1000,
     });
@@ -55,7 +58,10 @@ export class AuthController {
       ...this.commonCookieOptions,
       maxAge:
         parseInt(
-          this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRATION_SECONDS', '604800'),
+          this.configService.get<string>(
+            'JWT_REFRESH_TOKEN_EXPIRATION_SECONDS',
+            '604800',
+          ),
           10,
         ) * 1000,
       path: '/api/v1/auth/refresh-token',
@@ -76,15 +82,27 @@ export class AuthController {
     @Body() registerUserDto: RegisterUserDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ message: string; user: Omit<ValidatedUser, 'password'> }> {
-    this.logger.log(`Registration attempt initiated for email: ${registerUserDto.email}`);
-    if (!registerUserDto.email || !registerUserDto.password || !registerUserDto.displayName) {
-      throw new BadRequestException('Email, hasło i nazwa wyświetlana są wymagane do rejestracji.');
+    this.logger.log(
+      `Registration attempt initiated for email: ${registerUserDto.email}`,
+    );
+    if (
+      !registerUserDto.email ||
+      !registerUserDto.password ||
+      
+    ) {
+      throw new BadRequestException(
+        'Email, hasło są wymagane do rejestracji.',
+      );
     }
     const user = await this.authService.registerUser(registerUserDto);
     const tokens = await this.authService.login(user);
     this.setAuthCookies(response, tokens);
     const { ...result } = user;
-    return { message: 'Rejestracja pomyślna. Wysłano email weryfikacyjny (jeśli dotyczy).', user: result };
+    return {
+      message:
+        'Rejestracja pomyślna. Wysłano email weryfikacyjny (jeśli dotyczy).',
+      user: result,
+    };
   }
 
   @Post('login')
@@ -95,10 +113,16 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ message: string; user: ValidatedUser; accessToken: string }> {
     const user = req.user as ValidatedUser;
-    this.logger.log(`Login successful for user: ${user.email} (ID: ${user.id}). Setting auth cookies.`);
+    this.logger.log(
+      `Login successful for user: ${user.email} (ID: ${user.id}). Setting auth cookies.`,
+    );
     const tokens = await this.authService.login(user);
     this.setAuthCookies(response, tokens);
-    return { message: 'Logowanie pomyślne.', user, accessToken: tokens.accessToken };
+    return {
+      message: 'Logowanie pomyślne.',
+      user,
+      accessToken: tokens.accessToken,
+    };
   }
 
   @Get('verify-email/:token')
@@ -107,9 +131,13 @@ export class AuthController {
     @Param('token') token: string,
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ message: string }> {
+    // eslint-disable-next-line prettier/prettier
     this.logger.log(`Email verification attempt with token: ${token.substring(0, 10)}...`);
     await this.authService.verifyEmailToken(token);
-    return { message: 'Adres email został pomyślnie zweryfikowany. Możesz się teraz zalogować.' };
+    return {
+      message:
+        'Adres email został pomyślnie zweryfikowany. Możesz się teraz zalogować.',
+    };
   }
 
   @Post('refresh-token')
@@ -119,9 +147,12 @@ export class AuthController {
     @Body() body: RefreshTokenDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ accessToken: string }> {
-    const incomingRefreshToken = req.cookies?.['refresh_token'] || body.refreshToken;
+    const incomingRefreshToken =
+      req.cookies?.['refresh_token'] || body.refreshToken;
     if (!incomingRefreshToken) {
-      this.logger.warn('Refresh token endpoint called without a refresh token.');
+      this.logger.warn(
+        'Refresh token endpoint called without a refresh token.',
+      );
       throw new UnauthorizedException('Brak refresh tokena.');
     }
 
@@ -136,7 +167,9 @@ export class AuthController {
         'Invalid refresh token presented at /refresh-token endpoint (verification failed). Clearing cookies.',
       );
       this.clearAuthCookies(response);
-      throw new UnauthorizedException('Nieprawidłowy lub wygasły refresh token.');
+      throw new UnauthorizedException(
+        'Nieprawidłowy lub wygasły refresh token.',
+      );
     }
 
     if (!userIdFromToken) {
@@ -193,7 +226,10 @@ export class AuthController {
     const tokens = await this.authService.login(user);
     this.setAuthCookies(response, tokens);
     response.redirect(
-      this.configService.get<string>('FRONTEND_LOGIN_SUCCESS_REDIRECT_URL', '/dashboard'),
+      this.configService.get<string>(
+        'FRONTEND_LOGIN_SUCCESS_REDIRECT_URL',
+        '/dashboard',
+      ),
     );
   }
 
@@ -205,7 +241,10 @@ export class AuthController {
 
   @Get('twitch/callback')
   @UseGuards(AuthGuard('twitch'))
-  async twitchAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) response: Response) {
+  async twitchAuthRedirect(
+    @Req() req: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
     const user = req.user as ValidatedUser;
     if (!user) {
       this.logger.error(
@@ -225,15 +264,22 @@ export class AuthController {
     const tokens = await this.authService.login(user);
     this.setAuthCookies(response, tokens);
     response.redirect(
-      this.configService.get<string>('FRONTEND_LOGIN_SUCCESS_REDIRECT_URL', '/dashboard'),
+      this.configService.get<string>(
+        'FRONTEND_LOGIN_SUCCESS_REDIRECT_URL',
+        '/dashboard',
+      ),
     );
   }
 
   @Post('siwe/nonce')
   @HttpCode(HttpStatus.OK)
-  async getSiweNonce(@Body() body: SiweRequestNonceDto): Promise<{ nonce: string }> {
+  async getSiweNonce(
+    @Body() body: SiweRequestNonceDto,
+  ): Promise<{ nonce: string }> {
     if (!body.address) {
-      throw new BadRequestException('Adres portfela jest wymagany i musi być poprawny.');
+      throw new BadRequestException(
+        'Adres portfela jest wymagany i musi być poprawny.',
+      );
     }
     this.logger.log(`Generating SIWE nonce for address: ${body.address}`);
     const nonce = await this.authService.generateSiweNonce(body.address);
@@ -248,16 +294,28 @@ export class AuthController {
   ): Promise<{ message: string; user: ValidatedUser; accessToken: string }> {
     const { message, signature, address } = siweVerifyDto;
     if (!message || !signature || !address) {
-      throw new BadRequestException('Wiadomość SIWE, podpis i adres portfela są wymagane.');
+      throw new BadRequestException(
+        'Wiadomość SIWE, podpis i adres portfela są wymagane.',
+      );
     }
-    this.logger.log(`SIWE verification attempt for address from request: ${address}`);
-    const user = await this.siweVerifier.verifySignatureAndLogin(message, signature, address);
+    this.logger.log(
+      `SIWE verification attempt for address from request: ${address}`,
+    );
+    const user = await this.siweVerifier.verifySignatureAndLogin(
+      message,
+      signature,
+      address,
+    );
     this.logger.log(
       `SIWE Login successful for user ID: ${user.id}. Generating tokens and setting cookies.`,
     );
     const tokens = await this.authService.login(user);
     this.setAuthCookies(response, tokens);
-    return { message: 'Logowanie SIWE pomyślne.', user, accessToken: tokens.accessToken };
+    return {
+      message: 'Logowanie SIWE pomyślne.',
+      user,
+      accessToken: tokens.accessToken,
+    };
   }
 
   @Get('me')

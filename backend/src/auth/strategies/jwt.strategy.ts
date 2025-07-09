@@ -35,14 +35,17 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     // Sprawdzenie konfiguracji PO wywołaniu super()
     if (!jwtAccessSecret) {
       // Użycie this.logger jest teraz bezpieczne
-      this.logger.error('CRITICAL: JWT_ACCESS_TOKEN_SECRET is not defined in .env file. JWT strategy will not function.');
+      this.logger.error(
+        'CRITICAL: JWT_ACCESS_TOKEN_SECRET is not defined in .env file. JWT strategy will not function.',
+      );
       throw new Error('JWT_ACCESS_TOKEN_SECRET is not defined in .env file.');
     }
   }
 
   async validate(payload: JwtAccessPayload): Promise<ValidatedUser> {
     this.logger.debug(`JwtStrategy: Validating JWT access payload for user ID: ${payload.sub}`);
-    
+    );
+
     if (
         !payload.sub || 
         !payload.role || 

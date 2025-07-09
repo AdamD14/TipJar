@@ -49,7 +49,9 @@ export class CircleService implements OnModuleInit {
     const entitySecret = this.configService.get<string>('CIRCLE_ENTITY_SECRET');
 
     if (!apiKey || !entitySecret) {
-      this.logger.error('CRITICAL: CIRCLE_API_KEY or CIRCLE_ENTITY_SECRET is not defined. CircleService will not function.');
+      this.logger.error(
+        'CRITICAL: CIRCLE_API_KEY or CIRCLE_ENTITY_SECRET is not defined. CircleService will not function.',
+      );
       throw new InternalServerErrorException('Brak konfiguracji kluczy API dla CircleService.');
     }
     try {
@@ -57,24 +59,33 @@ export class CircleService implements OnModuleInit {
         apiKey: apiKey,
         entitySecret: entitySecret,
       });
-      this.logger.log('Circle Developer Controlled Wallets Client initialized successfully.');
+      this.logger.log(
+        'Circle Developer Controlled Wallets Client initialized successfully.',
+      );
     } catch (error) {
-        let message = 'Nie udało się zainicjalizować klienta Circle.';
+      let message = 'Nie udało się zainicjalizować klienta Circle.';
         if (error instanceof Error) {
             message = error.message;
         }
-        this.logger.error('Failed to initialize Circle Client in CircleService:', (error as Error).stack, message);
+      this.logger.error(
+        'Failed to initialize Circle Client in CircleService:',
+        (error as Error).stack,
+        message,
         throw new InternalServerErrorException(message);
     }
   }
-  
-  private handleCircleError(error: unknown, context: string, userId?: string): never {
+
+  private handleCircleError(
+    error: unknown,
+    context: string,
+    userId?: string,
+  ): never {
     let errorMessage = `Unknown error in ${context}`;
     let errorCode: number | string = 'N/A';
     let httpStatus: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
     if (isAxiosError(error)) {
-        errorMessage = error.response?.data?.message ?? error.message;
+      errorMessage = error.response?.data?.message ?? error.message;
         errorCode = error.response?.data?.code ?? 'N/A';
         httpStatus = error.response?.status ?? HttpStatus.INTERNAL_SERVER_ERROR;
     } else if (error instanceof Error) {

@@ -10,9 +10,6 @@ export class RegisterUserDto {
   @MinLength(6, { message: 'Password must be at least 6 characters' })
   password: string;
 
-  @IsString({ message: 'Display name must be a string' })
-  displayName: string;
-
   @IsOptional()
   role?: UserRole; // Dodano pole 'role'
 }

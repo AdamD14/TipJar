@@ -1,5 +1,10 @@
 // src/auth/dto/siwe-request-nonce.dto.ts
-import { IsNotEmpty, IsString, Matches, IsEthereumAddress } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  Matches,
+  IsEthereumAddress,
+} from 'class-validator';
 
 export class SiweRequestNonceDto {
   @IsNotEmpty()

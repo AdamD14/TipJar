@@ -35,7 +35,8 @@ export class TwitchStrategy extends PassportStrategy(Strategy, 'twitch') {
       this.logger.error('TwitchStrategy: Twitch ID not found in profile.');
       return done(new HttpException('Nie udało się uzyskać ID użytkownika z Twitch', HttpStatus.UNAUTHORIZED), false);
     }
-    
+    }
+
     try {
       const user: ValidatedUser = await this.authService.validateOAuthUser(
         'twitch',

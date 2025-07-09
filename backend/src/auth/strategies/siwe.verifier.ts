@@ -1,5 +1,13 @@
 // TipJar/backend/src/auth/strategies/siwe.verifier.ts
-import { Injectable, Logger, UnauthorizedException, BadRequestException, HttpException, HttpStatus, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  UnauthorizedException,
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { AuthService, ValidatedUser } from '../auth.service'; // Zaimportuj ValidatedUser z AuthService
 
 @Injectable()
@@ -21,11 +29,14 @@ export class SiweVerifier {
     signature: string,
     addressFromRequest: string, 
   ): Promise<ValidatedUser> {
-    this.logger.log(`SiweVerifier: Attempting to verify SIWE signature for address from request: ${addressFromRequest}.`);
+    this.logger.log(
+      `SiweVerifier: Attempting to verify SIWE signature for address from request: ${addressFromRequest}.`,
+    );
 
     // Krok 1: Weryfikacja wiadomości SIWE (w tym nonce z Redis i podpisu) przez AuthService
     const recoveredAddress = await this.authService.verifySiweMessage(message, signature, addressFromRequest);
-    
+    );
+
     // Sprawdzenie, czy adres odzyskany z podpisu zgadza się z adresem podanym w żądaniu
     // (AuthService.verifySiweMessage powinien już to robić wewnętrznie)
     if (!recoveredAddress || recoveredAddress.toLowerCase() !== addressFromRequest.toLowerCase()) {
