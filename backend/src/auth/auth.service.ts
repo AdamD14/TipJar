@@ -126,8 +126,10 @@ export class AuthService {
     const createUserData: InternalCreateUserDto = {
       email: registerDto.email.toLowerCase(),
       password: hashedPassword,
-      displayName: registerDto.email.split('@')[0]
-      role: registerDto.role || UserRole.FAN,
+      displayName: registerDto.email.split('@')[0],
+      role: registerDto.role
+    ? UserRole[registerDto.role.toUpperCase() as keyof typeof UserRole]  // "creator" → UserRole.CREATOR
+        : UserRole.FAN,
       isEmailVerified: false,
       isActive: true,
     };

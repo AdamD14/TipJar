@@ -16,7 +16,7 @@ export default function AuthForm() {
     email: "",
     password: "",
     confirmPassword: "",
-    displayName: "", // ← DODANE
+    
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,7 +30,7 @@ export default function AuthForm() {
   };
 
   const validateForm = () => {
-    if (!formData.email || !formData.password || !formData.confirmPassword || !formData.displayName) {
+    if (!formData.email || !formData.password || !formData.confirmPassword ) {
       setError("All fields are required");
       return false;
     }
@@ -68,7 +68,6 @@ export default function AuthForm() {
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
-          displayName: formData.displayName,
           role: tab,
         }),
       });

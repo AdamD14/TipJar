@@ -35,20 +35,30 @@ export class TwitchStrategy extends PassportStrategy(Strategy, 'twitch') {
       this.logger.error('TwitchStrategy: Twitch ID not found in profile.');
       return done(new HttpException('Nie udało się uzyskać ID użytkownika z Twitch', HttpStatus.UNAUTHORIZED), false);
     }
-    }
 
     try {
-      const user: ValidatedUser = await this.authService.validateOAuthUser(
-        'twitch',
-        twitchId,
-        email,
-        displayName,
-        avatarUrl,
+      // Walidacja/tworzenie użytkownika w TipJar na podstawie danych z Twitcha
+      const user = await this.authService.validateOAuthUser(
+        'twitch',        // Provider
+        twitchId,        // ProviderId (ID użytkownika Twitch)
+        email,           // Email
+        displayName,     // Nazwa wyświetlana
+        avatarUrl,       // URL avatara
       );
-      done(null, user);
-    } catch (error) {
-      this.logger.error(`TwitchStrategy: Error during user validation/creation for Twitch ID ${twitchId}: ${error.message}`, error.stack);
-      done(new HttpException('Błąd podczas przetwarzania danych logowania Twitch po stronie serwera.', HttpStatus.INTERNAL_SERVER_ERROR), false);
+      this.logger.log(`TwitchStrategy: User validated/created for Twitch ID: ${twitchId}. User ID: ${user.id}`);
+      return done(null, user); // Zwróć zwalidowanego użytkownika
+    } catch (error: unknown) {
+      if (error instanceof HttpException) {
+        this.logger.error(`TwitchStrategy: Error during user validation/creation for Twitch ID ${twitchId}: ${error.message}`, error.stack);
+        return done(error, false);
+      }
+      // Obsługa innych typów błędów
+      if (error instanceof Error) {
+        this.logger.error(`TwitchStrategy: An unexpected error occurred during user validation/creation for Twitch ID ${twitchId}: ${error.message}`, error.stack);
+      } else {
+        this.logger.error(`TwitchStrategy: An unknown error occurred during user validation/creation for Twitch ID ${twitchId}.`);
+      }
+      return done(new HttpException('Wewnętrzny błąd serwera podczas przetwarzania logowania Twitch.', HttpStatus.INTERNAL_SERVER_ERROR), false);
     }
   }
 }

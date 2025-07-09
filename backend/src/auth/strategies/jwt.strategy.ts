@@ -43,28 +43,27 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: JwtAccessPayload): Promise<ValidatedUser> {
-    this.logger.debug(`JwtStrategy: Validating JWT access payload for user ID: ${payload.sub}`);
-    );
+    this.logger.debug(`JwtStrategy: Validating JWT access payload for user ID: ${payload.sub}`); // Dodano brakujący nawias zamykający
 
     if (
-        !payload.sub || 
-        !payload.role || 
-        !payload.displayName ||
-        typeof payload.isEmailVerified !== 'boolean' ||
-        typeof payload.isActive !== 'boolean'
+      !payload.sub || 
+      !payload.role || 
+      !payload.displayName ||
+      typeof payload.isEmailVerified !== 'boolean' ||
+      typeof payload.isActive !== 'boolean'
     ) {
-        this.logger.warn(`JwtStrategy: Invalid JWT access payload structure for user ID: ${payload.sub}. Missing required fields.`);
-        throw new UnauthorizedException('Nieprawidłowy lub niekompletny token dostępowy.');
+      this.logger.warn(`JwtStrategy: Invalid JWT access payload structure for user ID: ${payload.sub}. Missing required fields.`);
+      throw new UnauthorizedException('Nieprawidłowy lub niekompletny token dostępowy.');
     }
     
     return { 
-        id: payload.sub, 
-        email: payload.email, 
-        role: payload.role,
-        displayName: payload.displayName,
-        isEmailVerified: payload.isEmailVerified, 
-        isActive: payload.isActive,
-        // avatarUrl nie jest w tym payloadzie, więc będzie undefined w ValidatedUser, co jest OK, jeśli jest opcjonalne
+      id: payload.sub, 
+      email: payload.email, 
+      role: payload.role,
+      displayName: payload.displayName,
+      isEmailVerified: payload.isEmailVerified, 
+      isActive: payload.isActive,
+      // avatarUrl nie jest w tym payloadzie, więc będzie undefined w ValidatedUser, co jest OK, jeśli jest opcjonalne
     };
   }
 }

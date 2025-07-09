@@ -3,9 +3,7 @@ import {
   Injectable,
   Logger,
   UnauthorizedException,
-  BadRequestException,
   HttpException,
-  HttpStatus,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { AuthService, ValidatedUser } from '../auth.service'; // Zaimportuj ValidatedUser z AuthService
@@ -34,11 +32,13 @@ export class SiweVerifier {
     );
 
     // Krok 1: Weryfikacja wiadomości SIWE (w tym nonce z Redis i podpisu) przez AuthService
-    const recoveredAddress = await this.authService.verifySiweMessage(message, signature, addressFromRequest);
+    const recoveredAddress = await this.authService.verifySiweMessage(
+      message,
+      signature,
+      addressFromRequest
     );
 
     // Sprawdzenie, czy adres odzyskany z podpisu zgadza się z adresem podanym w żądaniu
-    // (AuthService.verifySiweMessage powinien już to robić wewnętrznie)
     if (!recoveredAddress || recoveredAddress.toLowerCase() !== addressFromRequest.toLowerCase()) {
       this.logger.warn(`SiweVerifier: SIWE signature verification failed, or recovered address does not match request address. Recovered: ${recoveredAddress}, Requested: ${addressFromRequest}`);
       throw new UnauthorizedException('Nieprawidłowy podpis SIWE, niezgodność adresu lub problem z nonce.');
@@ -60,10 +60,18 @@ export class SiweVerifier {
         undefined,          // AvatarUrl (brak na tym etapie)
       );
       return user;
-    } catch (error) {
-      this.logger.error(`SiweVerifier: Error during user validation/creation for SIWE address ${recoveredAddress}: ${error.message}`, error.stack);
-      // Przekaż dalej znane wyjątki lub rzuć generyczny błąd serwera
-      if (error instanceof HttpException) throw error; 
+    } catch (error: unknown) { // Zmieniono typ na 'unknown'
+      // Sprawdzenie, czy błąd jest instancją HttpException
+      if (error instanceof HttpException) {
+        this.logger.error(`SiweVerifier: Error during user validation/creation for SIWE address ${recoveredAddress}: ${error.message}`, error.stack);
+        throw error; 
+      }
+      // Obsługa innych typów błędów
+      if (error instanceof Error) {
+        this.logger.error(`SiweVerifier: An unexpected error occurred during user validation/creation for SIWE address ${recoveredAddress}: ${error.message}`, error.stack);
+      } else {
+        this.logger.error(`SiweVerifier: An unknown error occurred during user validation/creation for SIWE address ${recoveredAddress}.`);
+      }
       throw new InternalServerErrorException('Wewnętrzny błąd serwera podczas przetwarzania logowania SIWE.');
     }
   }

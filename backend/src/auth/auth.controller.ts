@@ -85,19 +85,18 @@ export class AuthController {
     this.logger.log(
       `Registration attempt initiated for email: ${registerUserDto.email}`,
     );
-    if (
-      !registerUserDto.email ||
-      !registerUserDto.password ||
-      
-    ) {
+
+    if (!registerUserDto.email || !registerUserDto.password) {
       throw new BadRequestException(
-        'Email, hasło są wymagane do rejestracji.',
+        'Email i hasło są wymagane do rejestracji.',
       );
     }
+
     const user = await this.authService.registerUser(registerUserDto);
     const tokens = await this.authService.login(user);
     this.setAuthCookies(response, tokens);
     const { ...result } = user;
+
     return {
       message:
         'Rejestracja pomyślna. Wysłano email weryfikacyjny (jeśli dotyczy).',
@@ -179,7 +178,10 @@ export class AuthController {
     }
 
     this.logger.log(`Refresh token request for user ID: ${userIdFromToken}.`);
-    const newTokens = await this.authService.refreshToken(userIdFromToken, incomingRefreshToken);
+    const newTokens = await this.authService.refreshToken(
+      userIdFromToken,
+      incomingRefreshToken,
+    );
     this.setAuthCookies(response, newTokens);
     return { accessToken: newTokens.accessToken };
   }
@@ -206,7 +208,10 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) response: Response) {
+  async googleAuthRedirect(
+    @Req() req: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
     const user = req.user as ValidatedUser;
     if (!user) {
       this.logger.error(

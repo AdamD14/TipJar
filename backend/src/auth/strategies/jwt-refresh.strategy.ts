@@ -53,28 +53,32 @@ export class JwtRefreshStrategy extends PassportStrategy(
     req: Request,
     payload: JwtRefreshPayload,
   ): Promise<ValidatedRefreshUser> {
-    const refreshToken =
-      req.body.refreshToken || req.cookies?.['refresh_token'];
+    const body = req.body as { refreshToken?: string };
+    const cookies = req.cookies as { [key: string]: string };
+    const refreshToken = body.refreshToken || cookies['refresh_token'];
+
     this.logger.debug(
       `JwtRefreshStrategy: Validating refresh token payload for user ID: ${payload.sub}`,
     );
 
     if (!refreshToken) {
-        this.logger.warn('JwtRefreshStrategy: No refresh token found in request.');
-      );
+      this.logger.warn('JwtRefreshStrategy: No refresh token found in request.');
       throw new UnauthorizedException('Brak refresh tokena w żądaniu.');
     }
+
     if (!payload.sub || !payload.role || !payload.displayName) {
-        this.logger.warn(`JwtRefreshStrategy: Invalid refresh token payload structure for user ID: ${payload.sub}.`);
-        throw new UnauthorizedException('Nieprawidłowy format refresh tokena.');
+      this.logger.warn(
+        `JwtRefreshStrategy: Invalid refresh token payload structure for user ID: ${payload.sub}.`,
+      );
+      throw new UnauthorizedException('Nieprawidłowy format refresh tokena.');
     }
-    
-    return { 
-        sub: payload.sub, 
-        email: payload.email, 
-        role: payload.role,
-        displayName: payload.displayName,
-        refreshToken: refreshToken 
+
+    return {
+      sub: payload.sub,
+      email: payload.email,
+      role: payload.role,
+      displayName: payload.displayName,
+      refreshToken: refreshToken,
     };
   }
 }
