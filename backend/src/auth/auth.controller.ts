@@ -81,7 +81,7 @@ export class AuthController {
   async register(
     @Body() registerUserDto: RegisterUserDto,
     @Res({ passthrough: true }) response: Response,
-  ): Promise<{ message: string; user: Omit<ValidatedUser, 'password'> }> {
+  ): Promise<{ user: ValidatedUser; accessToken: string }> {
     this.logger.log(
       `Registration attempt initiated for email: ${registerUserDto.email}`,
     );
@@ -98,9 +98,8 @@ export class AuthController {
     const { ...result } = user;
 
     return {
-      message:
-        'Rejestracja pomyślna. Wysłano email weryfikacyjny (jeśli dotyczy).',
       user: result,
+      accessToken: tokens.accessToken,
     };
   }
 
