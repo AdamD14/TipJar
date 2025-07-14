@@ -1,4 +1,3 @@
-// TipJar/backend/src/auth/auth.service.ts
 import {
   Injectable,
   Logger,
@@ -21,12 +20,11 @@ import {
   UsersService,
   InternalCreateUserDto,
   InternalUpdateUserDto,
-} from '../users/users.service'; // Poprawiono formatowanie importu
+} from '../users/users.service';
 import { CircleService } from '../circle/circle.service';
 
 import { User as UserModelPrisma, UserRole, Prisma } from '@prisma/client';
 
-// Import DTO dla rejestracji
 import { RegisterUserDto } from './dto/register-user.dto';
 
 export interface ValidatedUser {
@@ -111,7 +109,6 @@ export class AuthService {
       `Attempting to register new user with email: ${registerDto.email}`,
     );
 
-    // Sprawdź, czy użytkownik o podanym emailu już istnieje
     const existingUser = await this.usersService.findOneByEmail(
       registerDto.email.toLowerCase(),
     );
@@ -128,7 +125,7 @@ export class AuthService {
       password: hashedPassword,
       displayName: registerDto.email.split('@')[0],
       role: registerDto.role
-    ? UserRole[registerDto.role.toUpperCase() as keyof typeof UserRole]  // "creator" → UserRole.CREATOR
+        ? UserRole[registerDto.role.toUpperCase() as keyof typeof UserRole]
         : UserRole.FAN,
       isEmailVerified: false,
       isActive: true,
@@ -242,7 +239,8 @@ export class AuthService {
     providerId: string,
     email: string | null,
     displayName: string,
-    avatarUrl?: string,
+    avatarUrl: string | undefined,
+    role: UserRole,
   ): Promise<ValidatedUser> {
     this.logger.debug(
       `Validating OAuth/SIWE user. Provider: ${provider}, Provider ID (prefix): ${providerId.substring(0, 10)}...`,
@@ -284,10 +282,10 @@ export class AuthService {
           email: email ? email.toLowerCase() : null,
           displayName: displayName,
           avatarUrl: avatarUrl,
-          role: UserRole.FAN, // Domyślnie FAN dla nowych użytkowników OAuth
+          role: role,
           provider: provider,
           providerId: providerId,
-          isEmailVerified: provider !== 'siwe' && !!email, // Email zweryfikowany, jeśli nie SIWE i email jest obecny
+          isEmailVerified: provider !== 'siwe' && !!email,
           isActive: true,
         };
         userFromDb = await this.usersService.createUser(createUserData);
@@ -360,14 +358,17 @@ export class AuthService {
     return this.generateTokens(validatedUser);
   }
 
-  async generateSiweNonce(address: string): Promise<string> {
+  async generateSiweNonce(address: string, role: UserRole): Promise<string> {
     const nonce = randomUUID();
-    const redisKey = `siwe:nonce:${address.toLowerCase()}`;
-    await this.redisClient.set(redisKey, nonce, {
+    const redisKey = `siwe:data:${address.toLowerCase()}`;
+    const dataToStore = JSON.stringify({ nonce, role });
+
+    await this.redisClient.set(redisKey, dataToStore, {
       EX: this.SIWE_NONCE_TTL_SECONDS,
     });
+
     this.logger.log(
-      `Generated SIWE nonce for address ${address}: ${nonce}. Stored in Redis with key ${redisKey} (TTL: ${this.SIWE_NONCE_TTL_SECONDS}s).`,
+      `Generated SIWE data for address ${address}: ${dataToStore}. Stored in Redis with key ${redisKey} (TTL: ${this.SIWE_NONCE_TTL_SECONDS}s).`,
     );
     return nonce;
   }
@@ -375,38 +376,47 @@ export class AuthService {
   private async verifySiweNonceWithRedis(
     address: string,
     receivedNonce: string,
-  ): Promise<boolean> {
-    const redisKey = `siwe:nonce:${address.toLowerCase()}`;
-    const storedNonce = await this.redisClient.get(redisKey);
+  ): Promise<{ nonceIsValid: boolean; role: UserRole | null }> {
+    const redisKey = `siwe:data:${address.toLowerCase()}`;
+    const storedData = await this.redisClient.get(redisKey);
+
+    if (!storedData) {
+      this.logger.warn(`No SIWE data found in Redis for address ${address}.`);
+      return { nonceIsValid: false, role: null };
+    }
+
+    const { nonce: storedNonce, role } = JSON.parse(storedData);
 
     if (storedNonce === receivedNonce) {
       await this.redisClient.del(redisKey);
       this.logger.log(
-        `SIWE nonce verified and deleted from Redis for address ${address}.`,
+        `SIWE nonce verified for address ${address}. Role retrieved: ${role}. Deleting data from Redis.`,
       );
-      return true;
+      return { nonceIsValid: true, role: role as UserRole };
     }
+
     this.logger.warn(
       `SIWE nonce verification failed for address ${address}. Received: [${receivedNonce}], Stored: [${storedNonce}]`,
     );
-    return false;
+    return { nonceIsValid: false, role: null };
   }
 
   async verifySiweMessage(
     message: string,
     signature: string,
     addressFromRequest: string,
-  ): Promise<string | null> {
+  ): Promise<{ address: string; role: UserRole } | null> {
     this.logger.debug(
       `Verifying SIWE message for address from request: ${addressFromRequest}`,
     );
     try {
       const siweMessage = new SiweMessage(message);
 
-      const nonceIsValid = await this.verifySiweNonceWithRedis(
+      const { nonceIsValid, role } = await this.verifySiweNonceWithRedis(
         siweMessage.address.toLowerCase(),
         siweMessage.nonce,
       );
+
       if (!nonceIsValid) {
         this.logger.warn(
           `SIWE nonce [${siweMessage.nonce}] invalid or expired for address from message [${siweMessage.address}].`,
@@ -454,7 +464,7 @@ export class AuthService {
       this.logger.log(
         `SIWE signature and message verified successfully for address: ${verifiedData.address}`,
       );
-      return verifiedData.address;
+      return { address: verifiedData.address, role: role || UserRole.FAN };
     } catch (error) {
       this.logger.error(
         `SIWE verification process failed: ${error.message}`,
@@ -510,21 +520,21 @@ export class AuthService {
         to: user.email,
         subject: `TipJar - Zweryfikuj swój adres email`,
         html: `
-                <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-                    <h2>Witaj ${user.displayName || user.email}!</h2>
-                    <p>Dziękujemy za korzystanie z TipJar! Aby zweryfikować swój adres email, kliknij poniższy link:</p>
-                    <p style="text-align: center;">
-                        <a href="${verificationUrl}" target="_blank" style="background-color: #FFD700; color: #006D6D; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">
-                            Zweryfikuj Mój Adres Email
-                        </a>
-                    </p>
-                    <p>Jeśli przycisk nie działa, skopiuj i wklej poniższy link do przeglądarki:</p>
-                    <p><a href="${verificationUrl}" target="_blank">${verificationUrl}</a></p>
-                    <p>Link weryfikacyjny jest ważny przez ograniczony czas.</p>
-                    <p>Jeśli nie prosiłeś/aś o weryfikację, zignoruj tę wiadomość.</p>
-                    <hr>
-                    <p>Pozdrawiamy serdecznie,<br>Zespół TipJar</p>
-                </div>`,
+                      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                          <h2>Witaj ${user.displayName || user.email}!</h2>
+                          <p>Dziękujemy za korzystanie z TipJar! Aby zweryfikować swój adres email, kliknij poniższy link:</p>
+                          <p style="text-align: center;">
+                              <a href="${verificationUrl}" target="_blank" style="background-color: #FFD700; color: #006D6D; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                                  Zweryfikuj Mój Adres Email
+                              </a>
+                          </p>
+                          <p>Jeśli przycisk nie działa, skopiuj i wklej poniższy link do przeglądarki:</p>
+                          <p><a href="${verificationUrl}" target="_blank">${verificationUrl}</a></p>
+                          <p>Link weryfikacyjny jest ważny przez ograniczony czas.</p>
+                          <p>Jeśli nie prosiłeś/aś o weryfikację, zignoruj tę wiadomość.</p>
+                          <hr>
+                          <p>Pozdrawiamy serdecznie,<br>Zespół TipJar</p>
+                      </div>`,
       });
       this.logger.log(
         `Verification email successfully sent to ${user.email} (User ID: ${user.id}).`,
@@ -584,4 +594,3 @@ export class AuthService {
     this.logger.log(`Stored refresh token cleared for user ID: ${userId}.`);
   }
 }
-// End of src/auth/auth.service.ts

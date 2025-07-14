@@ -12,19 +12,21 @@ import {
   UnauthorizedException,
   BadRequestException,
   Logger,
+  Query, // <<< Upewniamy się, że ten import jest obecny
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService, AuthTokens, ValidatedUser } from './auth.service';
-import { Request, Response, CookieOptions } from 'express'; // Typy dla Express
+import { Request, Response, CookieOptions } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { SiweVerifier } from './strategies/siwe.verifier'; // Nasz SiweVerifier
+// Usunięto SiweVerifier, ponieważ logikę przenosimy bezpośrednio do kontrolera dla jasności
 import { RegisterUserDto } from './dto/register-user.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { SiweRequestNonceDto } from './dto/siwe-request-nonce.dto';
 import { SiweVerifySignatureDto } from './dto/siwe-verify-signature.dto';
+import { UserRole } from '@prisma/client';
 
-@Controller('auth') // Globalny prefix /api/v1/auth (zdefiniowany w main.ts)
+@Controller('auth')
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
   private commonCookieOptions: CookieOptions;
@@ -33,7 +35,6 @@ export class AuthController {
     private authService: AuthService,
     private configService: ConfigService,
     private jwtService: JwtService,
-    private siweVerifier: SiweVerifier,
   ) {
     this.commonCookieOptions = {
       httpOnly: true,
@@ -85,13 +86,6 @@ export class AuthController {
     this.logger.log(
       `Registration attempt initiated for email: ${registerUserDto.email}`,
     );
-
-    if (!registerUserDto.email || !registerUserDto.password) {
-      throw new BadRequestException(
-        'Email i hasło są wymagane do rejestracji.',
-      );
-    }
-
     const user = await this.authService.registerUser(registerUserDto);
     const tokens = await this.authService.login(user);
     this.setAuthCookies(response, tokens);
@@ -123,13 +117,154 @@ export class AuthController {
     };
   }
 
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth(@Req() req: Request) { // Zmieniono: Usunięto @Query, ponieważ strategia musi to obsłużyć
+    this.logger.log(`Initiating Google OAuth flow.`);
+    // Logika przechwytywania roli zostanie przeniesiona do strategii
+  }
+
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthRedirect(
+    @Req() req: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const user = req.user as ValidatedUser;
+    if (!user) {
+      this.logger.error(
+        'Google OAuth callback - no user object in request after strategy validation.',
+      );
+      response.redirect(
+        `${this.configService.get<string>(
+          'FRONTEND_URL',
+          'http://localhost:3000',
+        )}/register?error=google_oauth_failed`,
+      );
+      return;
+    }
+    this.logger.log(
+      `Google OAuth successful for user: ${user.email} (ID: ${user.id}). Generating tokens.`,
+    );
+    const tokens = await this.authService.login(user);
+    this.setAuthCookies(response, tokens);
+    response.redirect(
+      `${this.configService.get<string>(
+        'FRONTEND_URL',
+        'http://localhost:3000',
+      )}/choose-username`,
+    );
+  }
+
+  @Get('twitch')
+  @UseGuards(AuthGuard('twitch'))
+  async twitchAuth(@Req() req: Request) { // Zmieniono: Usunięto @Query
+    this.logger.log(`Initiating Twitch OAuth flow.`);
+  }
+
+  @Get('twitch/callback')
+  @UseGuards(AuthGuard('twitch'))
+  async twitchAuthRedirect(
+    @Req() req: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const user = req.user as ValidatedUser;
+    if (!user) {
+      this.logger.error(
+        'Twitch OAuth callback - no user object in request after strategy validation.',
+      );
+      response.redirect(
+        `${this.configService.get<string>(
+          'FRONTEND_URL',
+          'http://localhost:3000',
+        )}/register?error=twitch_oauth_failed`,
+      );
+      return;
+    }
+    this.logger.log(
+      `Twitch OAuth successful for user: ${user.email || `ID ${user.id}`}. Generating tokens.`,
+    );
+    const tokens = await this.authService.login(user);
+    this.setAuthCookies(response, tokens);
+    response.redirect(
+      `${this.configService.get<string>(
+        'FRONTEND_URL',
+        'http://localhost:3000',
+      )}/choose-username`,
+    );
+  }
+
+  @Post('siwe/nonce')
+  @HttpCode(HttpStatus.OK)
+  async getSiweNonce(
+    @Body() body: SiweRequestNonceDto,
+  ): Promise<{ nonce: string }> {
+    this.logger.log(
+      `Generating SIWE nonce for address: ${body.address} with role: ${body.role || 'FAN'}`,
+    );
+    const nonce = await this.authService.generateSiweNonce(
+      body.address,
+      body.role || UserRole.FAN,
+    );
+    return { nonce };
+  }
+
+  @Post('siwe/verify')
+  @HttpCode(HttpStatus.OK)
+  async verifySiweSignature(
+    @Body() siweVerifyDto: SiweVerifySignatureDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<{ message: string; user: ValidatedUser; accessToken: string }> {
+    const { message, signature, address } = siweVerifyDto;
+    
+    const verifiedData = await this.authService.verifySiweMessage(
+      message,
+      signature,
+      address,
+    );
+    
+    if (!verifiedData) {
+        throw new BadRequestException('SIWE signature verification failed.');
+    }
+
+    const user = await this.authService.validateOAuthUser(
+        'siwe',
+        verifiedData.address,
+        null,
+        verifiedData.address.slice(0, 6),
+        undefined,
+        verifiedData.role,
+    );
+
+    this.logger.log(
+      `SIWE Login successful for user ID: ${user.id}. Generating tokens and setting cookies.`,
+    );
+    
+    const tokens = await this.authService.login(user);
+    this.setAuthCookies(response, tokens);
+    
+    return {
+      message: 'Logowanie SIWE pomyślne.',
+      user,
+      accessToken: tokens.accessToken,
+    };
+  }
+
+  @Get('me')
+  @UseGuards(AuthGuard('jwt'))
+  getProfile(@Req() req: Request): ValidatedUser {
+    const user = req.user as ValidatedUser;
+    this.logger.log(`Fetching profile for authenticated user ID: ${user.id}`);
+    return user;
+  }
+
+  // Metody `refreshToken`, `logout`, `verifyEmail` pozostają bez zmian
   @Get('verify-email/:token')
   @HttpCode(HttpStatus.OK)
   async verifyEmail(
     @Param('token') token: string,
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ message: string }> {
-    // eslint-disable-next-line prettier/prettier
     this.logger.log(`Email verification attempt with token: ${token.substring(0, 10)}...`);
     await this.authService.verifyEmailToken(token);
     return {
@@ -137,7 +272,7 @@ export class AuthController {
         'Adres email został pomyślnie zweryfikowany. Możesz się teraz zalogować.',
     };
   }
-
+  
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
   async refreshToken(
@@ -197,136 +332,5 @@ export class AuthController {
     await this.authService.logout(user.id);
     this.clearAuthCookies(response);
     return { message: 'Wylogowano pomyślnie.' };
-  }
-
-  @Get('google')
-  @UseGuards(AuthGuard('google'))
-  async googleAuth(@Req() req: Request) {
-    this.logger.log('Initiating Google OAuth flow.');
-  }
-
-  @Get('google/callback')
-  @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(
-    @Req() req: Request,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    const user = req.user as ValidatedUser;
-    if (!user) {
-      this.logger.error(
-        'Google OAuth callback - no user object in request after strategy validation.',
-      );
-      response.redirect(
-        `${this.configService.get<string>(
-          'FRONTEND_LOGIN_FAILURE_REDIRECT_URL',
-          '/login?error=google_oauth_failed',
-        )}`,
-      );
-      return;
-    }
-    this.logger.log(
-      `Google OAuth successful for user: ${user.email} (ID: ${user.id}). Generating tokens and setting cookies.`,
-    );
-    const tokens = await this.authService.login(user);
-    this.setAuthCookies(response, tokens);
-    response.redirect(
-      this.configService.get<string>(
-        'FRONTEND_LOGIN_SUCCESS_REDIRECT_URL',
-        '/dashboard',
-      ),
-    );
-  }
-
-  @Get('twitch')
-  @UseGuards(AuthGuard('twitch'))
-  async twitchAuth(@Req() req: Request) {
-    this.logger.log('Initiating Twitch OAuth flow.');
-  }
-
-  @Get('twitch/callback')
-  @UseGuards(AuthGuard('twitch'))
-  async twitchAuthRedirect(
-    @Req() req: Request,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    const user = req.user as ValidatedUser;
-    if (!user) {
-      this.logger.error(
-        'Twitch OAuth callback - no user object in request after strategy validation.',
-      );
-      response.redirect(
-        `${this.configService.get<string>(
-          'FRONTEND_LOGIN_FAILURE_REDIRECT_URL',
-          '/login?error=twitch_oauth_failed',
-        )}`,
-      );
-      return;
-    }
-    this.logger.log(
-      `Twitch OAuth successful for user: ${user.email || `ID ${user.id}`}. Generating tokens and setting cookies.`,
-    );
-    const tokens = await this.authService.login(user);
-    this.setAuthCookies(response, tokens);
-    response.redirect(
-      this.configService.get<string>(
-        'FRONTEND_LOGIN_SUCCESS_REDIRECT_URL',
-        '/dashboard',
-      ),
-    );
-  }
-
-  @Post('siwe/nonce')
-  @HttpCode(HttpStatus.OK)
-  async getSiweNonce(
-    @Body() body: SiweRequestNonceDto,
-  ): Promise<{ nonce: string }> {
-    if (!body.address) {
-      throw new BadRequestException(
-        'Adres portfela jest wymagany i musi być poprawny.',
-      );
-    }
-    this.logger.log(`Generating SIWE nonce for address: ${body.address}`);
-    const nonce = await this.authService.generateSiweNonce(body.address);
-    return { nonce };
-  }
-
-  @Post('siwe/verify')
-  @HttpCode(HttpStatus.OK)
-  async verifySiweSignature(
-    @Body() siweVerifyDto: SiweVerifySignatureDto,
-    @Res({ passthrough: true }) response: Response,
-  ): Promise<{ message: string; user: ValidatedUser; accessToken: string }> {
-    const { message, signature, address } = siweVerifyDto;
-    if (!message || !signature || !address) {
-      throw new BadRequestException(
-        'Wiadomość SIWE, podpis i adres portfela są wymagane.',
-      );
-    }
-    this.logger.log(
-      `SIWE verification attempt for address from request: ${address}`,
-    );
-    const user = await this.siweVerifier.verifySignatureAndLogin(
-      message,
-      signature,
-      address,
-    );
-    this.logger.log(
-      `SIWE Login successful for user ID: ${user.id}. Generating tokens and setting cookies.`,
-    );
-    const tokens = await this.authService.login(user);
-    this.setAuthCookies(response, tokens);
-    return {
-      message: 'Logowanie SIWE pomyślne.',
-      user,
-      accessToken: tokens.accessToken,
-    };
-  }
-
-  @Get('me')
-  @UseGuards(AuthGuard('jwt'))
-  getProfile(@Req() req: Request): ValidatedUser {
-    const user = req.user as ValidatedUser;
-    this.logger.log(`Fetching profile for authenticated user ID: ${user.id}`);
-    return user;
   }
 }
