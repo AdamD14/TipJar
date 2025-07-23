@@ -5,12 +5,10 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Mail, Lock, Wallet } from "lucide-react";
-import { SiweMessage } from "siwe";
-import { useConnect, useSignMessage } from "wagmi";
-import { injected } from "wagmi/connectors";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import apiClient from "@/lib/apiClient";
 import { registerSchema, RegisterFormValues } from "@/lib/schemas/authSchema";
+import axios from 'axios';
 
 // import { useAuthStore } from "@/lib/stores/authStore"; 
 
@@ -22,9 +20,6 @@ export default function AuthForm() {
   const [apiError, setApiError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const { connectAsync } = useConnect();
-  const { signMessageAsync } = useSignMessage();
 
   const methods = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -42,8 +37,16 @@ export default function AuthForm() {
       });
       setMessage("Registration successful! Please check your email to verify your account.");
       methods.reset();
-    } catch (err: any) {
-      setApiError(err.response?.data?.message || "An unexpected error occurred during registration.");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err) && err.response) {
+        if (err.response.status === 409) {
+          router.push('/login');
+        } else {
+          setApiError(err.response.data?.message || "An unexpected error occurred.");
+        }
+      } else {
+        setApiError("An unexpected error occurred during registration.");
+      }
     } finally {
       setLoading(false);
     }
@@ -51,55 +54,8 @@ export default function AuthForm() {
 
   const handleSocialLogin = (provider: "google" | "twitch") => {
     setLoading(true);
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+    const backendUrl = (process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:3001/api/v1').replace('/api/v1', '');
     window.location.href = `${backendUrl}/api/v1/auth/${provider}?role=${tab}`;
-  };
-
-  const handleSiweRegister = async () => {
-    setLoading(true);
-    setApiError("");
-    setMessage("");
-    try {
-      const { address, chainId } = await connectAsync({ connector: injected() });
-      if (!address) {
-        throw new Error("Wallet connection was cancelled or failed. Please try again.");
-      }
-
-      const nonceRes = await apiClient.post(`/auth/siwe/nonce`, { address, role: tab });
-      const { nonce } = nonceRes.data;
-
-      const message = new SiweMessage({
-        domain: window.location.host,
-        address,
-        statement: "Sign in with Ethereum to TipJar+.",
-        uri: window.location.origin,
-        version: "1",
-        chainId,
-        nonce,
-      });
-
-      const messageToSign = message.prepareMessage();
-      const signature = await signMessageAsync({ message: messageToSign });
-
-      const verifyRes = await apiClient.post('/auth/siwe/login', {
-        message: messageToSign,
-        signature,
-        address,
-        chainId,
-        nonce,
-      });
-
-      const { user, accessToken } = verifyRes.data;
-      // useAuthStore.getState().login(user, accessToken);
-      console.log("Login successful, token:", accessToken);
-
-      router.push("/choose-username");
-
-    } catch (err: any) {
-      setApiError(err.response?.data?.message || err.message || "Web3 registration failed.");
-    } finally {
-      setLoading(false);
-    }
   };
 
   const showInfoMessage = (infoType: string) => {
@@ -138,7 +94,7 @@ export default function AuthForm() {
           Register as a Creator
         </button>
       </div>
-
+      
       <FormProvider {...methods}>
         <form className="space-y-2" onSubmit={methods.handleSubmit(onEmailSubmit)}>
           <div>
@@ -203,9 +159,6 @@ export default function AuthForm() {
             {methods.formState.errors.confirmPassword && <p className="text-red-400 text-xs mt-1 ml-1">{methods.formState.errors.confirmPassword.message}</p>}
           </div>
 
-          {apiError && <div className="text-red-400 text-sm text-center bg-red-900/30 border border-red-500/50 rounded-lg p-3">{apiError}</div>}
-          {message && <div className="text-green-400 text-sm text-center bg-green-900/30 border border-green-500/50 rounded-lg p-3">{message}</div>}
-
           <button
             type="submit"
             disabled={loading}
@@ -218,6 +171,9 @@ export default function AuthForm() {
               </span>
             ) : "Register"}
           </button>
+          
+          {apiError && <div className="text-red-400 text-sm text-center bg-red-900/30 border border-red-500/50 rounded-lg p-3 mt-2">{apiError}</div>}
+          {message && <div className="text-green-400 text-sm text-center bg-green-900/30 border border-green-500/50 rounded-lg p-3 mt-2">{message}</div>}
         </form>
       </FormProvider>
 
@@ -234,7 +190,7 @@ export default function AuthForm() {
           disabled={loading}
           className="flex items-center justify-center gap-3 bg-white/20 hover:bg-white/30 transition-all text-white font-semibold rounded-lg py-3 text-sm border border-white/10 hover:border-white/20 disabled:opacity-60"
         >
-          <Image src="/assets/google-original-logo.svg" alt="Google logo" width={20} height={20} />
+          <Image src="/assets/google-original-logo.svg" alt="Google logo" width={20} height={20} className="w-5 h-5" />
           Continue with Google
         </button>
         <button
@@ -243,16 +199,8 @@ export default function AuthForm() {
           disabled={loading}
           className="flex items-center justify-center gap-3 bg-purple-600/70 hover:bg-purple-600/90 transition-all text-white font-semibold rounded-lg py-3 text-sm border border-purple-500/30 hover:border-purple-400/50 disabled:opacity-60"
         >
-          <Image src="/assets/twitch-logo.svg" alt="Twitch logo" width={20} height={20} />
+          <Image src="/assets/twitch-logo.svg" alt="Twitch logo" width={20} height={20} className="w-5 h-5" />
           Continue with Twitch
-        </button>
-        <button
-          type="button"
-          onClick={handleSiweRegister}
-          disabled={loading}
-          className="flex items-center justify-center gap-3 bg-black/40 hover:bg-black/60 transition-all text-white font-semibold rounded-lg py-3 text-sm border border-white/10 hover:border-white/20 disabled:opacity-60"
-        >
-          <Wallet className="w-5 h-5" /> Sign up with Wallet (Web3)
         </button>
       </div>
       <div className="text-center text-xs mt-4 text-white/50">

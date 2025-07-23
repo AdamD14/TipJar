@@ -12,9 +12,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
-import { SiweMessage } from 'siwe';
 import { MailerService } from '@nestjs-modules/mailer';
-import type { RedisClientType } from 'redis';
 
 import {
   UsersService,
@@ -45,7 +43,6 @@ export interface AuthTokens {
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
-  private readonly SIWE_NONCE_TTL_SECONDS = 300; // 5 minut
 
   constructor(
     @Inject(forwardRef(() => UsersService))
@@ -55,7 +52,6 @@ export class AuthService {
     @Inject(forwardRef(() => CircleService))
     private circleService: CircleService,
     private mailerService: MailerService,
-    @Inject('REDIS_CLIENT') private redisClient: RedisClientType,
   ) {}
 
   private toValidatedUser(user: UserModelPrisma): ValidatedUser {
@@ -109,9 +105,8 @@ export class AuthService {
       `Attempting to register new user with email: ${registerDto.email}`,
     );
 
-    const existingUser = await this.usersService.findOneByEmail(
-      registerDto.email.toLowerCase(),
-    );
+    const existingUser: UserModelPrisma | null =
+      await this.usersService.findOneByEmail(registerDto.email.toLowerCase());
     if (existingUser) {
       throw new ConflictException(
         'Użytkownik o tym adresie email już istnieje.',
@@ -132,7 +127,8 @@ export class AuthService {
     };
 
     try {
-      const newUserFromDb = await this.usersService.createUser(createUserData);
+      const newUserFromDb: UserModelPrisma =
+        await this.usersService.createUser(createUserData);
       this.logger.log(
         `User ${newUserFromDb.email} (ID: ${newUserFromDb.id}) registered successfully. Initiating post-registration actions.`,
       );
@@ -148,7 +144,7 @@ export class AuthService {
             `Circle Wallet provisioning successfully initiated for user ID ${newUserFromDb.id}`,
           ),
         )
-        .catch((circleError) =>
+        .catch((circleError: Error) =>
           this.logger.error(
             `Failed to initiate Circle Wallet provisioning for user ${newUserFromDb.id}: ${circleError.message}`,
             circleError.stack,
@@ -162,7 +158,7 @@ export class AuthService {
               `Verification email dispatch initiated for ${newUserFromDb.email}`,
             ),
           )
-          .catch((emailError) =>
+          .catch((emailError: Error) =>
             this.logger.error(
               `Failed to dispatch verification email to ${newUserFromDb.email}: ${emailError.message}`,
               emailError.stack,
@@ -171,27 +167,23 @@ export class AuthService {
       }
 
       return this.toValidatedUser(newUserFromDb);
-    } catch (error) {
+    } catch (error: unknown) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2002'
       ) {
-        this.logger.warn(
-          `Registration failed: Email ${registerDto.email} already exists (Prisma unique constraint).`,
-        );
         throw new ConflictException(
           'Użytkownik o tym adresie email już istnieje.',
         );
       }
       if (error instanceof ConflictException) {
-        this.logger.warn(
-          `Registration failed: Email ${registerDto.email} already exists (handled by custom exception).`,
-        );
         throw error;
       }
       this.logger.error(
-        `Critical error during registration for email ${registerDto.email}: ${error.message}`,
-        error.stack,
+        `Critical error during registration for email ${registerDto.email}: ${
+          (error as Error).message
+        }`,
+        (error as Error).stack,
       );
       throw new InternalServerErrorException(
         'Rejestracja nie powiodła się z powodu wewnętrznego błędu serwera.',
@@ -200,13 +192,10 @@ export class AuthService {
   }
 
   async login(user: ValidatedUser): Promise<AuthTokens> {
-    if (user.email && !user.isEmailVerified) {
-      this.logger.warn(
-        `Login attempt for unverified email: ${user.email}. User ID: ${user.id}`,
-      );
-    }
     this.logger.log(
-      `Login successful for user: ${user.email || `ID ${user.id}`}. Generating tokens.`,
+      `Login successful for user: ${
+        user.email || `ID ${user.id}`
+      }. Generating tokens.`,
     );
     return this.generateTokens(user);
   }
@@ -216,9 +205,8 @@ export class AuthService {
     pass: string,
   ): Promise<ValidatedUser | null> {
     this.logger.debug(`Validating user by password for email: ${email}`);
-    const userFromDb = await this.usersService.findOneByEmail(
-      email.toLowerCase(),
-    );
+    const userFromDb: UserModelPrisma | null =
+      await this.usersService.findOneByEmail(email.toLowerCase());
 
     if (
       userFromDb &&
@@ -235,7 +223,7 @@ export class AuthService {
   }
 
   async validateOAuthUser(
-    provider: 'google' | 'twitch' | 'siwe',
+    provider: 'google' | 'twitch', // Usunięto 'siwe'
     providerId: string,
     email: string | null,
     displayName: string,
@@ -243,7 +231,10 @@ export class AuthService {
     role: UserRole,
   ): Promise<ValidatedUser> {
     this.logger.debug(
-      `Validating OAuth/SIWE user. Provider: ${provider}, Provider ID (prefix): ${providerId.substring(0, 10)}...`,
+      `Validating OAuth user. Provider: ${provider}, Provider ID (prefix): ${providerId.substring(
+        0,
+        10,
+      )}...`,
     );
 
     const socialConnection = await this.usersService.findSocialConnection(
@@ -254,7 +245,12 @@ export class AuthService {
 
     if (socialConnection) {
       this.logger.log(
-        `Found existing user (ID: ${socialConnection.user.id}) via social connection [${provider}: ${providerId.substring(0, 10)}...].`,
+        `Found existing user (ID: ${
+          socialConnection.user.id
+        }) via social connection [${provider}: ${providerId.substring(
+          0,
+          10,
+        )}...].`,
       );
       userFromDb = socialConnection.user;
     } else {
@@ -285,7 +281,7 @@ export class AuthService {
           role: role,
           provider: provider,
           providerId: providerId,
-          isEmailVerified: provider !== 'siwe' && !!email,
+          isEmailVerified: !!email, // Uproszczona logika bez SIWE
           isActive: true,
         };
         userFromDb = await this.usersService.createUser(createUserData);
@@ -297,30 +293,15 @@ export class AuthService {
           .provisionUserWallet(userFromDb.id, userFromDb.email, userFromDb.role)
           .then(() =>
             this.logger.log(
-              `Circle Wallet provisioning successfully initiated for new OAuth/SIWE user ID ${userFromDb.id}`,
+              `Circle Wallet provisioning successfully initiated for new OAuth user ID ${userFromDb.id}`,
             ),
           )
-          .catch((circleError) =>
+          .catch((circleError: Error) =>
             this.logger.error(
-              `Failed to initiate Circle Wallet provisioning for new OAuth/SIWE user ${userFromDb.id}: ${circleError.message}`,
+              `Failed to initiate Circle Wallet provisioning for new OAuth user ${userFromDb.id}: ${circleError.message}`,
               circleError.stack,
             ),
           );
-
-        if (userFromDb.email && !userFromDb.isEmailVerified) {
-          this.sendVerificationEmail(userFromDb)
-            .then(() =>
-              this.logger.log(
-                `Verification email dispatch initiated for new OAuth/SIWE user ${userFromDb.email} as it was not auto-verified.`,
-              ),
-            )
-            .catch((emailError) =>
-              this.logger.error(
-                `Failed to dispatch verification email to new OAuth/SIWE user ${userFromDb.email}: ${emailError.message}`,
-                emailError.stack,
-              ),
-            );
-        }
       }
     }
     return this.toValidatedUser(userFromDb);
@@ -331,12 +312,10 @@ export class AuthService {
     currentRefreshToken: string,
   ): Promise<AuthTokens> {
     this.logger.debug(`Attempting to refresh tokens for user ID: ${userId}`);
-    const userFromDb = await this.usersService.findOneById(userId);
+    const userFromDb: UserModelPrisma | null =
+      await this.usersService.findOneById(userId);
 
     if (!userFromDb || !userFromDb.currentHashedRefreshToken) {
-      this.logger.warn(
-        `Refresh token validation failed: User ${userId} not found or has no stored refresh token.`,
-      );
       throw new UnauthorizedException('Dostęp zabroniony.');
     }
 
@@ -345,140 +324,11 @@ export class AuthService {
       userFromDb.currentHashedRefreshToken,
     );
     if (!isRefreshTokenMatching) {
-      this.logger.warn(
-        `Refresh token validation failed: Provided token does not match stored hash for user ${userId}.`,
-      );
       throw new UnauthorizedException('Dostęp zabroniony.');
     }
 
     const validatedUser = this.toValidatedUser(userFromDb);
-    this.logger.log(
-      `Refresh token validated for user ${userId}. Generating new access and refresh tokens.`,
-    );
     return this.generateTokens(validatedUser);
-  }
-
-  async generateSiweNonce(address: string, role: UserRole): Promise<string> {
-    const nonce = randomUUID();
-    const redisKey = `siwe:data:${address.toLowerCase()}`;
-    const dataToStore = JSON.stringify({ nonce, role });
-
-    await this.redisClient.set(redisKey, dataToStore, {
-      EX: this.SIWE_NONCE_TTL_SECONDS,
-    });
-
-    this.logger.log(
-      `Generated SIWE data for address ${address}: ${dataToStore}. Stored in Redis with key ${redisKey} (TTL: ${this.SIWE_NONCE_TTL_SECONDS}s).`,
-    );
-    return nonce;
-  }
-
-  private async verifySiweNonceWithRedis(
-    address: string,
-    receivedNonce: string,
-  ): Promise<{ nonceIsValid: boolean; role: UserRole | null }> {
-    const redisKey = `siwe:data:${address.toLowerCase()}`;
-    const storedData = await this.redisClient.get(redisKey);
-
-    if (!storedData) {
-      this.logger.warn(`No SIWE data found in Redis for address ${address}.`);
-      return { nonceIsValid: false, role: null };
-    }
-
-    const { nonce: storedNonce, role } = JSON.parse(storedData);
-
-    if (storedNonce === receivedNonce) {
-      await this.redisClient.del(redisKey);
-      this.logger.log(
-        `SIWE nonce verified for address ${address}. Role retrieved: ${role}. Deleting data from Redis.`,
-      );
-      return { nonceIsValid: true, role: role as UserRole };
-    }
-
-    this.logger.warn(
-      `SIWE nonce verification failed for address ${address}. Received: [${receivedNonce}], Stored: [${storedNonce}]`,
-    );
-    return { nonceIsValid: false, role: null };
-  }
-
-  async verifySiweMessage(
-    message: string,
-    signature: string,
-    addressFromRequest: string,
-  ): Promise<{ address: string; role: UserRole } | null> {
-    this.logger.debug(
-      `Verifying SIWE message for address from request: ${addressFromRequest}`,
-    );
-    try {
-      const siweMessage = new SiweMessage(message);
-
-      const { nonceIsValid, role } = await this.verifySiweNonceWithRedis(
-        siweMessage.address.toLowerCase(),
-        siweMessage.nonce,
-      );
-
-      if (!nonceIsValid) {
-        this.logger.warn(
-          `SIWE nonce [${siweMessage.nonce}] invalid or expired for address from message [${siweMessage.address}].`,
-        );
-        throw new BadRequestException('Nieprawidłowy lub wygasły nonce SIWE.');
-      }
-
-      const expectedDomain = this.configService.get<string>(
-        'FRONTEND_URL_DOMAIN_FOR_SIWE',
-      );
-      const expectedOrigin = this.configService.get<string>('FRONTEND_URL');
-
-      if (expectedDomain && siweMessage.domain !== expectedDomain) {
-        this.logger.error(
-          `SIWE domain mismatch. Expected: [${expectedDomain}], Got: [${siweMessage.domain}]`,
-        );
-        throw new BadRequestException('Niezgodność domeny w wiadomości SIWE.');
-      }
-      if (
-        siweMessage.uri &&
-        expectedOrigin &&
-        siweMessage.uri !== expectedOrigin
-      ) {
-        this.logger.error(
-          `SIWE URI mismatch. Expected: [${expectedOrigin}], Got: [${siweMessage.uri}]`,
-        );
-        throw new BadRequestException('Niezgodność URI w wiadomości SIWE.');
-      }
-
-      const { data: verifiedData } = await siweMessage.verify({
-        signature,
-      });
-
-      if (
-        verifiedData.address.toLowerCase() !== addressFromRequest.toLowerCase()
-      ) {
-        this.logger.error(
-          `SIWE message address [${verifiedData.address}] does not match address from request [${addressFromRequest}]. Potential tampering.`,
-        );
-        throw new BadRequestException(
-          'Adres w wiadomości SIWE nie zgadza się z adresem żądania.',
-        );
-      }
-
-      this.logger.log(
-        `SIWE signature and message verified successfully for address: ${verifiedData.address}`,
-      );
-      return { address: verifiedData.address, role: role || UserRole.FAN };
-    } catch (error) {
-      this.logger.error(
-        `SIWE verification process failed: ${error.message}`,
-        error.stack,
-      );
-      if (
-        error instanceof BadRequestException ||
-        error instanceof UnauthorizedException
-      )
-        throw error;
-      throw new BadRequestException(
-        `Weryfikacja wiadomości SIWE nie powiodła się: ${error.message}`,
-      );
-    }
   }
 
   async sendVerificationEmail(user: UserModelPrisma): Promise<void> {
@@ -488,10 +338,7 @@ export class AuthService {
       );
       return;
     }
-    if (
-      user.isEmailVerified &&
-      !process.env.ALLOW_RESEND_VERIFICATION_FOR_VERIFIED
-    ) {
+    if (user.isEmailVerified) {
       this.logger.log(
         `Email ${user.email} is already verified for user ID ${user.id}. Skipping verification email.`,
       );
@@ -501,19 +348,13 @@ export class AuthService {
     const verificationToken = randomUUID();
     const updateDto: InternalUpdateUserDto = {
       emailVerificationToken: verificationToken,
+      isEmailVerified: false,
     };
-    if (!user.isEmailVerified) {
-      updateDto.isEmailVerified = false;
-    }
 
     await this.usersService.updateUser(user.id, updateDto);
 
     const frontendUrl = this.configService.get<string>('FRONTEND_URL');
     const verificationUrl = `${frontendUrl}/auth/verify-email?token=${verificationToken}`;
-
-    this.logger.log(
-      `Preparing to send verification email to ${user.email} for user ID ${user.id}. URL: ${verificationUrl}`,
-    );
 
     try {
       await this.mailerService.sendMail({
@@ -530,42 +371,37 @@ export class AuthService {
                           </p>
                           <p>Jeśli przycisk nie działa, skopiuj i wklej poniższy link do przeglądarki:</p>
                           <p><a href="${verificationUrl}" target="_blank">${verificationUrl}</a></p>
-                          <p>Link weryfikacyjny jest ważny przez ograniczony czas.</p>
-                          <p>Jeśli nie prosiłeś/aś o weryfikację, zignoruj tę wiadomość.</p>
-                          <hr>
-                          <p>Pozdrawiamy serdecznie,<br>Zespół TipJar</p>
                       </div>`,
       });
       this.logger.log(
         `Verification email successfully sent to ${user.email} (User ID: ${user.id}).`,
       );
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error(
-        `Failed to send verification email to ${user.email} (User ID: ${user.id}): ${error.message}`,
-        error.stack,
+        `Failed to send verification email to ${user.email} (User ID: ${
+          user.id
+        }): ${(error as Error).message}`,
+        (error as Error).stack,
       );
     }
   }
 
   async verifyEmailToken(token: string): Promise<UserModelPrisma> {
     this.logger.log(
-      `Attempting to verify email with token (prefix): ${token.substring(0, 10)}...`,
+      `Attempting to verify email with token (prefix): ${token.substring(
+        0,
+        10,
+      )}...`,
     );
-    const userFromDb =
+    const userFromDb: UserModelPrisma | null =
       await this.usersService.findByEmailVerificationToken(token);
 
     if (!userFromDb) {
-      this.logger.warn(
-        `Invalid or expired email verification token presented: ${token.substring(0, 10)}...`,
-      );
       throw new BadRequestException(
-        'Token weryfikacyjny jest nieprawidłowy lub wygasł. Spróbuj ponownie poprosić o link weryfikacyjny.',
+        'Token weryfikacyjny jest nieprawidłowy lub wygasł.',
       );
     }
     if (userFromDb.isEmailVerified) {
-      this.logger.log(
-        `Email ${userFromDb.email} for user ID ${userFromDb.id} is already verified.`,
-      );
       return userFromDb;
     }
 
@@ -574,7 +410,7 @@ export class AuthService {
       emailVerificationToken: null,
       isActive: true,
     };
-    const updatedUser = await this.usersService.updateUser(
+    const updatedUser: UserModelPrisma = await this.usersService.updateUser(
       userFromDb.id,
       updateData,
     );
