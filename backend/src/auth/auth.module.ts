@@ -8,6 +8,8 @@ import { UsersModule } from '../users/users.module';
 import { CircleModule } from '../circle/circle.module';
 import { RedisModule } from '../shared/redis/redis.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter'; // <<< KROK 1: Dodajemy import
+import { join } from 'path'; // <<< KROK 1: Dodajemy import
 
 // Import strategii Passport
 import { LocalStrategy } from './strategies/local.strategy';
@@ -55,6 +57,14 @@ import { TwitchStrategy } from './strategies/twitch.strategy';
             'MAIL_FROM_ADDRESS',
             'noreply@tipjar.com',
           )}>`,
+        },
+        // <<< KROK 2: Dodajemy konfigurację szablonów
+        template: {
+          dir: join(__dirname, '..', '..', 'templates'), // Ścieżka do folderu z szablonami
+          adapter: new HandlebarsAdapter(), // Używamy adaptera Handlebars
+          options: {
+            strict: true,
+          },
         },
       }),
       inject: [ConfigService],

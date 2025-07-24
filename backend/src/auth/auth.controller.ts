@@ -204,18 +204,26 @@ export class AuthController {
   }
 
   @Get('verify-email/:token')
-  @HttpCode(HttpStatus.OK)
   async verifyEmail(
     @Param('token') token: string,
-  ): Promise<{ message: string }> {
+    @Res({ passthrough: true }) response: Response,
+  ) {
     this.logger.log(
       `Email verification attempt with token: ${token.substring(0, 10)}...`,
     );
-    await this.authService.verifyEmailToken(token);
-    return {
-      message:
-        'Adres email został pomyślnie zweryfikowany. Możesz się teraz zalogować.',
-    };
+
+    // POPRAWKA: Jawnie określamy typ `user`
+    const user: ValidatedUser = await this.authService.verifyEmailToken(token);
+
+    this.logger.log(`User ${user.email} verified. Logging in...`);
+    const tokens = await this.authService.login(user);
+    this.setAuthCookies(response, tokens);
+    response.redirect(
+      `${this.configService.get<string>(
+        'FRONTEND_URL',
+        'http://localhost:3000',
+      )}/choose-username`,
+    );
   }
 
   @Post('refresh-token')
@@ -225,7 +233,9 @@ export class AuthController {
     @Body() body: RefreshTokenDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ accessToken: string }> {
-    const incomingRefreshToken = (req.cookies?.['refresh_token'] ||
+    // POPRAWKA: Dodajemy bezpieczne typowanie `req.cookies`
+    const cookies = req.cookies as Record<string, string>;
+    const incomingRefreshToken = (cookies?.['refresh_token'] ||
       body.refreshToken) as string;
 
     if (!incomingRefreshToken) {

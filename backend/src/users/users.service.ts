@@ -390,7 +390,7 @@ export class UsersService {
       where: { id: userId },
       data: {
         username: data.username.toLowerCase(),
-        consents: data.consents as any,
+        consents: data.consents,
         hasCompletedOnboarding: true,
       },
     });

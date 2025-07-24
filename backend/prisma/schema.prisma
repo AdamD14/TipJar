@@ -2,12 +2,11 @@
 
 generator client {
   provider = "prisma-client-js"
-  // Ta konfiguracja użyje domyślnej, standardowej ścieżki (node_modules/@prisma/client)
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL") // Pobiera URL bazy danych ze zmiennej środowiskowej
+  url      = env("DATABASE_URL")
 }
 
 // --- Enumy ---
@@ -15,15 +14,15 @@ datasource db {
 enum UserRole {
   FAN
   CREATOR
-  ADMIN // Potencjalna rola dla panelu administracyjnego
+  ADMIN
 }
 
 enum TipStatus {
-  PENDING // Oczekuje na przetworzenie (np. płatność fiat, potwierdzenie blockchain)
-  PROCESSING // W trakcie przetwarzania
-  COMPLETED // Zakończony sukcesem, środki u twórcy
-  FAILED // Nieudany
-  REFUNDED // Zwrócony (jeśli taka opcja będzie)
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
 }
 
 enum PayoutStatus {
@@ -37,72 +36,76 @@ enum PayoutStatus {
 
 model User {
   id          String   @id @default(uuid())
-  email       String?  @unique // Opcjonalny, np. dla kont SIWE bez emaila; normalizuj do lowercase w logice serwisu
-  password    String? // Zhashowane hasło; opcjonalne dla logowań OAuth/SIWE
-  displayName String // Nazwa wyświetlana, wymagana
-  avatarUrl   String? // URL do awatara
+  email       String?  @unique
+  password    String?
+  displayName String
+  username    String?  @unique
+  avatarUrl   String?
   role        UserRole @default(FAN)
 
   // Flagi statusu konta i weryfikacji
-  isActive                        Boolean   @default(true) // Czy konto jest aktywne (może być false do czasu weryfikacji email)
-  isEmailVerified                 Boolean   @default(false) // Czy email został zweryfikowany
-  emailVerificationToken          String?   @unique // Token do weryfikacji emaila
-  emailVerificationTokenExpiresAt DateTime? // Opcjonalna data wygaśnięcia tokenu weryfikacyjnego
+  isActive                        Boolean   @default(true)
+  isEmailVerified                 Boolean   @default(false)
+  emailVerificationToken          String?   @unique
+  emailVerificationTokenExpiresAt DateTime?
 
-  currentHashedRefreshToken String? @db.Text // Zhashowany refresh token JWT
+  currentHashedRefreshToken String? @db.Text
 
   // Powiązanie z portfelem Circle
-  circleWalletId        String? @unique // ID portfela w systemie Circle
-  mainWalletAddress     String? @unique // Główny adres blockchain tego portfela Circle
-  isCircleSetupComplete Boolean @default(false) // Czy konfiguracja portfela Circle została zakończona
+  circleWalletId        String? @unique
+  mainWalletAddress     String? @unique
+  isCircleSetupComplete Boolean @default(false)
+
+  // <<< TA LINIA ZOSTAŁA DODANA
+  hasCompletedOnboarding Boolean @default(false)
+  // <<< I TA LINIA ZOSTAŁA DODANA
+  consents               Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // Relacje
-  socialConnections SocialConnection[] // Połączenia z kontami społecznościowymi (OAuth, SIWE)
-  profile           Profile? // Profil twórcy (jeśli user jest CREATOR)
-  tipsSent          Tip[]              @relation("TipsSentByFan") // Napiwki wysłane przez tego fana
-  tipsReceived      Tip[]              @relation("TipsReceivedByCreator") // Napiwki otrzymane przez tego twórcę
+  socialConnections SocialConnection[]
+  profile           Profile?
+  tipsSent          Tip[]              @relation("TipsSentByFan")
+  tipsReceived      Tip[]              @relation("TipsReceivedByCreator")
 
-  payouts         Payout[] // relacja 1:N, jeden User może mieć wiele wypłat
-  overlaySettings OverlaySettings? // relacja 1:1, jeden User ma opcjonalnie OverlaySettings
+  payouts         Payout[]
+  overlaySettings OverlaySettings?
 
-  circleWallet CircleWallet? // relacja 1:1, jeden User ma opcjonalnie CircleWallet
+  circleWallet CircleWallet?
 }
 
 model SocialConnection {
   id         String @id @default(cuid())
-  provider   String // Nazwa dostawcy (np. "google", "twitch", "siwe")
-  providerId String // Unikalne ID użytkownika u dostawcy (np. Google ID, adres portfela SIWE)
+  provider   String
+  providerId String
 
-  userId String // ID użytkownika w TipJar, do którego to połączenie należy
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade) // Relacja z User
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([provider, providerId]) // Zapewnia, że każde połączenie provider+providerId jest unikalne
-  @@index([userId]) // Indeks dla szybszego wyszukiwania połączeń użytkownika
+  @@unique([provider, providerId])
+  @@index([userId])
 }
 
 model Profile {
   id     String @id @default(uuid())
-  userId String @unique // Relacja jeden-do-jednego z User
+  userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  bio       String? @db.Text // Dłuższy opis/bio twórcy
-  bannerUrl String? // URL do zdjęcia bannera na profilu
+  bio       String? @db.Text
+  bannerUrl String?
 
-  customTipJarUrlSuffix String? @unique // Np. to co po tipjar.com/@ - jeśli inne niż displayName
+  customTipJarUrlSuffix String? @unique
 
-  acceptsTips Boolean @default(true) // Czy twórca aktualnie akceptuje napiwki
+  acceptsTips Boolean @default(true)
 
-  // Linki do zewnętrznych profili społecznościowych twórcy (prosta implementacja)
   websiteUrl String?
   twitterUrl String?
   youtubeUrl String?
-  // ... inne platformy
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -110,33 +113,29 @@ model Profile {
 
 model Tip {
   id       String  @id @default(uuid())
-  amount   Decimal // Kwota napiwku brutto (przed prowizją TipJar)
-  currency String  @default("USDC") // Waluta napiwku
+  amount   Decimal
+  currency String  @default("USDC")
 
-  message     String? @db.Text // Wiadomość od fana (opcjonalna)
-  isAnonymous Boolean @default(false) // Czy napiwek jest anonimowy
+  message     String? @db.Text
+  isAnonymous Boolean @default(false)
 
-  status TipStatus @default(PENDING) // Status napiwku
+  status TipStatus @default(PENDING)
 
-  // Kto wysłał napiwek (Fan)
-  fanId String? // Opcjonalne, jeśli napiwek od niezarejestrowanego gościa
+  fanId String?
   fan   User?   @relation("TipsSentByFan", fields: [fanId], references: [id], onDelete: SetNull)
 
-  // Kto otrzymał napiwek (Twórca)
   creatorId String
-  creator   User   @relation("TipsReceivedByCreator", fields: [creatorId], references: [id], onDelete: Cascade) // Rozważ onDelete: Restrict jeśli nie chcesz usuwać napiwków po usunięciu twórcy
+  creator   User   @relation("TipsReceivedByCreator", fields: [creatorId], references: [id], onDelete: Cascade)
 
-  // Informacje o transakcjach i płatnościach
-  blockchainTransactionHash String? @unique // Hash transakcji blockchain (jeśli napiwek był bezpośrednio on-chain od fana)
-  circleTransferId          String? @unique // ID transferu w systemie Circle
-  paymentGatewayChargeId    String? @unique // ID płatności z bramki fiat
+  blockchainTransactionHash String? @unique
+  circleTransferId          String? @unique
+  paymentGatewayChargeId    String? @unique
 
-  // Prowizje i kwoty
-  platformFeeAmount   Decimal? // Kwota prowizji pobrana przez TipJar
-  netAmountForCreator Decimal? // Kwota netto, która trafiła do twórcy
+  platformFeeAmount   Decimal?
+  netAmountForCreator Decimal?
 
   createdAt   DateTime  @default(now())
-  processedAt DateTime? // Kiedy napiwek został finalnie przetworzony
+  processedAt DateTime?
   updatedAt   DateTime  @updatedAt
 
   @@index([fanId])
@@ -178,11 +177,11 @@ model Payout {
 
 model CircleWallet {
   id     String @id @default(uuid())
-  userId String @unique // Relacja jeden-do-jednego z User
+  userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  circleWalletId    String @unique // ID portfela w systemie Circle
-  mainWalletAddress String @unique // Główny adres blockchain tego portfela Circle
+  circleWalletId    String @unique
+  mainWalletAddress String @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

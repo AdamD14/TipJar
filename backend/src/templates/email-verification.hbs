@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6;">
+    <h2>Witaj {{ displayName }}!</h2>
+    <p>Dziękujemy za korzystanie z TipJar! Aby zweryfikować swój adres email, kliknij poniższy link:</p>
+    <p style="text-align: center;">
+        <a href="{{ verificationUrl }}" target="_blank" style="background-color: #FFD700; color: #006D6D; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+            Zweryfikuj Mój Adres Email
+        </a>
+    </p>
+    <p>Jeśli przycisk nie działa, skopiuj i wklej poniższy link do przeglądarki:</p>
+    <p><a href="{{ verificationUrl }}" target="_blank">{{ verificationUrl }}</a></p>
+    <hr>
+    <p>Pozdrawiamy serdecznie,<br>Zespół TipJar</p>
+</body>
+</html>

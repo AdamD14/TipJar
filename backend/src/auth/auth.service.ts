@@ -13,17 +13,20 @@ import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { MailerService } from '@nestjs-modules/mailer';
-
 import {
   UsersService,
   InternalCreateUserDto,
   InternalUpdateUserDto,
 } from '../users/users.service';
 import { CircleService } from '../circle/circle.service';
-
-import { User as UserModelPrisma, UserRole, Prisma } from '@prisma/client';
-
+import {
+  User as UserModelPrisma,
+  UserRole,
+  Prisma,
+  SocialConnection,
+} from '@prisma/client';
 import { RegisterUserDto } from './dto/register-user.dto';
+import { JwtAccessPayload } from './strategies/jwt.strategy';
 
 export interface ValidatedUser {
   id: string;
@@ -67,11 +70,13 @@ export class AuthService {
   }
 
   private async generateTokens(user: ValidatedUser): Promise<AuthTokens> {
-    const payload = {
+    const payload: JwtAccessPayload = {
       sub: user.id,
       email: user.email,
       role: user.role,
       displayName: user.displayName,
+      isEmailVerified: user.isEmailVerified,
+      isActive: user.isActive,
     };
 
     const accessToken = this.jwtService.sign(payload, {
@@ -114,7 +119,6 @@ export class AuthService {
     }
 
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
-
     const createUserData: InternalCreateUserDto = {
       email: registerDto.email.toLowerCase(),
       password: hashedPassword,
@@ -139,11 +143,6 @@ export class AuthService {
           newUserFromDb.email,
           newUserFromDb.role,
         )
-        .then(() =>
-          this.logger.log(
-            `Circle Wallet provisioning successfully initiated for user ID ${newUserFromDb.id}`,
-          ),
-        )
         .catch((circleError: Error) =>
           this.logger.error(
             `Failed to initiate Circle Wallet provisioning for user ${newUserFromDb.id}: ${circleError.message}`,
@@ -152,24 +151,21 @@ export class AuthService {
         );
 
       if (newUserFromDb.email) {
-        this.sendVerificationEmail(newUserFromDb)
-          .then(() =>
-            this.logger.log(
-              `Verification email dispatch initiated for ${newUserFromDb.email}`,
-            ),
-          )
-          .catch((emailError: Error) =>
-            this.logger.error(
-              `Failed to dispatch verification email to ${newUserFromDb.email}: ${emailError.message}`,
-              emailError.stack,
-            ),
-          );
+        this.sendVerificationEmail(newUserFromDb).catch((emailError: Error) =>
+          this.logger.error(
+            `Failed to dispatch verification email to ${newUserFromDb.email}: ${emailError.message}`,
+            emailError.stack,
+          ),
+        );
       }
 
       return this.toValidatedUser(newUserFromDb);
     } catch (error: unknown) {
       if (
-        error instanceof Error && 'code' in error && typeof error.code === 'string' && error.code === 'P2002'
+        error instanceof Error &&
+        'code' in error &&
+        typeof (error as any).code === 'string' &&
+        (error as any).code === 'P2002'
       ) {
         throw new ConflictException(
           'Użytkownik o tym adresie email już istnieje.',
@@ -222,7 +218,7 @@ export class AuthService {
   }
 
   async validateOAuthUser(
-    provider: 'google' | 'twitch', // Usunięto 'siwe'
+    provider: 'google' | 'twitch',
     providerId: string,
     email: string | null,
     displayName: string,
@@ -236,10 +232,8 @@ export class AuthService {
       )}...`,
     );
 
-    const socialConnection = await this.usersService.findSocialConnection(
-      provider,
-      providerId,
-    );
+    const socialConnection: (SocialConnection & { user: UserModelPrisma }) | null =
+      await this.usersService.findSocialConnection(provider, providerId);
     let userFromDb: UserModelPrisma;
 
     if (socialConnection) {
@@ -280,7 +274,7 @@ export class AuthService {
           role: role,
           provider: provider,
           providerId: providerId,
-          isEmailVerified: !!email, // Uproszczona logika bez SIWE
+          isEmailVerified: !!email,
           isActive: true,
         };
         userFromDb = await this.usersService.createUser(createUserData);
@@ -290,11 +284,6 @@ export class AuthService {
 
         this.circleService
           .provisionUserWallet(userFromDb.id, userFromDb.email, userFromDb.role)
-          .then(() =>
-            this.logger.log(
-              `Circle Wallet provisioning successfully initiated for new OAuth user ID ${userFromDb.id}`,
-            ),
-          )
           .catch((circleError: Error) =>
             this.logger.error(
               `Failed to initiate Circle Wallet provisioning for new OAuth user ${userFromDb.id}: ${circleError.message}`,
@@ -326,7 +315,7 @@ export class AuthService {
       throw new UnauthorizedException('Dostęp zabroniony.');
     }
 
-    const validatedUser = this.toValidatedUser(userFromDb);
+    const validatedUser: ValidatedUser = this.toValidatedUser(userFromDb);
     return this.generateTokens(validatedUser);
   }
 
@@ -385,7 +374,7 @@ export class AuthService {
     }
   }
 
-  async verifyEmailToken(token: string): Promise<UserModelPrisma> {
+  async verifyEmailToken(token: string): Promise<ValidatedUser> {
     this.logger.log(
       `Attempting to verify email with token (prefix): ${token.substring(
         0,
@@ -400,8 +389,9 @@ export class AuthService {
         'Token weryfikacyjny jest nieprawidłowy lub wygasł.',
       );
     }
+
     if (userFromDb.isEmailVerified) {
-      return userFromDb;
+      return this.toValidatedUser(userFromDb);
     }
 
     const updateData: InternalUpdateUserDto = {
@@ -414,9 +404,9 @@ export class AuthService {
       updateData,
     );
     this.logger.log(
-      `Email for user ${userFromDb.email} (ID: ${userFromDb.id}) has been successfully verified.`,
+      `Email for user ${updatedUser.email} (ID: ${updatedUser.id}) has been successfully verified.`,
     );
-    return updatedUser;
+    return this.toValidatedUser(updatedUser);
   }
 
   async logout(userId: string): Promise<void> {

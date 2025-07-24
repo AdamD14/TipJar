@@ -1,7 +1,8 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
-// Definicje typów
-type UserRole = 'FAN' | 'CREATOR' | null;
+// Definicje typów, które już masz, są dobre.
+// Zmieniamy tylko `UserData` na bardziej kompletny typ `User`.
 type OnboardingStep =
   | 'ROLE_SELECTION'
   | 'REGISTER'
@@ -10,87 +11,95 @@ type OnboardingStep =
   | 'KYC'
   | 'COMPLETED';
 
-interface UserData {
+// <<< GŁÓWNA POPRAWKA: Tworzymy jeden, spójny typ dla użytkownika
+type User = {
+  id?: string;
   email?: string;
-  walletAddress?: string;
+  role: 'FAN' | 'CREATOR' | null;
   username?: string;
   avatarUrl?: string;
-  // Dodaj więcej jak trzeba (np. social links, opis, itp.)
-}
+  country?: string;
+  isEmailVerified?: boolean;
+  isActive?: boolean;
+};
 
 interface Consents {
   ageConfirmed: boolean;
   termsAccepted: boolean;
   privacyAccepted: boolean;
-  kycDone?: boolean; // opcjonalne
+  kycDone?: boolean;
 }
 
+// <<< POPRAWKA: Upraszczamy interfejs AuthState
 interface AuthState {
   step: OnboardingStep;
-  role: UserRole;
+  user: User | null; // Zamiast `role` i `userData`, mamy jeden obiekt `user`
   accessToken: string | null;
-  userData: UserData;
   consents: Consents;
   setStep: (step: OnboardingStep) => void;
-  setRole: (role: UserRole) => void;
+  setUser: (user: Partial<User> | null) => void; // Zamiast `setRole` i `setUserData` mamy `setUser`
   setAccessToken: (token: string | null) => void;
-  setUserData: (data: Partial<UserData>) => void;
   setConsents: (data: Partial<Consents>) => void;
   reset: () => void;
   nextStep: () => void;
 }
 
-// Kolejność kroków w onboardingu
 const stepsOrder: OnboardingStep[] = [
   'ROLE_SELECTION',
-  'REGISTER', // Email/Wallet
+  'REGISTER',
   'CHOOSE_USERNAME',
   'CONSENTS',
   'KYC',
   'COMPLETED',
 ];
 
-// Store Zustand
-export const useAuthStore = create<AuthState>((set, get) => ({
-  step: 'ROLE_SELECTION',
-  role: null,
+const initialState = {
+  step: 'ROLE_SELECTION' as OnboardingStep,
+  user: null,
   accessToken: null,
-  userData: {},
   consents: {
     ageConfirmed: false,
     termsAccepted: false,
     privacyAccepted: false,
   },
-  setStep: (step) => set({ step }),
-  setRole: (role) => set({ role }),
-  setAccessToken: (token) => set({ accessToken: token }),
-  setUserData: (data) =>
-    set((state) => ({
-      userData: { ...state.userData, ...data },
-    })),
-  setConsents: (data) =>
-    set((state) => ({
-      consents: { ...state.consents, ...data },
-    })),
-  reset: () =>
-    set({
-      step: 'ROLE_SELECTION',
-      role: null,
-      accessToken: null,
-      userData: {},
-      consents: {
-        ageConfirmed: false,
-        termsAccepted: false,
-        privacyAccepted: false,
+};
+
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set, get) => ({
+      ...initialState,
+
+      setStep: (step) => set({ step }),
+      
+      // <<< POPRAWKA: Implementujemy `setUser`
+      setUser: (data) =>
+        set((state) => ({
+          user: data ? { ...(state.user || {}), ...data } as User : null,
+        })),
+
+      setAccessToken: (token) => set({ accessToken: token }),
+
+      setConsents: (data) =>
+        set((state) => ({
+          consents: { ...state.consents, ...data },
+        })),
+
+      reset: () => set(initialState),
+
+      nextStep: () => {
+        const currentStepIndex = stepsOrder.indexOf(get().step);
+        let nextStep: OnboardingStep | undefined = stepsOrder[currentStepIndex + 1];
+        
+        // <<< POPRAWKA: Odwołujemy się do `get().user.role`
+        if (nextStep === 'KYC' && get().user?.role === 'FAN') {
+          nextStep = stepsOrder[currentStepIndex + 2];
+        }
+        if (nextStep) set({ step: nextStep });
       },
     }),
-  nextStep: () => {
-    const currentStepIndex = stepsOrder.indexOf(get().step);
-    let nextStep: OnboardingStep | undefined = stepsOrder[currentStepIndex + 1];
-    // Fan pomija KYC
-    if (nextStep === 'KYC' && get().role === 'FAN') {
-      nextStep = stepsOrder[currentStepIndex + 2];
-    }
-    if (nextStep) set({ step: nextStep });
-  },
-}));
+    {
+      name: 'auth-storage', // Nazwa klucza w localStorage
+      storage: createJSONStorage(() => sessionStorage), // Używamy sessionStorage
+    },
+  ),
+);
