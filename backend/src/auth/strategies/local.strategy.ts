@@ -21,7 +21,9 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
       this.logger.warn(`LocalStrategy: Invalid credentials for ${email}.`);
       throw new UnauthorizedException('Nieprawidłowe dane logowania.');
     }
-    this.logger.log(`LocalStrategy: User ${email} (ID: ${user.id}) validated successfully.`);
+    this.logger.log(
+      `LocalStrategy: User ${email} (ID: ${user.id}) validated successfully.`,
+    );
     return user; // Zwrócony obiekt zostanie dołączony do `req.user`
   }
 }

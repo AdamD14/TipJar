@@ -103,7 +103,7 @@ const ChooseUsernamePage = () => {
       if (role === "CREATOR") {
         router.push("/choose-username/kyc");
       } else {
-        router.push("/explore");
+        router.push("/fan/dashboard");
       }
     } catch (err: unknown) {
       if (axios.isAxiosError(err) && err.response) {

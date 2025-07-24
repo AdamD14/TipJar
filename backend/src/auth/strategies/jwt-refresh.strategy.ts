@@ -62,7 +62,9 @@ export class JwtRefreshStrategy extends PassportStrategy(
     );
 
     if (!refreshToken) {
-      this.logger.warn('JwtRefreshStrategy: No refresh token found in request.');
+      this.logger.warn(
+        'JwtRefreshStrategy: No refresh token found in request.',
+      );
       throw new UnauthorizedException('Brak refresh tokena w żądaniu.');
     }
 

@@ -35,12 +35,12 @@ const KycPromptPage = () => {
   }
 
   const handleSkip = () => {
-    router.push("/dashboard");
+    router.push("/creator/dashboard");
   };
 
   const handleStartKYC = () => {
     // TODO: Zintegrować z dostawcą KYC
-    router.push("/dashboard");
+    router.push("/creator/dashboard");
   };
 
   return (
