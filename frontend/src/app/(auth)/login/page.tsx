@@ -55,9 +55,7 @@ export default function LoginPage() {
       const { user, accessToken } = res.data;
       setUser(user);
       setAccessToken(accessToken);
-      if (!user.username || !user.hasCompletedOnboarding) {
-        router.push("/choose-username");
-      } else if (user.role === "CREATOR") {
+
         router.push("/creator/dashboard");
       } else {
         router.push("/fan/dashboard");
@@ -93,7 +91,7 @@ export default function LoginPage() {
         <div className="flex justify-center mb-6">
           <div className="bg-gradient-to-r from-teal-500 to-purple-500 text-white px-4 py-3/2 rounded-xl font-bold text-xl shadow-lg flex items-center gap-3">
             {/* Using a placeholder image for the icon as /assets/icon-tipjarnone.svg is not available */}
-            <img src="https://placehold.co/48x48/003737/FFFFFF?text=TJ+" alt="TipJar+ icon" className="h-12 rounded-lg" draggable={false} />
+            <img src="/assets/icon-tipjarnone.svg" alt="TipJar+ icon" width={48} height={48} className="h-12 w-auto" />
             tipjar.plus
           </div>
         </div>
