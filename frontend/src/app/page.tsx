@@ -9,11 +9,44 @@ type PaymentIconProps = {
   children: React.ReactNode;
   name: string;
 };
+const creatorAvatarUrls = [
+  "/assets/ja1.png",
+  "/assets/ja2.png",
+  "/assets/ja3.png",
+];
+
+type AvatarCarouselProps = {
+  images: string[];
+};
+
+const AvatarCarousel = ({ images }: AvatarCarouselProps) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 3000); 
+    return () => clearInterval(interval);
+  }, [images]);
+
+  return (
+    <div className="relative w-48 h-48 sm:w-64 sm:h-64 rounded-full overflow-hidden border-4 border-yellow-400 shadow-lg flex items-center justify-center mx-auto mb-4">
+      <Image
+        src={images[currentImageIndex]}
+        alt="Creator Avatar"
+        layout="fill"
+        objectFit="cover"
+        className="transition-opacity duration-1000 ease-in-out"
+      />
+    </div>
+  );
+};
+
 
 const PaymentIcon = ({ children, name }: PaymentIconProps) => (
   <div
     title={name}
-    className="w-full h-full bg-white bg-opacity-10 rounded-lg flex items-center justify-center text-white hover:scale-105 transition-transform"
+    className="w-full h-full bg-white bg-opacity-50 rounded-lg flex items-center justify-center text-white hover:scale-105 transition-transform"
     style={{
       minHeight: 0,
       minWidth: 0,
@@ -150,15 +183,15 @@ useEffect(() => {
     alt="deco 2"
     width={640}
     height={640}
-    className="absolute left-1/2 top-40 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-10"
+    className="absolute left-140 top-20 -translate-x -translate-y-1 pointer-events-none opacity-30"
     priority
   />
-  <div className="absolute inset-0 bg-[#0d2f3f] bg-opacity-70"></div>
+  <div className="absolute inset-0 bg-[#4D194D] bg-opacity-30"></div>
 </div>
 
       <div className="relative z-10 flex flex-col min-h-screen container mx-auto px-4">
         <header className={`fixed top-0 left-0 right-0 z-50 w-full border-b border-white border-opacity-10 transition-colors duration-300
-  ${isScrolled ? 'bg-[#0d2f3f] bg-opacity-95' : 'bg-[#0d2f3f] bg-opacity-30 backdrop-blur-lg'}
+  ${isScrolled ? 'bg-[#1D3850] bg-opacity-95' : 'bg-[#312244] bg-opacity-30 backdrop-blur-lg'}
 `}>
           <nav className="grid grid-cols-3 items-center w-full h-15">
             <div className="flex justify-start">
@@ -170,7 +203,7 @@ useEffect(() => {
     {/* Linki – środek */}
     <div className="hidden md:flex items-center justify-center gap-6 text-base whitespace-nowrap">
       <a href="#why" className="text-white hover:text-yellow-400 transition">Why tipjar+?</a>
-      <a href="#how-it-works" className="text-white hover:text-yellow-400 transition">How it works?</a>
+      <a href="#how-it-works" className="text-white hover:text-yellow-400 transition">How it-works?</a> 
       <a href="#start-building" className="text-white hover:text-yellow-400 transition">Start Building</a>
       <a href="#explore" className="text-white hover:text-yellow-400 transition">Explore</a>
       <a href="#learn" className="text-white hover:text-yellow-400 transition">Learn</a>
@@ -182,7 +215,7 @@ useEffect(() => {
       <a href="#" className="bg-[#FFD700] text-gray-900 font-bold py-2 px-4 rounded-lg text-sm hover:scale-105 transition">
         Begin as a Creator
       </a>
-      <a href="#" className="border border-white text-white font-bold py-2 px-4 rounded-lg text-sm hover:bg-white hover:text-[#0d2f3f] transition">
+      <a href="#" className="border border-white text-white font-bold py-2 px-4 rounded-lg text-sm hover:bg-white hover:text-[#272640] transition">
         Login
       </a>
     </div>
@@ -214,10 +247,10 @@ useEffect(() => {
           {label}
         </a>
       ))}
-      <a href="#" onClick={toggleMenu} className="block bg-[#FFD700] text-[#0d2f3f] font-bold py-2 px-4 rounded-lg hover:scale-105 transition">
+      <a href="#" onClick={toggleMenu} className="block bg-[#FFD700]  text-gray-900 py-2 px-4 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-400/50 w-full sm:w-auto text-center">
         Begin as a Creator
       </a>
-      <a href="#" onClick={toggleMenu} className="block border border-white text-white font-bold py-2 px-4 rounded-lg hover:bg-white hover:text-[#0d2f3f] transition">
+      <a href="#" onClick={toggleMenu} className="block border border-white text-white font-bold py-2 px-4 rounded-lg hover:bg-white hover:text-[#0d2f3f] transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-400/50">
         Login
       </a>
     </div>
@@ -225,8 +258,11 @@ useEffect(() => {
 </header>
 
 
-        <main className="flex-grow">
+          <main className="flex-grow">
+          {/* TO JEST NOWA SEKCJA GŁÓWNA, KTÓRA Obejmuje Dwie KOLUMNY (TEKST I PROFIL) */}
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start pt-20" style={{ minHeight: 'calc(90vh - 80px)' }}>
+            
+            {/* LEWA KOLUMNA: TYTUŁ I OPIS */}
             <div className="text-left pt-20">
               <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
                 Support Creativity,<br />Get Paid Instantly
@@ -235,99 +271,88 @@ useEffect(() => {
                 tipjar.plus – platform for instant micro-payments to your favorite creators: streamers, YouTubers, digital models, musicians, artists, bloggers, coaches, educators, journalists, influencers - simply for all content creators, without high fees.
               </p>
               <div className="flex flex-col sm:flex-row items-start gap-4 mt-10">
-                <a href="#" className="font-bold bg-[#FFD700] text-gray-900 py-3 px-6 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-400/50 w-full sm:w-auto text-center">
+                <a href="#" className="font-bold bg-[#FFD700] text-gray-900 py-2 px-4 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-400/50 w-full sm:w-auto text-center">
                   Sign Up as Creator
                 </a>
-                <a href="#" className="font-bold text-white border-2 border-white bg-transparent py-3 px-6 rounded-lg hover:bg-white hover:text-[#0d2f3f] transition-colors duration-300 w-full sm:w-auto text-center">
+                <a href="#" className="font-bold text-white border-2 border-white bg-transparent py-2 px-4 rounded-lg hover:bg-white hover:text-[#0d2f3f] transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-400/50 w-full sm:w-auto text-center">
                   Explore Creators
+                
                 </a>
-                <a href="#" className="font-bold text-white bg-white bg-opacity-20 py-3 px-6 rounded-lg hover:bg-opacity-30 transition-colors duration-300 w-full sm:w-auto text-center">
+                <a href="#" className="font-bold text-gray-900 bg-white bg-opacity-20 py-2 px-4 rounded-lg hover:bg-opacity-30 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-400/50 w-full sm:w-auto text-center">
                   Sign Up as a Fan
                 </a>
               </div>
-            </div>
-
-            <div className="hidden lg:flex justify-end pt-20">
-              <div className="bg-[#0f3a4d] rounded-2xl p-2 pb-4 w-full max-w-xs border border-white border-opacity-10 shadow-2xl backdrop-blur-sm">
-                <div className="flex justify-center relative -mt-16 shadow-xl">
-                  <div className="w-[180px] h-[180px] rounded-full overflow-hidden border-4 border-[#FFD700] bg-[#0f3a4d] flex items-center justify-center">
-                    <Image
-                      src="/assets/we.png"
-                      alt="Avatar Twórcy"
-                      width={200}
-                      height={200}
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
+            </div> 
+            
+            {/* PRAWA KOLUMNA: KARTA PROFILU ADAMDUDA */}
+            <div className="container mx-auto px-8 -mt-32 relative z-10 flex flex-col md:flex-row items-start justify-between gap-12">
+              <AvatarCarousel images={creatorAvatarUrls} />
+              <div className="text-center mt-2">
+                <h3 className="text-2xl font-bold">@AdamDuda</h3>
+                <div className="flex justify-center items-center gap-2 mt-1">
+                  <span className="text-sm text-[#b0c4de]">tipjar.plus/@AdamDuda</span>
+                  <button onClick={handleCopy} className="text-[#b0c4de] hover:text-white transition-colors" title="Skopiuj link">
+                    {isCopied ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                    )}
+                  </button>
                 </div>
-                <div className="text-center mt-2">
-                  <h3 className="text-2xl font-bold">@AdamDuda</h3>
-                  <div className="flex justify-center items-center gap-2 mt-1">
-                    <span className="text-sm text-[#b0c4de]">tipjar.plus/@AdamDuda</span>
-                    <button onClick={handleCopy} className="text-[#b0c4de] hover:text-white transition-colors" title="Skopiuj link">
-                      {isCopied ? (
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                      )}
-                    </button>
-                  </div>
-                </div>
-                <div className="text-center mt-2 px-1">
-                  <p className="text-sm text-[#b0c4de] max-w-xs mx-auto">
-                    Founder of tipjar+ - built together with a team of AI agents. Advocate of freedom, decentralization, and blockchain technology. Web3 & AI pro user. Paleo-contact believer.
-                  </p>
-                </div>
-                <div className="mt-4 px-2">
-                  <input type="range" min="0.1" max="20" step="0.1" value={tipAmount} onChange={(e) => setTipAmount(parseFloat(e.target.value))} className="w-full h-[6px] rounded-lg appearance-none cursor-pointer" style={sliderBackground} />
-                </div>
-                <div className="mt-4 grid grid-cols-4 gap-2 px-2">
-                  <button onClick={() => setTipAmount(1)} className={`py-2 rounded-lg text-sm transition-colors ${tipAmount === 1 ? 'bg-[#FFD700] text-gray-900 font-bold' : 'bg-white bg-opacity-10 text-white hover:bg-opacity-20'}`}>$1</button>
-                  <button onClick={() => setTipAmount(2)} className={`py-2 rounded-lg text-sm transition-colors ${tipAmount === 2 ? 'bg-[#FFD700] text-gray-900 font-bold' : 'bg-white bg-opacity-10 text-white hover:bg-opacity-20'}`}>$2</button>
-                  <button onClick={() => setTipAmount(5)} className={`py-2 rounded-lg text-sm transition-colors ${tipAmount === 5 ? 'bg-[#FFD700] text-gray-900 font-bold' : 'bg-white bg-opacity-10 text-white hover:bg-opacity-20'}`}>$5</button>
-                  <button onClick={() => setTipAmount(10)} className={`py-2 rounded-lg text-sm transition-colors ${tipAmount === 10 ? 'bg-[#FFD700] text-gray-900 font-bold' : 'bg-white bg-opacity-10 text-white hover:bg-opacity-20'}`}>$10</button>
-                </div>
-                <div className="text-center mt-4 px-2">
-                  <a href="#" className="w-full font-bold bg-[#FFD700] text-gray-900 py-3 px-4 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-400/50 text-lg inline-flex items-center justify-center gap-2">
-                    Tip ${tipAmount.toFixed(2)}
-                    <Image src="/assets/logo_usdc_1.png" width={28} height={28} className="object-cover opacity-80" alt="USDC Logo" />
-                  </a>
-                </div>
-               <div className="mt-2 grid grid-cols-6 gap-[4px] px-2 h-8">
-  <PaymentIcon name="Google Pay">
-    <Image src="/assets/Google_Pay_Logo.svg" alt="Google Pay"  width={36}
-      height={36} className="object-contain"/>
-  </PaymentIcon>
-  <PaymentIcon name="Apple Pay">
-    <Image src="/assets/Apple_Pay_Mark_RGB.svg" alt="Apple Pay"  width={32}
-      height={32} className="object-contain"/>  
-  </PaymentIcon>
-  <PaymentIcon name="Metamask">
-    <Image src="/assets/MetaMask-icon-fox.svg" alt="Metamask"  width={30}
-      height={30} className="object-contain"/>
-  </PaymentIcon>
-  <PaymentIcon name="Revolut">
-     <Image src="/assets/revolut.svg" alt="Revolut"  width={36}
-      height={36} className="object-contain" />
-  </PaymentIcon>
-  <PaymentIcon name="WalletConnect">
-    <Image src="/assets/wc.svg" alt="WalletConnect"  width={36}
-      height={36} className="object-contain" />
-  </PaymentIcon>
-  <PaymentIcon name="Bank">
-    <Image src="/assets/bank-svgrepo-com.svg" alt="Bank"  width={26}
-      height={26} className="object-contain"/>
-  </PaymentIcon>
-</div>
               </div>
-            </div>
-          </section>
-
-          {/* --- SECTIONS IN ORDER --- */}
+              <div className="text-center mt-2 px-1">
+                <p className="text-sm text-[#b0c4de] max-w-xs mx-auto">
+                  Founder of tipjar+ - built together with a team of AI agents. Advocate of freedom, decentralization, and blockchain technology. Web3 & AI pro user. Paleo-contact believer.
+                </p>
+              </div>
+              <div className="mt-4 px-2">
+                <input type="range" min="0.1" max="20" step="0.1" value={tipAmount} onChange={(e) => setTipAmount(parseFloat(e.target.value))} className="w-full h-[6px] rounded-lg appearance-none cursor-pointer" style={sliderBackground} />
+              </div>
+              <div className="mt-4 grid grid-cols-4 gap-2 px-2">
+                <button onClick={() => setTipAmount(1)} className={`py-2 rounded-lg text-sm transition-colors ${tipAmount === 1 ? 'bg-[#FFD700] text-gray-900 font-bold' : 'bg-white bg-opacity-10 text-gray-900 hover:bg-opacity-20'}`}>$1</button>
+                <button onClick={() => setTipAmount(2)} className={`py-2 rounded-lg text-sm transition-colors ${tipAmount === 2 ? 'bg-[#FFD700] text-gray-900 font-bold' : 'bg-white bg-opacity-10 text-gray-900 hover:bg-opacity-20'}`}>$2</button>
+                <button onClick={() => setTipAmount(5)} className={`py-2 rounded-lg text-sm transition-colors ${tipAmount === 5 ? 'bg-[#FFD700] text-gray-900 font-bold' : 'bg-white bg-opacity-10 text-gray-900 hover:bg-opacity-20'}`}>$5</button>
+                <button onClick={() => setTipAmount(10)} className={`py-2 rounded-lg text-sm transition-colors ${tipAmount === 10 ? 'bg-[#FFD700] text-gray-900 font-bold' : 'bg-white bg-opacity-10 text-gray-900 hover:bg-opacity-20'}`}>$10</button>
+              </div>
+              <div className="text-center mt-4 px-2">
+                <a href="#" className="w-full font-bold bg-[#FFD700] text-gray-900 py-3 px-4 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-400/50 text-lg inline-flex items-center justify-center gap-2">
+                  Tip ${tipAmount.toFixed(2)}
+                  <Image src="/assets/logo_usdc_1.png" width={28} height={28} className="object-cover opacity-80" alt="USDC Logo" />
+                </a>
+              </div>
+              <div className="mt-2 grid grid-cols-6 gap-[4px] px-2 h-8">
+                <PaymentIcon name="Google Pay">
+                  <Image src="/assets/Google_Pay_Logo.svg" alt="Google Pay"  width={36}
+                    height={36} className="object-contain"/>
+                </PaymentIcon>
+                <PaymentIcon name="Apple Pay">
+                  <Image src="/assets/Apple_Pay_Mark_RGB.svg" alt="Apple Pay"  width={32}
+                    height={32} className="object-contain"/>  
+                </PaymentIcon>
+                <PaymentIcon name="Metamask">
+                  <Image src="/assets/MetaMask-icon-fox.svg" alt="Metamask"  width={30}
+                    height={30} className="object-contain"/>
+                </PaymentIcon>
+                <PaymentIcon name="Revolut">
+                  <Image src="/assets/revolut.svg" alt="Revolut"  width={36}
+                    height={36} className="object-contain" />
+                </PaymentIcon>
+                <PaymentIcon name="WalletConnect">
+                  <Image src="/assets/wc.svg" alt="WalletConnect"  width={36}
+                    height={36} className="object-contain" />
+                </PaymentIcon>
+                <PaymentIcon name="Bank">
+                  <Image src="/assets/bank-svgrepo-com.svg" alt="Bank"  width={26}
+                    height={26} className="object-contain"/>
+                </PaymentIcon>
+              </div>
+            </div> 
+          </section> {/* Koniec sekcji hero - powinna zawierać obie kolumny */}
+          {/* ... reszta kodu sekcji "Why tipjar?", "How it works?", etc. */}
 
           <section id="why" className="py-20">
             <h2 className="text-4xl font-bold text-center text-white mb-16">Why tipjar+?</h2>
@@ -597,7 +622,6 @@ useEffect(() => {
           </footer>
         </main>
       </div>
-    </div>
+    </div> 
   );
 }
-
