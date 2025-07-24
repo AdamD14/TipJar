@@ -62,17 +62,7 @@ export default function AuthForm() {
   };
 
   const handleOpenEmailClient = () => {
-    const email = methods.getValues('email');
-    const domain = email.split('@')[1]?.toLowerCase();
-    const mailMap: Record<string, string> = {
-      'gmail.com': 'https://mail.google.com',
-      'outlook.com': 'https://outlook.live.com/mail',
-      'hotmail.com': 'https://outlook.live.com/mail',
-      'live.com': 'https://outlook.live.com/mail',
-      'yahoo.com': 'https://mail.yahoo.com',
-    };
-    const url = domain && mailMap[domain] ? mailMap[domain] : `mailto:${email}`;
-    window.open(url, '_blank');
+
   };
 
   const showInfoMessage = (infoType: string) => {
@@ -195,7 +185,7 @@ export default function AuthForm() {
             <button
               type="button"
               onClick={handleOpenEmailClient}
-              className="w-full bg-teal-700 text-white font-semibold py-2 rounded-lg mt-2 hover:bg-teal-600 transition-colors"
+
             >
               Open Email Client
             </button>
