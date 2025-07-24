@@ -36,6 +36,9 @@ export interface ValidatedUser {
   avatarUrl?: string | null;
   isEmailVerified: boolean;
   isActive: boolean;
+  username?: string | null;
+  hasCompletedOnboarding?: boolean;
+  consents?: Prisma.JsonValue | null;
 }
 
 export interface AuthTokens {
@@ -66,6 +69,9 @@ export class AuthService {
       role: user.role,
       isEmailVerified: user.isEmailVerified,
       isActive: user.isActive,
+      username: user.username,
+      hasCompletedOnboarding: user.hasCompletedOnboarding,
+      consents: user.consents,
     };
   }
 
@@ -342,7 +348,7 @@ export class AuthService {
     await this.usersService.updateUser(user.id, updateDto);
 
     const frontendUrl = this.configService.get<string>('FRONTEND_URL');
-    const verificationUrl = `${frontendUrl}/auth/verify-email?token=${verificationToken}`;
+    const verificationUrl = `${frontendUrl}/auth/verify-email/${verificationToken}`;
 
     try {
       await this.mailerService.sendMail({
