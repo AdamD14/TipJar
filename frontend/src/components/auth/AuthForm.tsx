@@ -20,6 +20,7 @@ export default function AuthForm() {
   const [apiError, setApiError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   const methods = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -29,6 +30,7 @@ export default function AuthForm() {
     setLoading(true);
     setApiError("");
     setMessage("");
+    setEmailSent(false);
     try {
       await apiClient.post('/auth/register', {
         email: data.email,
@@ -36,6 +38,7 @@ export default function AuthForm() {
         role: tab,
       });
       setMessage("Registration successful! Please check your email to verify your account.");
+      setEmailSent(true);
       methods.reset();
     } catch (err: unknown) {
       if (axios.isAxiosError(err) && err.response) {
@@ -56,6 +59,20 @@ export default function AuthForm() {
     setLoading(true);
     const backendUrl = (process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:3001/api/v1').replace('/api/v1', '');
     window.location.href = `${backendUrl}/api/v1/auth/${provider}?role=${tab}`;
+  };
+
+  const handleOpenEmailClient = () => {
+    const email = methods.getValues('email');
+    const domain = email.split('@')[1]?.toLowerCase();
+    const mailMap: Record<string, string> = {
+      'gmail.com': 'https://mail.google.com',
+      'outlook.com': 'https://outlook.live.com/mail',
+      'hotmail.com': 'https://outlook.live.com/mail',
+      'live.com': 'https://outlook.live.com/mail',
+      'yahoo.com': 'https://mail.yahoo.com',
+    };
+    const url = domain && mailMap[domain] ? mailMap[domain] : `mailto:${email}`;
+    window.open(url, '_blank');
   };
 
   const showInfoMessage = (infoType: string) => {
@@ -174,6 +191,15 @@ export default function AuthForm() {
           
           {apiError && <div className="text-red-400 text-sm text-center bg-red-900/30 border border-red-500/50 rounded-lg p-3 mt-2">{apiError}</div>}
           {message && <div className="text-green-400 text-sm text-center bg-green-900/30 border border-green-500/50 rounded-lg p-3 mt-2">{message}</div>}
+          {emailSent && (
+            <button
+              type="button"
+              onClick={handleOpenEmailClient}
+              className="w-full bg-teal-700 text-white font-semibold py-2 rounded-lg mt-2 hover:bg-teal-600 transition-colors"
+            >
+              Open Email Client
+            </button>
+          )}
         </form>
       </FormProvider>
 
