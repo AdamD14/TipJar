@@ -55,7 +55,7 @@ export default function LoginPage() {
       const { user, accessToken } = res.data;
       setUser(user);
       setAccessToken(accessToken);
-      if (user.role === "CREATOR") {
+
         router.push("/creator/dashboard");
       } else {
         router.push("/fan/dashboard");

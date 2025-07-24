@@ -21,6 +21,8 @@ type User = {
   country?: string;
   isEmailVerified?: boolean;
   isActive?: boolean;
+  hasCompletedOnboarding?: boolean;
+  consents?: unknown;
 };
 
 interface Consents {
