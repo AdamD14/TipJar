@@ -135,21 +135,15 @@ export class UsersService {
       return user;
     } catch (error: unknown) {
       this.logger.error(
-        `Failed to create user (Email: ${userEmail || 'N/A'}): ${
-          (error as Error).message
-        }`,
+        `Failed to create user (Email: ${userEmail || 'N/A'}): ${(error as Error).message}`,
         (error as Error).stack,
       );
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          const target = (error.meta?.target as string[])?.join(', ');
-          this.logger.warn(`Prisma unique constraint violation on: ${target}`);
-          throw new ConflictException(
-            `Użytkownik z tymi danymi (${
-              target || 'unikalne pole'
-            }) już istnieje.`,
-          );
-        }
+      if (error instanceof Error && 'code' in error && typeof error.code === 'string' && error.code === 'P2002') {
+        const target = (error as any).meta?.target?.join(', ');
+        this.logger.warn(`Prisma unique constraint violation on: ${target}`);
+        throw new ConflictException(
+          `Użytkownik z tymi danymi (${target || 'unikalne pole'}) już istnieje.`,
+        );
       }
       throw new InternalServerErrorException(
         'Wystąpił nieoczekiwany błąd podczas tworzenia użytkownika.',
@@ -205,15 +199,14 @@ export class UsersService {
         `Failed to update user ID [${id}]: ${(error as Error).message}`,
         (error as Error).stack,
       );
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error instanceof Error && 'code' in error && typeof error.code === 'string') {
         if (error.code === 'P2025') {
           this.logger.warn(`Update failed: User ID [${id}] not found.`);
           throw new NotFoundException(
             `Użytkownik o ID ${id} nie został znaleziony.`,
           );
-        }
-        if (error.code === 'P2002') {
-          const target = (error.meta?.target as string[])?.join(', ');
+        } else if (error.code === 'P2002') {
+          const target = (error as any).meta?.target?.join(', ');
           this.logger.warn(
             `Update failed for user ID [${id}]: Unique constraint violation on ${target}.`,
           );
@@ -283,7 +276,7 @@ export class UsersService {
     userId: string,
     provider: string,
     providerId: string,
- ): Promise<User> {
+  ): Promise<User> {
     this.logger.log(
       `Attempting to add social connection [${provider}: ${providerId.substring(
         0,
@@ -357,17 +350,13 @@ export class UsersService {
       return updatedUser;
     } catch (error: unknown) {
       this.logger.error(
-        `Failed to add social connection for user ID [${userId}]: ${
-          (error as Error).message
-        }`,
+        `Failed to add social connection for user ID [${userId}]: ${(error as Error).message}`,
         (error as Error).stack,
       );
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new ConflictException(
-            'To połączenie społeczne już istnieje lub wystąpił inny konflikt unikalności.',
-          );
-        }
+      if (error instanceof Error && 'code' in error && typeof error.code === 'string' && error.code === 'P2002') {
+        throw new ConflictException(
+          'To połączenie społeczne już istnieje lub wystąpił inny konflikt unikalności.',
+        );
       }
       throw new InternalServerErrorException(
         'Wystąpił błąd podczas dodawania połączenia społecznego.',

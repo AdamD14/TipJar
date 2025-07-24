@@ -169,8 +169,7 @@ export class AuthService {
       return this.toValidatedUser(newUserFromDb);
     } catch (error: unknown) {
       if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
+        error instanceof Error && 'code' in error && typeof error.code === 'string' && error.code === 'P2002'
       ) {
         throw new ConflictException(
           'Użytkownik o tym adresie email już istnieje.',
