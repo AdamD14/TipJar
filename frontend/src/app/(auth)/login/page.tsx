@@ -1,13 +1,21 @@
 // app/login/page.tsx
 "use client";
 import { useState } from "react";
-import { Eye, EyeOff, Mail, Lock, Wallet } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import Link from "next/link";
+import axios from "axios";
+import apiClient from "@/lib/apiClient";
+import { useAuthStore } from "@/lib/stores/authStore";
 
 export default function LoginPage() {
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState(""); // State for displaying messages
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const setUser = useAuthStore((state) => state.setUser);
+  const setAccessToken = useAuthStore((state) => state.setAccessToken);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -36,41 +44,37 @@ export default function LoginPage() {
     return true;
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validateForm()) return;
     setLoading(true);
     setError("");
-    setMessage(""); // Clear previous messages
-    // Tu podłącz własny backend / API do logowania
-    setTimeout(() => {
-      setLoading(false);
-      setMessage("Login successful!"); // Display message in UI
-      // Optionally clear form data after successful login
-      setFormData({
-        email: "",
-        password: "",
-      });
-    }, 1500);
-  };
-
-  const handleSocialLogin = async (provider: "google" | "twitch" | "web3") => {
-    setLoading(true);
-    setError("");
-    setMessage(""); // Clear previous messages
+    setMessage("");
     try {
-      // Tu wywołaj redirect do OAuth Twojego backendu lub zewnętrznej usługi
-      // For demonstration, we'll just show a message. In a real app, this would redirect.
-      setMessage(`Redirecting to ${provider} login...`);
-      // window.location.href = `/api/auth/${provider}`; // przykładowa ścieżka do OAuth
-      setTimeout(() => {
-        setLoading(false);
-        setMessage(`Social login with ${provider} simulated.`);
-      }, 1000);
-    } catch (err) {
-      setError("Social login failed");
+      const res = await apiClient.post("/auth/login", formData);
+      const { user, accessToken } = res.data;
+      setUser(user);
+      setAccessToken(accessToken);
+      if (user.role === "CREATOR") {
+        router.push("/creator/dashboard");
+      } else {
+        router.push("/fan/dashboard");
+      }
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err) && err.response) {
+        setError(err.response.data?.message || "Login failed");
+      } else {
+        setError("Network error. Please try again.");
+      }
+    } finally {
       setLoading(false);
     }
+  };
+
+  const handleSocialLogin = (provider: "google" | "twitch") => {
+    setLoading(true);
+    const backendUrl = (process.env.NEXT_PUBLIC_BACKEND_API_URL || "http://localhost:3001/api/v1").replace("/api/v1", "");
+    window.location.href = `${backendUrl}/api/v1/auth/${provider}`;
   };
 
   // Function to display terms/privacy messages
@@ -210,19 +214,19 @@ export default function LoginPage() {
             </svg>
             Sign in with Twitch
           </button>
-          <button
-            type="button"
-            onClick={() => handleSocialLogin("web3")}
-            disabled={loading}
-            className="flex items-center justify-center gap-3 bg-black/40 hover:bg-black/60 transition-all text-white font-semibold rounded-lg py-3 text-sm border border-white/10 hover:border-white/20 disabled:opacity-60"
-          >
-            <Wallet className="w-5 h-5" /> Connect Wallet (SIWE)
-          </button>
         </div>
 
         {/* Footer Links */}
         <div className="text-center text-xs mt-4 text-white/50">
-          <p className="text-center text-sm mt-4">Don't have an account? <a href="/register" className="text-teal-400 hover:text-teal-300 transition-colors underline decoration-dotted">Register</a></p>
+          <p className="text-center text-sm mt-4">
+            Don't have an account?{' '}
+            <Link
+              href="/register"
+              className="text-teal-400 hover:text-teal-300 transition-colors underline decoration-dotted"
+            >
+              Register
+            </Link>
+          </p>
         </div>
       </div>
     </main>
