@@ -57,8 +57,15 @@ export default function AuthForm() {
 
   const handleSocialLogin = (provider: "google" | "twitch") => {
     setLoading(true);
-    const backendUrl = (process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:3001/api/v1').replace('/api/v1', '');
-    window.location.href = `${backendUrl}/api/v1/auth/${provider}?role=${tab}`;
+    const backendUrl = (process.env.NEXT_PUBLIC_BACKEND_API_URL ||
+      'http://localhost:3001/api/v1').replace('/api/v1', '');
+
+    const payload = JSON.stringify({ role: tab });
+    const state =
+      provider === 'google' ? btoa(payload) : payload;
+
+    window.location.href =
+      `${backendUrl}/api/v1/auth/${provider}?state=${encodeURIComponent(state)}`;
   };
 
   const handleOpenEmailClient = () => {
