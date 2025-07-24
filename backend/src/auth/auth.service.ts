@@ -342,7 +342,7 @@ export class AuthService {
     await this.usersService.updateUser(user.id, updateDto);
 
     const frontendUrl = this.configService.get<string>('FRONTEND_URL');
-    const verificationUrl = `${frontendUrl}/auth/verify-email?token=${verificationToken}`;
+    const verificationUrl = `${frontendUrl}/auth/verify-email/${verificationToken}`;
 
     try {
       await this.mailerService.sendMail({
