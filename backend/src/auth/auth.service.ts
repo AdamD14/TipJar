@@ -38,7 +38,7 @@ export interface ValidatedUser {
   isActive: boolean;
   username?: string | null;
   hasCompletedOnboarding?: boolean;
-  consents?: Prisma.JsonValue | null;
+  consents?: any;
 }
 
 export interface AuthTokens {

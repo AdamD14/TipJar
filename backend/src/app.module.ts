@@ -1,17 +1,17 @@
-// TipJar/backend/src/app.module.ts
+// Modified version of TipJar/backend/src/app.module.ts
+// This file adds FanModule into the root module imports.  It is
+// intended to be copied over your existing app.module.ts to enable
+// the new fan API endpoints.
+
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config'; // ConfigService będzie potrzebny dla MailerModule
-
-// Import MailerModule
+import { ConfigModule, ConfigService } from '@nestjs/config';
+// Mailer
 import { MailerModule } from '@nestjs-modules/mailer';
-// import { join } from 'path'; // Odkomentuj, jeśli będziesz używał szablonów Handlebars
-// import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
-// Główne moduły aplikacji
-import { AppController } from './app.controller'; // Zakładając, że masz ten plik
+import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
-import { RedisModule } from './shared/redis/redis.module'; // Załóżmy, że masz ten moduł i jest on @Global
+import { RedisModule } from './shared/redis/redis.module';
 import { GeneratorModule } from './generator/generator.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
@@ -20,58 +20,51 @@ import { CircleModule } from './circle/circle.module';
 import { TipsModule } from './tips/tips.module';
 import { PayoutsModule } from './payouts/payouts.module';
 
+// Newly added FanModule
+import { FanModule } from './fan/fan.module';
+
 @Module({
   imports: [
-    // 1. ConfigModule jako pierwszy, aby zmienne .env były dostępne wszędzie
+    // Make .env configuration available everywhere
     ConfigModule.forRoot({
-      isGlobal: true, // Udostępnia ConfigService w całej aplikacji
-      envFilePath: '.env', // Ścieżka do pliku .env (z głównego katalogu backendu)
+      isGlobal: true,
+      envFilePath: '.env',
     }),
 
-    // 2. Twoje globalne moduły serwisowe
-    PrismaModule, // Zakładając, że PrismaModule jest @Global
-    RedisModule, // Zakładając, że RedisModule jest @Global (potrzebny dla AuthModulex)
+    // Core modules
+    PrismaModule,
+    RedisModule,
 
-    // === DODAJ KONFIGURACJĘ MAILERMODULE TUTAJ ===
+    // Mailer configuration
     MailerModule.forRootAsync({
-      imports: [ConfigModule], // Aby MailerModule miał dostęp do ConfigService
+      imports: [ConfigModule],
       useFactory: async (config: ConfigService) => ({
         transport: {
-          host: config.get<string>('MAIL_HOST'), // np. smtp.gmail.com
+          host: config.get<string>('MAIL_HOST'),
           port: parseInt(config.get<string>('MAIL_PORT', '587'), 10),
-          secure: config.get<string>('MAIL_SECURE', 'false') === 'true', // Dla Gmaila i portu 587 to false (STARTTLS)
+          secure: config.get<string>('MAIL_SECURE', 'false') === 'true',
           auth: {
-            user: config.get<string>('MAIL_USER'), // np. plustipjar@gmail.com
-            pass: config.get<string>('MAIL_PASS'), // Hasło aplikacji dla plustipjar@gmail.com
+            user: config.get<string>('MAIL_USER'),
+            pass: config.get<string>('MAIL_PASS'),
           },
-          // Możesz potrzebować `service: 'gmail'` jeśli standardowa konfiguracja host/port nie działa od razu
-          // service: config.get<string>('MAIL_SERVICE'),
         },
         defaults: {
           from: `"${config.get<string>('MAIL_FROM_NAME', 'TipJar Platform')}" <${config.get<string>('MAIL_FROM_ADDRESS', 'noreply@tipjar.example.com')}>`,
         },
-        // Opcjonalne szablony (jeśli będziesz ich używać)
-        // template: {
-        //   dir: join(__dirname, '..', 'templates', 'email'), // Tworzysz folder np. src/templates/email
-        //   adapter: new HandlebarsAdapter(),
-        //   options: {
-        //     strict: true,
-        //   },
-        // },
       }),
-      inject: [ConfigService], // Wstrzyknij ConfigService do useFactory
+      inject: [ConfigService],
     }),
-    // ============================================
 
-    // 3. Moduły poszczególnych funkcjonalności aplikacji
-    AuthModule, // AuthModule będzie teraz mógł importować MailerModule (bez .forRootAsync)
+    // Feature modules
+    AuthModule,
     UsersModule,
     CircleModule,
     TipsModule,
     PayoutsModule,
-
+    // Import the fan module to enable fan endpoints
+    FanModule,
   ],
-  controllers: [AppController], // Jeśli masz AppController
-  providers: [AppService], // Jeśli masz AppService
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

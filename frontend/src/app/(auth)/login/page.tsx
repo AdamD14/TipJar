@@ -57,10 +57,14 @@ export default function LoginPage() {
       setAccessToken(accessToken);
 
         router.push("/creator/dashboard");
-      } else {
+         else {
         router.push("/fan/dashboard");
+        async function (): Promise<void> {
+      try {
       }
-    } catch (err: unknown) {
+      catch {
+      }
+    } (err: unknown) {
       if (axios.isAxiosError(err) && err.response) {
         setError(err.response.data?.message || "Login failed");
       } else {

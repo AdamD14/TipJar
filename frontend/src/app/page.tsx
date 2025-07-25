@@ -29,14 +29,8 @@ const AvatarCarousel = ({ images }: AvatarCarouselProps) => {
   }, [images]);
 
   return (
-    <div className="relative w-48 h-48 sm:w-64 sm:h-64 rounded-full overflow-hidden border-4 border-yellow-400 shadow-lg flex items-center justify-center mx-auto mb-4">
-      <Image
-        src={images[currentImageIndex]}
-        alt="Creator Avatar"
-        layout="fill"
-        objectFit="cover"
-        className="transition-opacity duration-1000 ease-in-out"
-      />
+    <div className="container mx-auto px-8 -mt-32 relative z-10 flex flex-col md:flex-row items-start justify-between gap-12">
+        <AvatarCarousel images={creatorAvatarUrls} />
     </div>
   );
 };
@@ -197,85 +191,39 @@ export default function Page() {
   <div className="absolute inset-0 bg-[#4D194D] bg-opacity-30"></div>
 </div>
 
-      <div className="relative z-10 flex flex-col min-h-screen container mx-auto px-4">
+      <div className="relative z-5 flex container  px-1">
         <header
-          className={`fixed top-0 left-0 right-0 z-50 w-full border-b border-white border-opacity-10 transition-colors duration-300
-  ${isScrolled ? "bg-[#0d2f3f] bg-opacity-95" : "bg-[#0d2f3f] bg-opacity-30 backdrop-blur-lg"}
+          className={`fixed top-1 left-1 right-0  w-full border-b border-[#E7E3C1] border-opacity-10 transition-colors duration-300
+  ${isScrolled ? "bg-[#0d2f3f] bg-opacity-95" : "bg-[#144552] bg-opacity-30 backdrop-blur-lg"}
 `}
         >
-          <nav className="grid grid-cols-3 items-center w-full h-15">
-            <div className="flex justify-start">
-              <a
-                href="#"
-                className="flex items-center space-x-2"
-                aria-label="Strona główna TipJar+"
-              >
-                <Image
-                  src="/assets/icon_tipjarnone.png"
-                  alt="TipJar+ Logo"
-                  width={60}
-                  height={60}
-                />
-                <span className="text-2xl font-bold text-white">
-                  tipjar.plus
-                </span>
-              </a>
-            </div>
-            {/* Linki – środek */}
-            <div className="hidden md:flex items-center justify-center gap-6 text-base whitespace-nowrap">
-              <a
-                href="#why"
-                className="text-white hover:text-yellow-400 transition"
-              >
-                Why tipjar+?
-              </a>
-              <a
-                href="#how-it-works"
-                className="text-white hover:text-yellow-400 transition"
-              >
-                How it works?
-              </a>
-              <a
-                href="#start-building"
-                className="text-white hover:text-yellow-400 transition"
-              >
-                Start Building
-              </a>
-              <a
-                href="#explore"
-                className="text-white hover:text-yellow-400 transition"
-              >
-                Explore
-              </a>
-              <a
-                href="#learn"
-                className="text-white hover:text-yellow-400 transition"
-              >
-                Learn
-              </a>
-              <a
-                href="#ai-studio"
-                className="text-white hover:text-yellow-400 transition"
-              >
-                AI Studio
-              </a>
-            </div>
+          <nav className="grid grid-cols-3  w-full ">
+            <div className="flex mb-3/2 top-2">
+          <div className="bg-gradient-to-r from-[#E7E3C1] to-[#144552] text-white px-2  rounded font-bold text-xl shadow-lg flex items-center ">
+            {/* Using a placeholder image for the icon as /assets/icon-tipjarnone.svg is not available */}
+            <img src="/assets/icon-tipjarnone.svg" alt="TipJar+ icon" width={48} height={48} className="h-12 w-auto" />
+            tipjar.plus
+          </div>
+        </div>
+    {/* Linki – środek */}
+    <div className="hidden xl:flex items-center justify-center gap-10 text-base whitespace-nowrap">
+      <a href="#why" className="text-white hover:text-[#E7E3C1] transition">Why tipjar+?</a>
+      <a href="#how-it-works" className="text-white hover:text-[#E7E3C1] transition">How it works?</a>
+      <a href="#start-building" className="text-white hover:text-[#E7E3C1] transition">Start Building</a>
+      <a href="#explore" className="text-white hover:text-[#E7E3C1] transition">Explore</a>
+      <a href="#learn" className="text-white hover:text-[#E7E3C1] transition">Learn</a>
+      <a href="#ai-studio" className="text-white hover:text-[#E7E3C1] transition">AI Studio</a>
+    </div>
 
-            {/* CTA – prawa strona */}
-            <div className="hidden md:flex justify-end items-center gap-3 pr-6">
-              <a
-                href="#"
-                className="bg-[#FFD700] text-gray-900 font-bold py-2 px-4 rounded-lg text-sm hover:scale-105 transition"
-              >
-                Begin as a Creator
-              </a>
-              <a
-                href="#"
-                className="border border-white text-white font-bold py-2 px-4 rounded-lg text-sm hover:bg-white hover:text-[#0d2f3f] transition"
-              >
-                Login
-              </a>
-            </div>
+    {/* CTA – prawa strona */}
+    <div className="hidden xl:flex justify-end items-center gap-4 pr-6">
+      <a href="#" className="bg-[#E7E3C1] text-gray-900 font-bold py-2 px-4 rounded text-full hover:scale-105 transition">
+        Begin as a Creator
+      </a>
+      <a href="#" className="border border-[#E7E3C1] text-[#E7E3C1] font-bold py-2 px-4 rounded text-full hover:bg-[#E7E3C1] hover:text-[#0d2f3f] -105 transition">
+        Login
+      </a>
+    </div>
 
             {/* Hamburger – mobile */}
             <button
@@ -308,49 +256,34 @@ export default function Page() {
             </button>
           </nav>
 
-          {/* Menu mobile */}
-          {isMenuOpen && (
-            <div className="md:hidden bg-[#0f3a4d] bg-opacity-90 p-4 space-y-2 text-center border-t border-white border-opacity-10">
-              {[
-                ["#why", "Why tipjar+?"],
-                ["#how-it-works", "How it works?"],
-                ["#start-building", "Start Building"],
-                ["#explore", "Explore"],
-                ["#learn", "Learn"],
-                ["#ai-studio", "AI Studio"],
-              ].map(([href, label]) => (
-                <a
-                  key={href}
-                  href={href}
-                  onClick={toggleMenu}
-                  className="block text-white hover:text-yellow-400 transition"
-                >
-                  {label}
-                </a>
-              ))}
-              <a
-                href="#"
-                onClick={toggleMenu}
-                className="block bg-[#FFD700] text-[#0d2f3f] font-bold py-2 px-4 rounded-lg hover:scale-105 transition"
-              >
-                Begin as a Creator
-              </a>
-              <a
-                href="#"
-                onClick={toggleMenu}
-                className="block border border-white text-white font-bold py-2 px-4 rounded-lg hover:bg-white hover:text-[#0d2f3f] transition"
-              >
-                Login
-              </a>
-            </div>
-          )}
-        </header>
+  {/* Menu mobile */}
+  {isMenuOpen && (
+    <div className="md:hidden bg-[#0f3a4d] bg-opacity-90 p-4 space-y-2 text-center border-t border-white border-opacity-10">
+      {[
+        ['#why', 'Why tipjar+?'],
+        ['#how-it-works', 'How it works?'],
+        ['#start-building', 'Start Building'],
+        ['#explore', 'Explore'],
+        ['#learn', 'Learn'],
+        ['#ai-studio', 'AI Studio']
+      ].map(([href, label]) => (
+        <a key={href} href={href} onClick={toggleMenu} className="block text-white hover:text-yellow-400 transition">
+          {label}
+        </a>
+      ))}
+      <a href="#" onClick={toggleMenu} className="block bg-[#FFD700] text-[#0d2f3f] font-bold py-2 px-4 rounded-lg hover:scale-105 transition">
+        Begin as a Creator
+      </a>
+      <a href="#" onClick={toggleMenu} className="block border border-white text-white font-bold py-2 px-4 rounded-lg hover:bg-white hover:text-[#0d2f3f] transition">
+        Login
+      </a>
+    </div>
+  )}
+</header>
+
 
         <main className="flex-grow">
-          <section
-            className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start pt-20"
-            style={{ minHeight: "calc(90vh - 80px)" }}
-          >
+          <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start pt-20" style={{ minHeight: 'calc(90vh - 80px)' }}>
             <div className="text-left pt-20">
               <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
                 Support Creativity,
@@ -365,23 +298,14 @@ export default function Page() {
                 fees.
               </p>
               <div className="flex flex-col sm:flex-row items-start gap-4 mt-10">
-                <a
-                  href="#"
-                  className="font-bold bg-[#FFD700] text-gray-900 py-3 px-6 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-400/50 w-full sm:w-auto text-center"
-                >
+                <a href="#" className="font-bold bg-[#FFD700] text-gray-900 py-3 px-6 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-400/50 w-full sm:w-auto text-center">
                   Sign Up as Creator
                 </a>
-                <a
-                  href="#"
-                  className="font-bold text-white border-2 border-white bg-transparent py-3 px-6 rounded-lg hover:bg-white hover:text-[#0d2f3f] transition-colors duration-300 w-full sm:w-auto text-center"
-                >
+                <a href="#" className="font-bold text-white border-2 border-white bg-transparent py-3 px-6 rounded-lg hover:bg-white hover:text-[#0d2f3f] transition-colors duration-300 w-full sm:w-auto text-center">
                   Explore Creators
                 
                 </a>
-                <a
-                  href="#"
-                  className="font-bold text-white bg-white bg-opacity-20 py-3 px-6 rounded-lg hover:bg-opacity-30 transition-colors duration-300 w-full sm:w-auto text-center"
-                >
+                <a href="#" className="font-bold text-white bg-white bg-opacity-20 py-3 px-6 rounded-lg hover:bg-opacity-30 transition-colors duration-300 w-full sm:w-auto text-center">
                   Sign Up as a Fan
                 </a>
               </div>
@@ -403,43 +327,15 @@ export default function Page() {
                 <div className="text-center mt-2">
                   <h3 className="text-2xl font-bold">@AdamDuda</h3>
                   <div className="flex justify-center items-center gap-2 mt-1">
-                    <span className="text-sm text-[#b0c4de]">
-                      tipjar.plus/@AdamDuda
-                    </span>
-                    <button
-                      onClick={handleCopy}
-                      className="text-[#b0c4de] hover:text-white transition-colors"
-                      title="Skopiuj link"
-                    >
+                    <span className="text-sm text-[#b0c4de]">tipjar.plus/@AdamDuda</span>
+                    <button onClick={handleCopy} className="text-[#b0c4de] hover:text-white transition-colors" title="Skopiuj link">
                       {isCopied ? (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5 text-green-400"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                       ) : (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                          />
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                         </svg>
                       )}
                     </button>
@@ -447,121 +343,50 @@ export default function Page() {
                 </div>
                 <div className="text-center mt-2 px-1">
                   <p className="text-sm text-[#b0c4de] max-w-xs mx-auto">
-                    Founder of tipjar+ - built together with a team of AI
-                    agents. Advocate of freedom, decentralization, and
-                    blockchain technology. Web3 & AI pro user. Paleo-contact
-                    believer.
+                    Founder of tipjar+ - built together with a team of AI agents. Advocate of freedom, decentralization, and blockchain technology. Web3 & AI pro user. Paleo-contact believer.
                   </p>
                 </div>
                 <div className="mt-4 px-2">
-                  <input
-                    type="range"
-                    min="0.1"
-                    max="20"
-                    step="0.1"
-                    value={tipAmount}
-                    onChange={(e) => setTipAmount(parseFloat(e.target.value))}
-                    className="w-full h-[6px] rounded-lg appearance-none cursor-pointer"
-                    style={sliderBackground}
-                  />
+                  <input type="range" min="0.1" max="20" step="0.1" value={tipAmount} onChange={(e) => setTipAmount(parseFloat(e.target.value))} className="w-full h-[6px] rounded-lg appearance-none cursor-pointer" style={sliderBackground} />
                 </div>
                 <div className="mt-4 grid grid-cols-4 gap-2 px-2">
-                  <button
-                    onClick={() => setTipAmount(1)}
-                    className={`py-2 rounded-lg text-sm transition-colors ${tipAmount === 1 ? "bg-[#FFD700] text-gray-900 font-bold" : "bg-white bg-opacity-10 text-white hover:bg-opacity-20"}`}
-                  >
-                    $1
-                  </button>
-                  <button
-                    onClick={() => setTipAmount(2)}
-                    className={`py-2 rounded-lg text-sm transition-colors ${tipAmount === 2 ? "bg-[#FFD700] text-gray-900 font-bold" : "bg-white bg-opacity-10 text-white hover:bg-opacity-20"}`}
-                  >
-                    $2
-                  </button>
-                  <button
-                    onClick={() => setTipAmount(5)}
-                    className={`py-2 rounded-lg text-sm transition-colors ${tipAmount === 5 ? "bg-[#FFD700] text-gray-900 font-bold" : "bg-white bg-opacity-10 text-white hover:bg-opacity-20"}`}
-                  >
-                    $5
-                  </button>
-                  <button
-                    onClick={() => setTipAmount(10)}
-                    className={`py-2 rounded-lg text-sm transition-colors ${tipAmount === 10 ? "bg-[#FFD700] text-gray-900 font-bold" : "bg-white bg-opacity-10 text-white hover:bg-opacity-20"}`}
-                  >
-                    $10
-                  </button>
+                  <button onClick={() => setTipAmount(1)} className={`py-2 rounded-lg text-sm transition-colors ${tipAmount === 1 ? 'bg-[#FFD700] text-gray-900 font-bold' : 'bg-white bg-opacity-10 text-white hover:bg-opacity-20'}`}>$1</button>
+                  <button onClick={() => setTipAmount(2)} className={`py-2 rounded-lg text-sm transition-colors ${tipAmount === 2 ? 'bg-[#FFD700] text-gray-900 font-bold' : 'bg-white bg-opacity-10 text-white hover:bg-opacity-20'}`}>$2</button>
+                  <button onClick={() => setTipAmount(5)} className={`py-2 rounded-lg text-sm transition-colors ${tipAmount === 5 ? 'bg-[#FFD700] text-gray-900 font-bold' : 'bg-white bg-opacity-10 text-white hover:bg-opacity-20'}`}>$5</button>
+                  <button onClick={() => setTipAmount(10)} className={`py-2 rounded-lg text-sm transition-colors ${tipAmount === 10 ? 'bg-[#FFD700] text-gray-900 font-bold' : 'bg-white bg-opacity-10 text-white hover:bg-opacity-20'}`}>$10</button>
                 </div>
                 <div className="text-center mt-4 px-2">
-                  <a
-                    href="#"
-                    className="w-full font-bold bg-[#FFD700] text-gray-900 py-3 px-4 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-400/50 text-lg inline-flex items-center justify-center gap-2"
-                  >
+                  <a href="#" className="w-full font-bold bg-[#FFD700] text-gray-900 py-3 px-4 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-400/50 text-lg inline-flex items-center justify-center gap-2">
                     Tip ${tipAmount.toFixed(2)}
-                    <Image
-                      src="/assets/logo_usdc_1.png"
-                      width={28}
-                      height={28}
-                      className="object-cover opacity-80"
-                      alt="USDC Logo"
-                    />
+                    <Image src="/assets/logo_usdc_1.png" width={28} height={28} className="object-cover opacity-80" alt="USDC Logo" />
                   </a>
                 </div>
-                <div className="mt-2 grid grid-cols-6 gap-[4px] px-2 h-8">
-                  <PaymentIcon name="Google Pay">
-                    <Image
-                      src="/assets/Google_Pay_Logo.svg"
-                      alt="Google Pay"
-                      width={36}
-                      height={36}
-                      className="object-contain"
-                    />
-                  </PaymentIcon>
-                  <PaymentIcon name="Apple Pay">
-                    <Image
-                      src="/assets/Apple_Pay_Mark_RGB.svg"
-                      alt="Apple Pay"
-                      width={32}
-                      height={32}
-                      className="object-contain"
-                    />
-                  </PaymentIcon>
-                  <PaymentIcon name="Metamask">
-                    <Image
-                      src="/assets/MetaMask-icon-fox.svg"
-                      alt="Metamask"
-                      width={30}
-                      height={30}
-                      className="object-contain"
-                    />
-                  </PaymentIcon>
-                  <PaymentIcon name="Revolut">
-                    <Image
-                      src="/assets/revolut.svg"
-                      alt="Revolut"
-                      width={36}
-                      height={36}
-                      className="object-contain"
-                    />
-                  </PaymentIcon>
-                  <PaymentIcon name="WalletConnect">
-                    <Image
-                      src="/assets/wc.svg"
-                      alt="WalletConnect"
-                      width={36}
-                      height={36}
-                      className="object-contain"
-                    />
-                  </PaymentIcon>
-                  <PaymentIcon name="Bank">
-                    <Image
-                      src="/assets/bank-svgrepo-com.svg"
-                      alt="Bank"
-                      width={26}
-                      height={26}
-                      className="object-contain"
-                    />
-                  </PaymentIcon>
-                </div>
+               <div className="mt-2 grid grid-cols-6 gap-[4px] px-2 h-8">
+  <PaymentIcon name="Google Pay">
+    <Image src="/assets/Google_Pay_Logo.svg" alt="Google Pay"  width={36}
+      height={36} className="object-contain"/>
+  </PaymentIcon>
+  <PaymentIcon name="Apple Pay">
+    <Image src="/assets/Apple_Pay_Mark_RGB.svg" alt="Apple Pay"  width={32}
+      height={32} className="object-contain"/>  
+  </PaymentIcon>
+  <PaymentIcon name="Metamask">
+    <Image src="/assets/MetaMask-icon-fox.svg" alt="Metamask"  width={30}
+      height={30} className="object-contain"/>
+  </PaymentIcon>
+  <PaymentIcon name="Revolut">
+     <Image src="/assets/revolut.svg" alt="Revolut"  width={36}
+      height={36} className="object-contain" />
+  </PaymentIcon>
+  <PaymentIcon name="WalletConnect">
+    <Image src="/assets/wc.svg" alt="WalletConnect"  width={36}
+      height={36} className="object-contain" />
+  </PaymentIcon>
+  <PaymentIcon name="Bank">
+    <Image src="/assets/bank-svgrepo-com.svg" alt="Bank"  width={26}
+      height={26} className="object-contain"/>
+  </PaymentIcon>
+</div>
               </div>
             </div>
           </section>
@@ -991,3 +816,4 @@ export default function Page() {
     </div> 
   );
 }
+

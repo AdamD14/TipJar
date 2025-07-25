@@ -1,244 +1,125 @@
-"use client";
+"use client"
+import React, { useState, useEffect, FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { useState, useEffect, useMemo } from "react"; // <<< Dodajemy import useMemo
-import { useRouter } from "next/navigation";
-import apiClient from "@/lib/apiClient";
-import { useAuthStore } from "@/lib/stores/authStore";
-import { User, Check } from "lucide-react";
-import axios from "axios";
-
-const ChooseUsernamePage = () => {
+/**
+ * ChooseUsername
+ *
+ * This page collects a unique username from the user after registration.  It
+ * fetches the current user from the backend to determine their role (creator
+ * or fan).  The username must be unique across the platform; on submit the
+ * value is posted to `/auth/username`.  Once saved the user is redirected to
+ * the appropriate onboarding flow: creators proceed to `/creator/setup` and
+ * fans to `/fan/setup`.
+ */
+export default function ChooseUsername() {
   const router = useRouter();
+  const [username, setUsername] = useState('');
+  const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
+  const [error, setError] = useState('');
+  const [user, setUser] = useState<{ role: string } | null>(null);
 
-  const user = useAuthStore((state) => state.user);
-  const setUser = useAuthStore((state) => state.setUser);
-  const role = user?.role;
-  const country = user?.country || "PL";
+  // Fetch current user
+  useEffect(() => {
+    const fetchMe = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data.user);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchMe();
+  }, []);
 
-  const [username, setUsername] = useState("");
-  const [usernameStatus, setUsernameStatus] = useState<
-    "checking" | "available" | "taken" | "invalid" | null
-  >(null);
-  const [consents, setConsents] = useState({
-    terms: false,
-    privacy: false,
-    age: false,
-    marketing: false,
-    usTax: false,
-    usTerms: false,
-  });
-
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const isUSUser = country === "US";
-  
-  // <<< POPRAWKA: Używamy useMemo, aby wyrażenie regularne było tworzone tylko raz
-  const usernameRegex = useMemo(() => /^[A-Za-z0-9_]{3,30}$/, []);
-
+  // Check username availability when it changes
   useEffect(() => {
     if (!username) {
-      setUsernameStatus(null);
+      setIsAvailable(null);
       return;
     }
-
-    const controller = new AbortController();
     const timer = setTimeout(async () => {
-      const trimmed = username.trim().toLowerCase();
-      if (!usernameRegex.test(trimmed)) {
-        setUsernameStatus("invalid");
-        return;
-      }
       try {
-        setUsernameStatus("checking");
-        const res = await apiClient.get(
-          `/users/username-check?username=${trimmed}`,
-          { signal: controller.signal },
-        );
-        setUsernameStatus(res.data.available ? "available" : "taken");
-      } catch {
-        setUsernameStatus(null);
+        const res = await fetch(`/api/auth/username-check?username=${encodeURIComponent(username)}`);
+        if (res.ok) {
+          const data = await res.json();
+          setIsAvailable(data.available);
+        }
+      } catch (err) {
+        console.error(err);
       }
-    }, 500);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [username]);
 
-    return () => {
-      clearTimeout(timer);
-      controller.abort();
-    };
-  }, [username, usernameRegex]);
-
-  const allRequiredConsentsGiven =
-    consents.terms &&
-    consents.privacy &&
-    consents.age &&
-    (!isUSUser || (consents.usTax && consents.usTerms));
-
-  const handleConsentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = e.target;
-    setConsents((prev) => ({ ...prev, [name]: checked }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setError("");
-
-    if (!usernameRegex.test(username) || usernameStatus !== "available") {
-      setError("Username is invalid or already taken.");
+    if (!username) {
+      setError('Please enter a username');
       return;
     }
-    if (!allRequiredConsentsGiven) {
-      setError("Please accept all required terms to continue.");
+    if (isAvailable === false) {
+      setError('This username is already taken');
       return;
     }
-
     try {
-      setLoading(true);
-      const payload = { username: username.trim(), consents: consents };
-      await apiClient.post("/users/set-username", payload);
-
-      if (user) {
-        setUser({ ...user, username: username.trim() });
-      }
-
-      if (role === "CREATOR") {
-        router.push("/choose-username/kyc");
+      const res = await fetch('/api/auth/username', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      // redirect based on role
+      if (user?.role === 'CREATOR') {
+        router.push('/creator/setup');
       } else {
-        router.push("/fan/dashboard");
+        router.push('/fan/setup');
       }
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err) && err.response) {
-        setError(
-          err.response.data?.message ||
-            "Failed to set username. Please try again.",
-        );
-      } else {
-        setError("Network error. Please check your connection.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getUsernameStatusUI = () => {
-    if (!username) return null;
-    switch (usernameStatus) {
-      case "checking":
-        return <p className="text-yellow-400 text-xs mt-1">Checking...</p>;
-      case "available":
-        return <p className="text-green-400 text-xs mt-1">✅ Available!</p>;
-      case "taken":
-        return <p className="text-red-400 text-xs mt-1">❌ Already taken</p>;
-      case "invalid":
-        return (
-          <p className="text-red-400 text-xs mt-1">
-            Must be 3-30 letters, numbers, or underscores.
-          </p>
-        );
-      default:
-        return null;
+    } catch (err) {
+      setError('Failed to save username');
     }
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-black px-4 py-8">
-      <div className="w-full max-w-md bg-teal-900/20 backdrop-blur-md border border-teal-400/20 rounded-2xl shadow-2xl p-6">
-        <h1 className="text-white text-2xl font-bold text-center mb-6">
-          Complete Your Profile
-        </h1>
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          <div>
-            <label
-              htmlFor="username"
-              className="block text-white text-sm mb-2 font-medium"
-            >
-              Choose a unique username
-            </label>
-            <div className="relative">
-              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-teal-400 w-5 h-5" />
-              <input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="e.g. your_cool_name"
-                disabled={loading}
-                required
-                className="w-full bg-slate-900/60 border border-teal-400/40 rounded-lg pl-11 pr-4 py-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all"
-              />
-            </div>
-            {getUsernameStatusUI()}
-          </div>
-
-          <div className="space-y-3 pt-2">
-            <p className="text-white text-sm font-medium">
-              Please review and accept:
-            </p>
-            {[
-              { name: 'terms', label: 'I agree to the Terms of Service' },
-              { name: 'privacy', label: 'I agree to the Privacy Policy' },
-              { name: 'age', label: 'I confirm I am over 18 years old' },
-              {
-                name: 'marketing',
-                label: 'I agree to receive marketing emails (optional)',
-                optional: true,
-              },
-              ...(isUSUser
-                ? [
-                    {
-                      name: 'usTax',
-                      label: 'I certify I am a U.S. person for tax purposes',
-                    },
-                    {
-                      name: 'usTerms',
-                      label: 'I agree to US-specific disclosures',
-                    },
-                  ]
-                : []),
-            ].map((consent) => (
-              <label
-                key={consent.name}
-                className="flex items-center gap-3 text-white/80 text-sm cursor-pointer"
-              >
-                <input
-                  type="checkbox"
-                  name={consent.name}
-                  checked={consents[consent.name as keyof typeof consents]}
-                  onChange={handleConsentChange}
-                  disabled={loading}
-                  className="hidden peer"
-                />
-                <span className="w-5 h-5 border-2 border-teal-400/60 rounded-md peer-checked:bg-teal-500 peer-checked:border-teal-500 flex items-center justify-center transition-all">
-                  <Check className="w-4 h-4 text-white opacity-0 peer-checked:opacity-100" />
-                </span>
-                {consent.label}{' '}
-                {!consent.optional && (
-                  <span className="text-teal-400">*</span>
-                )}
-              </label>
-            ))}
-          </div>
-
-          {error && (
-            <div className="text-red-400 text-sm text-center bg-red-900/30 border border-red-500/50 rounded-lg p-3 mt-2">
-              {error}
-            </div>
+    <div className="mx-auto max-w-lg p-6">
+      <h1 className="text-3xl font-semibold mb-4">Choose your username</h1>
+      <p className="mb-6 text-gray-600">
+        Pick a unique handle that will be part of your public profile URL.
+      </p>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label htmlFor="username" className="block font-medium mb-1">
+            Username
+          </label>
+          <input
+            id="username"
+            type="text"
+            value={username}
+            onChange={(e) => {
+              setUsername(e.target.value.toLowerCase());
+              setError('');
+            }}
+            required
+            className="w-full border rounded p-2"
+          />
+          {isAvailable === false && (
+            <p className="text-red-500 text-sm mt-1">This username is taken</p>
           )}
-
-          <button
-            type="submit"
-            disabled={
-              loading ||
-              !allRequiredConsentsGiven ||
-              usernameStatus !== 'available'
-            }
-            className="w-full bg-gradient-to-r from-teal-500 to-purple-500 text-white font-bold py-3 rounded-lg hover:from-teal-600 hover:to-purple-600 hover:scale-[1.02] transform transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none disabled:hover:scale-100 shadow-lg"
-          >
-            {loading ? 'Saving...' : 'Confirm and Continue'}
-          </button>
-        </form>
-      </div>
-    </main>
+          {isAvailable === true && (
+            <p className="text-green-600 text-sm mt-1">This username is available</p>
+          )}
+        </div>
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+        <button
+          type="submit"
+          className="px-6 py-3 bg-teal-600 text-white rounded hover:bg-teal-700 transition"
+        >
+          Save and continue
+        </button>
+      </form>
+    </div>
   );
-};
-
-export default ChooseUsernamePage;
+}
