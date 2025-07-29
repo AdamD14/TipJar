@@ -310,4 +310,65 @@ export class CircleService implements OnModuleInit {
       this.handleCircleError(error, 'get transaction status');
     }
   }
+
+  async getUserWallet(userId: string) {
+    const record = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { circleWalletId: true, mainWalletAddress: true },
+    });
+    if (!record?.circleWalletId || !record.mainWalletAddress) {
+      throw new NotFoundException('Circle wallet not found');
+    }
+    return { walletId: record.circleWalletId, address: record.mainWalletAddress };
+  }
+
+  async listUserTransactions(userId: string) {
+    const wallet = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { circleWalletId: true },
+    });
+    if (!wallet?.circleWalletId) {
+      throw new NotFoundException('Circle wallet not found');
+    }
+    try {
+      const res = await this.circleClient.listTransactions({ walletIds: [wallet.circleWalletId] });
+      return res.data?.transactions ?? [];
+    } catch (error) {
+      this.handleCircleError(error, 'list transactions', userId);
+    }
+  }
+
+  async createHostedCheckout(userId: string, amount: number) {
+    if (amount <= 0) {
+      throw new BadRequestException('Amount must be positive');
+    }
+    const wallet = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { circleWalletId: true },
+    });
+    if (!wallet?.circleWalletId) {
+      throw new NotFoundException('Circle wallet not found');
+    }
+    return { hostedUrl: 'https://example.com/checkout' };
+  }
+
+  async handleWebhook(payload: any, signature: string) {
+    if (!signature) {
+      throw new BadRequestException('Missing signature');
+    }
+    this.logger.debug(`Received Circle webhook with signature ${signature}`);
+    this.logger.verbose(JSON.stringify(payload));
+    return { received: true };
+  }
+
+  async listAllWallets() {
+    return this.prisma.user.findMany({
+      where: { circleWalletId: { not: null } },
+      select: {
+        id: true,
+        circleWalletId: true,
+        mainWalletAddress: true,
+      },
+    });
+  }
 }
