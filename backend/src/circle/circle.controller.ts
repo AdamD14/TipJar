@@ -90,4 +90,9 @@ export class CircleController {
     }
     return this.circleService.listAllWallets();
   }
+
+  @Post('withdraw')
+  @UseGuards(AuthGuard('jwt'))
+
+  }
 }
