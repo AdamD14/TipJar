@@ -30,11 +30,10 @@ import {
   Balance,
   TokenInfo,
 } from '@circle-fin/developer-controlled-wallets';
-import { isAxiosError } from 'axios';
-import { randomUUID, createHmac } from 'crypto';
-import { Request } from 'express';
+
 import { PrismaService } from '../prisma/prisma.service';
 import { UserRole } from '@prisma/client';
+import { Request } from 'express';
 
 @Injectable()
 export class CircleService implements OnModuleInit {
@@ -397,7 +396,7 @@ export class CircleService implements OnModuleInit {
     circleTransactionId: string,
   ): Promise<Transaction | null> {
     this.logger.debug(
-      `Fetching status for Circle transaction ID: ${circleTransactionId}`,
+
     );
     try {
       const requestPayload: GetTransactionInput = { id: circleTransactionId };
@@ -408,103 +407,5 @@ export class CircleService implements OnModuleInit {
     }
   }
 
-  async handleWebhook(req: Request, body: any): Promise<void> {
-    const signature = req.headers['circle-signature'] as string;
-    const secret = process.env.CIRCLE_WEBHOOK_SECRET || '';
 
-    const expected = createHmac('sha256', secret)
-      .update(JSON.stringify(body))
-      .digest('hex');
-
-    if (signature !== expected) {
-      throw new UnauthorizedException('Invalid webhook signature');
-    }
-
-    const eventType = body.type;
-    const data = body.data;
-
-    this.logger.log(`Circle webhook event received: ${eventType}`);
-
-    switch (eventType) {
-      case 'payment.complete':
-        if (this.prisma.hostedDeposit) {
-          await this.prisma.hostedDeposit.updateMany({
-            where: { circleCheckoutId: data.id },
-            data: { status: 'COMPLETED' },
-          });
-        }
-        break;
-      case 'wallet.transfer.complete':
-        if (this.prisma.withdrawal) {
-          await this.prisma.withdrawal.updateMany({
-            where: { circleTransferId: data.id },
-            data: { status: 'COMPLETED' },
-          });
-        }
-        break;
-      default:
-        this.logger.warn(`Unhandled Circle webhook type: ${eventType}`);
-        break;
-    }
-  }
-
-  async withdrawUSDC(
-    userId: string,
-    amount: number,
-    toAddress: string,
-  ): Promise<{ transferId: string }> {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { circleWalletId: true },
-    });
-
-    if (!user?.circleWalletId) {
-      throw new NotFoundException('Circle wallet not found');
-    }
-
-    const idempotencyKey = randomUUID();
-
-    const res = await fetch(
-      `https://api.circle.com/v1/wallets/${user.circleWalletId}/transfers`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${process.env.CIRCLE_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          idempotencyKey,
-          destination: {
-            type: 'blockchain',
-            address: toAddress,
-            chain: 'POLYGON',
-          },
-          amount: {
-            amount: amount.toFixed(2),
-            currency: 'USD',
-          },
-        }),
-      },
-    );
-
-    if (!res.ok) {
-      const text = await res.text();
-      throw new HttpException(`Circle API error: ${text}`, res.status);
-    }
-
-    const responseData = await res.json();
-    const transferId = responseData.data?.id;
-
-    await this.prisma.withdrawal.create({
-      data: {
-        userId,
-        amount,
-        circleTransferId: transferId,
-        toAddress,
-        status: 'PENDING',
-      },
-    });
-
-    return { transferId };
-  }
 }

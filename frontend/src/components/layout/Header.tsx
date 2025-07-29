@@ -1,98 +1,112 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { Menu, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
 
-const TipJarLogo = () => (
-  <Link href="/" className="flex items-center gap-2 z-50">
-    <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center p-1">
-      <div className="w-full h-full bg-teal-800 rounded-sm flex items-center justify-center text-yellow-400 font-bold text-lg">
-        +
-      </div>
-    </div>
-    <span className="text-xl font-bold text-white tracking-wider">TipJar</span>
-  </Link>
-);
+// Ten komponent zawiera wyłącznie kod nagłówka/nawigacji
+// wyciągnięty z Twojego pliku page.tsx
+const Header = () => {
+  // Cała logika stanu związana z headerem została przeniesiona tutaj
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
-export const Header = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-  const navLinks = [
-    { href: '/discover', label: 'Odkrywaj Twórców' },
-    { href: '/how-it-works', label: 'Jak to działa?' },
-    { href: '/learn', label: 'Strona Learn' },
-  ];
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <header className="bg-teal-800 text-white shadow-md sticky top-0 z-40">
-      <div className="container mx-auto flex items-center justify-between p-4">
-        <TipJarLogo />
-        <nav className="hidden md:flex items-center gap-6">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-sm font-semibold text-teal-100 hover:text-yellow-400 transition-colors relative after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-yellow-400 after:scale-x-0 after:origin-bottom-left after:transition-transform after:duration-300 hover:after:scale-x-100"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="hidden md:flex items-center gap-4">
-          <Link href="/login" className="text-sm font-semibold text-teal-100 hover:text-yellow-400 transition-colors">
-            Logowanie
-          </Link>
+    <header
+      className={`fixed top-1 left-1 right-0 w-full border-b border-[#E7E3C1] border-opacity-10 transition-colors duration-300
+        ${isScrolled ? "bg-[#0d2f3f] bg-opacity-95" : "bg-[#144552] bg-opacity-30 backdrop-blur-lg"}
+      `}
+    >
+      <nav className="grid grid-cols-3 w-full ">
+        <div className="flex mb-3/2 top-2">
+          <div className="bg-gradient-to-r from-[#E7E3C1] to-[#144552] text-white px-2 rounded font-bold text-xl shadow-lg flex items-center ">
+            <img src="/assets/icon-tipjarnone.svg" alt="TipJar+ icon" width={48} height={48} className="h-12 w-auto" />
+            tipjar.plus
+          </div>
         </div>
-        <div className="md:hidden">
-          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} aria-label="Otwórz menu">
-            <Menu className="h-6 w-6 text-white" />
-          </button>
+        
+        {/* Linki – środek */}
+        <div className="hidden xl:flex items-center justify-center gap-10 text-base whitespace-nowrap">
+          <a href="#why" className="text-white hover:text-[#E7E3C1] transition">Why tipjar+?</a>
+          <a href="#how-it-works" className="text-white hover:text-[#E7E3C1] transition">How it works?</a>
+          <a href="#start-building" className="text-white hover:text-[#E7E3C1] transition">Start Building</a>
+          <a href="#explore" className="text-white hover:text-[#E7E3C1] transition">Explore</a>
+          <a href="#learn" className="text-white hover:text-[#E7E3C1] transition">Learn</a>
+          <a href="#ai-studio" className="text-white hover:text-[#E7E3C1] transition">AI Studio</a>
         </div>
-      </div>
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            className="md:hidden fixed inset-0 bg-teal-900/95 backdrop-blur-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+
+        {/* CTA – prawa strona */}
+        <div className="hidden xl:flex justify-end items-center gap-4 pr-6">
+          <a href="#" className="bg-[#E7E3C1] text-gray-900 font-bold py-2 px-4 rounded text-full hover:scale-105 transition">
+            Begin as a Creator
+          </a>
+          <a href="#" className="border border-[#E7E3C1] text-[#E7E3C1] font-bold py-2 px-4 rounded text-full hover:bg-[#E7E3C1] hover:text-[#0d2f3f] -105 transition">
+            Login
+          </a>
+        </div>
+
+        {/* Hamburger – mobile */}
+        <button
+          onClick={toggleMenu}
+          className="md:hidden text-white justify-self-end pr-4"
+          aria-label="Menu"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            <div className="container mx-auto p-4">
-              <div className="flex justify-between items-center mb-8">
-                <TipJarLogo />
-                <button onClick={() => setIsMobileMenuOpen(false)} aria-label="Zamknij menu">
-                  <X className="h-6 w-6 text-white" />
-                </button>
-              </div>
-              <nav className="flex flex-col items-center gap-6 text-lg mt-16">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="font-semibold text-teal-100 hover:text-yellow-400 transition-colors py-2"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-                <div className="mt-8 flex flex-col items-center gap-4 w-full max-w-xs">
-                  <Link
-                    href="/login"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="w-full text-center py-3 font-semibold text-teal-100 hover:text-yellow-400 transition-colors"
-                  >
-                    Logowanie
-                  </Link>
-                    Zarejestruj się
-                </div>
-              </nav>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            {isMenuOpen ? (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            ) : (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            )}
+          </svg>
+        </button>
+      </nav>
+
+      {/* Menu mobile */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-[#0f3a4d] bg-opacity-90 p-4 space-y-2 text-center border-t border-white border-opacity-10">
+          {[
+            ['#why', 'Why tipjar+?'],
+            ['#how-it-works', 'How it works?'],
+            ['#start-building', 'Start Building'],
+            ['#explore', 'Explore'],
+            ['#learn', 'Learn'],
+            ['#ai-studio', 'AI Studio']
+          ].map(([href, label]) => (
+            <a key={href} href={href} onClick={toggleMenu} className="block text-white hover:text-yellow-400 transition">
+              {label}
+            </a>
+          ))}
+          <a href="#" onClick={toggleMenu} className="block bg-[#FFD700] text-[#0d2f3f] font-bold py-2 px-4 rounded-lg hover:scale-105 transition">
+            Begin as a Creator
+          </a>
+          <a href="#" onClick={toggleMenu} className="block border border-white text-white font-bold py-2 px-4 rounded-lg hover:bg-white hover:text-[#0d2f3f] transition">
+            Login
+          </a>
+        </div>
+      )}
     </header>
   );
 };
+
+export default Header;

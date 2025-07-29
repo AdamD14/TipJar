@@ -19,10 +19,11 @@ export class PrismaService
   declare tip: any;
   declare user: any;
   declare payout: any;
-  declare socialConnection: any;
-  declare overlaySettings: any;
   declare withdrawal: any;
   declare hostedDeposit: any;
+  declare socialConnection: any;
+  declare overlaySettings: any;
+
   private readonly logger = new Logger(PrismaService.name);
   constructor() {
     super({
