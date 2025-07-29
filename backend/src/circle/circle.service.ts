@@ -396,7 +396,7 @@ export class CircleService implements OnModuleInit {
     circleTransactionId: string,
   ): Promise<Transaction | null> {
     this.logger.debug(
-      
+
     );
     try {
       const requestPayload: GetTransactionInput = { id: circleTransactionId };

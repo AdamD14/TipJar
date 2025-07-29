@@ -23,7 +23,7 @@ export class PrismaService
   declare hostedDeposit: any;
   declare socialConnection: any;
   declare overlaySettings: any;
-  declare notification: any;
+
   private readonly logger = new Logger(PrismaService.name);
   constructor() {
     super({
