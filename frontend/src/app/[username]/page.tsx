@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, FC, ReactNode, useEffect } from "react";
+
 import {
   Users,
   DollarSign,
@@ -103,8 +103,7 @@ const CreatorProfilePage = () => {
 
   const [tipAmount, setTipAmount] = useState<number>(10);
   const [message, setMessage] = useState<string>("");
-  const [showTipPanel, setShowTipPanel] = useState<boolean>(false);
-  const [showDepositModal, setShowDepositModal] = useState<boolean>(false);
+
 
   const creatorAvatarUrls = [
     "/assets/ja1.png",
@@ -475,18 +474,7 @@ return (
                 </div>
               </div>
 
-              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Recent Supporters & Messages</h3>
-              <div className="space-y-4">
-                {supportHistory.map((support) => (
-                  <div key={support.id} className="donation-card bg-gray-50 p-3 rounded-lg transition cursor-pointer">
-                    <div className="flex justify-between items-center">
-                      <div className="font-medium text-gray-900">{support.name}</div>
-                      <div className="text-teal-600 font-bold">${support.amount}</div>
-                    </div>
-                    {support.message && <div className="text-sm text-gray-700 mt-1">"{support.message}"</div>}
-                    <div className="text-xs text-gray-500 mt-1">{support.time}</div>
-                  </div>
-                ))}
+
               </div>
             </div>
           </div>
