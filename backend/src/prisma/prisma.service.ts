@@ -1,12 +1,21 @@
 // TipJar/backend/src/prisma/prisma.service.ts
-import { Injectable, OnModuleInit, OnModuleDestroy, INestApplication, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  OnModuleInit,
+  OnModuleDestroy,
+  INestApplication,
+  Logger,
+} from '@nestjs/common';
 // Importuj PrismaClient z poprawnie wygenerowanej lokalizacji
 // Zakładając, że schema.prisma jest w backend/prisma/ a output klienta to ../generated/prisma
 // to klient jest w backend/generated/prisma
 import { PrismaClient } from '@prisma/client';
 
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+export class PrismaService
+  extends PrismaClient
+  implements OnModuleInit, OnModuleDestroy
+{
   declare tip: any;
   declare user: any;
   declare payout: any;
@@ -14,6 +23,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   declare hostedDeposit: any;
   declare socialConnection: any;
   declare overlaySettings: any;
+  declare notification: any;
   private readonly logger = new Logger(PrismaService.name);
   constructor() {
     super({
@@ -36,9 +46,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       await this.$connect();
       this.logger.log('Successfully connected to the database (Prisma)');
     } catch (error) {
-      this.logger.error('Failed to connect to the database (Prisma)', error.stack);
+      this.logger.error(
+        'Failed to connect to the database (Prisma)',
+        error.stack,
+      );
       // Możesz zdecydować, czy aplikacja powinna się zatrzymać, jeśli nie może połączyć się z bazą
-      // process.exit(1); 
+      // process.exit(1);
     }
   }
 
