@@ -29,7 +29,8 @@ import {
   Balance,
   TokenInfo,
 } from '@circle-fin/developer-controlled-wallets';
-
+import axios, { isAxiosError } from 'axios';
+import { randomUUID } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserRole } from '@prisma/client';
 
@@ -66,10 +67,7 @@ export class CircleService implements OnModuleInit {
       if (error instanceof Error) {
         message = error.message;
       }
-      this.logger.error( // Poprawiono składnię wywołania logger.error
-        'Failed to initialize Circle Client in CircleService:',
-        (error as Error).stack,
-        message
+
       );
       throw new InternalServerErrorException(message);
     }
@@ -300,9 +298,4 @@ export class CircleService implements OnModuleInit {
   }
 
 
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { circleWalletId: true },
-   
-  }
 }
