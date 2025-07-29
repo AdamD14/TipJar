@@ -9,6 +9,7 @@ import {
   NotFoundException,
   BadRequestException,
   ConflictException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -29,10 +30,10 @@ import {
   Balance,
   TokenInfo,
 } from '@circle-fin/developer-controlled-wallets';
-import axios, { isAxiosError } from 'axios';
-import { randomUUID } from 'crypto';
+
 import { PrismaService } from '../prisma/prisma.service';
 import { UserRole } from '@prisma/client';
+import { Request } from 'express';
 
 @Injectable()
 export class CircleService implements OnModuleInit {
@@ -395,7 +396,7 @@ export class CircleService implements OnModuleInit {
     circleTransactionId: string,
   ): Promise<Transaction | null> {
     this.logger.debug(
-      `Fetching status for Circle transaction ID: ${circleTransactionId}`,
+      
     );
     try {
       const requestPayload: GetTransactionInput = { id: circleTransactionId };
@@ -405,11 +406,5 @@ export class CircleService implements OnModuleInit {
       this.handleCircleError(error, 'get transaction status');
     }
   }
-
-
-        circleWalletId: true,
-        mainWalletAddress: true,
-      },
-    });
 
 }

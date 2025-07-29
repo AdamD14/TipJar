@@ -10,6 +10,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   declare tip: any;
   declare user: any;
   declare payout: any;
+  declare withdrawal: any;
+  declare hostedDeposit: any;
   declare socialConnection: any;
   declare overlaySettings: any;
   private readonly logger = new Logger(PrismaService.name);
