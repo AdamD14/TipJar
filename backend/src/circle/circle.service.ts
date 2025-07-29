@@ -406,39 +406,7 @@ export class CircleService implements OnModuleInit {
     }
   }
 
-  async getUserWalletInfo(
-    userId: string,
-  ): Promise<{ walletId: string; address: string; chain: string }> {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { circleWalletId: true, mainWalletAddress: true },
-    });
-    if (!user?.circleWalletId || !user.mainWalletAddress) {
-      throw new NotFoundException('Circle wallet not found');
-    }
-    const chain = this.configService.get<string>(
-      'DEFAULT_BLOCKCHAIN',
-      'MATIC-AMOY',
-    );
-    return {
-      walletId: user.circleWalletId,
-      address: user.mainWalletAddress,
-      chain,
-    };
-  }
 
-  async getUserWalletBalance(
-    userId: string,
-  ): Promise<{ balance: number; currency: string }> {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { circleWalletId: true },
-    });
-    if (!user?.circleWalletId) {
-      throw new NotFoundException('Circle wallet not found');
-    }
-    const balance = await this.getWalletBalance(user.circleWalletId);
-    return { balance, currency: 'USDC' };
   }
 
   async listAllWallets() {
@@ -446,76 +414,11 @@ export class CircleService implements OnModuleInit {
       where: { circleWalletId: { not: null } },
       select: {
         id: true,
-        email: true,
+
         circleWalletId: true,
         mainWalletAddress: true,
       },
     });
   }
 
-  async getWalletTransactionsForUser(userId: string): Promise<any[]> {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { circleWalletId: true },
-    });
-    if (!user?.circleWalletId) {
-      throw new NotFoundException('Circle wallet not found');
-    }
-    try {
-      const client: any = this.circleClient as any;
-      if (typeof client.getWalletTransactions === 'function') {
-        const res = await client.getWalletTransactions({
-          id: user.circleWalletId,
-        });
-        return res?.data?.transactions ?? [];
-      }
-      return [];
-    } catch (error) {
-      this.handleCircleError(error, 'get wallet transactions', userId);
-    }
-  }
-
-  async createHostedDeposit(
-    userId: string,
-    amount: string,
-  ): Promise<{ hostedUrl: string }> {
-    this.logger.log(
-      `Hosted deposit placeholder for user ${userId} amount ${amount}`,
-    );
-    return { hostedUrl: 'https://example.com/checkout/' + randomUUID() };
-  }
-
-  async withdrawForUser(userId: string, amount: string, toAddress: string) {
-    const blockchain = this.configService.get<string>(
-      'DEFAULT_BLOCKCHAIN',
-      'MATIC-AMOY',
-    );
-    const tokenId = this.configService.get<string>('USDC_TOKEN_ID', 'USDC');
-    return this.initiateWithdrawal(
-      userId,
-      toAddress,
-      amount,
-      blockchain as any,
-      tokenId,
-    );
-  }
-
-  async initiateCctpTransfer(
-    userId: string,
-    amount: string,
-    toChain: string,
-    toAddress: string,
-  ) {
-    this.logger.log(
-      `CCTP transfer placeholder from ${userId} to ${toAddress} on ${toChain} amount ${amount}`,
-    );
-    return { transferId: randomUUID() };
-  }
-
-  async handleWebhook(payload: any): Promise<void> {
-    this.logger.debug(
-      'Received Circle webhook payload',
-      JSON.stringify(payload),
-    );
-  }
 }
