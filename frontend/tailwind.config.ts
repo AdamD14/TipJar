@@ -14,7 +14,7 @@ const config: Config = {
         'brand-light-text': '#b0c4de'
       },
       fontFamily: {
-        sans: ['Montserrat', 'sans-serif'],
+        sans: ['var(--font-sans)'],
       },
     },
   },

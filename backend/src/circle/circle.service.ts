@@ -49,7 +49,9 @@ export class CircleService implements OnModuleInit {
     const entitySecret = this.configService.get<string>('CIRCLE_ENTITY_SECRET');
 
     if (!apiKey || !entitySecret) {
-      this.logger.error('CRITICAL: CIRCLE_API_KEY or CIRCLE_ENTITY_SECRET is not defined. CircleService will not function.');
+      this.logger.error(
+        'CRITICAL: CIRCLE_API_KEY or CIRCLE_ENTITY_SECRET is not defined. CircleService will not function.',
+      );
       throw new InternalServerErrorException('Brak konfiguracji kluczy API dla CircleService.');
     }
     try {
@@ -57,35 +59,46 @@ export class CircleService implements OnModuleInit {
         apiKey: apiKey,
         entitySecret: entitySecret,
       });
-      this.logger.log('Circle Developer Controlled Wallets Client initialized successfully.');
-    } catch (error) {
-        let message = 'Nie udało się zainicjalizować klienta Circle.';
-        if (error instanceof Error) {
-            message = error.message;
-        }
-        this.logger.error('Failed to initialize Circle Client in CircleService:', (error as Error).stack, message);
-        throw new InternalServerErrorException(message);
+      this.logger.log(
+        'Circle Developer Controlled Wallets Client initialized successfully.',
+      );
+    } catch (error: unknown) { // Zmieniono typ na 'unknown'
+      let message = 'Nie udało się zainicjalizować klienta Circle.';
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      this.logger.error( // Poprawiono składnię wywołania logger.error
+        'Failed to initialize Circle Client in CircleService:',
+        (error as Error).stack,
+        message
+      );
+      throw new InternalServerErrorException(message);
     }
   }
-  
-  private handleCircleError(error: unknown, context: string, userId?: string): never {
+
+  // Przeniesiono metodę handleCircleError do wnętrza klasy
+  private handleCircleError(
+    error: unknown,
+    context: string,
+    userId?: string,
+  ): never {
     let errorMessage = `Unknown error in ${context}`;
     let errorCode: number | string = 'N/A';
     let httpStatus: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
     if (isAxiosError(error)) {
-        errorMessage = error.response?.data?.message ?? error.message;
-        errorCode = error.response?.data?.code ?? 'N/A';
-        httpStatus = error.response?.status ?? HttpStatus.INTERNAL_SERVER_ERROR;
+      errorMessage = error.response?.data?.message ?? error.message;
+      errorCode = error.response?.data?.code ?? 'N/A';
+      httpStatus = error.response?.status ?? HttpStatus.INTERNAL_SERVER_ERROR;
     } else if (error instanceof Error) {
-        errorMessage = error.message;
+      errorMessage = error.message;
     }
 
     const logMessage = `Circle API Error (${context}) for User ${userId || 'N/A'} (Code: ${errorCode}): ${errorMessage}`;
     this.logger.error(logMessage, (error as Error).stack);
 
     if (errorCode === 152021) {
-        throw new ConflictException('Portfel dla użytkownika mógł już zostać utworzony.');
+      throw new ConflictException('Portfel dla użytkownika mógł już zostać utworzony.');
     }
 
     throw new HttpException(`Błąd operacji Circle (${context}): ${errorMessage}`, httpStatus);
@@ -98,57 +111,57 @@ export class CircleService implements OnModuleInit {
   ): Promise<{ circleWalletId: string; mainWalletAddress: string }> {
     this.logger.log(`Attempting to provision Circle wallet for User ID: ${tipJarUserId}, Role: ${userRole || 'N/A'}`);
     try {
-        const existingUserRecord = await this.prisma.user.findUnique({
-            where: { id: tipJarUserId },
-            select: { circleWalletId: true, mainWalletAddress: true, isCircleSetupComplete: true },
-        });
+      const existingUserRecord = await this.prisma.user.findUnique({
+        where: { id: tipJarUserId },
+        select: { circleWalletId: true, mainWalletAddress: true, isCircleSetupComplete: true },
+      });
 
-        if (!existingUserRecord) {
-            throw new NotFoundException(`Użytkownik o ID ${tipJarUserId} nie istnieje.`);
-        }
-        if (existingUserRecord.isCircleSetupComplete && existingUserRecord.circleWalletId && existingUserRecord.mainWalletAddress) {
-            this.logger.warn(`Wallet already exists for User ID: ${tipJarUserId}. WalletID: ${existingUserRecord.circleWalletId}`);
-            return {
-                circleWalletId: existingUserRecord.circleWalletId,
-                mainWalletAddress: existingUserRecord.mainWalletAddress,
-            };
-        }
-
-        const walletSetId = this.configService.get<string>('CIRCLE_WALLET_SET_ID');
-        if (!walletSetId) {
-            throw new InternalServerErrorException('Konfiguracja Wallet Set ID jest niekompletna.');
-        }
-        const defaultBlockchain = this.configService.get<string>('DEFAULT_BLOCKCHAIN', 'MATIC-AMOY') as Blockchain;
-
-        const createWalletsPayload: CreateWalletsInput = {
-            idempotencyKey: randomUUID(),
-            walletSetId: walletSetId,
-            blockchains: [defaultBlockchain],
-            count: 1,
-            accountType: 'SCA',
-            metadata: [{ name: `TipJar Wallet for ${email || tipJarUserId}`, refId: tipJarUserId }],
+      if (!existingUserRecord) {
+        throw new NotFoundException(`Użytkownik o ID ${tipJarUserId} nie istnieje.`);
+      }
+      if (existingUserRecord.isCircleSetupComplete && existingUserRecord.circleWalletId && existingUserRecord.mainWalletAddress) {
+        this.logger.warn(`Wallet already exists for User ID: ${tipJarUserId}. WalletID: ${existingUserRecord.circleWalletId}`);
+        return {
+          circleWalletId: existingUserRecord.circleWalletId,
+          mainWalletAddress: existingUserRecord.mainWalletAddress,
         };
+      }
 
-        this.logger.debug(`Calling Circle API to create wallet: ${JSON.stringify(createWalletsPayload)}`);
-        
-        const response = await this.circleClient.createWallets(createWalletsPayload);
-        const createdWallet = response?.data?.wallets?.[0];
+      const walletSetId = this.configService.get<string>('CIRCLE_WALLET_SET_ID');
+      if (!walletSetId) {
+        throw new InternalServerErrorException('Konfiguracja Wallet Set ID jest niekompletna.');
+      }
+      const defaultBlockchain = this.configService.get<string>('DEFAULT_BLOCKCHAIN', 'MATIC-AMOY') as Blockchain;
 
-        if (!createdWallet || !createdWallet.id || !createdWallet.address) {
-            throw new InternalServerErrorException('Nie udało się utworzyć portfela Circle - nieprawidłowa odpowiedź SDK.');
-        }
+      const createWalletsPayload: CreateWalletsInput = {
+        idempotencyKey: randomUUID(),
+        walletSetId: walletSetId,
+        blockchains: [defaultBlockchain],
+        count: 1,
+        accountType: 'SCA',
+        metadata: [{ name: `TipJar Wallet for ${email || tipJarUserId}`, refId: tipJarUserId }],
+      };
 
-        const { id: circleWalletId, address: mainWalletAddress } = createdWallet;
-        this.logger.log(`Circle wallet created. ID: ${circleWalletId}, Address: ${mainWalletAddress} for User ID: ${tipJarUserId}`);
-        
-        await this.prisma.user.update({
-            where: { id: tipJarUserId },
-            data: { circleWalletId, mainWalletAddress, isCircleSetupComplete: true },
-        });
+      this.logger.debug(`Calling Circle API to create wallet: ${JSON.stringify(createWalletsPayload)}`);
 
-        return { circleWalletId, mainWalletAddress };
+      const response = await this.circleClient.createWallets(createWalletsPayload);
+      const createdWallet = response?.data?.wallets?.[0];
+
+      if (!createdWallet || !createdWallet.id || !createdWallet.address) {
+        throw new InternalServerErrorException('Nie udało się utworzyć portfela Circle - nieprawidłowa odpowiedź SDK.');
+      }
+
+      const { id: circleWalletId, address: mainWalletAddress } = createdWallet;
+      this.logger.log(`Circle wallet created. ID: ${circleWalletId}, Address: ${mainWalletAddress} for User ID: ${tipJarUserId}`);
+
+      await this.prisma.user.update({
+        where: { id: tipJarUserId },
+        data: { circleWalletId, mainWalletAddress, isCircleSetupComplete: true },
+      });
+
+      return { circleWalletId, mainWalletAddress };
     } catch (error) {
-        this.handleCircleError(error, 'wallet provisioning', tipJarUserId);
+      this.handleCircleError(error, 'wallet provisioning', tipJarUserId);
     }
   }
 
@@ -161,45 +174,45 @@ export class CircleService implements OnModuleInit {
   ): Promise<{ circleTransactionId: string; status: TransactionState; txHash?: string }> {
     this.logger.log(`Initiate withdrawal: UserID ${tipJarUserId}, Amount ${amountString} USDC, To ${destinationAddressString} on ${blockchain}`);
     try {
-        const user = await this.prisma.user.findUnique({
-            where: { id: tipJarUserId }, select: { circleWalletId: true },
-        });
-        if (!user || !user.circleWalletId) {
-            throw new NotFoundException(`Portfel Circle dla użytkownika ${tipJarUserId} nie znaleziony.`);
-        }
-        const sourceWalletId = user.circleWalletId;
-        const amountDecimal = parseFloat(amountString);
-        if (isNaN(amountDecimal) || amountDecimal <= 0) {
-            throw new BadRequestException('Nieprawidłowa kwota wypłaty.');
-        }
+      const user = await this.prisma.user.findUnique({
+        where: { id: tipJarUserId }, select: { circleWalletId: true },
+      });
+      if (!user || !user.circleWalletId) {
+        throw new NotFoundException(`Portfel Circle dla użytkownika ${tipJarUserId} nie znaleziony.`);
+      }
+      const sourceWalletId = user.circleWalletId;
+      const amountDecimal = parseFloat(amountString);
+      if (isNaN(amountDecimal) || amountDecimal <= 0) {
+        throw new BadRequestException('Nieprawidłowa kwota wypłaty.');
+      }
 
-        const tokenInfo: TokenInfo = tokenId.includes('-')
-            ? { tokenId: tokenId }
-            : { tokenAddress: tokenId, blockchain: blockchain as unknown as TokenBlockchain };
+      const tokenInfo: TokenInfo = tokenId.includes('-')
+        ? { tokenId: tokenId }
+        : { tokenAddress: tokenId, blockchain: blockchain as unknown as TokenBlockchain };
 
-        const transferRequestPayload: CreateTransferTransactionInput = {
-            idempotencyKey: randomUUID(),
-            walletId: sourceWalletId,
-            destinationAddress: destinationAddressString,
-            amount: [amountString],
-            ...tokenInfo,
-            fee: { type: 'level', config: { feeLevel: FeeLevel.Medium } },
-        };
+      const transferRequestPayload: CreateTransferTransactionInput = {
+        idempotencyKey: randomUUID(),
+        walletId: sourceWalletId,
+        destinationAddress: destinationAddressString,
+        amount: [amountString],
+        ...tokenInfo,
+        fee: { type: 'level', config: { feeLevel: FeeLevel.Medium } },
+      };
 
-        const response = await this.circleClient.createTransaction(transferRequestPayload);
-        const txData = response.data;
-        if (!txData || !txData.id || !txData.state) {
-            throw new InternalServerErrorException('Nie udało się zainicjować wypłaty - błąd SDK.');
-        }
-        
-        const fullTransactionDetails = await this.getTransactionStatus(txData.id);
-        return {
-            circleTransactionId: txData.id,
-            status: txData.state as TransactionState,
-            txHash: fullTransactionDetails?.txHash,
-        };
+      const response = await this.circleClient.createTransaction(transferRequestPayload);
+      const txData = response.data;
+      if (!txData || !txData.id || !txData.state) {
+        throw new InternalServerErrorException('Nie udało się zainicjować wypłaty - błąd SDK.');
+      }
+
+      const fullTransactionDetails = await this.getTransactionStatus(txData.id);
+      return {
+        circleTransactionId: txData.id,
+        status: txData.state as TransactionState,
+        txHash: fullTransactionDetails?.txHash,
+      };
     } catch (error) {
-        this.handleCircleError(error, 'withdrawal', tipJarUserId);
+      this.handleCircleError(error, 'withdrawal', tipJarUserId);
     }
   }
 
@@ -213,24 +226,24 @@ export class CircleService implements OnModuleInit {
       if (!balancesData?.tokenBalances || balancesData.tokenBalances.length === 0) {
         return 0;
       }
-      
+
       let targetBalanceEntry: Balance | undefined;
       if (tokenIdToFilter) {
-          targetBalanceEntry = balancesData.tokenBalances.find(tb =>
-              tb.token?.id === tokenIdToFilter ||
-              tb.token?.tokenAddress?.toLowerCase() === tokenIdToFilter.toLowerCase()
-          );
+        targetBalanceEntry = balancesData.tokenBalances.find(tb =>
+          tb.token?.id === tokenIdToFilter ||
+          tb.token?.tokenAddress?.toLowerCase() === tokenIdToFilter.toLowerCase()
+        );
       } else {
-          targetBalanceEntry = balancesData.tokenBalances.find(tb => tb.token?.symbol === 'USDC') || balancesData.tokenBalances[0];
+        targetBalanceEntry = balancesData.tokenBalances.find(tb => tb.token?.symbol === 'USDC') || balancesData.tokenBalances[0];
       }
 
       if (!targetBalanceEntry?.amount) {
         return 0;
       }
-      
+
       return parseFloat(targetBalanceEntry.amount);
     } catch (error) {
-        this.handleCircleError(error, 'get balance', walletId);
+      this.handleCircleError(error, 'get balance', walletId);
     }
   }
 
@@ -243,47 +256,47 @@ export class CircleService implements OnModuleInit {
   ): Promise<{ circleTransactionId: string; status: TransactionState; txHash?: string }> {
     this.logger.log(`Internal tip: from ${sourceCircleWalletId} to ${destinationCircleWalletId}.`);
     try {
-        const amountNetDecimal = parseFloat(amountNetString);
-        if (isNaN(amountNetDecimal) || amountNetDecimal <= 0) {
-            throw new BadRequestException('Nieprawidłowa kwota netto transferu.');
-        }
+      const amountNetDecimal = parseFloat(amountNetString);
+      if (isNaN(amountNetDecimal) || amountNetDecimal <= 0) {
+        throw new BadRequestException('Nieprawidłowa kwota netto transferu.');
+      }
 
-        const destinationWalletRecord = await this.prisma.user.findFirst({
-            where: { circleWalletId: destinationCircleWalletId },
-            select: { mainWalletAddress: true }
-        });
+      const destinationWalletRecord = await this.prisma.user.findFirst({
+        where: { circleWalletId: destinationCircleWalletId },
+        select: { mainWalletAddress: true }
+      });
 
-        if (!destinationWalletRecord?.mainWalletAddress) {
-            throw new NotFoundException(`Nie można znaleźć adresu docelowego portfela twórcy.`);
-        }
-        
-        const tokenInfo: TokenInfo = tokenId.includes('-')
-            ? { tokenId: tokenId }
-            : { tokenAddress: tokenId, blockchain: blockchain as unknown as TokenBlockchain };
+      if (!destinationWalletRecord?.mainWalletAddress) {
+        throw new NotFoundException(`Nie można znaleźć adresu docelowego portfela twórcy.`);
+      }
 
-        const transferRequestPayload: CreateTransferTransactionInput = {
-            idempotencyKey: randomUUID(),
-            walletId: sourceCircleWalletId,
-            destinationAddress: destinationWalletRecord.mainWalletAddress,
-            amount: [amountNetString],
-            ...tokenInfo,
-            fee: { type: 'level', config: { feeLevel: FeeLevel.Medium } },
-        };
+      const tokenInfo: TokenInfo = tokenId.includes('-')
+        ? { tokenId: tokenId }
+        : { tokenAddress: tokenId, blockchain: blockchain as unknown as TokenBlockchain };
 
-        const response = await this.circleClient.createTransaction(transferRequestPayload);
-        const txData = response.data;
-        if (!txData?.id || !txData.state) {
-            throw new InternalServerErrorException('Nie udało się zainicjować napiwku - błąd SDK Circle.');
-        }
-        
-        const fullTransactionDetails = await this.getTransactionStatus(txData.id);
-        return {
-            circleTransactionId: txData.id,
-            status: txData.state as TransactionState,
-            txHash: fullTransactionDetails?.txHash
-        };
+      const transferRequestPayload: CreateTransferTransactionInput = {
+        idempotencyKey: randomUUID(),
+        walletId: sourceCircleWalletId,
+        destinationAddress: destinationWalletRecord.mainWalletAddress,
+        amount: [amountNetString],
+        ...tokenInfo,
+        fee: { type: 'level', config: { feeLevel: FeeLevel.Medium } },
+      };
+
+      const response = await this.circleClient.createTransaction(transferRequestPayload);
+      const txData = response.data;
+      if (!txData?.id || !txData.state) {
+        throw new InternalServerErrorException('Nie udało się zainicjować napiwku - błąd SDK Circle.');
+      }
+
+      const fullTransactionDetails = await this.getTransactionStatus(txData.id);
+      return {
+        circleTransactionId: txData.id,
+        status: txData.state as TransactionState,
+        txHash: fullTransactionDetails?.txHash
+      };
     } catch (error) {
-        this.handleCircleError(error, 'internal tip');
+      this.handleCircleError(error, 'internal tip');
     }
   }
 

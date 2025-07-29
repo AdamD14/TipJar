@@ -18,13 +18,16 @@ export interface ValidatedRefreshUser extends JwtRefreshPayload {
 }
 
 @Injectable()
-export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
+export class JwtRefreshStrategy extends PassportStrategy(
+  Strategy,
+  'jwt-refresh',
+) {
   private readonly logger = new Logger(JwtRefreshStrategy.name);
 
-  constructor(
-    private configService: ConfigService,
-  ) {
-    const jwtRefreshSecret = configService.get<string>('JWT_REFRESH_TOKEN_SECRET');
+  constructor(private configService: ConfigService) {
+    const jwtRefreshSecret = configService.get<string>(
+      'JWT_REFRESH_TOKEN_SECRET',
+    );
 
     // === WYWOŁANIE SUPER() JAKO PIERWSZE ===
     super({
@@ -39,30 +42,45 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
     // Sprawdzenie konfiguracji PO wywołaniu super()
     if (!jwtRefreshSecret) {
       // Użycie this.logger jest teraz bezpieczne
-      this.logger.error('CRITICAL: JWT_REFRESH_TOKEN_SECRET is not defined in .env file. Refresh token strategy will not function.');
+      this.logger.error(
+        'CRITICAL: JWT_REFRESH_TOKEN_SECRET is not defined in .env file. Refresh token strategy will not function.',
+      );
       throw new Error('JWT_REFRESH_TOKEN_SECRET is not defined in .env file.');
     }
   }
 
-  async validate(req: Request, payload: JwtRefreshPayload): Promise<ValidatedRefreshUser> {
-    const refreshToken = req.body.refreshToken || req.cookies?.['refresh_token'];
-    this.logger.debug(`JwtRefreshStrategy: Validating refresh token payload for user ID: ${payload.sub}`);
+  async validate(
+    req: Request,
+    payload: JwtRefreshPayload,
+  ): Promise<ValidatedRefreshUser> {
+    const body = req.body as { refreshToken?: string };
+    const cookies = req.cookies as { [key: string]: string };
+    const refreshToken = body.refreshToken || cookies['refresh_token'];
+
+    this.logger.debug(
+      `JwtRefreshStrategy: Validating refresh token payload for user ID: ${payload.sub}`,
+    );
 
     if (!refreshToken) {
-        this.logger.warn('JwtRefreshStrategy: No refresh token found in request.');
-        throw new UnauthorizedException('Brak refresh tokena w żądaniu.');
+      this.logger.warn(
+        'JwtRefreshStrategy: No refresh token found in request.',
+      );
+      throw new UnauthorizedException('Brak refresh tokena w żądaniu.');
     }
+
     if (!payload.sub || !payload.role || !payload.displayName) {
-        this.logger.warn(`JwtRefreshStrategy: Invalid refresh token payload structure for user ID: ${payload.sub}.`);
-        throw new UnauthorizedException('Nieprawidłowy format refresh tokena.');
+      this.logger.warn(
+        `JwtRefreshStrategy: Invalid refresh token payload structure for user ID: ${payload.sub}.`,
+      );
+      throw new UnauthorizedException('Nieprawidłowy format refresh tokena.');
     }
-    
-    return { 
-        sub: payload.sub, 
-        email: payload.email, 
-        role: payload.role,
-        displayName: payload.displayName,
-        refreshToken: refreshToken 
+
+    return {
+      sub: payload.sub,
+      email: payload.email,
+      role: payload.role,
+      displayName: payload.displayName,
+      refreshToken: refreshToken,
     };
   }
 }

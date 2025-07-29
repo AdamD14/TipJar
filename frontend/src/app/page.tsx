@@ -1,7 +1,6 @@
-'use client';
+"use client";
 
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import QRGenerator from "../components/QRGenerator.tsx";
 import Image from "next/image";
 
@@ -9,22 +8,48 @@ type PaymentIconProps = {
   children: React.ReactNode;
   name: string;
 };
+const creatorAvatarUrls = [
+  "/assets/ja1.png",
+  "/assets/ja2.png",
+  "/assets/ja3.png",
+];
+
+type AvatarCarouselProps = {
+  images: string[];
+};
+
+const AvatarCarousel = ({ images }: AvatarCarouselProps) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 3000); 
+    return () => clearInterval(interval);
+  }, [images]);
+
+  return (
+    <div className="container mx-auto px-8 -mt-32 relative z-10 flex flex-col md:flex-row items-start justify-between gap-12">
+        <AvatarCarousel images={creatorAvatarUrls} />
+    </div>
+  );
+};
+
 
 const PaymentIcon = ({ children, name }: PaymentIconProps) => (
   <div
     title={name}
-    className="w-full h-full bg-white bg-opacity-10 rounded-lg flex items-center justify-center text-white hover:scale-105 transition-transform"
+    className="w-full h-full bg-white bg-opacity-50 rounded-lg flex items-center justify-center text-white hover:scale-105 transition-transform"
     style={{
       minHeight: 0,
       minWidth: 0,
       padding: 0,
-      margin: 0
+      margin: 0,
     }}
   >
     {children}
   </div>
 );
-
 
 export default function Page() {
   const [tipAmount, setTipAmount] = useState(10);
@@ -32,35 +57,38 @@ export default function Page() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-useEffect(() => {
-  const onScroll = () => setIsScrolled(window.scrollY > 20);
-  window.addEventListener('scroll', onScroll);
-  return () => window.removeEventListener('scroll', onScroll);
-}, []);
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const handleCopy = () => {
-    const textToCopy = 'tipjar.plus/@AdamDuda';
+    const textToCopy = "tipjar.plus/@AdamDuda";
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(textToCopy).then(() => {
-        setIsCopied(true);
-        setTimeout(() => setIsCopied(false), 2000);
-      }).catch(err => {
-        console.error('Async copy failed', err);
-      });
+      navigator.clipboard
+        .writeText(textToCopy)
+        .then(() => {
+          setIsCopied(true);
+          setTimeout(() => setIsCopied(false), 2000);
+        })
+        .catch((err) => {
+          console.error("Async copy failed", err);
+        });
     } else {
-      const textArea = document.createElement('textarea');
+      const textArea = document.createElement("textarea");
       textArea.value = textToCopy;
-      textArea.style.position = 'fixed';
+      textArea.style.position = "fixed";
       document.body.appendChild(textArea);
       textArea.focus();
       textArea.select();
       try {
-        document.execCommand('copy');
+        document.execCommand("copy");
         setIsCopied(true);
         setTimeout(() => setIsCopied(false), 2000);
       } catch (err) {
-        console.error('Fallback copy failed', err);
+        console.error("Fallback copy failed", err);
       }
       document.body.removeChild(textArea);
     }
@@ -72,8 +100,13 @@ useEffect(() => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-cover bg-center bg-fixed text-white" style={{ backgroundImage: "url('/assets/back.png')" }}>
-      <style dangerouslySetInnerHTML={{ __html: `
+    <div
+      className="relative min-h-screen overflow-x-hidden bg-cover bg-center bg-fixed text-white"
+      style={{ backgroundImage: "url('/assets/back.png')" }}
+    >
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         @keyframes pulse-glow {
           0%, 100% {
             box-shadow: 0 0 5px rgba(255, 215, 0, 0.5), 0 0 10px rgba(255, 215, 0, 0.5), 0 0 15px rgba(255, 215, 0, 0.5);
@@ -142,7 +175,9 @@ useEffect(() => {
           border: 2px solid #0f3a4d;
           margin-top: 0;
         }
-      `}} />
+      `,
+        }}
+      />
 
       <div className="relative">
   <Image
@@ -150,54 +185,76 @@ useEffect(() => {
     alt="deco 2"
     width={640}
     height={640}
-    className="absolute left-1/2 top-40 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-10"
+    className="absolute left-140 top-20 -translate-x -translate-y-1 pointer-events-none opacity-30"
     priority
   />
-  <div className="absolute inset-0 bg-[#0d2f3f] bg-opacity-70"></div>
+  <div className="absolute inset-0 bg-[#4D194D] bg-opacity-30"></div>
 </div>
 
-      <div className="relative z-10 flex flex-col min-h-screen container mx-auto px-4">
-        <header className={`fixed top-0 left-0 right-0 z-50 w-full border-b border-white border-opacity-10 transition-colors duration-300
-  ${isScrolled ? 'bg-[#0d2f3f] bg-opacity-95' : 'bg-[#0d2f3f] bg-opacity-30 backdrop-blur-lg'}
-`}>
-          <nav className="grid grid-cols-3 items-center w-full h-15">
-            <div className="flex justify-start">
-              <a href="#" className="flex items-center space-x-2" aria-label="Strona główna TipJar+">
-                <Image src="/assets/icon_tipjarnone.png" alt="TipJar+ Logo" width={60} height={60} />
-                <span className="text-2xl font-bold text-white">tipjar.plus</span>
-              </a>
-            </div>
+      <div className="relative z-5 flex container  px-1">
+        <header
+          className={`fixed top-1 left-1 right-0  w-full border-b border-[#E7E3C1] border-opacity-10 transition-colors duration-300
+  ${isScrolled ? "bg-[#0d2f3f] bg-opacity-95" : "bg-[#144552] bg-opacity-30 backdrop-blur-lg"}
+`}
+        >
+          <nav className="grid grid-cols-3  w-full ">
+            <div className="flex mb-3/2 top-2">
+          <div className="bg-gradient-to-r from-[#E7E3C1] to-[#144552] text-white px-2  rounded font-bold text-xl shadow-lg flex items-center ">
+            {/* Using a placeholder image for the icon as /assets/icon-tipjarnone.svg is not available */}
+            <img src="/assets/icon-tipjarnone.svg" alt="TipJar+ icon" width={48} height={48} className="h-12 w-auto" />
+            tipjar.plus
+          </div>
+        </div>
     {/* Linki – środek */}
-    <div className="hidden md:flex items-center justify-center gap-6 text-base whitespace-nowrap">
-      <a href="#why" className="text-white hover:text-yellow-400 transition">Why tipjar+?</a>
-      <a href="#how-it-works" className="text-white hover:text-yellow-400 transition">How it works?</a>
-      <a href="#start-building" className="text-white hover:text-yellow-400 transition">Start Building</a>
-      <a href="#explore" className="text-white hover:text-yellow-400 transition">Explore</a>
-      <a href="#learn" className="text-white hover:text-yellow-400 transition">Learn</a>
-      <a href="#ai-studio" className="text-white hover:text-yellow-400 transition">AI Studio</a>
+    <div className="hidden xl:flex items-center justify-center gap-10 text-base whitespace-nowrap">
+      <a href="#why" className="text-white hover:text-[#E7E3C1] transition">Why tipjar+?</a>
+      <a href="#how-it-works" className="text-white hover:text-[#E7E3C1] transition">How it works?</a>
+      <a href="#start-building" className="text-white hover:text-[#E7E3C1] transition">Start Building</a>
+      <a href="#explore" className="text-white hover:text-[#E7E3C1] transition">Explore</a>
+      <a href="#learn" className="text-white hover:text-[#E7E3C1] transition">Learn</a>
+      <a href="#ai-studio" className="text-white hover:text-[#E7E3C1] transition">AI Studio</a>
     </div>
 
     {/* CTA – prawa strona */}
-    <div className="hidden md:flex justify-end items-center gap-3 pr-6">
-      <a href="#" className="bg-[#FFD700] text-gray-900 font-bold py-2 px-4 rounded-lg text-sm hover:scale-105 transition">
+    <div className="hidden xl:flex justify-end items-center gap-4 pr-6">
+      <a href="#" className="bg-[#E7E3C1] text-gray-900 font-bold py-2 px-4 rounded text-full hover:scale-105 transition">
         Begin as a Creator
       </a>
-      <a href="#" className="border border-white text-white font-bold py-2 px-4 rounded-lg text-sm hover:bg-white hover:text-[#0d2f3f] transition">
+      <a href="#" className="border border-[#E7E3C1] text-[#E7E3C1] font-bold py-2 px-4 rounded text-full hover:bg-[#E7E3C1] hover:text-[#0d2f3f] -105 transition">
         Login
       </a>
     </div>
 
-    {/* Hamburger – mobile */}
-    <button onClick={toggleMenu} className="md:hidden text-white justify-self-end pr-4" aria-label="Menu">
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        {isMenuOpen ? (
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        ) : (
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-        )}
-      </svg>
-    </button>
-  </nav>
+            {/* Hamburger – mobile */}
+            <button
+              onClick={toggleMenu}
+              className="md:hidden text-white justify-self-end pr-4"
+              aria-label="Menu"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                {isMenuOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                )}
+              </svg>
+            </button>
+          </nav>
 
   {/* Menu mobile */}
   {isMenuOpen && (
@@ -229,10 +286,16 @@ useEffect(() => {
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start pt-20" style={{ minHeight: 'calc(90vh - 80px)' }}>
             <div className="text-left pt-20">
               <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
-                Support Creativity,<br />Get Paid Instantly
+                Support Creativity,
+                <br />
+                Get Paid Instantly
               </h1>
               <p className="mt-6 text-2xl text-[#b0c4de] max-w-xl">
-                tipjar.plus – platform for instant micro-payments to your favorite creators: streamers, YouTubers, digital models, musicians, artists, bloggers, coaches, educators, journalists, influencers - simply for all content creators, without high fees.
+                tipjar.plus – platform for instant micro-payments to your
+                favorite creators: streamers, YouTubers, digital models,
+                musicians, artists, bloggers, coaches, educators, journalists,
+                influencers - simply for all content creators, without high
+                fees.
               </p>
               <div className="flex flex-col sm:flex-row items-start gap-4 mt-10">
                 <a href="#" className="font-bold bg-[#FFD700] text-gray-900 py-3 px-6 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-400/50 w-full sm:w-auto text-center">
@@ -240,6 +303,7 @@ useEffect(() => {
                 </a>
                 <a href="#" className="font-bold text-white border-2 border-white bg-transparent py-3 px-6 rounded-lg hover:bg-white hover:text-[#0d2f3f] transition-colors duration-300 w-full sm:w-auto text-center">
                   Explore Creators
+                
                 </a>
                 <a href="#" className="font-bold text-white bg-white bg-opacity-20 py-3 px-6 rounded-lg hover:bg-opacity-30 transition-colors duration-300 w-full sm:w-auto text-center">
                   Sign Up as a Fan
@@ -330,264 +394,416 @@ useEffect(() => {
           {/* --- SECTIONS IN ORDER --- */}
 
           <section id="why" className="py-20">
-            <h2 className="text-4xl font-bold text-center text-white mb-16">Why tipjar+?</h2>
+            <h2 className="text-4xl font-bold text-center text-white mb-16">
+              Why tipjar+?
+            </h2>
             <div className="max-w-6xl mx-auto px-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                 <div className="bg-[#123647] p-6 rounded-xl text-center text-white transition-transform duration-300 hover:scale-105 hover:shadow-xl">
-                  <h3 className="text-2xl font-bold mb-2">Simplicity & Payment Flexibility</h3>
-                  <p className="text-[#b0c4de]">No sign-up required, no crypto experience needed. Fans can tip using <strong className="text-yellow-400">cards</strong>, <strong className="text-yellow-400">Google Pay</strong>, <strong className="text-yellow-400">Apple Pay</strong>, <strong className="text-yellow-400">Revolut</strong>, <strong className="text-yellow-400">bank transfer</strong> or <strong className="text-yellow-400">Crypto wallet</strong> — creators always receive USDC. Just tap, scan, or click — done in seconds.</p>
+                  <h3 className="text-2xl font-bold mb-2">
+                    Simplicity & Payment Flexibility
+                  </h3>
+                  <p className="text-[#b0c4de]">
+                    No sign-up required, no crypto experience needed. Fans can
+                    tip using <strong className="text-yellow-400">cards</strong>
+                    , <strong className="text-yellow-400">Google Pay</strong>,{" "}
+                    <strong className="text-yellow-400">Apple Pay</strong>,{" "}
+                    <strong className="text-yellow-400">Revolut</strong>,{" "}
+                    <strong className="text-yellow-400">bank transfer</strong>{" "}
+                    or{" "}
+                    <strong className="text-yellow-400">Crypto wallet</strong> —
+                    creators always receive USDC. Just tap, scan, or click —
+                    done in seconds.
+                  </p>
                 </div>
                 <div className="bg-[#123647] p-6 rounded-xl text-center text-white transition-transform duration-300 hover:scale-105 hover:shadow-xl">
-                  <h3 className="text-2xl font-bold mb-2">Secure and Transparent</h3>
-                  <p className="text-[#b0c4de]">Built on Web3 technology, tipjar ensures secure and transparent transactions. Powered by blockchain and USDC — a fully-reserved, regulated stablecoin <strong className="text-yellow-400">issued by Circle.com</strong>. No custodians, no banks — you stay in full control.</p>
+                  <h3 className="text-2xl font-bold mb-2">
+                    Secure and Transparent
+                  </h3>
+                  <p className="text-[#b0c4de]">
+                    Built on Web3 technology, tipjar ensures secure and
+                    transparent transactions. Powered by blockchain and USDC — a
+                    fully-reserved, regulated stablecoin{" "}
+                    <strong className="text-yellow-400">
+                      issued by Circle.com
+                    </strong>
+                    . No custodians, no banks — you stay in full control.
+                  </p>
                 </div>
               </div>
-              
+
               <div className="bg-[#0f3a4d] p-8 rounded-2xl text-center text-white border-2 border-yellow-400 pulsing-glow transform transition-transform duration-500 hover:scale-105 my-8">
-                <h3 className="text-3xl font-bold mb-4 text-yellow-400">LOW FEES & Direct Support</h3>
+                <h3 className="text-3xl font-bold mb-4 text-yellow-400">
+                  LOW FEES & Direct Support
+                </h3>
                 <p className="text-lg text-gray-200 max-w-3xl mx-auto">
-                  A simple, flat <strong className="text-yellow-400">5% service fee</strong> ensures creators receive the majority of their earnings. Creators receive tips directly from their fans, eliminating intermediaries and maximizing earnings.
+                  A simple, flat{" "}
+                  <strong className="text-yellow-400">5% service fee</strong>{" "}
+                  ensures creators receive the majority of their earnings.
+                  Creators receive tips directly from their fans, eliminating
+                  intermediaries and maximizing earnings.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
                 <div className="bg-[#123647] p-6 rounded-xl text-center text-white transition-transform duration-300 hover:scale-105 hover:shadow-xl">
                   <h3 className="text-2xl font-bold mb-2">Global</h3>
-                  <p className="text-[#b0c4de]">Send or receive support from anywhere in the world — no banks, no borders, no limits. Circle enables fans to tip using over <strong className="text-yellow-400">80</strong> fiat currencies including USD, EUR, GBP, JPY. Creators get paid instantly in USDC, directly to their wallets. Fast, borderless, censorship-free.</p>
+                  <p className="text-[#b0c4de]">
+                    Send or receive support from anywhere in the world — no
+                    banks, no borders, no limits. Circle enables fans to tip
+                    using over <strong className="text-yellow-400">80</strong>{" "}
+                    fiat currencies including USD, EUR, GBP, JPY. Creators get
+                    paid instantly in USDC, directly to their wallets. Fast,
+                    borderless, censorship-free.
+                  </p>
                 </div>
                 <div className="bg-[#123647] p-6 rounded-xl text-center text-white transition-transform duration-300 hover:scale-105 hover:shadow-xl">
                   <h3 className="text-2xl font-bold mb-2">Instant Payouts</h3>
-                  <p className="text-[#b0c4de]">Funds are delivered instantly to the creator’s wallet — with no delays, no holds, and no frozen assets. You earn it, you own it — right away. Need cash? You can easily convert and withdraw to your <strong className="text-yellow-400">local currency</strong> anytime via Circle’s off-ramps.</p>
+                  <p className="text-[#b0c4de]">
+                    Funds are delivered instantly to the creator’s wallet — with
+                    no delays, no holds, and no frozen assets. You earn it, you
+                    own it — right away. Need cash? You can easily convert and
+                    withdraw to your{" "}
+                    <strong className="text-yellow-400">local currency</strong>{" "}
+                    anytime via Circle’s off-ramps.
+                  </p>
                 </div>
               </div>
             </div>
           </section>
 
-        <section id="how-it-works" className="py-20">
-  <h2 className="text-4xl font-bold text-center text-white mb-12">How it works?</h2>
-  <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-24">
-    {/* For Fans */}
-    <div className="bg-white bg-opacity-5 p-8 rounded-xl border border-white border-opacity-10">
-      <h3 className="text-3xl font-bold text-center text-yellow-400 mb-8">For Fans</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-stretch">
-        <div className="flex flex-col items-center text-center h-full">
-          <Image src="/assets/regi.png" alt="Register Icon" width={176} height={176} className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4" />
-          <h4 className="text-xl font-semibold mb-2">Sign Up (Optional)</h4>
-          <p className="text-[#b0c4de] text-sm">Use email, Google, Twitch, or MetaMask. Registration isn&apos;t required to send tips.</p>
-        </div>
-        <div className="flex flex-col items-center text-center h-full">
-          <Image src="/assets/opup.png" alt="Fund your tips icon" width={176} height={176} className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4" />
-          <h4 className="text-xl font-semibold mb-2">Fund Your Tips</h4>
-          <p className="text-[#b0c4de] text-sm mb-3">Top up with USDC using crypto or your preferred payment method.</p>
-          <div className="grid grid-cols-3 gap-2 w-full max-w-[200px]">
-            {/* Payment icons (nie zmieniaj tutaj rozmiaru) */}
-          </div>
-        </div>
-        <div className="flex flex-col items-center text-center h-full">
-          <Image src="/assets/explore.png" alt="Tip" width={176} height={176} className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4" />
-          <h4 className="text-xl font-semibold mb-2">Explore!</h4>
-          <p className="text-[#b0c4de] text-sm">Discover Web3 skills and inspiration — from streamers and models to musicians, educators, coaches, and influencers.
-.</p>
-        </div>
-        <div className="flex flex-col items-center text-center h-full">
-          <Image src="/assets/tipit3.png" alt="Tip" width={176} height={176} className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4" />
-          <h4 className="text-xl font-semibold mb-2">Support!</h4>
-          <p className="text-[#b0c4de] text-sm">Real people real value. Find creators sharing knowledge and experiences for the new digital era.</p>
-        </div>
-        <div className="flex flex-col items-center text-center h-full">
-          <Image
-            src="/assets/beapart.png"
-            alt="Tip"
-            width={176}
-            height={176}
-            className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4"
-          />
-          <h4 className="text-xl font-semibold mb-2">Enjoy the journey!</h4>
-          <p className="text-[#b0c4de] text-sm">Fuel the movement</p>
-        </div>
-        <div className="flex flex-col items-center text-center h-full">
-          <Image
-            src="/assets/getaa.png"
-            alt="Enjoy"
-            width={176}
-            height={176}
-            className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4"
-          />
-          <h4 className="text-xl font-semibold mb-2">Contribute to the culture,</h4>
-          <p className="text-[#b0c4de] text-sm">be part of the style.</p>
-        </div>
-      </div>
-    </div>
+          <section id="how-it-works" className="py-20">
+            <h2 className="text-4xl font-bold text-center text-white mb-12">
+              How it works?
+            </h2>
+            <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-24">
+              {/* For Fans */}
+              <div className="bg-white bg-opacity-5 p-8 rounded-xl border border-white border-opacity-10">
+                <h3 className="text-3xl font-bold text-center text-yellow-400 mb-8">
+                  For Fans
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-stretch">
+                  <div className="flex flex-col items-center text-center h-full">
+                    <Image
+                      src="/assets/regi.png"
+                      alt="Register Icon"
+                      width={176}
+                      height={176}
+                      className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4"
+                    />
+                    <h4 className="text-xl font-semibold mb-2">
+                      Sign Up (Optional)
+                    </h4>
+                    <p className="text-[#b0c4de] text-sm">
+                      Use email, Google, Twitch, or MetaMask. Registration
+                      isn&apos;t required to send tips.
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-center text-center h-full">
+                    <Image
+                      src="/assets/opup.png"
+                      alt="Fund your tips icon"
+                      width={176}
+                      height={176}
+                      className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4"
+                    />
+                    <h4 className="text-xl font-semibold mb-2">
+                      Fund Your Tips
+                    </h4>
+                    <p className="text-[#b0c4de] text-sm mb-3">
+                      Top up with USDC using crypto or your preferred payment
+                      method.
+                    </p>
+                    <div className="grid grid-cols-3 gap-2 w-full max-w-[200px]">
+                      {/* Payment icons (nie zmieniaj tutaj rozmiaru) */}
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-center text-center h-full">
+                    <Image
+                      src="/assets/explore.png"
+                      alt="Tip"
+                      width={176}
+                      height={176}
+                      className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4"
+                    />
+                    <h4 className="text-xl font-semibold mb-2">Explore!</h4>
+                    <p className="text-[#b0c4de] text-sm">
+                      Discover Web3 skills and inspiration — from streamers and
+                      models to musicians, educators, coaches, and influencers.
+                      .
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-center text-center h-full">
+                    <Image
+                      src="/assets/tipit3.png"
+                      alt="Tip"
+                      width={176}
+                      height={176}
+                      className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4"
+                    />
+                    <h4 className="text-xl font-semibold mb-2">Support!</h4>
+                    <p className="text-[#b0c4de] text-sm">
+                      Real people real value. Find creators sharing knowledge
+                      and experiences for the new digital era.
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-center text-center h-full">
+                    <Image
+                      src="/assets/beapart.png"
+                      alt="Tip"
+                      width={176}
+                      height={176}
+                      className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4"
+                    />
+                    <h4 className="text-xl font-semibold mb-2">
+                      Enjoy the journey!
+                    </h4>
+                    <p className="text-[#b0c4de] text-sm">Fuel the movement</p>
+                  </div>
+                  <div className="flex flex-col items-center text-center h-full">
+                    <Image
+                      src="/assets/getaa.png"
+                      alt="Enjoy"
+                      width={176}
+                      height={176}
+                      className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4"
+                    />
+                    <h4 className="text-xl font-semibold mb-2">
+                      Contribute to the culture,
+                    </h4>
+                    <p className="text-[#b0c4de] text-sm">
+                      be part of the style.
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-    {/* For Creators Column */}
-    <div className="bg-white bg-opacity-5 p-8 rounded-xl border border-white border-opacity-10">
-      <h3 className="text-3xl font-bold text-center text-yellow-400 mb-8">For Creators</h3>
-      <div className="grid grid-cols-3 sm:grid-cols-2 gap-3 items-stretch">
-        <div className="flex flex-col items-center text-center h-full">
-          <Image
-            src="/assets/ful.png"
-            alt="Stylized avatar icon with a golden crown representing creator ownership and independence, set against a vibrant digital background. The image conveys empowerment and confidence."
-            width={176}
-            height={176}
-            className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4"
-          />
-          <h4 className="text-xl font-semibold mb-2">Ownership</h4>
-          <p className="text-[#b0c4de] text-sm">Editable avatar, bio, animated/static cover. No third-party integrations — 100% creator-owned space</p>
-        </div>
-        <div className="flex flex-col items-center text-center h-full">
-          <Image
-            src="/assets/real.png"
-            alt="Fund your tips icon"
-            width={176}
-            height={176}
-            className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4"
-          />
-          <h4 className="text-xl font-semibold mb-2">Engagement</h4>
-          <p className="text-[#b0c4de] text-sm">Goal tracking that shows real impact, subscriptions that build loyalty and community</p>
-        </div>
-        <div className="flex flex-col items-center text-center h-full">
-          <Image
-            src="/assets/moder.png"
-            alt="Tip"
-            width={176}
-            height={176}
-            className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4"
-          />
-          <h4 className="text-xl font-semibold mb-2">Usability</h4>
-          <p className="text-[#b0c4de] text-sm">Clean Web3 UI with responsive layout, hover effects, microanimations, color themes, works out of the box - no coding needed.</p>
-        </div>
-        <div className="flex flex-col items-center text-center h-full">
-          <Image
-            src="/assets/fle.png"
-            alt="Tip"
-            width={176}
-            height={176}
-            className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4"
-          />
-          <h4 className="text-xl font-semibold mb-2">Flexibility</h4>
-          <p className="text-[#b0c4de] text-sm">One-time tips with custom presets, fundraising goals with progress bars and deadlines, monthly subscriptions with customizable tiers.</p>
-        </div>
-        <div className="flex flex-col items-center text-center h-full">
-          <Image
-            src="/assets/zero.png"
-            alt="Tip"
-            width={176}
-            height={176}
-            className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4"
-          />
-          <h4 className="text-xl font-semibold mb-2">Accessibility</h4>
-          <p className="text-[#b0c4de] text-sm">No login required, no crypto wallet needed — built-in on-ramp, instant access via sharable links and QR codes.</p>
-        </div>
-        <div className="flex flex-col items-center text-center h-full">
-          <Image
-            src="/assets/easy.png"
-            alt="Tip"
-            width={176}
-            height={176}
-            className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4"
-          />
-          <h4 className="text-xl font-semibold mb-2">Shareability</h4>
-          <p className="text-[#b0c4de] text-sm">Shareable widget (iframe), QR code, dynamic OpenGraph cards, social links: X, Instagram, YouTube, Discord, Telegram, perfect for bios, stories, and link-in-bio tools.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+              {/* For Creators Column */}
+              <div className="bg-white bg-opacity-5 p-8 rounded-xl border border-white border-opacity-10">
+                <h3 className="text-3xl font-bold text-center text-yellow-400 mb-8">
+                  For Creators
+                </h3>
+                <div className="grid grid-cols-3 sm:grid-cols-2 gap-3 items-stretch">
+                  <div className="flex flex-col items-center text-center h-full">
+                    <Image
+                      src="/assets/ful.png"
+                      alt="Stylized avatar icon with a golden crown representing creator ownership and independence, set against a vibrant digital background. The image conveys empowerment and confidence."
+                      width={176}
+                      height={176}
+                      className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4"
+                    />
+                    <h4 className="text-xl font-semibold mb-2">Ownership</h4>
+                    <p className="text-[#b0c4de] text-sm">
+                      Editable avatar, bio, animated/static cover. No
+                      third-party integrations — 100% creator-owned space
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-center text-center h-full">
+                    <Image
+                      src="/assets/real.png"
+                      alt="Fund your tips icon"
+                      width={176}
+                      height={176}
+                      className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4"
+                    />
+                    <h4 className="text-xl font-semibold mb-2">Engagement</h4>
+                    <p className="text-[#b0c4de] text-sm">
+                      Goal tracking that shows real impact, subscriptions that
+                      build loyalty and community
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-center text-center h-full">
+                    <Image
+                      src="/assets/moder.png"
+                      alt="Tip"
+                      width={176}
+                      height={176}
+                      className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4"
+                    />
+                    <h4 className="text-xl font-semibold mb-2">Usability</h4>
+                    <p className="text-[#b0c4de] text-sm">
+                      Clean Web3 UI with responsive layout, hover effects,
+                      microanimations, color themes, works out of the box - no
+                      coding needed.
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-center text-center h-full">
+                    <Image
+                      src="/assets/fle.png"
+                      alt="Tip"
+                      width={176}
+                      height={176}
+                      className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4"
+                    />
+                    <h4 className="text-xl font-semibold mb-2">Flexibility</h4>
+                    <p className="text-[#b0c4de] text-sm">
+                      One-time tips with custom presets, fundraising goals with
+                      progress bars and deadlines, monthly subscriptions with
+                      customizable tiers.
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-center text-center h-full">
+                    <Image
+                      src="/assets/zero.png"
+                      alt="Tip"
+                      width={176}
+                      height={176}
+                      className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4"
+                    />
+                    <h4 className="text-xl font-semibold mb-2">
+                      Accessibility
+                    </h4>
+                    <p className="text-[#b0c4de] text-sm">
+                      No login required, no crypto wallet needed — built-in
+                      on-ramp, instant access via sharable links and QR codes.
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-center text-center h-full">
+                    <Image
+                      src="/assets/easy.png"
+                      alt="Tip"
+                      width={176}
+                      height={176}
+                      className="w-32 h-32 sm:w-44 sm:h-44 object-contain mx-auto mb-4"
+                    />
+                    <h4 className="text-xl font-semibold mb-2">Shareability</h4>
+                    <p className="text-[#b0c4de] text-sm">
+                      Shareable widget (iframe), QR code, dynamic OpenGraph
+                      cards, social links: X, Instagram, YouTube, Discord,
+                      Telegram, perfect for bios, stories, and link-in-bio
+                      tools.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
 
-<section id="Start building" className="py-20">
-  <h2 className="text-4xl font-bold text-center text-white mb-12">Start building your own tipjar+ page!</h2>
-  <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+          <section id="Start building" className="py-20">
+            <h2 className="text-4xl font-bold text-center text-white mb-12">
+              Start building your own tipjar+ page!
+            </h2>
+            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* QR Generator */}
+              <div>
+                <div className="relative p-8 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-lg flex flex-col items-center min-h-[530px] h-full">
+                  <h3 className="font-semibold mb-4 text-slate-300">
+                    QR Generator
+                  </h3>
+                  <div className="flex-1 w-full flex items-center justify-center">
+                    <QRGenerator />
+                  </div>
+                  <p className="absolute bottom-5 left-0 w-full text-center text-slate-400 text-base">
+                    Share your code anywhere
+                  </p>
+                </div>
+              </div>
 
-    {/* QR Generator */}
-    <div>
-      <div className="relative p-8 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-lg flex flex-col items-center min-h-[530px] h-full">
-        <h3 className="font-semibold mb-4 text-slate-300">QR Generator</h3>
-        <div className="flex-1 w-full flex items-center justify-center">
-          <QRGenerator />
-        </div>
-        <p className="absolute bottom-5 left-0 w-full text-center text-slate-400 text-base">Share your code anywhere</p>
-      </div>
-    </div>
+              <div className="relative py-8 px-0 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-lg min-h-[530px] h-full flex flex-col">
+                <h3 className="font-semibold mb-4 text-slate-300 text-center">
+                  Widget
+                </h3>
+                <div className="flex-1 flex items-center justify-center relative">
+                  <div className="relative w-[98%] h-auto flex items-center justify-center">
+                    <Image
+                      src="/assets/widget.png"
+                      alt="Widget"
+                      width={600}
+                      height={400}
+                      className="w-full h-auto object-contain rounded-lg"
+                      style={{ display: "block" }}
+                    />
+                    <span
+                      style={{
+                        position: "absolute",
+                        left: "50%",
+                        bottom: "46px",
+                        transform: "translateX(-50%)",
+                        color: "#077d77",
+                        border: "2px solid #FFD700",
+                        borderRadius: "7px",
+                        padding: "2px 18px",
+                        fontWeight: 700,
+                        fontSize: "1rem",
+                        background: "none",
+                        whiteSpace: "nowrap",
+                        letterSpacing: "0.03em",
+                        boxShadow: "0 2px 8px 0 rgba(0,0,0,0.09)",
+                      }}
+                    >
+                      tipjar.plus/@AdamDuda
+                    </span>
+                  </div>
+                </div>
+                <p className="text-slate-400 text-base text-center mt-4">
+                  Integrate with your page
+                </p>
+              </div>
 
-<div className="relative py-8 px-0 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-lg min-h-[530px] h-full flex flex-col">
-  <h3 className="font-semibold mb-4 text-slate-300 text-center">Widget</h3>
-  <div className="flex-1 flex items-center justify-center relative">
-    <div className="relative w-[98%] h-auto flex items-center justify-center">
-      <Image
-        src="/assets/widget.png"
-        alt="Widget"
-        width={600}
-        height={400}
-        className="w-full h-auto object-contain rounded-lg"
-        style={{ display: 'block' }}
-      />
-      <span
-        style={{
-          position: 'absolute',
-          left: '50%',
-          bottom: '46px',
-          transform: 'translateX(-50%)',
-          color: '#077d77',
-          border: '2px solid #FFD700',
-          borderRadius: '7px',
-          padding: '2px 18px',
-          fontWeight: 700,
-          fontSize: '1rem',
-          background: 'none',
-          whiteSpace: 'nowrap',
-          letterSpacing: '0.03em',
-          boxShadow: '0 2px 8px 0 rgba(0,0,0,0.09)'
-        }}
-      >
-        tipjar.plus/@AdamDuda
-      </span>
-    </div>
-  </div>
-  <p className="text-slate-400 text-base text-center mt-4">Integrate with your page</p>
-</div>
-
-    {/* Customize */}
-    <div>
-      <div className="relative py-8 px-0 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-lg flex flex-col items-center min-h-[530px] h-full">
-        <h3 className="font-semibold mb-4 text-slate-300">Customize</h3>
-        <div className="flex-1 w-full flex items-center justify-center">
-          <Image
-            src="/assets/ikonybuild.png"
-            alt="Customize"
-            width={500}
-            height={250}
-            className="w-[90%] max-h-[250px] object-contain"
-          />
-        </div>
-        <p className="absolute bottom-5 left-0 w-full text-center text-slate-400 text-base">Personalize your TipJar+</p>
-      </div>
-    </div>
-
-  </div>
-</section>
+              {/* Customize */}
+              <div>
+                <div className="relative py-8 px-0 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-lg flex flex-col items-center min-h-[530px] h-full">
+                  <h3 className="font-semibold mb-4 text-slate-300">
+                    Customize
+                  </h3>
+                  <div className="flex-1 w-full flex items-center justify-center">
+                    <Image
+                      src="/assets/ikonybuild.png"
+                      alt="Customize"
+                      width={500}
+                      height={250}
+                      className="w-[90%] max-h-[250px] object-contain"
+                    />
+                  </div>
+                  <p className="absolute bottom-5 left-0 w-full text-center text-slate-400 text-base">
+                    Personalize your TipJar+
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
 
           <section id="explore" className="py-20">
-            <h2 className="text-4xl font-bold text-center text-white mb-12">Explore Creators</h2>
+            <h2 className="text-4xl font-bold text-center text-white mb-12">
+              Explore Creators
+            </h2>
             <div className="text-center text-[#b0c4de]">
-              <p>This section is under construction. Come back later to discover talented creators!</p>
+              <p>
+                This section is under construction. Come back later to discover
+                talented creators!
+              </p>
             </div>
           </section>
 
           <section id="learn" className="py-20">
-            <h2 className="text-4xl font-bold text-center text-white mb-12">Learn</h2>
+            <h2 className="text-4xl font-bold text-center text-white mb-12">
+              Learn
+            </h2>
             <div className="text-center text-[#b0c4de]">
-              <p>Learn more about Web3, USDC, and how to maximize your earnings. Content coming soon.</p>
+              <p>
+                Learn more about Web3, USDC, and how to maximize your earnings.
+                Content coming soon.
+              </p>
             </div>
           </section>
 
-          <section id="ai-studio" className="py-20 my-10 bg-[#0a2836] rounded-2xl border-2 border-yellow-400/50 shadow-2xl shadow-yellow-400/20">
+          <section
+            id="ai-studio"
+            className="py-20 my-10 bg-[#0a2836] rounded-2xl border-2 border-yellow-400/50 shadow-2xl shadow-yellow-400/20"
+          >
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-4xl font-bold text-white mb-6">🤖 AI Studio</h2>
+              <h2 className="text-4xl font-bold text-white mb-6">
+                🤖 AI Studio
+              </h2>
               <p className="text-xl text-yellow-400 mb-6">
                 This platform is a living experiment in human-AI collaboration.
               </p>
               <p className="text-lg text-white max-w-3xl mx-auto">
-                From concept and coding to design and copywriting, this entire project was built by a human founder working in tandem with a team of specialized AI agents. It stands as a testament to the power of combining human vision with artificial intelligence to build functional, modern applications.
+                From concept and coding to design and copywriting, this entire
+                project was built by a human founder working in tandem with a
+                team of specialized AI agents. It stands as a testament to the
+                power of combining human vision with artificial intelligence to
+                build functional, modern applications.
               </p>
             </div>
           </section>
@@ -597,7 +813,7 @@ useEffect(() => {
           </footer>
         </main>
       </div>
-    </div>
+    </div> 
   );
 }
 

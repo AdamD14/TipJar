@@ -3,7 +3,6 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { SiweVerifier } from './strategies/siwe.verifier';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -13,9 +12,8 @@ describe('AuthController', () => {
       controllers: [AuthController],
       providers: [
         { provide: AuthService, useValue: {} },
-
+        { provide: ConfigService, useValue: {} },
         { provide: JwtService, useValue: {} },
-        { provide: SiweVerifier, useValue: {} },
       ],
     }).compile();
 

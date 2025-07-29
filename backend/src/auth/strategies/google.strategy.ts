@@ -1,10 +1,18 @@
-// TipJar/backend/src/auth/strategies/google.strategy.ts
-
 import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, VerifyCallback, Profile as GoogleProfile } from 'passport-google-oauth20'; // Używamy aliasu GoogleProfile dla typu Profile z tej biblioteki
-import { AuthService, ValidatedUser } from '../auth.service'; // Nasz AuthService i interfejs ValidatedUser
-import { ConfigService } from '@nestjs/config'; // Do odczytu konfiguracji (zmiennych środowiskowych)
+import {
+  Strategy,
+  VerifyCallback,
+  Profile as GoogleProfile,
+} from 'passport-google-oauth20';
+import { AuthService, ValidatedUser } from '../auth.service';
+import { ConfigService } from '@nestjs/config';
+import { Request } from 'express';
+import { UserRole } from '@prisma/client';
+
+type StatePayload = {
+  role?: 'CREATOR' | 'FAN';
+};
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
@@ -18,48 +26,76 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     const clientSecret = configService.get<string>('GOOGLE_CLIENT_SECRET');
     const callbackURL = configService.get<string>('GOOGLE_CALLBACK_URL');
 
-    // Wywołanie super() MUSI być pierwsze, jeśli używasz 'this' przed nim.
-    // Alternatywnie, nie używaj 'this' (np. this.logger) przed super().
-    // W tym przypadku najpierw wywołamy super, a potem sprawdzimy, czy wartości są poprawne
-    // (chociaż idealnie byłoby to zrobić przed super, ale bez użycia 'this').
-    // Najprostszym rozwiązaniem jest upewnienie się, że zmienne są przekazane poprawnie do super.
-    // Jeśli którakolwiek z nich jest undefined, strategia i tak nie zadziała poprawnie.
-
     super({
-      clientID: clientID || '', // Przekaż pusty string, jeśli undefined, aby uniknąć błędu typu
-      clientSecret: clientSecret || '', // Strategia sama rzuci błąd, jeśli są puste
+      clientID: clientID || '',
+      clientSecret: clientSecret || '',
       callbackURL: callbackURL || '',
       scope: ['email', 'profile'],
-      passReqToCallback: false,
+      passReqToCallback: true,
     });
 
-    // Sprawdzenie konfiguracji można umieścić PO super(), jeśli chcemy użyć this.logger
-    // lub przed super(), jeśli logger jest statyczny lub nie używamy this.
     if (!clientID || !clientSecret || !callbackURL) {
-      this.logger.error( // Teraz 'this' jest dostępne
-        'Google OAuth configuration is incomplete. GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, or GOOGLE_CALLBACK_URL is missing in .env file.'
+      this.logger.error(
+        'Google OAuth configuration is incomplete. Please check your .env file.',
       );
-      // Rzucenie błędu tutaj zatrzyma inicjalizację, co jest dobrym zachowaniem.
       throw new Error(
         'Google OAuth configuration is incomplete. Please check your .env file.',
       );
     }
   }
 
-  // Metoda validate pozostaje bez zmian
-  async validate(accessToken: string, refreshToken: string, profile: GoogleProfile, done: VerifyCallback): Promise<any> {
+  async validate(
+    req: Request,
+    accessToken: string,
+    refreshToken: string,
+    profile: GoogleProfile,
+    done: VerifyCallback,
+  ): Promise<any> {
     const { id: googleId, name, emails, photos } = profile;
     const primaryEmail = emails?.[0]?.value || null;
-    const displayName = name?.givenName 
-      ? `${name.givenName} ${name.familyName || ''}`.trim() 
+    const displayName = name?.givenName
+      ? `${name.givenName} ${name.familyName || ''}`.trim()
       : profile.displayName;
     const avatarUrl = photos?.[0]?.value;
 
-    this.logger.log(`GoogleStrategy: Received profile for Google ID [${googleId}], Email [${primaryEmail || 'N/A'}]`);
+    this.logger.log(
+      `GoogleStrategy: Received profile for Google ID [${googleId}], Email [${
+        primaryEmail || 'N/A'
+      }]`,
+    );
 
     if (!googleId) {
-      this.logger.error('GoogleStrategy: Google ID not found in profile object.');
-      return done(new HttpException('Nie udało się uzyskać identyfikatora użytkownika z Google.', HttpStatus.UNAUTHORIZED), false);
+      return done(
+        new HttpException(
+          'Nie udało się uzyskać identyfikatora użytkownika z Google.',
+          HttpStatus.UNAUTHORIZED,
+        ),
+        false,
+      );
+    }
+
+    let role = UserRole.FAN;
+    if (req.query.state) {
+      try {
+        const state = JSON.parse(
+          Buffer.from(req.query.state as string, 'base64').toString('ascii'),
+        ) as StatePayload;
+
+        if (state && (state.role === 'CREATOR' || state.role === 'FAN')) {
+          // <<< POPRAWKA 1: Konwertujemy string na enum
+          role = state.role === 'CREATOR' ? UserRole.CREATOR : UserRole.FAN;
+          this.logger.log(
+            `GoogleStrategy: Role '${state.role}' extracted from state parameter and set to enum.`,
+          );
+        }
+      } catch (e) {
+        // <<< POPRAWKA 2: Używamy zmiennej 'e'
+        this.logger.warn(
+          `GoogleStrategy: Could not parse role from state parameter: ${JSON.stringify(
+            req.query.state,
+          )}. Error: ${(e as Error).message}`,
+        );
+      }
     }
 
     try {
@@ -69,11 +105,23 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         primaryEmail,
         displayName,
         avatarUrl,
+        role,
       );
       done(null, user);
-    } catch (error) {
-      this.logger.error(`GoogleStrategy: Error during user validation/creation for Google ID [${googleId}]: ${error.message}`, error.stack);
-      done(new HttpException('Wystąpił błąd serwera podczas przetwarzania danych logowania Google.', HttpStatus.INTERNAL_SERVER_ERROR), false);
+    } catch (error: unknown) {
+      this.logger.error(
+        `GoogleStrategy: Error during user validation/creation for Google ID [${googleId}]: ${
+          (error as Error).message
+        }`,
+        (error as Error).stack,
+      );
+      done(
+        new HttpException(
+          'Wystąpił błąd serwera podczas przetwarzania danych logowania Google.',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        ),
+        false,
+      );
     }
   }
 }

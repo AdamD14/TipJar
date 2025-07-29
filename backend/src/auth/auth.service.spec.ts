@@ -6,7 +6,6 @@ import { ConfigService } from '@nestjs/config';
 import { CircleService } from '../circle/circle.service';
 import { MailerService } from '@nestjs-modules/mailer';
 
-
 describe('AuthService', () => {
   let service: AuthService;
 
