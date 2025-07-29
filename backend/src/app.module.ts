@@ -19,6 +19,7 @@ import { UsersModule } from './users/users.module';
 import { CircleModule } from './circle/circle.module';
 import { TipsModule } from './tips/tips.module';
 import { PayoutsModule } from './payouts/payouts.module';
+import { NotificationModule } from './notification/notification.module';
 
 // Newly added FanModule
 import { FanModule } from './fan/fan.module';
@@ -61,6 +62,7 @@ import { FanModule } from './fan/fan.module';
     CircleModule,
     TipsModule,
     PayoutsModule,
+    NotificationModule,
     // Import the fan module to enable fan endpoints
     FanModule,
   ],
