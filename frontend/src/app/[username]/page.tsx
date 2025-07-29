@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, FC, ReactNode, useEffect } from "react";
+
 import {
   Users,
   DollarSign,
@@ -103,8 +103,7 @@ const CreatorProfilePage = () => {
 
   const [tipAmount, setTipAmount] = useState<number>(10);
   const [message, setMessage] = useState<string>("");
-  const [showTipPanel, setShowTipPanel] = useState<boolean>(false);
-  const [showDepositModal, setShowDepositModal] = useState<boolean>(false);
+
 
   const creatorAvatarUrls = [
     "/assets/ja1.png",
@@ -196,62 +195,66 @@ return (
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Tip Panel OR Funding Goal Preview */}
-      {showTipPanel ? (
-        <div className="absolute top-[256px] right-8 w-96 bg-gray-100 text-gray-900 rounded-xl shadow-lg p-3 z-20">
-          <button
-            onClick={() => setShowTipPanel(false)}
-            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-1 rounded-full"
-          >
-            <X className="w-5 h-5" />
-          </button>
-          <div className="mt-2">
-            <input type="range" min="0.1" max="20" step="0.1" value={tipAmount} onChange={(e) => setTipAmount(parseFloat(e.target.value))} className="w-full h-[6px] rounded-lg appearance-none cursor-pointer" style={sliderBackground} />
-          </div>
-          <div className="mt-1 grid grid-cols-4 gap-2">
-            {[1, 2, 5, 10].map((amount) => (
-              <button
-                key={amount}
-                onClick={() => setTipAmount(amount)}
-                className={`py-1 rounded-lg text-sm transition-colors ${
-                  tipAmount === amount
-                    ? 'w-full bg-gradient-to-r from-teal-500 to-purple-500 text-white font-bold py-3 rounded-lg hover:from-teal-600 hover:to-purple-600 hover:scale-[1.02] transform transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none shadow-lg'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                ${amount}
-              </button>
-            ))}
-          </div>
-          <div className="text-center mt-2">
-            <button onClick={() => handlePayment("Direct Tip")} className="w-full font-bold bg-gradient-to-r from-teal-500 to-purple-500 text-white py-2 px-4 rounded-lg transition-all duration-300 hover:from-teal-600 hover:to-purple-600 hover:scale-[1.02] transform transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none shadow-lg inline-flex items-center justify-center gap-2 text-base">
-              Tip ${tipAmount.toFixed(2)}
-              <img src="/assets/logo_usdc_1.png" width={24} height={24} className="object-cover opacity-80" alt="USDC Logo" />
-            </button>
-          </div>
-          <div className="mt-2 grid grid-cols-3 sm:grid-cols-6 gap-[4px] h-8">
-            <PaymentIcon name="Google Pay">
-              <img src="/assets/Google_Pay_Logo.svg" alt="Google Pay" width={24} height={24} className="object-contain"/>
-            </PaymentIcon>
-            <PaymentIcon name="Apple Pay">
-              <img src="/assets/Apple_Pay_Mark_RGB.svg" alt="Apple Pay" width={24} height={24} className="object-contain"/>
-            </PaymentIcon>
-            <PaymentIcon name="Metamask">
-              <img src="/assets/MetaMask-icon-fox.svg" alt="Metamask" width={24} height={24} className="object-contain"/>
-            </PaymentIcon>
-            <PaymentIcon name="Revolut">
-              <img src="/assets/Revolut.svg" alt="Revolut" width={24} height={24} className="object-contain" />
-            </PaymentIcon>
-            <PaymentIcon name="WalletConnect">
-              <img src="/assets/wc.svg" alt="WalletConnect" width={24} height={24} className="object-contain" />
-            </PaymentIcon>
-            <PaymentIcon name="Bank">
-              <img src="/assets/bank-svgrepo-com.svg" alt="Bank" width={24} height={24} className="object-contain"/>
-            </PaymentIcon>
-          </div>
+        {/* ŚRODEK */}
+        <div className="flex items-center justify-center h-full">
+          {[
+            ["#why", "Why tipjar+?"],
+            ["#how-it-works", "How it works?"],
+            ["#start-building", "Start Building"],
+            ["#explore", "Explore"],
+            ["#learn", "Learn"],
+            ["#ai-studio", "AI Studio"],
+          ].map(([href, label], idx, arr) => (
+            <span
+              key={href}
+              style={{
+                fontSize: "1rem",
+                lineHeight: "1",
+                marginRight: idx !== arr.length - 1 ? "4px" : "0",
+                color: "white",
+              }}
+            >
+              <a href={href}>{label}</a>
+            </span>
+          ))}
         </div>
+
+        {/* BUTTONY */}
+        <div className="flex items-center justify-end h-full pr-[2px] gap-[2px]">
+          <button
+            style={{
+              padding: "2px 32px", // Begin: góra/dół 2px, lewo/prawo 2rem/32px
+              fontSize: "1rem",
+              fontWeight: "bold",
+              background: "#f7f1bf",
+              color: "#065a60",
+              borderRadius: "8px",
+              border: "none",
+            }}
+          >
+            Begin as a Creator
+          </button>
+          <button
+            style={{
+              padding: "2px 64px", // Login: góra/dół 2px, lewo/prawo 4rem/64px
+              fontSize: "1rem",
+              fontWeight: "bold",
+              border: "1px solid #f7f1bf",
+              color: "#f7f1bf",
+              background: "transparent",
+              borderRadius: "8px",
+            }}
+          >
+            Login
+          </button>
+        </div>
+      </nav>
+    </header>
+  );
+};
+
+export default Header;
       ) : (
         <div className="absolute top-[256px] right-8 w-96 bg-gray-100 text-gray-900 rounded-xl shadow-lg p-6 z-20">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Funding Goals</h2>
@@ -475,18 +478,7 @@ return (
                 </div>
               </div>
 
-              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Recent Supporters & Messages</h3>
-              <div className="space-y-4">
-                {supportHistory.map((support) => (
-                  <div key={support.id} className="donation-card bg-gray-50 p-3 rounded-lg transition cursor-pointer">
-                    <div className="flex justify-between items-center">
-                      <div className="font-medium text-gray-900">{support.name}</div>
-                      <div className="text-teal-600 font-bold">${support.amount}</div>
-                    </div>
-                    {support.message && <div className="text-sm text-gray-700 mt-1">"{support.message}"</div>}
-                    <div className="text-xs text-gray-500 mt-1">{support.time}</div>
-                  </div>
-                ))}
+
               </div>
             </div>
           </div>
