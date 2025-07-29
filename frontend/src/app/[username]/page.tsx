@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, FC, ReactNode } from "react";
+import WalletAddressModal from "../../components/WalletAddressModal";
 import {
   X,
   CreditCard,
@@ -80,10 +81,12 @@ const CreatorProfilePage: FC = () => {
     "profile"
   );
   const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
+  const [showAddressModal, setShowAddressModal] = useState<boolean>(false);
   const [showMessageField, setShowMessageField] = useState<boolean>(false); // Re-introduced
   const [isGeneratingMessage, setIsGeneratingMessage] = useState<boolean>(false); // Re-introduced
   const carouselImages = ['/assets/ja1.png', '/assets/ja2.png', '/assets/ja3.png'];
   const [carouselIndex, setCarouselIndex] = useState<number>(0);
+  const walletAddress = "0x1234567890ABCDEF1234567890ABCDEF12345678";
 
 
   const fundingGoal = 1500;
@@ -432,6 +435,15 @@ const CreatorProfilePage: FC = () => {
                 </button>
               </div>
 
+              <div className="mt-2 text-center">
+                <button
+                  onClick={() => setShowAddressModal(true)}
+                  className="inline-flex items-center gap-1 text-sm text-[#9C27B0] hover:text-[#6A1B9A]"
+                >
+                  <Wallet className="w-4 h-4" /> Adres do wpłaty
+                </button>
+              </div>
+
               <div className="mt-6">
                 <p className="text-gray-400 text-center mb-2">
                   Other payment methods
@@ -560,6 +572,14 @@ const CreatorProfilePage: FC = () => {
             </button>
           </div>
         </div>
+      )}
+
+      {showAddressModal && (
+        <WalletAddressModal
+          isOpen={showAddressModal}
+          onClose={() => setShowAddressModal(false)}
+          address={walletAddress}
+        />
       )}
 
       {/* Custom CSS */}
