@@ -310,4 +310,176 @@ export class CircleService implements OnModuleInit {
       this.handleCircleError(error, 'get transaction status');
     }
   }
+
+  async getWalletForUser(userId: string): Promise<{ walletId: string; address: string; chain: string }> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        circleWalletId: true,
+        mainWalletAddress: true,
+      },
+    });
+
+    if (!user?.circleWalletId || !user?.mainWalletAddress) {
+      throw new NotFoundException('Circle wallet not found for user');
+    }
+
+    const chain = this.configService.get<string>('DEFAULT_BLOCKCHAIN', 'MATIC-AMOY');
+
+    return {
+      walletId: user.circleWalletId,
+      address: user.mainWalletAddress,
+      chain,
+    };
+  }
+
+  async getWalletBalanceForUser(userId: string): Promise<{ balance: number; currency: string }> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { circleWalletId: true },
+    });
+
+    if (!user?.circleWalletId) {
+      throw new NotFoundException('User has no Circle wallet');
+    }
+
+    const balance = await this.getWalletBalance(user.circleWalletId);
+    return { balance, currency: 'USD' };
+  }
+
+  async getWalletTransactions(userId: string): Promise<any[]> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { circleWalletId: true },
+    });
+
+    if (!user?.circleWalletId) {
+      throw new NotFoundException('Circle wallet not found');
+    }
+
+    const res = await fetch(`https://api.circle.com/v1/wallets/${user.circleWalletId}/transactions`, {
+      headers: {
+        Authorization: `Bearer ${this.configService.get<string>('CIRCLE_API_KEY')}`,
+      },
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new HttpException(`Failed to fetch transactions: ${text}`, res.status);
+    }
+
+    const data = await res.json();
+    const list = data.data || [];
+
+    return list.map((tx: any) => ({
+      id: tx.id,
+      type: tx.type,
+      status: tx.status,
+      amount: tx.amount?.amount,
+      currency: tx.amount?.currency,
+      source: tx.source?.id || null,
+      destination: tx.destination?.address || null,
+      chain: tx.chain,
+      createdAt: tx.createDate,
+    }));
+  }
+
+  async createHostedDeposit(userId: string, amount: number): Promise<{ hostedUrl: string }> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { circleWalletId: true, email: true },
+    });
+
+    if (!user?.circleWalletId) {
+      throw new NotFoundException('Circle wallet not found');
+    }
+
+    const payload = {
+      idempotencyKey: randomUUID(),
+      amount: {
+        amount: amount.toFixed(2),
+        currency: 'USD',
+      },
+      settlementCurrency: 'USD',
+      walletId: user.circleWalletId,
+      customerEmail: user.email,
+      redirectUrl: `${this.configService.get<string>('FRONTEND_URL')}/deposit-success`,
+    };
+
+    const res = await fetch('https://api.circle.com/v1/hosted-checkouts', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${this.configService.get<string>('CIRCLE_API_KEY')}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new HttpException(`Failed to create hosted deposit: ${text}`, res.status);
+    }
+
+    const data = await res.json();
+    return { hostedUrl: data.data?.checkoutUrl };
+  }
+
+  async initiateCctpTransfer(
+    userId: string,
+    amount: number,
+    toChain: string,
+    toAddress: string,
+  ): Promise<{ transferId: string }> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { circleWalletId: true },
+    });
+
+    if (!user?.circleWalletId) {
+      throw new NotFoundException('Wallet not found');
+    }
+
+    const payload = {
+      idempotencyKey: randomUUID(),
+      source: { walletId: user.circleWalletId, chain: 'POLYGON' },
+      destination: { address: toAddress, chain: toChain },
+      amount: { amount: amount.toFixed(2), currency: 'USD' },
+    };
+
+    const res = await fetch('https://api.circle.com/v1/cctp/transfers', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${this.configService.get<string>('CIRCLE_API_KEY')}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new HttpException(`Failed to initiate CCTP transfer: ${text}`, res.status);
+    }
+
+    const data = await res.json();
+    return { transferId: data.data?.id };
+  }
+
+  async listAllWallets(): Promise<any[]> {
+    const users = await this.prisma.user.findMany({
+      where: { circleWalletId: { not: null } },
+      select: {
+        id: true,
+        email: true,
+        circleWalletId: true,
+        mainWalletAddress: true,
+      },
+    });
+
+    return users.map(u => ({
+      userId: u.id,
+      email: u.email,
+      walletId: u.circleWalletId,
+      address: u.mainWalletAddress,
+    }));
+  }
 }
