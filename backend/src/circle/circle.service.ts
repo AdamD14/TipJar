@@ -29,7 +29,7 @@ import {
   Balance,
   TokenInfo,
 } from '@circle-fin/developer-controlled-wallets';
-import { isAxiosError } from 'axios';
+import axios, { isAxiosError } from 'axios';
 import { randomUUID } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserRole } from '@prisma/client';
@@ -407,18 +407,9 @@ export class CircleService implements OnModuleInit {
   }
 
 
-  }
-
-  async listAllWallets() {
-    return this.prisma.user.findMany({
-      where: { circleWalletId: { not: null } },
-      select: {
-        id: true,
-
         circleWalletId: true,
         mainWalletAddress: true,
       },
     });
-  }
 
 }
