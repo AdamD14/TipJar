@@ -1,6 +1,6 @@
-"use client"
-import { notFound } from 'next/navigation';
-import Image from 'next/image';
+"use client";
+import { notFound } from "next/navigation";
+import Image from "next/image";
 
 interface CreatorProfileProps {
   params: { username: string };
@@ -17,26 +17,30 @@ interface CreatorProfileProps {
  * currently mocked – integrate with your backend API or database as needed.
  */
 async function fetchCreator(username: string) {
-  // TODO: replace with API call to fetch profile by username
-  // Example structure returned for demonstration
-  return {
-    username,
-    displayName: 'Jane Doe',
-    tagline: 'Video creator and illustrator',
-    bio: 'I’m a video creator and illustrator sharing tutorials, behind‑the‑scenes content and creative inspiration.',
-    avatarUrl: '/placeholder_light_gray_block.png',
-    bannerUrl: '/placeholder_light_gray_block.png',
-    goal: 1000,
-    raised: 350,
-    quickAmounts: [1, 5, 10, 25],
-    accentColor: '#1EB589',
-    supporters: [
-      { name: 'Aaron', amount: 20, message: '', date: '3h ago' },
-      { name: 'Anonymous', amount: 10, message: '', date: '1 day ago' },
-      { name: 'Emma', amount: 50, message: 'You’re amazing!', date: '2 days ago' },
-    ],
-    donationAddress: '0x1234...abcd',
-  };
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/users/profile/${username}`,
+      { cache: "no-store" },
+    );
+    if (!res.ok) return null;
+    const user = await res.json();
+    return {
+      username: user.username,
+      displayName: user.displayName,
+      tagline: "",
+      bio: user.profile?.bio ?? "",
+      avatarUrl: user.avatarUrl || "/placeholder_light_gray_block.png",
+      bannerUrl: user.profile?.bannerUrl || "/placeholder_light_gray_block.png",
+      goal: 0,
+      raised: 0,
+      quickAmounts: [1, 5, 10, 25],
+      accentColor: "#1EB589",
+      supporters: [],
+      donationAddress: user.mainWalletAddress || "",
+    };
+  } catch {
+    return null;
+  }
 }
 
 export default async function CreatorProfile({ params }: CreatorProfileProps) {
@@ -48,11 +52,21 @@ export default async function CreatorProfile({ params }: CreatorProfileProps) {
       <div className="relative rounded-lg overflow-hidden shadow-md">
         <div className="h-48 bg-gray-200 relative">
           {data.bannerUrl && (
-            <Image src={data.bannerUrl} alt="Banner" fill style={{ objectFit: 'cover' }} />
+            <Image
+              src={data.bannerUrl}
+              alt="Banner"
+              fill
+              style={{ objectFit: "cover" }}
+            />
           )}
         </div>
         <div className="absolute -bottom-12 left-6 rounded-full border-4 border-white w-24 h-24 overflow-hidden">
-          <Image src={data.avatarUrl} alt="Avatar" fill style={{ objectFit: 'cover' }} />
+          <Image
+            src={data.avatarUrl}
+            alt="Avatar"
+            fill
+            style={{ objectFit: "cover" }}
+          />
         </div>
       </div>
       <div className="mt-16 px-6">
@@ -60,26 +74,29 @@ export default async function CreatorProfile({ params }: CreatorProfileProps) {
         <p className="text-teal-600 mt-1">@{data.username}</p>
         <p className="mt-4 text-gray-700">{data.bio}</p>
         {/* Social links placeholder – update when available */}
-        <div className="flex space-x-4 mt-4">
-          {/* Icons would go here */}
-        </div>
+        <div className="flex space-x-4 mt-4">{/* Icons would go here */}</div>
       </div>
       {/* Fundraising stats */}
       <div className="px-6 mt-8 flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <span className="text-xl font-medium">${data.raised.toFixed(0)}</span>
-            <span className="text-gray-500">raised</span>
-          </div>
-          <div className="h-2 flex-1 bg-gray-200 rounded">
-            <div
-              className="h-full rounded"
-              style={{ width: `${(data.raised / data.goal) * 100}%`, backgroundColor: data.accentColor }}
-            />
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-xl font-medium">{((data.raised / data.goal) * 100).toFixed(0)}%</span>
-            <span className="text-gray-500">of ${data.goal}</span>
-          </div>
+        <div className="flex items-center space-x-2">
+          <span className="text-xl font-medium">${data.raised.toFixed(0)}</span>
+          <span className="text-gray-500">raised</span>
+        </div>
+        <div className="h-2 flex-1 bg-gray-200 rounded">
+          <div
+            className="h-full rounded"
+            style={{
+              width: `${(data.raised / data.goal) * 100}%`,
+              backgroundColor: data.accentColor,
+            }}
+          />
+        </div>
+        <div className="flex items-center space-x-2">
+          <span className="text-xl font-medium">
+            {((data.raised / data.goal) * 100).toFixed(0)}%
+          </span>
+          <span className="text-gray-500">of ${data.goal}</span>
+        </div>
       </div>
       {/* Tip panel */}
       <div className="px-6 mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -110,7 +127,9 @@ export default async function CreatorProfile({ params }: CreatorProfileProps) {
       {/* Donation address / QR */}
       <div className="px-6 mt-10">
         <h2 className="font-semibold mb-2">Donation address</h2>
-        <p className="font-mono text-gray-700 break-all">{data.donationAddress}</p>
+        <p className="font-mono text-gray-700 break-all">
+          {data.donationAddress}
+        </p>
         {/* A QR code could be generated and rendered here via a library */}
       </div>
       {/* Recent supporters */}
