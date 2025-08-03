@@ -1,5 +1,5 @@
-// TipJar+ Header FINAL - 48px Icon, literalne wytyczne Adaś
 "use client";
+
 import React from "react";
 
 const HEADER_HEIGHT = 52; // header 52px wysokości
@@ -145,13 +145,8 @@ const Header = () => (
   </header>
 );
 
-export default Header;
-"use client";
-import React from "react";
 
-const HEADER_HEIGHT = 52;
 
-const Header = () => (
   <header
     style={{
       height: `${HEADER_HEIGHT}px`,
@@ -298,6 +293,6 @@ const Header = () => (
       </div>
     </nav>
   </header>
-);
+
 
 export default Header;
