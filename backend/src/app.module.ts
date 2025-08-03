@@ -23,6 +23,7 @@ import { NotificationModule } from './notification/notification.module';
 
 // Newly added FanModule
 import { FanModule } from './fan/fan.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -65,6 +66,7 @@ import { FanModule } from './fan/fan.module';
     NotificationModule,
     // Import the fan module to enable fan endpoints
     FanModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

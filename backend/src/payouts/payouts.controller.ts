@@ -1,4 +1,14 @@
-import { Controller, Post, Body, UseGuards, Req, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Param,
+  Body,
+  UseGuards,
+  Req,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { PayoutsService } from './payouts.service';
 import { CreatePayoutDto } from './dto/create-payout.dto';
@@ -13,8 +23,29 @@ export class PayoutsController {
   @Post('payout')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.CREATED)
-  createPayout(@Req() req: Request, @Body() dto: CreatePayoutDto): Promise<Payout> {
+  createPayout(
+    @Req() req: Request,
+    @Body() dto: CreatePayoutDto,
+  ): Promise<Payout> {
     const user = req.user as ValidatedUser;
-    return this.payoutsService.createPayout(user.id, dto.amount, dto.destinationAddress);
+    return this.payoutsService.createPayout(
+      user.id,
+      dto.amount,
+      dto.destinationAddress,
+    );
+  }
+
+  @Get('payouts')
+  @UseGuards(AuthGuard('jwt'))
+  getPayouts(@Req() req: Request): Promise<Payout[]> {
+    const user = req.user as ValidatedUser;
+    return this.payoutsService.getPayoutsForCreator(user.id);
+  }
+
+  @Get('payouts/:id')
+  @UseGuards(AuthGuard('jwt'))
+  getPayout(@Req() req: Request, @Param('id') id: string): Promise<Payout> {
+    const user = req.user as ValidatedUser;
+    return this.payoutsService.getPayoutForCreator(user.id, id);
   }
 }
