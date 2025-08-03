@@ -8,9 +8,10 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Tip, TipStatus, UserRole } from '@prisma/client';
+import { Tip, TipStatus, UserRole, User } from '@prisma/client';
 import { CircleService } from '../circle/circle.service';
 import { UsersService } from '../users/users.service';
+import { NotificationService } from '../notification/notification.service';
 import { Decimal } from '@prisma/client/runtime/library';
 import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
@@ -36,9 +37,13 @@ export class TipsService {
     private circleService: CircleService,
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService,
+    private notificationService: NotificationService,
   ) {}
 
-  private async processFiatPayment(token: string, amount: string): Promise<string> {
+  private async processFiatPayment(
+    token: string,
+    amount: string,
+  ): Promise<string> {
     if (!token) {
       throw new BadRequestException('Brak tokenu płatności.');
     }
@@ -54,17 +59,29 @@ export class TipsService {
     const { amount: amountString, creatorId, fanId } = data;
 
     const creator = await this.usersService.findOneById(creatorId);
-    if (!creator || !creator.circleWalletId || creator.role !== UserRole.CREATOR) {
-      throw new NotFoundException('Nie znaleziono twórcy lub jego portfel nie jest skonfigurowany.');
+    if (
+      !creator ||
+      !creator.circleWalletId ||
+      creator.role !== UserRole.CREATOR
+    ) {
+      throw new NotFoundException(
+        'Nie znaleziono twórcy lub jego portfel nie jest skonfigurowany.',
+      );
     }
 
     const tipAmountDecimal = new Decimal(amountString);
-    if (tipAmountDecimal.isNaN() || tipAmountDecimal.isNegative() || tipAmountDecimal.isZero()) {
+    if (
+      tipAmountDecimal.isNaN() ||
+      tipAmountDecimal.isNegative() ||
+      tipAmountDecimal.isZero()
+    ) {
       throw new BadRequestException('Nieprawidłowa kwota napiwku.');
     }
 
     const platformFeePercentage = new Decimal(fanId ? '0.02' : '0.10');
-    const platformFeeAmount = tipAmountDecimal.mul(platformFeePercentage).toDecimalPlaces(6);
+    const platformFeeAmount = tipAmountDecimal
+      .mul(platformFeePercentage)
+      .toDecimalPlaces(6);
     const netAmountForCreator = tipAmountDecimal.sub(platformFeeAmount);
 
     let tipRecord = await this.prisma.tip.create({
@@ -80,6 +97,7 @@ export class TipsService {
       },
     });
 
+    let fan: User | null = null;
     try {
       const blockchain = this.configService.get<string>(
         'DEFAULT_BLOCKCHAIN',
@@ -88,18 +106,19 @@ export class TipsService {
       const tokenId = this.configService.get<string>('USDC_TOKEN_ID', 'USDC');
 
       if (fanId) {
-        const fan = await this.usersService.findOneById(fanId);
+        fan = await this.usersService.findOneById(fanId);
         if (!fan || !fan.circleWalletId) {
           throw new NotFoundException('Portfel fana nie jest skonfigurowany.');
         }
 
-        const transferResult = await this.circleService.initiateInternalTipTransfer(
-          fan.circleWalletId,
-          creator.circleWalletId,
-          netAmountForCreator.toString(),
-          blockchain,
-          tokenId,
-        );
+        const transferResult =
+          await this.circleService.initiateInternalTipTransfer(
+            fan.circleWalletId,
+            creator.circleWalletId,
+            netAmountForCreator.toString(),
+            blockchain,
+            tokenId,
+          );
 
         tipRecord = await this.prisma.tip.update({
           where: { id: tipRecord.id },
@@ -126,18 +145,37 @@ export class TipsService {
         });
       }
 
-      this.logger.log(`Tip [${tipRecord.id}] successfully processed. Status: ${tipRecord.status}`);
+      const formattedAmount = tipAmountDecimal.toNumber().toFixed(2);
+      const senderName =
+        fan?.username || (data.isAnonymous ? 'Anonim' : 'Gość');
+      await this.notificationService.create({
+        userId: creator.id,
+        message: `Nowy napiwek ${formattedAmount} USDC od ${senderName}.`,
+      });
+
+      this.logger.log(
+        `Tip [${tipRecord.id}] successfully processed. Status: ${tipRecord.status}`,
+      );
       return tipRecord;
     } catch (paymentError) {
-      this.logger.error(`Payment processing failed for tip [${tipRecord.id}]:`, paymentError);
+      this.logger.error(
+        `Payment processing failed for tip [${tipRecord.id}]:`,
+        paymentError,
+      );
       await this.prisma.tip.update({
         where: { id: tipRecord.id },
         data: { status: TipStatus.FAILED },
       });
-      if (paymentError instanceof BadRequestException || paymentError instanceof NotFoundException) {
+      if (
+        paymentError instanceof BadRequestException ||
+        paymentError instanceof NotFoundException
+      ) {
         throw paymentError;
       }
-      const message = paymentError instanceof Error ? paymentError.message : 'Przetwarzanie płatności napiwku nie powiodło się.';
+      const message =
+        paymentError instanceof Error
+          ? paymentError.message
+          : 'Przetwarzanie płatności napiwku nie powiodło się.';
       throw new InternalServerErrorException(message);
     }
   }

@@ -4,8 +4,10 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
 import { CircleService } from '../circle/circle.service';
 import { ConfigService } from '@nestjs/config';
+import { NotificationService } from '../notification/notification.service';
 
 jest.mock('@prisma/client', () => ({
+  PrismaClient: class {},
   TipStatus: { PENDING: 'PENDING', COMPLETED: 'COMPLETED', FAILED: 'FAILED' },
   UserRole: { CREATOR: 'CREATOR', FAN: 'FAN' },
 }));
@@ -19,6 +21,7 @@ describe('TipsService', () => {
   let usersService: any;
   let circleService: any;
   let config: any;
+  let notificationService: any;
 
   beforeEach(async () => {
     prisma = {
@@ -36,6 +39,7 @@ describe('TipsService', () => {
         return def;
       }),
     };
+    notificationService = { create: jest.fn() };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -44,6 +48,7 @@ describe('TipsService', () => {
         { provide: UsersService, useValue: usersService },
         { provide: CircleService, useValue: circleService },
         { provide: ConfigService, useValue: config },
+        { provide: NotificationService, useValue: notificationService },
       ],
     }).compile();
 
@@ -79,6 +84,9 @@ describe('TipsService', () => {
           circleTransferId: 'tx',
         }),
       }),
+    );
+    expect(notificationService.create).toHaveBeenCalledWith(
+      expect.objectContaining({ userId: 'creator' }),
     );
     expect(result.status).toBe(TipStatus.COMPLETED);
   });
@@ -127,6 +135,9 @@ describe('TipsService', () => {
           paymentGatewayChargeId: expect.any(String),
         }),
       }),
+    );
+    expect(notificationService.create).toHaveBeenCalledWith(
+      expect.objectContaining({ userId: 'creator' }),
     );
     expect(result.status).toBe(TipStatus.COMPLETED);
   });
