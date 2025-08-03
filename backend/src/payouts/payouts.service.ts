@@ -1,4 +1,10 @@
-import { Injectable, Logger, NotFoundException, Inject, forwardRef } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CircleService } from '../circle/circle.service';
 import { Payout, PayoutStatus } from '@prisma/client';
@@ -11,11 +17,18 @@ export class PayoutsService {
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
-    @Inject(forwardRef(() => CircleService)) private circleService: CircleService,
+    @Inject(forwardRef(() => CircleService))
+    private circleService: CircleService,
   ) {}
 
-  async createPayout(creatorId: string, amount: string, destinationAddress: string): Promise<Payout> {
-    const creator = await this.prisma.user.findUnique({ where: { id: creatorId } });
+  async createPayout(
+    creatorId: string,
+    amount: string,
+    destinationAddress: string,
+  ): Promise<Payout> {
+    const creator = await this.prisma.user.findUnique({
+      where: { id: creatorId },
+    });
     if (!creator || !creator.circleWalletId) {
       throw new NotFoundException('Creator wallet not configured');
     }
@@ -30,7 +43,10 @@ export class PayoutsService {
     });
 
     try {
-      const blockchain = this.configService.get<string>('DEFAULT_BLOCKCHAIN', 'MATIC-AMOY');
+      const blockchain = this.configService.get<string>(
+        'DEFAULT_BLOCKCHAIN',
+        'MATIC-AMOY',
+      );
       const tokenId = this.configService.get<string>('USDC_TOKEN_ID', 'USDC');
       const res = await this.circleService.initiateWithdrawal(
         creatorId,
@@ -56,6 +72,28 @@ export class PayoutsService {
       throw err;
     }
 
-    return this.prisma.payout.findUnique({ where: { id: payout.id } }) as Promise<Payout>;
+    return this.prisma.payout.findUnique({
+      where: { id: payout.id },
+    }) as Promise<Payout>;
+  }
+
+  async getPayoutsForCreator(creatorId: string): Promise<Payout[]> {
+    return this.prisma.payout.findMany({
+      where: { creatorId },
+      orderBy: { requestedAt: 'desc' },
+    });
+  }
+
+  async getPayoutForCreator(
+    creatorId: string,
+    payoutId: string,
+  ): Promise<Payout> {
+    const payout = await this.prisma.payout.findUnique({
+      where: { id: payoutId },
+    });
+    if (!payout || payout.creatorId !== creatorId) {
+      throw new NotFoundException('Payout not found');
+    }
+    return payout;
   }
 }
