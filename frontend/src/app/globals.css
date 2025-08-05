@@ -138,3 +138,9 @@
   font-style: normal;
   font-display: swap;
 }
+
+body {
+  background: #003737;
+  background: -webkit-linear-gradient(133deg, #003737 0%, #006565 50%, #002828 100%);
+  background: linear-gradient(133deg, #003737 0%, #006565 50%, #002828 100%);
+}

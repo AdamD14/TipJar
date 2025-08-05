@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-screen bg-[#003737] font-sans text-white antialiased",
+          "min-h-screen font-sans text-white antialiased",
           montserrat.variable // Aplikujemy zmienną z czcionką do całego body
         )}
       >
