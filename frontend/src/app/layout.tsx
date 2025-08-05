@@ -1,15 +1,8 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { ReactNode } from 'react';
-import { Montserrat } from 'next/font/google';
-import { cn } from '@/lib/utils';
+import { mukta, inter, ibm, playfair } from './fonts';
 import { Providers } from './providers'; // Importujemy nasz wrapper dla wagmi
-
-// Konfiguracja czcionki Montserrat z next/font
-const montserrat = Montserrat({
-  subsets: ['latin'],
-  variable: '--font-sans', // Definiujemy zmienną CSS dla naszej czcionki
-});
 
 export const metadata: Metadata = {
   title: {
@@ -21,13 +14,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={cn(
-          "min-h-screen bg-[#003737] font-sans text-white antialiased",
-          montserrat.variable // Aplikujemy zmienną z czcionką do całego body
-        )}
-      >
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${mukta.variable} ${inter.variable} ${ibm.variable} ${playfair.variable}`}
+    >
+      <body className="min-h-screen bg-[#003737] font-sans text-white antialiased">
         {/*
           Opakowujemy całą aplikację w Providers.
           To sprawia, że hooki z wagmi (do obsługi portfela)
