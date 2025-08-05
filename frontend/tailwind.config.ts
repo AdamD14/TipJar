@@ -14,7 +14,10 @@ const config: Config = {
         'brand-light-text': '#b0c4de'
       },
       fontFamily: {
-        sans: ['var(--font-sans)'],
+        sans: ['var(--font-mukta)', 'sans-serif'],
+        ui: ['var(--font-inter)', 'sans-serif'],
+        mono: ['var(--font-ibm)', 'monospace'],
+        accent: ['var(--font-playfair)', 'serif'],
       },
     },
   },
