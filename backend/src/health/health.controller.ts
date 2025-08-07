@@ -25,7 +25,11 @@ export class HealthController {
   check() {
     return this.health.check([
       () => this.http.pingCheck('self', 'http://localhost:3000'),
-      () => this.prismaIndicator.pingCheck('database', this.prisma),
+      () =>
+        this.prismaIndicator.pingCheck(
+          'database',
+          this.prisma as unknown as any,
+        ),
       () =>
         this.disk.checkStorage('disk', { path: '/', thresholdPercent: 0.9 }),
       () => this.memory.checkRSS('memory_rss', 150 * 1024 * 1024),
