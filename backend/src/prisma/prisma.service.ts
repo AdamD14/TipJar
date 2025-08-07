@@ -24,6 +24,7 @@ export class PrismaService
   declare socialConnection: any;
   declare overlaySettings: any;
   declare notification: any;
+  declare $queryRawUnsafe: (query: string) => any;
 
   private readonly logger = new Logger(PrismaService.name);
   constructor() {
