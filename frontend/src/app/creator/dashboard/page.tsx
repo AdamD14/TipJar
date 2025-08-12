@@ -1,29 +1,29 @@
-// app/creator/dashboard/page.tsx
-import Link from 'next/link';
-
 export default function CreatorDashboardPage() {
   return (
-    <main className="min-h-screen bg-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-      <header className="bg-[#003737] text-white p-4 flex justify-between items-center">
-        <h1 className="text-2xl">Creator Dashboard</h1>
-        <nav>
-          <Link href="/creator/dashboard" className="px-3 text-[#FFD700]">Dashboard</Link>
-          <Link href="/creator/withdrawals" className="px-3 hover:text-[#FFD700]">Withdrawals</Link>
-          <Link href="/creator/settings" className="px-3 hover:text-[#FFD700]">Settings</Link>
-          <Link href="/" className="px-3 hover:text-[#FFD700]">Logout</Link>
-        </nav>
-      </header>
-      <section className="p-8">
-        <h2 className="text-xl mb-2">Summary Statistics</h2>
-        <p className="mb-4">Total Tips Received: <span className="font-bold">$123.45</span></p>
-        <p className="mb-6">Current Balance: <span className="font-bold">$67.89</span></p>
-        <h2 className="text-xl mb-2">Recent Tips</h2>
-        <ul className="list-disc pl-5 text-gray-700">
-          <li>Carol tipped $10 – "Love your work!"</li>
-          <li>Dave tipped $5 – "Great content!"</li>
-          <li>Anonymous tipped $2</li>
-        </ul>
-      </section>
-    </main>
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold">Creator Dashboard</h1>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {["Tips today", "Total supporters", "USDC balance", "Payouts"].map((t, i) => (
+          <div key={t} className="rounded-2xl border border-white/10 bg-[#140a2a] p-4">
+            <div className="text-sm text-white/60">{t}</div>
+            <div className="mt-2 text-2xl font-bold">{["23", "4,120", "1,053", "2"][i]}</div>
+          </div>
+        ))}
+      </div>
+      <div className="rounded-2xl border border-white/10 bg-[#140a2a] p-4">
+        <h2 className="font-semibold">Recent tips</h2>
+        <div className="mt-3 space-y-2 text-sm">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="flex justify-between border-b border-white/10 py-2 last:border-0"
+            >
+              <span>Fan {i + 1}</span>
+              <span className="text-white/70">{i % 2 ? 3 : 5} USDC</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
