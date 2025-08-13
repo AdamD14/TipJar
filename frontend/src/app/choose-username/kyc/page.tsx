@@ -22,7 +22,7 @@ const KycPromptPage = () => {
   // Wyświetl spinner, dopóki dane użytkownika nie zostaną w pełni załadowane
   if (!user) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-black">
+      <main className="min-h-screen flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
       </main>
     );
@@ -44,7 +44,7 @@ const KycPromptPage = () => {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-black px-4">
+    <main className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-teal-900/20 backdrop-blur-md border border-teal-400/20 rounded-2xl shadow-2xl p-8 text-center">
         <div className="mx-auto w-fit bg-gradient-to-r from-teal-500 to-purple-500 p-3 rounded-full mb-6">
           <ShieldCheck className="w-10 h-10 text-white" />

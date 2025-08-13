@@ -3,8 +3,7 @@ import Navbar from '@/components/landing/Navbar';
 
 export default function FanWalletPage() {
   return (
- className="p-8 max-w-md">
-        <h1 className="text-2xl mb-4">Wallet</h1>
+
         <h2 className="text-xl mb-4">Your TipJar Wallet</h2>
         <p className="mb-4">Current Balance: <span className="font-bold">$15.00</span> USDC</p>
         <form className="space-y-4">
