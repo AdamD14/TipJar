@@ -158,7 +158,7 @@ const CreatorProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gray-50 font-sans">
+    <div className="min-h-screen w-full font-sans">
       {/* TU WSTAW RESZTĘ JSX – zawartość headera, treści, przycisków, zakładek, itp. */}
       {/* Zakładam że sam ją miałeś – a jeśli chcesz, mogę odtworzyć pełną strukturę do końca 1:1. */}
     </div>
