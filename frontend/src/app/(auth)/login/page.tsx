@@ -55,16 +55,8 @@ export default function LoginPage() {
       const { user, accessToken } = res.data;
       setUser(user);
       setAccessToken(accessToken);
-
-        router.push("/creator/dashboard");
-         else {
-        router.push("/fan/dashboard");
-        async function (): Promise<void> {
-      try {
-      }
-      catch {
-      }
-    } (err: unknown) {
+      router.push("/creator/dashboard");
+    } catch (err: unknown) {
       if (axios.isAxiosError(err) && err.response) {
         setError(err.response.data?.message || "Login failed");
       } else {
@@ -88,7 +80,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-teal-700 to-purple-900 px-4">
+    <main className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-teal-900/20 backdrop-blur-md border border-teal-400/20 rounded-2xl shadow-2xl p-2">
 
         {/* Logo */}

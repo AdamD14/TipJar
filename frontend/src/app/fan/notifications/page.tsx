@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function FanNotificationsPage() {
   return (
-    <main className="min-h-screen bg-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+    <main className="min-h-screen" style={{ fontFamily: 'Montserrat, sans-serif' }}>
       <header className="bg-[#003737] text-white p-4 flex justify-between items-center">
         <h1 className="text-2xl">Notifications</h1>
         <nav>

@@ -26,9 +26,10 @@ export default function WithdrawFundsModal({ isOpen, onClose }: WithdrawFundsMod
     try {
       await apiClient.post('/creator/payout', { amount, destinationAddress: address });
       onClose();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setError(err?.response?.data?.message || 'Wystąpił błąd podczas wypłaty.');
+      const apiError = err as { response?: { data?: { message?: string } } };
+      setError(apiError.response?.data?.message || 'Wystąpił błąd podczas wypłaty.');
     } finally {
       setLoading(false);
     }

@@ -19,6 +19,10 @@ const config: Config = {
         mono: ['var(--font-ibm)', 'monospace'],
         accent: ['var(--font-playfair)', 'serif'],
       },
+      backgroundImage: {
+        fio: "url('/fio.png')",
+        tu: "url('/tu.png')",
+      },
     },
   },
   plugins: [],
