@@ -531,7 +531,7 @@ Złoto reprezentuje wartość i nagrodę – idealnie pasuje do idei napiwku jak
 Barwy uzupełniające: biel (#FFFFFF) dla tekstu na ciemnych tłach (wysoki kontrast dla czytelności), odcienie szarości (#E0E0E0) do mniej istotnych elementów/ikon, jasny turkus lub mięta (#00C4FF) jako ewentualny drugi akcent (np. dla linków).
 
 
-Typografia: Użyto nowoczesnych sans-serifów – np. Montserrat lub Inter – które dobrze wyglądają zarówno w nagłówkach, jak i dłuższym tekście. Nagłówki są pogrubione (Montserrat Bold dla przyciągnięcia uwagi). Tekst paragrafów jest prosty, czytelny (Inter Regular). Czcionki są skalowane responsywnie, by na urządzeniach mobilnych pozostały czytelne.
+Typografia: Użyto nowoczesnych fontów – domyślnie Mukta dla tekstu oraz Playfair Display dla nagłówków. Drobne etykiety korzystają z Inter, a przyciski z IBM Plex Sans. Czcionki są skalowane responsywnie, by na urządzeniach mobilnych pozostały czytelne.
 
 Styl ogólny: Nowoczesny, lekko futurystyczny. Interfejs jest dość minimalistyczny – dużo pustej przestrzeni (whitespace), wyraźne podziały sekcji. Elementy mają zaokrąglone krawędzie (przyciski, karty profili) nadając przyjaznego charakteru.
 Delikatne ozdobniki nawiązujące do blockchain: np. tło niektórych sekcji ma dyskretny wzór sieci bloków lub geometrycznych linii. Ikony mogą być stylizowane – np. symbol USDC, ikona portfela – z dodanymi neonowymi obrysami lub 3D efektem.

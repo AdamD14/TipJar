@@ -3,8 +3,7 @@ import Navbar from '@/components/landing/Navbar';
 
 export default function FanNotificationsPage() {
   return (
-    <main className="min-h-screen bg-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-      <Navbar />
+
       <section className="p-8">
         <h1 className="text-2xl mb-4">Notifications</h1>
         <h2 className="text-xl mb-4">Your Notifications</h2>

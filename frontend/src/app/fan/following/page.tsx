@@ -4,8 +4,7 @@ import Navbar from '@/components/landing/Navbar';
 
 export default function FanFollowingPage() {
   return (
-    <main className="min-h-screen bg-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-      <Navbar />
+
       <section className="p-8">
         <h1 className="text-2xl mb-4">Following</h1>
         <h2 className="text-xl mb-4">Creators You Follow</h2>

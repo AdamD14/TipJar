@@ -3,8 +3,7 @@ import Navbar from '@/components/landing/Navbar';
 
 export default function CreatorSettingsPage() {
   return (
-    <main className="min-h-screen bg-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-      <Navbar />
+
       <section className="p-8 max-w-lg">
         <h1 className="text-2xl mb-4">Settings</h1>
         <h2 className="text-xl mb-4">Profile Settings</h2>

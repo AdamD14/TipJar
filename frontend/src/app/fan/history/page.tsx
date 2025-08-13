@@ -3,8 +3,7 @@ import Navbar from '@/components/landing/Navbar';
 
 export default function FanHistoryPage() {
   return (
-    <main className="min-h-screen bg-white" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-      <Navbar />
+
       <section className="p-8">
         <h1 className="text-2xl mb-4">Tip History</h1>
         <h2 className="text-xl mb-4">Your Support History</h2>
