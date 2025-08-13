@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-gradient-to-b from-[#551655] to-[#471347]">
+      <body className="min-h-screen bg-gradient-to-b from-[#551655] to-[#003737]">
         {/*
           Opakowujemy całą aplikację w Providers.
           To sprawia, że hooki z wagmi (do obsługi portfela)
