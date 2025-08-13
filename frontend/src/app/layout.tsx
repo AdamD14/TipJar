@@ -4,6 +4,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import './globals.css';
 import type { Metadata } from 'next';
 
+import { ibm, inter, mukta, playfair } from '@/fonts';
 import { Providers } from './providers'; // Importujemy nasz wrapper dla wagmi
 
 const bgClasses = ['bg-fio', 'bg-tu'];
@@ -25,8 +26,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <html lang="en">
-      <body className={`${bgClass} bg-cover bg-center bg-fixed min-h-screen`}>
+
         {/*
           Opakowujemy całą aplikację w Providers.
           To sprawia, że hooki z wagmi (do obsługi portfela)
