@@ -23,7 +23,6 @@ export async function GET(req: NextRequest) {
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          fontFamily: 'Montserrat',
         }}
       >
         <div style={{ fontSize: 40, marginBottom: 20 }}>🎁 Support @{handle}</div>
