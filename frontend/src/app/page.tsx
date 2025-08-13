@@ -7,7 +7,7 @@ export default function Page() {
       {/* Hero */}
       <section className="grid gap-8 md:grid-cols-2 md:items-center" id="hero">
         <div>
-          <h1 className="font-[var(--font-mukta)] text-4xl font-extrabold leading-tight md:text-5xl">
+          <h1 className="text-4xl font-extrabold leading-tight md:text-5xl">
             Tip. Subscribe. <span className="bg-gradient-to-r from-[#6B46C1] to-[#00A8A8] bg-clip-text text-transparent">Own your support.</span>
           </h1>
           <p className="mt-4 max-w-xl text-white/80">
