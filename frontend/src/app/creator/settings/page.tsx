@@ -1,5 +1,5 @@
 // app/creator/settings/page.tsx
-import Navbar from '@/components/landing/Navbar';
+import Navbar from '@/components/Navbar';
 
 export default function CreatorSettingsPage() {
   return (

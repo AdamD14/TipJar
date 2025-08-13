@@ -1,5 +1,5 @@
 // app/fan/history/page.tsx
-import Navbar from '@/components/landing/Navbar';
+import Navbar from '@/components/Navbar';
 
 export default function FanHistoryPage() {
   return (

@@ -1,6 +1,4 @@
-"use client";
-
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode } from 'react';
 import './globals.css';
 import type { Metadata } from 'next';
 
@@ -18,15 +16,13 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  const [bgClass, setBgClass] = useState('');
-
-  useEffect(() => {
-    const randomClass = bgClasses[Math.floor(Math.random() * bgClasses.length)];
-    setBgClass(randomClass);
-  }, []);
+  const bgClass = bgClasses[Math.floor(Math.random() * bgClasses.length)];
 
   return (
-
+    <html lang="en">
+      <body
+        className={`${bgClass} ${ibm.variable} ${inter.variable} ${mukta.variable} ${playfair.variable}`}
+      >
         {/*
           Opakowujemy całą aplikację w Providers.
           To sprawia, że hooki z wagmi (do obsługi portfela)

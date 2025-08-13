@@ -1,6 +1,6 @@
 // app/fan/following/page.tsx
 import Link from 'next/link';
-import Navbar from '@/components/landing/Navbar';
+import Navbar from '@/components/Navbar';
 
 export default function FanFollowingPage() {
   return (

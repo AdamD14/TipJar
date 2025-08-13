@@ -1,5 +1,5 @@
 // app/fan/notifications/page.tsx
-import Navbar from '@/components/landing/Navbar';
+import Navbar from '@/components/Navbar';
 
 export default function FanNotificationsPage() {
   return (

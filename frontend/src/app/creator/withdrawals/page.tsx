@@ -1,5 +1,5 @@
 // app/creator/withdrawals/page.tsx
-import Navbar from '@/components/landing/Navbar';
+import Navbar from '@/components/Navbar';
 
 export default function CreatorWithdrawalsPage() {
   return (

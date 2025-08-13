@@ -1,76 +1,142 @@
+// app/page.tsx
+"use client";
+
 import Link from "next/link";
-import { Button } from "@/components/Button";
 
-export default function Page() {
+export default function LandingPage() {
   return (
-    <div>
-      {/* Hero */}
-      <section className="grid gap-8 md:grid-cols-2 md:items-center" id="hero">
-        <div>
-          <h1 className="text-4xl font-extrabold leading-tight md:text-5xl">
-            Tip. Subscribe. <span className="bg-gradient-to-r from-[#6B46C1] to-[#00A8A8] bg-clip-text text-transparent">Own your support.</span>
+    <div className="min-h-screen text-white bg-[#041e24] relative overflow-hidden">
+      {/* Subtelne tło – ciemny turkus z winietą */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(1200px 600px at 30% 20%, rgba(0, 116, 116, 0.12) 0%, rgba(0,0,0,0) 60%), radial-gradient(900px 500px at 70% 60%, rgba(20, 74, 101, 0.18) 0%, rgba(0,0,0,0) 60%)",
+        }}
+      />
+
+      {/* NAVBAR */}
+      <header className="relative z-10">
+        <nav className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between">
+          {/* Logo + marka */}
+          <Link href="/" className="flex items-center gap-3 group">
+            {/* Ikona „słoik” (prosty szkic SVG) */}
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              className="opacity-90"
+            >
+              <path
+                d="M6 7c0-1.1.9-2 2-2h8c1.1 0 2 .9 2 2v1c0 1.1-.9 2-2 2H8c-1.1 0-2-.9-2-2V7Zm0 0v10a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V7"
+                stroke="#3fd1c1"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <div className="text-xl font-semibold tracking-wide">
+              <span className="align-middle">tipjar</span>
+              <span className="align-middle">.</span>
+              <span className="align-middle">plus</span>
+            </div>
+            {/* delikatny „sheen” przy hoverze */}
+            <span className="ml-1 inline-block h-5 w-3 rounded-sm bg-gradient-to-r from-cyan-300/0 via-cyan-300/50 to-cyan-300/0 opacity-0 translate-x-[-6px] group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+          </Link>
+
+          {/* Linki */}
+          <div className="hidden md:flex items-center gap-8 text-sm">
+            <Link href="#" className="hover:text-cyan-200 transition-colors">
+              Home
+            </Link>
+            <Link href="#" className="hover:text-cyan-200 transition-colors">
+              About
+            </Link>
+            <Link href="#" className="hover:text-cyan-200 transition-colors">
+              Contact
+            </Link>
+
+            {/* Sign Up (outline) */}
+            <Link
+              href="#"
+              className={[
+                "rounded-xl px-4 py-2 border",
+                "border-white/30 text-white/90",
+                "hover:bg-white/10 hover:border-white/50",
+                "transition-all duration-200",
+              ].join(" ")}
+            >
+              Sign Up
+            </Link>
+          </div>
+        </nav>
+      </header>
+
+      {/* HERO */}
+      <main className="relative z-10">
+        <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-6 pb-16 md:pt-12 md:pb-24">
+          <h1 className="max-w-4xl text-4xl md:text-6xl leading-snug md:leading-[1.15] font-semibold text-white/95 drop-shadow-[0_1px_0_rgba(255,255,255,0.06)]">
+            tipjar.plus — platform for instant micro-paymets to your favorite
+            creators: streamers, YouTubers, digital bloggers, coaches,
+            educators, journalists, influencers — simply for all content
+            creators.
           </h1>
-          <p className="mt-4 max-w-xl text-white/80">
-            Direct USDC micro-tips to the creators you love — no gatekeepers, fast payouts, simple onboarding.
-          </p>
-          <div className="mt-6 flex flex-wrap items-center gap-3">
-            <Link href="/signup"><Button variant="gold">Begin as a creator</Button></Link>
-            <Link href="/explore"><Button variant="outline">Explore creators</Button></Link>
-            <Link href="#how" className="text-sm text-white/70 hover:text-white">How it works</Link>
+
+          {/* CTA */}
+          <div className="mt-10 flex flex-wrap items-center gap-6">
+            {/* Gold CTA */}
+            <Link
+              href="#"
+              className={[
+                "rounded-2xl px-8 py-4 text-lg font-semibold",
+                "text-white shadow-lg",
+                "bg-gradient-to-r from-[#C87900] via-[#D9921A] to-[#F0B12E]",
+                "hover:shadow-xl hover:translate-y-[-1px]",
+                "transition-all duration-200",
+              ].join(" ")}
+            >
+              Begin as a creator
+            </Link>
+
+            {/* Purple CTA */}
+            <Link
+              href="#"
+              className={[
+                "rounded-2xl px-8 py-4 text-lg font-semibold",
+                "text-white shadow-lg",
+                "bg-gradient-to-r from-[#6B1CB3] via-[#7A2ACB] to-[#8D35E8]",
+                "hover:shadow-xl hover:translate-y-[-1px]",
+                "transition-all duration-200",
+              ].join(" ")}
+            >
+              Explore as fun
+            </Link>
           </div>
-        </div>
-        <div className="rounded-2xl border border-white/10 bg-[#120a24] p-4">
-          <div className="grid grid-cols-3 gap-3">
-            {Array.from({ length: 9 }).map((_, i) => (
-              <div key={i} className="h-20 rounded-xl bg-gradient-to-br from-[#6B46C1]/30 to-[#00A8A8]/20" />
-            ))}
+
+          {/* Dolne linki (małe) */}
+          <div className="mt-24 text-sm text-white/80">
+            <ul className="flex gap-5">
+              <li>
+                <Link href="#" className="hover:text-cyan-200 transition">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:text-cyan-200 transition">
+                  Abour.
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:text-cyan-200 transition">
+                  Contact
+                </Link>
+              </li>
+            </ul>
           </div>
-        </div>
-      </section>
-      {/* Benefits */}
-      <section className="mt-16 grid gap-4 md:grid-cols-4" id="why">
-        {[
-          ["Direct & instant", "Tips go straight to creators with fast settlement."],
-          [
-            "Simple onboarding",
-            "Start with email/OAuth; connect a wallet when you’re ready.",
-          ],
-          ["Borderless by design", "USDC micro-tips that work worldwide."],
-          ["Own your audience", "Your link, your supporters—no opaque feeds."],
-        ].map(([t, s]) => (
-          <div key={t} className="rounded-2xl border border-white/10 bg-[#140a2a] p-4">
-            <h3 className="font-semibold">{t}</h3>
-            <p className="mt-2 text-sm text-white/80">{s}</p>
-          </div>
-        ))}
-      </section>
-      {/* How it works */}
-      <section className="mt-16" id="how">
-        <h2 className="text-2xl font-bold">How it works</h2>
-        <ol className="mt-4 grid gap-4 md:grid-cols-3">
-          {[
-            ["Discover", "Find creators you love."],
-            ["Tip in USDC", "Pay by card or crypto."],
-            ["Celebrate", "Leave a message and an optional NFT badge."],
-          ].map(([t, s], i) => (
-            <li key={t} className="rounded-2xl border border-white/10 bg-[#140a2a] p-4">
-              <div className="text-3xl font-bold text-white/40">{i + 1}</div>
-              <h3 className="mt-2 font-semibold">{t}</h3>
-              <p className="text-sm text-white/80">{s}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
-      {/* Trust strip */}
-      <section className="mt-16 rounded-2xl border border-white/10 bg-[#120a24] p-6 text-center">
-        <p className="text-white/80">Built for creators, loved by fans.</p>
-        <div className="mt-3 flex justify-center gap-3">
-          <Link href="/signup"><Button variant="gold">Start now</Button></Link>
-          <Link href="/learn"><Button variant="outline">Learn more</Button></Link>
-        </div>
-      </section>
+        </section>
+      </main>
     </div>
-
-
   );
-};
+}
