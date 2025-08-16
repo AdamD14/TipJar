@@ -42,7 +42,6 @@
   font-style: normal;
   font-display: swap;
 }
-
 /* ================================
    GLOBAL STYLE
    ================================ */
@@ -55,11 +54,10 @@ html, body {
 /* Gradient tła */
 .bg-gradient-main {
   background: linear-gradient(
-    45deg,
-    hsla(180, 100%, 11%, 1) 0%,
-    hsla(200, 67%, 24%, 1) 18%,
-    hsla(300, 51%, 20%, 1) 60%,
-    hsla(180, 100%, 20%, 1) 83%,
-    hsla(224, 30%, 20%, 1) 100%
+    135deg,
+    hsla(180, 100%, 7%, 1) 0%,
+    hsla(180, 100%, 8%, 1) 33%,
+    hsla(195, 100%, 13%, 1) 60%,
+    hsla(215, 100%, 11%, 1) 100%
   );
 }
