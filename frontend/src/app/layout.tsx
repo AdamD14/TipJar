@@ -1,22 +1,30 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { ReactNode } from 'react';
-import { Montserrat } from 'next/font/google';
+import { Mukta, IBM_Plex_Sans } from 'next/font/google';
 import { cn } from '@/lib/utils';
-import { Providers } from './providers'; // Importujemy nasz wrapper dla wagmi
+import { Providers } from './providers'; // wrapper dla wagmi
 
-// Konfiguracja czcionki Montserrat z next/font
-const montserrat = Montserrat({
+// Konfiguracja czcionek
+const bodyFont = Mukta({
   subsets: ['latin'],
-  variable: '--font-sans', // Definiujemy zmienną CSS dla naszej czcionki
+  weight: ['400', '500', '700'], // Regular, Medium, Bold
+  variable: '--font-body',
 });
 
+const uiFont = IBM_Plex_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-ui',
+});
+
+// SEO metadata
 export const metadata: Metadata = {
   title: {
-    default: 'TipJar+',
-    template: '%s | TipJar+',
+    default: 'tipjar+',
+    template: '%s | tipjar+',
   },
-  description: 'Instant micro-payments for your favourite creators',
+  description: 'Platform for supporting your favorite creators in USDC',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -24,14 +32,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-screen bg-[#003737] font-sans text-white antialiased",
-          montserrat.variable // Aplikujemy zmienną z czcionką do całego body
+          'min-h-screen bg-gradient-main text-white antialiased font-sans',
+          bodyFont.variable,
+          uiFont.variable
         )}
       >
-        {/*
+        {/* 
           Opakowujemy całą aplikację w Providers.
-          To sprawia, że hooki z wagmi (do obsługi portfela)
-          będą dostępne w każdym komponencie.
+          Dzięki temu hooki z wagmi (portfel) 
+          są dostępne w każdym komponencie. 
         */}
         <Providers>{children}</Providers>
       </body>

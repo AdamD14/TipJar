@@ -9,15 +9,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'brand-dark': '#0d2f3f',
-        'brand-gold': '#FFD700',
-        'brand-light-text': '#b0c4de'
+        // Brand
+        "brand-dark": "#003737",
+        "brand-gold": "#FFD700",
+        "brand-purple": "#4D194D",
+
+        // Teksty
+        "text-primary": "#DDE0DA",
+        "text-secondary": "#BCC1B6",
       },
       fontFamily: {
-        sans: ['var(--font-sans)'],
+        sans: ["var(--font-body)"], // Mukta (tekst)
+        ui: ["var(--font-ui)"],     // IBM Plex Sans (UI)
       },
     },
   },
   plugins: [],
 };
+
 export default config;
