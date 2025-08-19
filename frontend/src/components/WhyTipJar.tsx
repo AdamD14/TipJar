@@ -3,7 +3,7 @@ const WhyTipJar = () => (
     <h2 className="text-3xl font-title text-tipjar-gold text-center mb-12">Why TipJar+?</h2>
     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto px-6">
       {[
-        { title: 'Low Fees', desc: 'Only 1% platform fee. Keep 99% of your tips.' },
+        { title: 'Low Fees', desc: 'Only 5% platform fee. Keep 95% of your tips.' },
         { title: 'Global & Instant', desc: 'Receive tips from anywhere, instantly.' },
         { title: 'Secure & Stable', desc: 'Backed by USDC - secure and stable tips.' },
         { title: 'Simple Interface', desc: 'No crypto skills needed to get started.' },
