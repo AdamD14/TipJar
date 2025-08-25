@@ -22,31 +22,31 @@ export default function Header() {
     <header
       className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-brand-gold shadow-[0_2px_6px_rgba(255,165,0,0.2)]"
       style={{
-        backgroundImage: "url('/tlo.png')", // ✅ pliki z /public serwujemy spod rootu
+        backgroundImage: "url('/tlo.png')",
         backgroundAttachment: "fixed",
         backgroundPosition: "center top",
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
       }}
     >
-      {/* Overlay reagujący na scroll */}
       <div
         className={`absolute inset-0 transition-all duration-300 pointer-events-none ${
-          isScrolled ? "bg-[#0d2f3f]/90 backdrop-blur-md" : "bg-transparent"
+          isScrolled ? "bg-gradient-main backdrop-blur-md" : "bg-transparent"
         }`}
       />
 
       <div className="h-full px-2 flex items-center justify-between relative">
-        {/* BRAND */}
-        <Link href="/" className="flex gap-2 items-center">
-          <Image
-            src="/logo.png"              // ✅ poprawna ścieżka
-            alt="TipJar+ logo"
-            width={24}
-            height={24}
-            className="h-6 w-6 z-50"     // czytelny rozmiar
-            priority
-          />
+        {/* BRAND - ZMODYFIKOWANA SEKCJA */}
+        <Link href="/" className="flex gap-0.5 items-center">
+          <div className="relative h-14 w-10">
+            <Image
+              src="/logo.png"
+              alt="TipJar+ logo"
+              fill={true}
+              objectFit="contain"
+              priority
+            />
+          </div>
           <span className="text-[24px] font-ui text-text-primary leading-none">
             tipjar.plus
           </span>
@@ -64,11 +64,10 @@ export default function Header() {
             className="
               group relative inline-flex items-center justify-center
               h-10 px-9 text-[14px] font-ui font-semibold
-              text-[#0e0d40]
-              rounded-[33px] border-2 border-[#0e0d40] bg-[#DDE0DA]
+              text-[#092327]
+              rounded-[33px] border-2 border-[#00ffff] bg-[#EAF4FB]
               transition-all duration-300 ease-linear
-              hover:rounded-[5px] hover:bg-gradient-to-r hover:from-[#0e0d40] hover:to-[#4d194d]
-              hover:text-[#EAF4FB] active:translate-y-[1px]
+              hover:rounded-[2px] hover:bg-gradient-to-r hover:from-[#0a5e5e] hover:to-[linear-gradient(352deg, #0cbaba 0%, #1db7ea 50%, #0a5e5e 100%);]              hover:text-[#EAF4FB] active:translate-y-[1px]
             "
           >
             <User className="h-4 w-4 mr-2 transition-transform duration-300 group-hover:translate-x-[5px]" />
