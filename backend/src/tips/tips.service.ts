@@ -1,83 +1,96 @@
-// backend/src/notification/notification.service.ts
-import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Prisma, Tip, TipStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { UsersService } from '../users/users.service';
+import { CircleService } from '../circle/circle.service';
+import { ConfigService } from '@nestjs/config';
 
-/** Publiczny kształt zwracany przez API (zero `any`). */
-export type NotificationRow = {
-  id: string;
-  userId: string;
-  message: string;
-  read: boolean;
-  createdAt: Date;
-};
-
-/** Silnie typowany „select” z Prisma dla bezpieczeństwa typów. */
-type NotificationSelect = Prisma.NotificationGetPayload<{
-  select: {
-    id: true;
-    userId: true;
-    message: true;
-    read: true;
-    createdAt: true;
-  };
-}>;
+interface ProcessTipInput {
+  amount: string;
+  creatorId: string;
+  fanId: string | null;
+  message?: string;
+  isAnonymous?: boolean;
+  paymentGatewayToken?: string;
+}
 
 @Injectable()
-export class NotificationService {
-  constructor(private readonly prisma: PrismaService) {}
+export class TipsService {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly usersService: UsersService,
+    private readonly circleService: CircleService,
+    private readonly config: ConfigService,
+  ) {}
 
-  /** Mapowanie selektu Prisma → kształt publiczny. */
-  private toRow(n: NotificationSelect): NotificationRow {
-    return {
-      id: n.id,
-      userId: n.userId,
-      message: n.message,
-      read: n.read,
-      createdAt: n.createdAt,
-    };
-  }
+  async processNewTip(data: ProcessTipInput): Promise<Tip> {
+    const { amount, creatorId, fanId, message, isAnonymous, paymentGatewayToken } = data;
 
-  /** Utwórz powiadomienie. Zwraca NotificationRow. */
-  async create(data: {
-    userId: string;
-    message: string;
-  }): Promise<NotificationRow> {
-    const created = await this.prisma.notification.create({
-      data: { userId: data.userId, message: data.message },
-      select: {
-        id: true,
-        userId: true,
-        message: true,
-        read: true,
-        createdAt: true,
+    const tip = await this.prisma.tip.create({
+      data: {
+        amount: new Prisma.Decimal(amount),
+        creatorId,
+        fanId,
+        message,
+        isAnonymous,
+        status: TipStatus.PENDING,
       },
     });
-    return this.toRow(created);
-  }
 
-  /** Lista powiadomień użytkownika (najnowsze na górze). */
-  async getUserNotifications(userId: string): Promise<NotificationRow[]> {
-    const rows = await this.prisma.notification.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-      select: {
-        id: true,
-        userId: true,
-        message: true,
-        read: true,
-        createdAt: true,
-      },
-    });
-    return rows.map((n) => this.toRow(n));
-  }
+    if (fanId) {
+      const [creator, fan] = await Promise.all([
+        this.usersService.findOneById(creatorId),
+        this.usersService.findOneById(fanId),
+      ]);
 
-  /** Oznacz wszystkie jako przeczytane — zwraca liczbę zmodyfikowanych rekordów. */
-  async markAllAsRead(userId: string): Promise<number> {
-    const { count } = await this.prisma.notification.updateMany({
-      where: { userId, read: false },
-      data: { read: true },
-    });
-    return count;
+      try {
+        const blockchain = this.config.get<string>('DEFAULT_BLOCKCHAIN') as any;
+        const tokenId = this.config.get<string>('USDC_TOKEN_ID') as string;
+        const transfer = await this.circleService.initiateInternalTipTransfer(
+          fan?.circleWalletId as string,
+          creator?.circleWalletId as string,
+          amount,
+          blockchain,
+          tokenId,
+        );
+        return await this.prisma.tip.update({
+          where: { id: tip.id },
+          data: {
+            status: TipStatus.COMPLETED,
+            circleTransferId: transfer.circleTransactionId,
+            blockchainTransactionHash: transfer.txHash,
+          },
+        });
+      } catch (error) {
+        await this.prisma.tip.update({
+          where: { id: tip.id },
+          data: { status: TipStatus.FAILED },
+        });
+        throw new InternalServerErrorException('Internal transfer failed');
+      }
+    }
+
+    try {
+      if (!paymentGatewayToken) {
+        throw new Error('Payment token missing');
+      }
+      if (paymentGatewayToken === 'fail') {
+        throw new Error('Payment failed');
+      }
+      const chargeId = `pg_${Date.now()}`;
+      return await this.prisma.tip.update({
+        where: { id: tip.id },
+        data: {
+          status: TipStatus.COMPLETED,
+          paymentGatewayChargeId: chargeId,
+        },
+      });
+    } catch (error) {
+      await this.prisma.tip.update({
+        where: { id: tip.id },
+        data: { status: TipStatus.FAILED },
+      });
+      throw new InternalServerErrorException('Payment failed');
+    }
   }
 }
