@@ -1,15 +1,68 @@
-import { Controller, Get, UseGuards, Request } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { NotificationService } from './notification.service';
+import { Body, Controller, Get, Post, UseGuards, Req } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { Request as ExpressRequest } from 'express';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiOkResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
-@UseGuards(JwtAuthGuard)
-@Controller('api/v1/notifications')
+import { NotificationService } from './notification.service';
+import { ValidatedUser } from '../auth/auth.service';
+
+type RequestWithUser = ExpressRequest & { user: ValidatedUser };
+
+type NotificationRow = {
+  id: string;
+  userId: string;
+  message: string;
+  read: boolean;
+  createdAt: Date;
+};
+
+class CreateNotificationDto {
+  message!: string;
+}
+
+@ApiTags('Notifications')
+@ApiBearerAuth()
+@Controller('notifications') // globalny prefix 'api/v1' już jest w main.ts
 export class NotificationController {
-  constructor(private readonly notificationService: NotificationService) {}
+  constructor(private readonly notifications: NotificationService) {}
 
   @Get()
-  async getNotifications(@Request() req) {
-    const userId: string = req.user?.id;
-    return this.notificationService.getUserNotifications(userId);
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: 'Pobierz powiadomienia zalogowanego użytkownika' })
+  @ApiOkResponse({ description: 'Lista powiadomień' })
+  async list(@Req() req: RequestWithUser): Promise<NotificationRow[]> {
+    const rows = await this.notifications.getUserNotifications(req.user.id);
+    return rows as unknown as NotificationRow[];
+  }
+
+  @Post('read-all')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: 'Oznacz wszystkie powiadomienia jako przeczytane' })
+  @ApiOkResponse({ description: 'Liczba zaktualizowanych rekordów' })
+  async markAll(
+    @Req() req: RequestWithUser,
+  ): Promise<{ updatedCount: number }> {
+    const result = await this.notifications.markAllAsRead(req.user.id);
+    return { updatedCount: result.count ?? 0 };
+  }
+
+  @Post()
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: 'Utwórz powiadomienie (dev/test)' })
+  @ApiOkResponse({ description: 'Utworzone powiadomienie' })
+  async create(
+    @Req() req: RequestWithUser,
+    @Body() body: CreateNotificationDto,
+  ): Promise<NotificationRow> {
+    const row = await this.notifications.create({
+      userId: req.user.id,
+      message: body.message,
+    });
+    return row as unknown as NotificationRow;
   }
 }

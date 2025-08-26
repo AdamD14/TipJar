@@ -1,6 +1,6 @@
-"use client"
-import React, { useState, FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
+"use client";
+import React, { useState, FormEvent } from "react";
+import { useRouter } from "next/navigation";
 
 /**
  * CreatorSetup
@@ -16,30 +16,30 @@ import { useRouter } from 'next/navigation';
 export default function CreatorSetup() {
   const router = useRouter();
   // local form state
-  const [displayName, setDisplayName] = useState('');
-  const [tagline, setTagline] = useState('');
-  const [bio, setBio] = useState('');
+  const [displayName, setDisplayName] = useState("");
+  const [tagline, setTagline] = useState("");
+  const [bio, setBio] = useState("");
   const [goal, setGoal] = useState(0);
   const [quickAmounts, setQuickAmounts] = useState<number[]>([1, 5, 10]);
-  const [accentColor, setAccentColor] = useState('#00C4B4');
+  const [accentColor, setAccentColor] = useState("#00C4B4");
   const [avatar, setAvatar] = useState<File | null>(null);
   const [banner, setBanner] = useState<File | null>(null);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const body = new FormData();
-    body.append('displayName', displayName);
-    body.append('tagline', tagline);
-    body.append('bio', bio);
-    body.append('goal', goal.toString());
-    body.append('quickAmounts', JSON.stringify(quickAmounts));
-    body.append('accentColor', accentColor);
-    if (avatar) body.append('avatar', avatar);
-    if (banner) body.append('banner', banner);
+    body.append("displayName", displayName);
+    body.append("tagline", tagline);
+    body.append("bio", bio);
+    body.append("goal", goal.toString());
+    body.append("quickAmounts", JSON.stringify(quickAmounts));
+    body.append("accentColor", accentColor);
+    if (avatar) body.append("avatar", avatar);
+    if (banner) body.append("banner", banner);
     try {
-      await fetch('/api/creators/setup', { method: 'POST', body });
+      await fetch("/api/creators/setup", { method: "POST", body });
       // after successful save redirect to creator dashboard
-      router.push('/creator/dashboard');
+      router.push("/creator/dashboard");
     } catch (err) {
       console.error(err);
       // TODO: display error notification
@@ -48,10 +48,12 @@ export default function CreatorSetup() {
 
   return (
     <div className="mx-auto max-w-3xl p-6">
-      <h1 className="text-3xl font-semibold mb-4">Set up your creator profile</h1>
+      <h1 className="text-3xl font-semibold mb-4">
+        Set up your creator profile
+      </h1>
       <p className="mb-8 text-gray-600">
-        Complete the information below to publish your public profile.  You can edit these
-        details later from your settings.
+        Complete the information below to publish your public profile. You can
+        edit these details later from your settings.
       </p>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Avatar upload */}
@@ -136,13 +138,15 @@ export default function CreatorSetup() {
         </div>
         {/* Quick amounts */}
         <div>
-          <label className="block font-medium mb-1">Suggested tip amounts (comma‑separated)</label>
+          <label className="block font-medium mb-1">
+            Suggested tip amounts (comma‑separated)
+          </label>
           <input
             type="text"
-            value={quickAmounts.join(',')}
+            value={quickAmounts.join(",")}
             onChange={(e) => {
               const values = e.target.value
-                .split(',')
+                .split(",")
                 .map((v) => v.trim())
                 .filter(Boolean)
                 .map((v) => parseFloat(v));

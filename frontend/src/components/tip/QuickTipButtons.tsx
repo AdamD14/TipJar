@@ -6,7 +6,11 @@ export interface QuickTipButtonsProps {
   onSelect: (value: number) => void;
 }
 
-export const QuickTipButtons = ({ amounts, active, onSelect }: QuickTipButtonsProps) => (
+export const QuickTipButtons = ({
+  amounts,
+  active,
+  onSelect,
+}: QuickTipButtonsProps) => (
   <div className="mb-4 flex gap-2">
     {amounts.map((amt) => (
       <button

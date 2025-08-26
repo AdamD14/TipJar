@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import React, { useState, Suspense } from 'react';
+import React, { useState, Suspense } from "react";
 
 const QRCode = React.lazy(() =>
-  import('react-qrcode-logo').then(m => ({ default: m.QRCode }))
+  import("react-qrcode-logo").then((m) => ({ default: m.QRCode })),
 );
 
 export default function QRGenerator() {
-  const [profileUrl, setProfileUrl] = useState('');
+  const [profileUrl, setProfileUrl] = useState("");
   const [qrValue, setQrValue] = useState<string>();
-  const [fgColor, setFgColor] = useState('#003737');
-  const [bgColor, setBgColor] = useState('#ffffff');
+  const [fgColor, setFgColor] = useState("#003737");
+  const [bgColor, setBgColor] = useState("#ffffff");
 
   const handleGenerate = () => {
     if (!profileUrl.trim()) return;
@@ -23,7 +23,7 @@ export default function QRGenerator() {
         className="w-full rounded-md bg-slate-800 text-white px-3 py-2"
         value={profileUrl}
         placeholder="Profile link"
-        onChange={e => setProfileUrl(e.target.value)}
+        onChange={(e) => setProfileUrl(e.target.value)}
       />
 
       <div className="flex flex-row gap-4 w-full text-white items-center">
@@ -32,7 +32,7 @@ export default function QRGenerator() {
           <input
             type="color"
             value={fgColor}
-            onChange={e => setFgColor(e.target.value)}
+            onChange={(e) => setFgColor(e.target.value)}
             className="h-10 w-20 rounded-md"
           />
         </div>
@@ -41,7 +41,7 @@ export default function QRGenerator() {
           <input
             type="color"
             value={bgColor}
-            onChange={e => setBgColor(e.target.value)}
+            onChange={(e) => setBgColor(e.target.value)}
             className="h-10 w-20 rounded-md"
           />
         </div>

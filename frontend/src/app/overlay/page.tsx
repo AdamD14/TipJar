@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams } from "next/navigation";
 
 export default function OverlayPage() {
   const searchParams = useSearchParams();
-  const creatorId = searchParams.get('creatorId') || 'me';
-  const showQR = searchParams.get('qr') === 'true';
+  const creatorId = searchParams.get("creatorId") || "me";
+  const showQR = searchParams.get("qr") === "true";
 
   return (
     <div className="relative w-full h-screen bg-transparent">

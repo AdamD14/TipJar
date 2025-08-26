@@ -4,12 +4,11 @@ declare module '@prisma/client' {
     PROCESSING = 'PROCESSING',
     COMPLETED = 'COMPLETED',
     FAILED = 'FAILED',
-    REFUNDED = 'REFUNDED'
+    REFUNDED = 'REFUNDED',
   }
   export enum UserRole {
     FAN = 'FAN',
     CREATOR = 'CREATOR',
-    ADMIN = 'ADMIN'
+    ADMIN = 'ADMIN',
   }
-
 }

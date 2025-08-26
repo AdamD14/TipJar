@@ -1,144 +1,83 @@
-import {
-  Injectable,
-  Logger,
-  BadRequestException,
-  NotFoundException,
-  InternalServerErrorException,
-  Inject,
-  forwardRef,
-} from '@nestjs/common';
+// backend/src/notification/notification.service.ts
+import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { Tip, TipStatus, UserRole } from '@prisma/client';
-import { CircleService } from '../circle/circle.service';
-import { UsersService } from '../users/users.service';
-import { Decimal } from '@prisma/client/runtime/library';
-import { ConfigService } from '@nestjs/config';
-import { randomUUID } from 'crypto';
-import { Blockchain } from '@circle-fin/developer-controlled-wallets';
 
-interface ProcessTipData {
-  amount: string;
-  creatorId: string;
-  message?: string;
-  isAnonymous?: boolean;
-  fanId: string | null;
-  paymentGatewayToken?: string;
-}
+/** Publiczny kształt zwracany przez API (zero `any`). */
+export type NotificationRow = {
+  id: string;
+  userId: string;
+  message: string;
+  read: boolean;
+  createdAt: Date;
+};
+
+/** Silnie typowany „select” z Prisma dla bezpieczeństwa typów. */
+type NotificationSelect = Prisma.NotificationGetPayload<{
+  select: {
+    id: true;
+    userId: true;
+    message: true;
+    read: true;
+    createdAt: true;
+  };
+}>;
 
 @Injectable()
-export class TipsService {
-  private readonly logger = new Logger(TipsService.name);
+export class NotificationService {
+  constructor(private readonly prisma: PrismaService) {}
 
-  constructor(
-    private prisma: PrismaService,
-    private configService: ConfigService,
-    @Inject(forwardRef(() => CircleService))
-    private circleService: CircleService,
-    @Inject(forwardRef(() => UsersService))
-    private usersService: UsersService,
-  ) {}
-
-  private async processFiatPayment(token: string, amount: string): Promise<string> {
-    if (!token) {
-      throw new BadRequestException('Brak tokenu płatności.');
-    }
-    // In real implementation this would call an external payment processor.
-    if (token.startsWith('fail')) {
-      throw new Error('Payment gateway rejected the charge');
-    }
-    return `mock_charge_${randomUUID()}`;
+  /** Mapowanie selektu Prisma → kształt publiczny. */
+  private toRow(n: NotificationSelect): NotificationRow {
+    return {
+      id: n.id,
+      userId: n.userId,
+      message: n.message,
+      read: n.read,
+      createdAt: n.createdAt,
+    };
   }
 
-  async processNewTip(data: ProcessTipData): Promise<Tip> {
-    this.logger.log(`Processing new tip: ${JSON.stringify(data)}`);
-    const { amount: amountString, creatorId, fanId } = data;
-
-    const creator = await this.usersService.findOneById(creatorId);
-    if (!creator || !creator.circleWalletId || creator.role !== UserRole.CREATOR) {
-      throw new NotFoundException('Nie znaleziono twórcy lub jego portfel nie jest skonfigurowany.');
-    }
-
-    const tipAmountDecimal = new Decimal(amountString);
-    if (tipAmountDecimal.isNaN() || tipAmountDecimal.isNegative() || tipAmountDecimal.isZero()) {
-      throw new BadRequestException('Nieprawidłowa kwota napiwku.');
-    }
-
-    const platformFeePercentage = new Decimal(fanId ? '0.02' : '0.10');
-    const platformFeeAmount = tipAmountDecimal.mul(platformFeePercentage).toDecimalPlaces(6);
-    const netAmountForCreator = tipAmountDecimal.sub(platformFeeAmount);
-
-    let tipRecord = await this.prisma.tip.create({
-      data: {
-        amount: tipAmountDecimal,
-        creatorId: creator.id,
-        fanId,
-        status: TipStatus.PENDING,
-        platformFeeAmount,
-        netAmountForCreator,
-        message: data.message,
-        isAnonymous: data.isAnonymous || false,
+  /** Utwórz powiadomienie. Zwraca NotificationRow. */
+  async create(data: {
+    userId: string;
+    message: string;
+  }): Promise<NotificationRow> {
+    const created = await this.prisma.notification.create({
+      data: { userId: data.userId, message: data.message },
+      select: {
+        id: true,
+        userId: true,
+        message: true,
+        read: true,
+        createdAt: true,
       },
     });
+    return this.toRow(created);
+  }
 
-    try {
-      const blockchain = this.configService.get<string>(
-        'DEFAULT_BLOCKCHAIN',
-        'MATIC-AMOY',
-      ) as Blockchain;
-      const tokenId = this.configService.get<string>('USDC_TOKEN_ID', 'USDC');
+  /** Lista powiadomień użytkownika (najnowsze na górze). */
+  async getUserNotifications(userId: string): Promise<NotificationRow[]> {
+    const rows = await this.prisma.notification.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        userId: true,
+        message: true,
+        read: true,
+        createdAt: true,
+      },
+    });
+    return rows.map((n) => this.toRow(n));
+  }
 
-      if (fanId) {
-        const fan = await this.usersService.findOneById(fanId);
-        if (!fan || !fan.circleWalletId) {
-          throw new NotFoundException('Portfel fana nie jest skonfigurowany.');
-        }
-
-        const transferResult = await this.circleService.initiateInternalTipTransfer(
-          fan.circleWalletId,
-          creator.circleWalletId,
-          netAmountForCreator.toString(),
-          blockchain,
-          tokenId,
-        );
-
-        tipRecord = await this.prisma.tip.update({
-          where: { id: tipRecord.id },
-          data: {
-            status: TipStatus.COMPLETED,
-            circleTransferId: transferResult.circleTransactionId,
-            blockchainTransactionHash: transferResult.txHash,
-            processedAt: new Date(),
-          },
-        });
-      } else {
-        const chargeId = await this.processFiatPayment(
-          data.paymentGatewayToken as string,
-          tipAmountDecimal.toString(),
-        );
-
-        tipRecord = await this.prisma.tip.update({
-          where: { id: tipRecord.id },
-          data: {
-            status: TipStatus.COMPLETED,
-            paymentGatewayChargeId: chargeId,
-            processedAt: new Date(),
-          },
-        });
-      }
-
-      this.logger.log(`Tip [${tipRecord.id}] successfully processed. Status: ${tipRecord.status}`);
-      return tipRecord;
-    } catch (paymentError) {
-      this.logger.error(`Payment processing failed for tip [${tipRecord.id}]:`, paymentError);
-      await this.prisma.tip.update({
-        where: { id: tipRecord.id },
-        data: { status: TipStatus.FAILED },
-      });
-      if (paymentError instanceof BadRequestException || paymentError instanceof NotFoundException) {
-        throw paymentError;
-      }
-      const message = paymentError instanceof Error ? paymentError.message : 'Przetwarzanie płatności napiwku nie powiodło się.';
-      throw new InternalServerErrorException(message);
-    }
+  /** Oznacz wszystkie jako przeczytane — zwraca liczbę zmodyfikowanych rekordów. */
+  async markAllAsRead(userId: string): Promise<number> {
+    const { count } = await this.prisma.notification.updateMany({
+      where: { userId, read: false },
+      data: { read: true },
+    });
+    return count;
   }
 }

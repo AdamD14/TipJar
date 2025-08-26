@@ -46,7 +46,11 @@ const TipForm: React.FC<TipFormProps> = ({ creatorId, onComplete }) => {
     e.preventDefault();
     setError("");
     const amountToSend = getFinalAmount();
-    if (!amountToSend || isNaN(parseFloat(amountToSend)) || parseFloat(amountToSend) <= 0) {
+    if (
+      !amountToSend ||
+      isNaN(parseFloat(amountToSend)) ||
+      parseFloat(amountToSend) <= 0
+    ) {
       setError("Podaj poprawną kwotę napiwku.");
       return;
     }
@@ -75,7 +79,10 @@ const TipForm: React.FC<TipFormProps> = ({ creatorId, onComplete }) => {
       setMessage("");
       setIsAnonymous(false);
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || "Nie udało się wysłać napiwku.";
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Nie udało się wysłać napiwku.";
       setError(msg);
     } finally {
       setLoading(false);
@@ -107,7 +114,10 @@ const TipForm: React.FC<TipFormProps> = ({ creatorId, onComplete }) => {
 
       {/* Własna kwota */}
       <div>
-        <label htmlFor="customAmount" className="block text-sm font-medium mb-1">
+        <label
+          htmlFor="customAmount"
+          className="block text-sm font-medium mb-1"
+        >
           Własna kwota
         </label>
         <input

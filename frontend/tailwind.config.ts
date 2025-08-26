@@ -20,7 +20,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-body)"], // Mukta (tekst)
-        ui: ["var(--font-ui)"],     // IBM Plex Sans (UI)
+        ui: ["var(--font-ui)"], // IBM Plex Sans (UI)
       },
     },
   },

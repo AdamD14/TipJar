@@ -5,8 +5,8 @@ import {
   http,
   WalletClient,
   PublicClient,
-} from 'viem';
-import { toSimple7702SmartAccount } from 'viem/accounts';
+} from "viem";
+import { toSimple7702SmartAccount } from "viem/accounts";
 
 export interface PaymasterConfig {
   entryPoint: `0x${string}`;
@@ -16,14 +16,14 @@ export interface PaymasterConfig {
 }
 
 export async function getPaymasterConfig(): Promise<PaymasterConfig> {
-  const res = await fetch('/api/paymaster/config');
-  if (!res.ok) throw new Error('Missing paymaster config');
+  const res = await fetch("/api/paymaster/config");
+  if (!res.ok) throw new Error("Missing paymaster config");
   return res.json();
 }
 
 export async function getNonce(): Promise<string> {
-  const res = await fetch('/api/paymaster/nonce');
-  if (!res.ok) throw new Error('Nonce fetch failed');
+  const res = await fetch("/api/paymaster/nonce");
+  if (!res.ok) throw new Error("Nonce fetch failed");
   const data = await res.json();
   return data.nonce as string;
 }

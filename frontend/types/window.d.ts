@@ -1,3 +1,3 @@
 interface Window {
-  ethereum?: import('@metamask/providers').MetaMaskInpageProvider;
+  ethereum?: import("@metamask/providers").MetaMaskInpageProvider;
 }

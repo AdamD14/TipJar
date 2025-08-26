@@ -1,4 +1,13 @@
-import { Controller, Post, Body, UseGuards, Req, Logger, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Req,
+  Logger,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { TipsService } from './tips.service';
 import { CreateTipDto, CreateGuestTipDto } from './dto/create-tip.dto';
@@ -15,9 +24,14 @@ export class TipsController {
   @Post()
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.CREATED)
-  async createTip(@Body() createTipDto: CreateTipDto, @Req() req: Request): Promise<Tip> {
+  async createTip(
+    @Body() createTipDto: CreateTipDto,
+    @Req() req: Request,
+  ): Promise<Tip> {
     const fan = req.user as ValidatedUser;
-    this.logger.log(`User [${fan.id}] creating tip for creator [${createTipDto.creatorId}]`);
+    this.logger.log(
+      `User [${fan.id}] creating tip for creator [${createTipDto.creatorId}]`,
+    );
     return this.tipsService.processNewTip({
       ...createTipDto,
       fanId: fan.id,
@@ -26,8 +40,12 @@ export class TipsController {
 
   @Post('guest')
   @HttpCode(HttpStatus.CREATED)
-  async createGuestTip(@Body() createGuestTipDto: CreateGuestTipDto): Promise<Tip> {
-    this.logger.log(`Guest creating tip for creator [${createGuestTipDto.creatorId}]`);
+  async createGuestTip(
+    @Body() createGuestTipDto: CreateGuestTipDto,
+  ): Promise<Tip> {
+    this.logger.log(
+      `Guest creating tip for creator [${createGuestTipDto.creatorId}]`,
+    );
     return this.tipsService.processNewTip({
       ...createGuestTipDto,
       fanId: null,

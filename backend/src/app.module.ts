@@ -12,7 +12,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import { RedisModule } from './shared/redis/redis.module';
-import { GeneratorModule } from './generator/generator.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
@@ -39,7 +38,7 @@ import { FanModule } from './fan/fan.module';
     // Mailer configuration
     MailerModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (config: ConfigService) => ({
+      useFactory: (config: ConfigService) => ({
         transport: {
           host: config.get<string>('MAIL_HOST'),
           port: parseInt(config.get<string>('MAIL_PORT', '587'), 10),

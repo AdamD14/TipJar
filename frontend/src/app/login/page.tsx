@@ -13,7 +13,8 @@ export default function Page() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null); setLoading(true);
+    setError(null);
+    setLoading(true);
     try {
       await login({ email, password });
       const user = await me().catch(() => null);
@@ -32,11 +33,31 @@ export default function Page() {
       <div className="mx-auto max-w-md rounded-2xl border border-white/10 bg-white/5 p-6">
         <h1 className="font-sans text-2xl font-bold text-white">Sign in</h1>
         <form onSubmit={onSubmit} className="mt-4 space-y-3">
-          <input value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Email" className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#FFD700]"/>
-          <input value={password} onChange={(e)=>setPassword(e.target.value)} type="password" placeholder="Password" className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#FFD700]"/>
-          <button disabled={loading} className="font-ui w-full rounded-xl bg-[#FFD700] px-4 py-3 font-semibold text-[#003737] disabled:opacity-60">{loading?"Processing…":"Sign in"}</button>
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#FFD700]"
+          />
+          <input
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            placeholder="Password"
+            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#FFD700]"
+          />
+          <button
+            disabled={loading}
+            className="font-ui w-full rounded-xl bg-[#FFD700] px-4 py-3 font-semibold text-[#003737] disabled:opacity-60"
+          >
+            {loading ? "Processing…" : "Sign in"}
+          </button>
         </form>
-        <p className="mt-3 text-sm text-[#BCC1B6]"><a className="underline" href="/register">Nie masz konta?</a></p>
+        <p className="mt-3 text-sm text-[#BCC1B6]">
+          <a className="underline" href="/register">
+            Nie masz konta?
+          </a>
+        </p>
       </div>
     </main>
   );

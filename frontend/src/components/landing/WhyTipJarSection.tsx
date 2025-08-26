@@ -1,30 +1,37 @@
 // src/components/landing/WhyTipJarSection.tsx
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { Coins, CreditCard, Zap } from 'lucide-react';
-import Image from 'next/image';
+import { motion } from "framer-motion";
+import { Coins, CreditCard, Zap } from "lucide-react";
+import Image from "next/image";
 
 const features = [
   {
     icon: <Coins size={56} className="text-tipjar-gold" />,
-    title: 'Via Crypto',
-    description: '(MIN 2% PLATFORM FEE)',
+    title: "Via Crypto",
+    description: "(MIN 2% PLATFORM FEE)",
   },
   {
     icon: <CreditCard size={56} className="text-tipjar-gold" />,
-    title: 'Fiat-Easy',
-    description: 'Google Pay, Revolut & bank',
+    title: "Fiat-Easy",
+    description: "Google Pay, Revolut & bank",
   },
   {
-    icon: <Image src="/assets/logo_usdc_1.png" alt="USDC Logo" width={80} height={80} />,
-    title: 'Receive in USDC',
-    description: 'Secure, backed by Circle.com',
+    icon: (
+      <Image
+        src="/assets/logo_usdc_1.png"
+        alt="USDC Logo"
+        width={80}
+        height={80}
+      />
+    ),
+    title: "Receive in USDC",
+    description: "Secure, backed by Circle.com",
   },
   {
     icon: <Zap size={56} className="text-tipjar-gold" />,
-    title: 'Instant Payouts',
-    description: 'Crypto, USD, EUR & local currency',
+    title: "Instant Payouts",
+    description: "Crypto, USD, EUR & local currency",
   },
 ];
 

@@ -5,6 +5,7 @@ Platform for blockchain-based micropayments and tipping for content creators. En
 A ChainWorks project by Adam D.
 
 ## Dokumentacja
+
 - [Poradnik Rejestracji Twórców](docs/registration-guide.md)
 - [Specyfikacja projektu](docs/tipjar.md)
 - [Integracja z Gas Station i Paymaster](docs/gas-station-paymaster.md)
@@ -14,6 +15,7 @@ A ChainWorks project by Adam D.
 ## Development
 
 ### Frontend
+
 W katalogu `frontend/` znajduje się projekt **Next.js**.
 
 ```bash
@@ -30,4 +32,3 @@ cp .env.example .env
 npm install
 npm run start:dev
 ```
-

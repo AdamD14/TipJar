@@ -30,9 +30,13 @@ export class FanService {
       select: { circleWalletId: true },
     });
     if (!userRecord?.circleWalletId) {
-      throw new NotFoundException('Użytkownik nie ma skonfigurowanego portfela Circle.');
+      throw new NotFoundException(
+        'Użytkownik nie ma skonfigurowanego portfela Circle.',
+      );
     }
-    const balance = await this.circleService.getWalletBalance(userRecord.circleWalletId);
+    const balance = await this.circleService.getWalletBalance(
+      userRecord.circleWalletId,
+    );
     return balance;
   }
 

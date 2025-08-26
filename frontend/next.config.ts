@@ -3,10 +3,10 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/:path*',
+        source: "/:path*",
         headers: [
           {
-            key: 'Content-Security-Policy',
+            key: "Content-Security-Policy",
             value:
               "default-src 'self'; " +
               "script-src 'self' 'unsafe-eval' 'unsafe-inline'; " +

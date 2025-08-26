@@ -6,15 +6,15 @@
 
 /* Mukta Malar (tekst: regular + bold) */
 @font-face {
-  font-family: 'MuktaMalar';
-  src: url('/fonts/Mukta_Malar/MuktaMalar-Regular.ttf') format('truetype');
+  font-family: "MuktaMalar";
+  src: url("/fonts/Mukta_Malar/MuktaMalar-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: 'MuktaMalar';
-  src: url('/fonts/Mukta_Malar/MuktaMalar-Bold.ttf') format('truetype');
+  font-family: "MuktaMalar";
+  src: url("/fonts/Mukta_Malar/MuktaMalar-Bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -22,22 +22,22 @@
 
 /* IBM Plex Sans (UI, przyciski) */
 @font-face {
-  font-family: 'IBMPlexSans';
-  src: url('/fonts/IBM_Plex_Sans/IBMPlexSans-Regular.ttf') format('truetype');
+  font-family: "IBMPlexSans";
+  src: url("/fonts/IBM_Plex_Sans/IBMPlexSans-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: 'IBMPlexSans';
-  src: url('/fonts/IBM_Plex_Sans/IBMPlexSans-Medium.ttf') format('truetype');
+  font-family: "IBMPlexSans";
+  src: url("/fonts/IBM_Plex_Sans/IBMPlexSans-Medium.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: 'IBMPlexSans';
-  src: url('/fonts/IBM_Plex_Sans/IBMPlexSans-Bold.ttf') format('truetype');
+  font-family: "IBMPlexSans";
+  src: url("/fonts/IBM_Plex_Sans/IBMPlexSans-Bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -46,7 +46,8 @@
    GLOBAL STYLE
    ================================ */
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
 }

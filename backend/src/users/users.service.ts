@@ -138,7 +138,12 @@ export class UsersService {
         `Failed to create user (Email: ${userEmail || 'N/A'}): ${(error as Error).message}`,
         (error as Error).stack,
       );
-      if (error instanceof Error && 'code' in error && typeof error.code === 'string' && error.code === 'P2002') {
+      if (
+        error instanceof Error &&
+        'code' in error &&
+        typeof error.code === 'string' &&
+        error.code === 'P2002'
+      ) {
         const target = (error as any).meta?.target?.join(', ');
         this.logger.warn(`Prisma unique constraint violation on: ${target}`);
         throw new ConflictException(
@@ -199,7 +204,11 @@ export class UsersService {
         `Failed to update user ID [${id}]: ${(error as Error).message}`,
         (error as Error).stack,
       );
-      if (error instanceof Error && 'code' in error && typeof error.code === 'string') {
+      if (
+        error instanceof Error &&
+        'code' in error &&
+        typeof error.code === 'string'
+      ) {
         if (error.code === 'P2025') {
           this.logger.warn(`Update failed: User ID [${id}] not found.`);
           throw new NotFoundException(
@@ -353,7 +362,12 @@ export class UsersService {
         `Failed to add social connection for user ID [${userId}]: ${(error as Error).message}`,
         (error as Error).stack,
       );
-      if (error instanceof Error && 'code' in error && typeof error.code === 'string' && error.code === 'P2002') {
+      if (
+        error instanceof Error &&
+        'code' in error &&
+        typeof error.code === 'string' &&
+        error.code === 'P2002'
+      ) {
         throw new ConflictException(
           'To połączenie społeczne już istnieje lub wystąpił inny konflikt unikalności.',
         );

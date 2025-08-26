@@ -1,4 +1,12 @@
-import { Controller, Post, Body, UseGuards, Req, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Req,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { PayoutsService } from './payouts.service';
 import { CreatePayoutDto } from './dto/create-payout.dto';
@@ -13,8 +21,15 @@ export class PayoutsController {
   @Post('payout')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.CREATED)
-  createPayout(@Req() req: Request, @Body() dto: CreatePayoutDto): Promise<Payout> {
+  createPayout(
+    @Req() req: Request,
+    @Body() dto: CreatePayoutDto,
+  ): Promise<Payout> {
     const user = req.user as ValidatedUser;
-    return this.payoutsService.createPayout(user.id, dto.amount, dto.destinationAddress);
+    return this.payoutsService.createPayout(
+      user.id,
+      dto.amount,
+      dto.destinationAddress,
+    );
   }
 }

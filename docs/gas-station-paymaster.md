@@ -24,6 +24,7 @@ const transferRequestPayload: CreateDeveloperTransactionTransferRequest = {
   feeLevel: FeeLevel.MEDIUM,
 };
 ```
+
 3. **Konfiguracja polityk** – w konsoli Circle definiujemy zasady sponsorowania, np. limity wydatków czy listy dozwolonych adresów.
 4. **Rozliczenia** – TipJar rozlicza zużyty gaz w USDC/kartą podpiętą do konta Circle.
 
@@ -52,13 +53,12 @@ Oba są ograniczone prostym limiterem do maks. 10 zapytań na minutę z jednego 
 
 ## 9.3 Różnice Gas Station vs. Paymaster
 
-| Kategoria | Circle Paymaster (fan z EOA) | Circle Gas Station (operacje TipJar) |
-|-----------|-----------------------------|-------------------------------------|
-| **Opis** | Fan płaci gaz w USDC. | Platforma sponsoruje gaz użytkowników. |
-| **Konto Circle** | Nie wymagane. | Wymagane dla TipJar. |
-| **Kompatybilne portfele** | Dowolny portfel ERC‑4337 lub EOA z EIP‑7702. | Circle Wallets (SCA). |
-| **Płacone w** | USDC przez fana. | Waluta fiat (karta) przez TipJar. |
-| **Płacone przez** | Fana (użytkownik końcowy). | TipJar (deweloper). |
+| Kategoria                 | Circle Paymaster (fan z EOA)                 | Circle Gas Station (operacje TipJar)   |
+| ------------------------- | -------------------------------------------- | -------------------------------------- |
+| **Opis**                  | Fan płaci gaz w USDC.                        | Platforma sponsoruje gaz użytkowników. |
+| **Konto Circle**          | Nie wymagane.                                | Wymagane dla TipJar.                   |
+| **Kompatybilne portfele** | Dowolny portfel ERC‑4337 lub EOA z EIP‑7702. | Circle Wallets (SCA).                  |
+| **Płacone w**             | USDC przez fana.                             | Waluta fiat (karta) przez TipJar.      |
+| **Płacone przez**         | Fana (użytkownik końcowy).                   | TipJar (deweloper).                    |
 
 Zastosowanie obu rozwiązań minimalizuje koszty po stronie użytkowników i zapewnia płynne doświadczenie podczas wysyłania napiwków.
-

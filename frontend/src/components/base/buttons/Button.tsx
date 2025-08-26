@@ -167,7 +167,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       type = "button",
       ...otherProps
     },
-    ref
+    ref,
   ) => {
     const isIcon = (IconLeading || IconTrailing) && !children;
 
@@ -189,7 +189,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             (showTextWhileLoading
               ? "[&>*:not([data-icon=loading]):not([data-text])]:hidden"
               : "[&>*:not([data-icon=loading])]:invisible"),
-          className
+          className,
         )}
       >
         {isValidElement(IconLeading) && IconLeading}
@@ -205,7 +205,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             className={cx(
               styles.common.icon,
               !showTextWhileLoading &&
-                "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
             )}
           >
             <circle
@@ -244,7 +244,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         )}
       </AriaButton>
     );
-  }
+  },
 );
 Button.displayName = "Button";
 
@@ -267,7 +267,7 @@ export const LinkButton = forwardRef<HTMLAnchorElement, LinkProps>(
       href,
       ...otherProps
     },
-    ref
+    ref,
   ) => {
     const isIcon = (IconLeading || IconTrailing) && !children;
 
@@ -290,7 +290,7 @@ export const LinkButton = forwardRef<HTMLAnchorElement, LinkProps>(
             (showTextWhileLoading
               ? "[&>*:not([data-icon=loading]):not([data-text])]:hidden"
               : "[&>*:not([data-icon=loading])]:invisible"),
-          className
+          className,
         )}
       >
         {isValidElement(IconLeading) && IconLeading}
@@ -306,7 +306,7 @@ export const LinkButton = forwardRef<HTMLAnchorElement, LinkProps>(
             className={cx(
               styles.common.icon,
               !showTextWhileLoading &&
-                "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
             )}
           >
             <circle
@@ -345,6 +345,6 @@ export const LinkButton = forwardRef<HTMLAnchorElement, LinkProps>(
         )}
       </AriaLink>
     );
-  }
+  },
 );
 LinkButton.displayName = "LinkButton";

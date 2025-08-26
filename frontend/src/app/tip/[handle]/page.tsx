@@ -18,7 +18,9 @@ export default function Page({ params }: { params: { handle: string } }) {
       const payload = { creatorId: handle, amount };
       const { tip } = await sendTip(payload);
       const tx = tip?.txHash || tip?.tx || tip?.id || "tx_demo";
-      router.push(`/tip/${handle}/success?amt=${encodeURIComponent(amount)}&tx=${encodeURIComponent(String(tx))}`);
+      router.push(
+        `/tip/${handle}/success?amt=${encodeURIComponent(amount)}&tx=${encodeURIComponent(String(tx))}`,
+      );
     } catch (e: any) {
       setError(e.message || "Payment failed");
     } finally {

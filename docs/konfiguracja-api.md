@@ -2,13 +2,13 @@
 
 Wszystkie wrażliwe dane dostępowe przechowuj w zmiennych środowiskowych lub menedżerze sekretów. Poniższa tabela prezentuje najważniejsze klucze wymagane do działania systemu TipJar.
 
-| Zmienna | Opis |
-|---------|------|
-| `CIRCLE_API_KEY` | Klucz API dla usług Circle (wallets i payments). |
-| `CIRCLE_ENTITY_SECRET` | Sekret jednostki Circle używany do podpisywania zapytań. |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Dane do integracji OAuth z Google. |
-| `TWITCH_CLIENT_ID` / `TWITCH_CLIENT_SECRET` | Dane do integracji OAuth z Twitch. |
-| `SENDGRID_API_KEY` | Klucz do usługi SendGrid (opcjonalnie dla powiadomień e-mail). |
+| Zmienna                                     | Opis                                                           |
+| ------------------------------------------- | -------------------------------------------------------------- |
+| `CIRCLE_API_KEY`                            | Klucz API dla usług Circle (wallets i payments).               |
+| `CIRCLE_ENTITY_SECRET`                      | Sekret jednostki Circle używany do podpisywania zapytań.       |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Dane do integracji OAuth z Google.                             |
+| `TWITCH_CLIENT_ID` / `TWITCH_CLIENT_SECRET` | Dane do integracji OAuth z Twitch.                             |
+| `SENDGRID_API_KEY`                          | Klucz do usługi SendGrid (opcjonalnie dla powiadomień e-mail). |
 
 Przykładowy plik `.env` może wyglądać następująco:
 

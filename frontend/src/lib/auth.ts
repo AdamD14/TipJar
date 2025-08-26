@@ -1,7 +1,11 @@
 import { http } from "./http";
 import { API } from "./api-routes";
 
-export type RegisterDto = { email: string; password: string; displayName?: string };
+export type RegisterDto = {
+  email: string;
+  password: string;
+  displayName?: string;
+};
 export type LoginDto = { email: string; password: string };
 
 export async function register(dto: RegisterDto) {

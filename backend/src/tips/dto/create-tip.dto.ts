@@ -1,7 +1,17 @@
-import { IsString, IsNotEmpty, IsDecimal, IsOptional, IsUUID, IsBoolean } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsDecimal,
+  IsOptional,
+  IsUUID,
+  IsBoolean,
+} from 'class-validator';
 
 export class CreateTipDto {
-  @IsDecimal({ decimal_digits: '2,6' }, { message: 'Kwota musi być liczbą dziesiętną.' })
+  @IsDecimal(
+    { decimal_digits: '2,6' },
+    { message: 'Kwota musi być liczbą dziesiętną.' },
+  )
   @IsNotEmpty({ message: 'Kwota jest wymagana.' })
   amount: string;
 

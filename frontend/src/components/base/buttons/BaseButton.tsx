@@ -205,7 +205,7 @@ export const BaseButton = ({
 
   const isIcon = (IconLeading || IconTrailing) && !children;
   const isLinkType = ["link-gray", "link-color", "link-destructive"].includes(
-    color
+    color,
   );
 
   noTextPadding = isLinkType || noTextPadding;
@@ -242,7 +242,7 @@ export const BaseButton = ({
           (showTextWhileLoading
             ? "[&>*:not([data-icon=loading]):not([data-text])]:hidden"
             : "[&>*:not([data-icon=loading])]:invisible"),
-        className
+        className,
       )}
     >
       {/* Leading icon */}
@@ -259,7 +259,7 @@ export const BaseButton = ({
           className={cx(
             styles.common.icon,
             !showTextWhileLoading &&
-              "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+              "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
           )}
         >
           <circle
@@ -284,7 +284,10 @@ export const BaseButton = ({
       )}
 
       {children && (
-        <span data-text className={cx("transition-inherit-all", !noTextPadding && "px-0.5")}>
+        <span
+          data-text
+          className={cx("transition-inherit-all", !noTextPadding && "px-0.5")}
+        >
           {children}
         </span>
       )}

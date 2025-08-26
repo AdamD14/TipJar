@@ -1,6 +1,10 @@
 const requests: Map<string, { count: number; ts: number }> = new Map();
 
-export function rateLimit(ip: string, limit = 10, intervalMs = 60_000): boolean {
+export function rateLimit(
+  ip: string,
+  limit = 10,
+  intervalMs = 60_000,
+): boolean {
   const now = Date.now();
   const entry = requests.get(ip);
   if (!entry || now - entry.ts > intervalMs) {

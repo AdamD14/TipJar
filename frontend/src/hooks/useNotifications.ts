@@ -26,7 +26,7 @@ export function useNotifications(opts: Options = {}) {
     setLoading(true);
     try {
       const res = await http(API.NOTIFICATIONS);
-      const list = Array.isArray(res) ? res : (res?.items || []);
+      const list = Array.isArray(res) ? res : res?.items || [];
       setItems(list);
     } catch (e: any) {
       setError(e.message || "Failed to fetch notifications");
@@ -37,11 +37,16 @@ export function useNotifications(opts: Options = {}) {
 
   useEffect(() => {
     let alive = true;
-    (async () => { if (alive) await load(); })();
+    (async () => {
+      if (alive) await load();
+    })();
     timer.current = setInterval(load, interval);
-    return () => { alive = false; clearInterval(timer.current); };
+    return () => {
+      alive = false;
+      clearInterval(timer.current);
+    };
   }, [interval]);
 
-  const unread = items.filter(i => i.read === false).length;
+  const unread = items.filter((i) => i.read === false).length;
   return { items, unread, loading, error, reload: load };
 }

@@ -14,7 +14,12 @@ export interface PaymentMethodSelectorProps {
   balance?: number;
 }
 
-export const PaymentMethodSelector = ({ methods, selected, onSelect, balance }: PaymentMethodSelectorProps) => (
+export const PaymentMethodSelector = ({
+  methods,
+  selected,
+  onSelect,
+  balance,
+}: PaymentMethodSelectorProps) => (
   <div className="mb-4">
     <div className="mb-2 flex gap-3">
       {methods.map((m) => (
@@ -24,7 +29,9 @@ export const PaymentMethodSelector = ({ methods, selected, onSelect, balance }: 
           onClick={() => onSelect(m.id)}
           title={m.tooltip}
           className={`rounded-lg border px-3 py-2 ${
-            selected === m.id ? "border-brand-gold bg-brand-gold text-brand-dark" : "border-brand-gold text-brand-gold"
+            selected === m.id
+              ? "border-brand-gold bg-brand-gold text-brand-dark"
+              : "border-brand-gold text-brand-gold"
           }`}
         >
           {m.icon}
@@ -32,7 +39,9 @@ export const PaymentMethodSelector = ({ methods, selected, onSelect, balance }: 
       ))}
     </div>
     {selected === "internal" && balance !== undefined && (
-      <div className="text-sm text-brand-light-text">Saldo: ${balance.toFixed(2)}</div>
+      <div className="text-sm text-brand-light-text">
+        Saldo: ${balance.toFixed(2)}
+      </div>
     )}
   </div>
 );

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { apiClient } from '@/lib/apiClient';
+import { useState } from "react";
+import { apiClient } from "@/lib/apiClient";
 
 interface WithdrawFundsModalProps {
   isOpen: boolean;
@@ -15,20 +15,28 @@ interface WithdrawFundsModalProps {
  * displays any returned errors.  After success, it closes the
  * modal.
  */
-export default function WithdrawFundsModal({ isOpen, onClose }: WithdrawFundsModalProps) {
-  const [amount, setAmount] = useState('');
-  const [address, setAddress] = useState('');
+export default function WithdrawFundsModal({
+  isOpen,
+  onClose,
+}: WithdrawFundsModalProps) {
+  const [amount, setAmount] = useState("");
+  const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const handleWithdraw = async () => {
     setError(null);
     setLoading(true);
     try {
-      await apiClient.post('/creator/payout', { amount, destinationAddress: address });
+      await apiClient.post("/creator/payout", {
+        amount,
+        destinationAddress: address,
+      });
       onClose();
     } catch (err: any) {
       console.error(err);
-      setError(err?.response?.data?.message || 'Wystąpił błąd podczas wypłaty.');
+      setError(
+        err?.response?.data?.message || "Wystąpił błąd podczas wypłaty.",
+      );
     } finally {
       setLoading(false);
     }
@@ -45,7 +53,7 @@ export default function WithdrawFundsModal({ isOpen, onClose }: WithdrawFundsMod
             min="0"
             step="0.01"
             value={amount}
-            onChange={e => setAmount(e.target.value)}
+            onChange={(e) => setAmount(e.target.value)}
             className="w-full border px-3 py-2 rounded"
           />
         </div>
@@ -54,7 +62,7 @@ export default function WithdrawFundsModal({ isOpen, onClose }: WithdrawFundsMod
           <input
             type="text"
             value={address}
-            onChange={e => setAddress(e.target.value)}
+            onChange={(e) => setAddress(e.target.value)}
             className="w-full border px-3 py-2 rounded"
             placeholder="0x..."
           />
@@ -73,7 +81,7 @@ export default function WithdrawFundsModal({ isOpen, onClose }: WithdrawFundsMod
             className="px-4 py-2 rounded bg-blue-600 text-white"
             disabled={loading || !amount || !address}
           >
-            {loading ? 'Przetwarzanie...' : 'Wypłać'}
+            {loading ? "Przetwarzanie..." : "Wypłać"}
           </button>
         </div>
       </div>

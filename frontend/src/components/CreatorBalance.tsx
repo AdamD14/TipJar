@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { apiClient } from '@/lib/apiClient';
+import { useEffect, useState } from "react";
+import { apiClient } from "@/lib/apiClient";
 
 /**
  * Displays the creator's current USDC balance.  On mount it
@@ -15,10 +15,10 @@ export default function CreatorBalance() {
       try {
         // Assumes an endpoint exists at /api/v1/creator/wallet/balance which
         // returns { balance: number }
-        const res = await apiClient.get('/creator/wallet/balance');
+        const res = await apiClient.get("/creator/wallet/balance");
         setBalance(res.data.balance ?? 0);
       } catch (err) {
-        console.error('Error fetching balance', err);
+        console.error("Error fetching balance", err);
         setBalance(0);
       }
     }

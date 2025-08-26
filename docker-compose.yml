@@ -1,5 +1,5 @@
 # TipJar/backend/docker-compose.yml
-version: '3.8' # Wersja składni Docker Compose
+version: "3.8" # Wersja składni Docker Compose
 
 services:
   postgres_db: # Nazwa serwisu PostgreSQL
@@ -27,5 +27,5 @@ services:
 volumes: # Definicje nazwanych wolumenów
   tipjar_postgres_data_mvp: # Wolumen dla PostgreSQL
     driver: local
-  tipjar_redis_data:        # Wolumen dla Redis
+  tipjar_redis_data: # Wolumen dla Redis
     driver: local

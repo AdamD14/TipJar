@@ -10,7 +10,12 @@ export interface TipModalProps {
   children?: React.ReactNode;
 }
 
-export const TipModal = ({ creator, isOpen, onClose, children }: TipModalProps) => {
+export const TipModal = ({
+  creator,
+  isOpen,
+  onClose,
+  children,
+}: TipModalProps) => {
   useEffect(() => {
     if (!isOpen) return;
     const handleEsc = (e: KeyboardEvent) => {
@@ -37,13 +42,21 @@ export const TipModal = ({ creator, isOpen, onClose, children }: TipModalProps) 
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-brand-gold">Wyślij napiwek</h2>
-          <button onClick={onClose} aria-label="Zamknij" className="text-brand-gold">
+          <button
+            onClick={onClose}
+            aria-label="Zamknij"
+            className="text-brand-gold"
+          >
             <X />
           </button>
         </div>
         <div className="mb-6 flex items-center gap-3">
           {creator.avatar && (
-            <img src={creator.avatar} alt={creator.name} className="h-8 w-8 rounded-full" />
+            <img
+              src={creator.avatar}
+              alt={creator.name}
+              className="h-8 w-8 rounded-full"
+            />
           )}
           <p className="text-sm text-brand-light-text">dla {creator.name}</p>
         </div>

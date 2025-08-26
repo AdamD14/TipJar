@@ -12,10 +12,25 @@ import { SubmitTipButton } from "./SubmitTipButton";
 import { TipFeedback } from "./TipFeedback";
 
 const paymentMethods: PaymentMethod[] = [
-  { id: "internal", label: "Wallet", icon: <Wallet />, tooltip: "Bez prowizji" },
+  {
+    id: "internal",
+    label: "Wallet",
+    icon: <Wallet />,
+    tooltip: "Bez prowizji",
+  },
   { id: "metamask", label: "MetaMask", icon: <Shield />, tooltip: "Web3" },
-  { id: "google", label: "Google Pay", icon: <Smartphone />, tooltip: "3.5% fee" },
-  { id: "apple", label: "Apple Pay", icon: <Smartphone />, tooltip: "3.5% fee" },
+  {
+    id: "google",
+    label: "Google Pay",
+    icon: <Smartphone />,
+    tooltip: "3.5% fee",
+  },
+  {
+    id: "apple",
+    label: "Apple Pay",
+    icon: <Smartphone />,
+    tooltip: "3.5% fee",
+  },
   { id: "card", label: "Karta", icon: <CreditCard />, tooltip: "3.5% fee" },
 ];
 
@@ -39,7 +54,11 @@ export const TipModalContent = () => {
   return (
     <div>
       <AmountSlider value={amount} onChange={setAmount} />
-      <QuickTipButtons amounts={[1, 2, 5, 10]} active={amount} onSelect={setAmount} />
+      <QuickTipButtons
+        amounts={[1, 2, 5, 10]}
+        active={amount}
+        onSelect={setAmount}
+      />
       <MessageTextarea value={message} onChange={setMessage} />
       <PaymentMethodSelector
         methods={paymentMethods}
@@ -49,7 +68,13 @@ export const TipModalContent = () => {
       />
       <TipSummary amount={amount} fee={fee} />
       <SubmitTipButton onSubmit={handleSubmit} loading={loading} />
-      {feedback && <TipFeedback success message={feedback} onClose={() => setFeedback(null)} />}
+      {feedback && (
+        <TipFeedback
+          success
+          message={feedback}
+          onClose={() => setFeedback(null)}
+        />
+      )}
     </div>
   );
 };

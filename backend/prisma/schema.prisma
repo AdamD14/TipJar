@@ -192,18 +192,18 @@ model CircleWallet {
 }
 
 model Withdrawal {
-  id               String   @id @default(uuid())
+  id String @id @default(uuid())
 
   userId String
-  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   amount           Float
   circleTransferId String   @unique
   toAddress        String
   status           String
 
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([userId, status, createdAt])
 }
@@ -212,13 +212,13 @@ model Withdrawal {
    Notification (NOWE)
    ====================== */
 model Notification {
-  id        String   @id @default(uuid())
+  id String @id @default(uuid())
 
   userId String
-  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  message   String   @db.Text
-  read      Boolean  @default(false)
+  message String  @db.Text
+  read    Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

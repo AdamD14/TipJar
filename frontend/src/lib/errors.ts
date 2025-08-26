@@ -1,8 +1,11 @@
 export type UiError = { message: string; code?: number; details?: unknown };
 
-export function toUiError(e: unknown, fallback = "Something went wrong"): UiError {
+export function toUiError(
+  e: unknown,
+  fallback = "Something went wrong",
+): UiError {
   if (!e) return { message: fallback };
-  if (typeof e === 'string') return { message: e };
+  if (typeof e === "string") return { message: e };
   if (e instanceof Error) return { message: e.message || fallback };
   try {
     const any = e as any;

@@ -20,7 +20,6 @@ Natychmiastowa wypłacalność środków: Twórca może w dowolnym momencie wyp�
 
 Brak zmartwień o “gas” (opłaty transakcyjne): TipJar korzysta z mechanizmów Circle Gas Station / Paymaster, dzięki którym fani wysyłający napiwki nie muszą płacić za gas na blockchainie. Przy mikropłatnościach nawet drobna opłata (np. $0,10) mogłaby zniechęcić do wysłania $1 napiwku. Platforma TipJar automatycznie sponsoruje te opłaty sieciowe na zapleczu – zwłaszcza że operuje na tanich sieciach (Polygon, Solana itp.), więc koszty są minimalne. W razie potrzeby TipJar może rozliczać gas w USDC (np. poprzez mechanizm “Pay User’s Gas in USDC” oferowany przez Circle). To zapewnia płynne doświadczenie użytkownika: fan płaci dokładnie $1 i nie obchodzi go techniczna warstwa opłat sieciowych.
 
-
 Rozwiązywany problem: Monetyzacja drobnych treści i napiwków dla twórców od lat nastręcza trudności. Istniejące platformy:
 
 Są często ograniczone geograficznie (np. Patreon nie obsługuje wielu krajów) i generują wysokie koszty przewalutowań oraz wypłat międzynarodowych.
@@ -30,7 +29,6 @@ Pobierają wysokie prowizje, przez co z małego napiwku niewiele zostaje dla tw�
 Mają bariery minimalnej kwoty lub opłaty transakcyjne (np. przy płatności kartą małe kwoty są nieopłacalne ze względu na prowizje płatnicze).
 
 Nie wykorzystują potencjału kryptowalut/stablecoinów, które mogłyby te problemy rozwiązać.
-
 
 TipJar adresuje te problemy, oferując:
 
@@ -43,7 +41,6 @@ Brak progów wejścia – fani mogą wesprzeć nawet symbolicznie, twórcy otrzy
 Nowe możliwości monetyzacji i interakcji – integracja z transmisjami na żywo (alerty napiwków), możliwość ustawiania celów finansowych, subskrypcji itp.
 
 Promowanie adopcji Web3 – twórcy i ich społeczności poznają praktyczne zastosowanie kryptowalut (stablecoinów) w sposób przynoszący realną wartość.
-
 
 Specyfikacja Funkcjonalna
 
@@ -69,16 +66,13 @@ Na zewnętrzny adres portfela kryptowalutowego (transfer on-chain USDC).
 
 Na konto bankowe (sprzedaż USDC i przelew fiat – wymaga integracji z bramką fiat, np. Circle Payouts).
 
-
 Ustawienia konta: edycja profilu, ustawienia powiadomień (np. e-mail/SMS o otrzymaniu napiwku), konfiguracja preferencji (np. preferowana sieć blockchain do otrzymywania napiwków, waluta wyświetlania itp.).
-
 
 Powiadomienia w czasie rzeczywistym: Po otrzymaniu napiwku twórca może dostać natychmiastowe powiadomienie (push w aplikacji mobilnej, e-mail, lub nawet powiadomienie na streamie poprzez integrację z OBS/Streamlabs). API TipJar może udostępniać webhook lub wtyczkę dla oprogramowania streamerskiego, aby na ekranie pojawiała się animacja „${fan} wsparł Cię kwotą 5 USDC!”.
 
 Subskrypcje i wsparcie cykliczne: (Funkcjonalność planowana) Twórca może zaoferować fanom opcję miesięcznego wsparcia (np. 5 USDC co miesiąc). System TipJar będzie wówczas automatycznie inicjował cykliczny transfer USDC z portfela fana do portfela twórcy (wymaga to albo autoryzacji wielokrotnej transakcji w Circle API, albo wykorzystania smart kontraktu/subskrypcji on-chain).
 
 Weryfikacja tożsamości (opcjonalna): Twórcy mogą zweryfikować swoje konto (np. poprzez połączenie z kontami społecznościowymi lub dostarczenie dodatkowych danych) aby uzyskać odznakę „Zweryfikowany Twórca”. To buduje zaufanie wśród fanów, że środki trafiają do właściwej osoby. (Od strony regulacyjnej, TipJar na starcie nie wymaga pełnego KYC, ponieważ operuje drobnymi kwotami; jednak w razie dużych przepływów lub wypłat fiat, platforma może wymagać od twórców przejścia procedury KYC zgodnie z przepisami AML.)
-
 
 Funkcje dla Fanów (Fan Features)
 
@@ -96,16 +90,13 @@ Portfel TipJar (Circle): Jeśli fan założy prosty portfel w TipJar (np. loguj�
 
 Karta płatnicza (fiat): Dla fanów nieobeznanych z kryptowalutami TipJar może oferować bramkę płatniczą – np. integrację z Circle Payments API lub innym dostawcą – aby zapłacić zwykłą kartą (Visa/Mastercard). W tym scenariuszu fan wprowadza dane karty jak w klasycznym checkoucie, następuje autoryzacja np. 3D Secure, a kwota np. $5 zostaje pobrana i automatycznie zamieniona na 5 USDC, które trafia do portfela twórcy. Dla fana jest to transparentne – po prostu zapłacił kartą na rzecz twórcy. (Takie rozwiązanie wymaga pewnych procedur zgodności regulacyjnej, ale Circle i podobne firmy oferują gotowe rozwiązania on-ramp.)
 
-
 Tryb anonimowy vs. podpisany: Fan może wybrać, czy chce przedstawić się twórcy (np. imieniem lub nickiem) i przekazać wiadomość, czy woli pozostać anonimowy. Jeśli fan jest zalogowany/posiada profil TipJar, system może podpisać jego napiwek automatycznie nazwą profilu.
-
 
 Potwierdzenie i podziękowanie: Po zrealizowaniu transakcji fan otrzymuje wizualne potwierdzenie (animacja „Dziękujemy za wsparcie!”). W przypadku integracji na żywo, twórca mógł otrzymać alert na ekranie streamu. Fanom można wyświetlić dowód transakcji (np. skrót TX na blockchainie dla przejrzystości, w razie płatności krypto).
 
 Profil fana (opcjonalnie): Jeśli fan utworzy konto (opcjonalne, np. by mieć historię swoich napiwków czy zbierać odznaki), może mieć prosty profil z podstawowymi danymi, listą twórców których wsparł, itp. Jednak TipJar nie wymaga od fanów zakładania konta – „pay as guest” jest domyślnym, by usunąć tarcie.
 
 Gamifikacja dla fanów: (Opisano szczegółowo w sekcji Elementy Gamifikacji) Fani mogą zdobywać pewne odznaki lub wyróżnienia za aktywność (np. „Super Fan” – za wsparcie powyżej określonej kwoty, leaderboard top wspierających danego twórcę, itp.), co zachęca do udziału w zabawie i buduje społeczność.
-
 
 Funkcje Administracyjne i Infrastrukturalne
 
@@ -123,8 +114,6 @@ Wprowadzenie innych tokenów w przyszłości (np. napiwki w lokalnych stablecoin
 
 Integracje społecznościowe – np. TipJar mógłby oferować plugin dla Discorda czy Twittera, pozwalający błyskawicznie wysłać napiwek poprzez komendę lub kliknięcie w mediach społecznościowych.
 
-
-
 Architektura Systemu
 
 Architektura TipJar opiera się na modelu klient-serwer z wydzielonym zapleczem integrującym usługi blockchain poprzez API firmy Circle. W skład systemu wchodzą następujące główne komponenty:
@@ -141,34 +130,32 @@ Zewnętrzne API OAuth – do obsługi logowania przez platformy społecznościow
 
 Inne usługi – np. system wysyłki e-maili z potwierdzeniami, notyfikacje push, usługa analityki itp.
 
-
 Platforma Circle (infrastruktura zewnętrzna): Obejmuje Circle Programmable Wallets (programowalne portfele custodial), Circle Gas Station/Paymaster (usługa sponsorowania gazu transakcyjnego) oraz Circle CCTP (Cross-Chain Transfer Protocol do przenoszenia USDC między sieciami). TipJar backend komunikuje się z tymi usługami przez oficjalne SDK/REST API. Ponadto wykorzystywani mogą być partnerzy Circle do obsługi płatności kartą i wypłat fiat (Circle Payments/Payouts).
 
 Sieć blockchain: Warstwa blockchain (początkowo jedna lub dwie sieci, np. Polygon jako główna sieć do tansferów USDC, opcjonalnie Ethereum/Avalanche do kompatybilności z innymi ekosystemami). Blockchain zapewnia właściwą realizację transferów wartości (USDC) między adresami. Dzięki integracji Circle, wiele operacji (jak transfer między portfelami twórców) może być obsłużonych off-chain w ramach infrastruktury Circle i jej rozrachunku on-chain w razie potrzeby.
 
 Usługi wspomagające i narzędzia DevOps: Kontenery Docker do uruchamiania komponentów, pipeline CI/CD do automatycznego testowania i wdrażania, serwery hostingowe (np. AWS, Azure lub inne) obsługujące backend, monitoring i logowanie (np. Sentry do błędów, Prometheus/Grafana do metryk wydajności).
 
-
 Poniższy diagram przedstawia kluczowe elementy architektury i ich zależności (komponenty TipJar w niebieskich ramkach, usługi zewnętrzne na zielono, użytkownicy na szaro, strzałki obrazują przepływ danych i wartości):
 
 Użytkownik (Fan) [przeglądarka / mobilnie, MetaMask lub karta]  
-    |  
-    v  
+ |  
+ v  
 **TipJar Frontend** (Aplikacja Web / Widget / Mobile)  
-    | REST API (żądania HTTP)  
-    v  
+ | REST API (żądania HTTP)  
+ v  
 **TipJar Backend** (NestJS API + baza danych)  
-    | integracja z Circle  
-    v  
+ | integracja z Circle  
+ v  
 **Circle Platform** (Wallets API, Gas Station, CCTP)  
-    | transakcje USDC on-chain  
-    v  
+ | transakcje USDC on-chain  
+ v  
 **Sieć Blockchain** (np. Polygon, Ethereum)  
-    |  
-    v  
+ |  
+ v  
 **Portfel Twórcy (Circle)** – środki USDC dostępne  
-    |  
-    v  
+ |  
+ v  
 Użytkownik (Twórca) [panel TipJar, wypłaty]
 
 (Diagram tekstowy: Fan przesyła żądanie wsparcia poprzez frontend → backend TipJar tworzy/zleca transakcję w Circle → Circle wykonuje operację w sieci blockchain (jeśli potrzebna) → środki trafiają do portfela twórcy w systemie. Twórca widzi to w swoim panelu i może wypłacić dalej.)
@@ -193,12 +180,10 @@ Baza danych (PostgreSQL) może być skalowana (np. replikacja odczytów). Prisma
 
 Monitoring wydajności (APM) – zintegrowano narzędzia typu Datadog/New Relic, które mierzą czasy odpowiedzi API, czas realizacji zewnętrznych wywołań (np. do Circle czy Google). Pozwala to wykryć wąskie gardła i zaplanować optymalizacje.
 
-
 Niezawodność i obsługa błędów: Każde wywołanie zewnętrzne (API Google, API Circle itd.) ma zaimplementowane mechanizmy ponawiania (retry z eksponencjalnym odstępem) w razie chwilowych błędów sieci. Wykorzystujemy np. bibliotekę axios z ustawionym mechanizmem axios-retry dla zapytań HTTP. Ponadto, jeśli pewne operacje nie powiodą się wiele razy, trafiają do Dead Letter Queue (kolejki błędów) – co wyzwala alert do obsługi technicznej. System loguje błędy (np. do Sentry), dzięki czemu zespół od razu wie o wyjątku w produkcji.
 Idempotentność jest zapewniona tam, gdzie to potrzebne – np. podczas tworzenia portfela w Circle używany jest unikalny idempotencyKey (UUID), by powtórne wywołanie nie tworzyło duplikatów. Circle API wspiera idempotentność i TipJar to wykorzystuje.
 
 Kompatybilność i przyszłościowość: Zastosowane technologie są nowoczesne, ale i sprawdzone. Backend NestJS łatwo integruje kolejne strategie logowania czy kolejne usługi (modułowa architektura). Warstwa integracji z Circle jest odseparowana w formie np. CircleService – dzięki czemu, gdyby kiedykolwiek zaszła potrzeba zmiany dostawcy lub przejścia na bardziej zdecentralizowane rozwiązanie (np. ERC-4337 Account Abstraction z własnym smart kontraktem portfela), będzie to możliwe do zaadaptowania bez przebudowy całego systemu.
-
 
 Komponenty Backendowe
 
@@ -214,7 +199,6 @@ AuthController z endpointami: /auth/google (redirect na Google OAuth), /auth/goo
 
 AuthService – zawiera logikę sprawdzania użytkowników w bazie, tworzenia nowych kont po raz pierwszy (np. nowy twórca loguje się przez Google – serwis sprawdza: czy mamy w bazie użytkownika z danym googleId lub emailem? Jeśli nie – tworzy nowy rekord użytkownika, w tym inicjuje dla niego proces tworzenia portfela Circle).
 
-
 Moduł Users/Profile – zarządza danymi profili twórców. Pozwala pobierać publiczne profile (na potrzeby stron twórców), edytować profil (prywatne API dla właściciela), ustawiać cele, itp. To tutaj następuje integracja z AuthService przy tworzeniu użytkownika, aby w tle uruchomić provisioning portfela (patrz integracja z Circle niżej).
 
 Moduł Tips/Payments – obsługuje logikę przekazywania napiwków. Zapewnia endpointy:
@@ -227,16 +211,13 @@ Jeśli fan płaci poprzez swój portfel TipJar (wewnętrzny transfer) – wtedy 
 
 Jeśli fan płaci kartą – serwis może integrować się z API bramki płatniczej. Np. wywołuje API Circle Payments tworząc tzw. PaymentIntent i przekazuje frontowi klienta token do obsługi (lub generuje link do kasy). Po zatwierdzeniu transakcji przez dostawcę płatności, otrzymuje webhook potwierdzający, który finalizuje płatność.
 
-
 Endpointy webhooków/listenerów:
 
 Webhook płatności fiat – odbiera sygnał od dostawcy (np. Circle), że płatność kartą się powiodła, wraz ze szczegółami (kwota, który fan/twórca, itp.), i następnie zasila portfel twórcy odpowiadającą ilością USDC.
 
 Monitorowanie on-chain – tu są różne podejścia: albo nasłuchiwanie zdarzeń (subskrypcja logów kontraktu USDC dla adresów portfeli twórców), albo regularny polling przez Circle API (SDK Circle może udostępniać listę transakcji portfela). Gdy wykryty zostanie nowy depozyt od fana, serwis oznacza transakcję jako zakończoną i rejestruje napiwek.
 
-
 PaymentsService – incydentalnie może korzystać z CircleService (poniżej) do inicjowania transferów między portfelami w systemie.
-
 
 Moduł CircleIntegration (CircleService) – kapsułuje komunikację z API Circle. Inicjalizuje oficjalny klient SDK @circle-fin/developer-controlled-wallets. Odpowiada za:
 
@@ -256,18 +237,15 @@ Po otrzymaniu odpowiedzi, serwis zapisuje w bazie otrzymany circleWalletId (unik
 
 Operacja jest wykonywana asynchronicznie, aby nie opóźniać rejestracji użytkownika – np. za pomocą kolejki zadań: event “walletNeeded” trafia do BullMQ, a worker wywołuje CircleService.provisionUserWallet.
 
-
 Transfery USDC (w ramach Circle): Jeśli zarówno fan jak i twórca mają portfele w systemie (developer-controlled wallets), możliwy jest transfer off-chain: Circle pozwala na przesunięcie środków między dwoma portfelami prowadzonymi przez tą samą entity. CircleService udostępnia metodę np. transferUSDC(fromWalletId, toWalletId, amount) która wywołuje Circle API (endpoint Transfers) z parametrami: portfel źródłowy, docelowy, kwota, idempotencyKey. Dzięki temu napiwek może zostać przekazany natychmiastowo w ramach systemu (Circle księguje to wewnętrznie, a ewentualny ruch on-chain jest przeźroczysty).
 
 Wypłaty (on-chain lub fiat): CircleService może również inicjować wypłatę na zewnętrzny adres blockchain – to de facto transfer z portfela twórcy na adres wskazany (Circle wykona transakcję on-chain z użyciem Gas Station by pokryć opłatę). Alternatywnie, może wywołać API Circle Payouts żeby zlecić przelew bankowy (to już bardziej zaawansowane, wymagające skonfigurowania beneficjentów, KYC twórcy itp., więc najpewniej realizowane na dalszym etapie).
 
 Obsługa błędów i wyjątków: CircleService centralizuje try/catch dla wywołań do Circle. W razie błędów (np. brak środków, błąd sieci, przekroczone limity) – loguje problem, ewentualnie rzuca wyjątek HttpException do wyższych warstw by zwrócić błąd API klientowi (np. 502 Bad Gateway jeśli problem z zewnętrzną usługą).
 
-
 Moduł Notifications – wysyła powiadomienia o nowych napiwkach. Może integrować się z usługą e-mail (np. SendGrid) do powiadomienia twórcy „Otrzymałeś nowe wsparcie 5 USDC od użytkownika X”. Albo dla fanów – potwierdzenie e-mailem płatności. W przyszłości moduł ten rozbuduje się o webpush czy integracje z API YouTube/Twitch (by wyświetlać powiadomienie na streamie).
 
 Moduł Analytics – rejestruje zdarzenia (eventy) do analizy zachowań: np. konwersje na stronie głównej (ile osób kliknęło „Wesprzyj”, ile sfinalizowało płatność), trendy wysokości napiwków itp. Pozwala to zespołowi TipJar ulepszać UX i też tworzyć raporty dla twórców.
-
 
 Schemat bazy danych: Warto wspomnieć uproszczony schemat głównych tabel:
 
@@ -293,7 +271,6 @@ goalAmount, goalDescription (cel zbiórki jeśli ustawiony),
 
 ... (inne ustawienia, timestampy, itp.).
 
-
 Tip – zapis pojedynczej transakcji napiwku:
 
 id (UUID),
@@ -314,9 +291,7 @@ paymentMethod (ENUM: USDC_INTERNAL, USDC_ONCHAIN, CARD, etc. – sposób przekaz
 
 status (INITIATED, PENDING, CONFIRMED, FAILED).
 
-
 Ewentualnie tabele: Subscription, Withdrawal, OAuthTokens (jeśli przechowujemy refresh tokeny do API społecznościowych, choć to wrażliwe – można unikać i polegać na stateless JWT), AuditLog itp.
-
 
 Komponenty Frontendowe
 
@@ -342,7 +317,6 @@ Ustawienia konta: zarządzanie preferencjami (np. powiadomienia e-mail on/off), 
 
 Narzędzia twórcy: wygeneruj kod widgetu (pojawia się snippet HTML/JS z jego unikalnym ID do wklejenia na stronę), podejrzyj jak wygląda Twój publiczny profil (podgląd), ustawienia celów i subskrypcji (jeśli dostępne).
 
-
 Strona profilu twórcy (widok publiczny): To strona widoczna dla każdego fana pod adresem tipjar.com/@alias. Zawiera:
 
 Banner i zdjęcie twórcy, nazwę i opis.
@@ -355,29 +329,21 @@ Sekcja społecznościowa: lista ostatnich napiwków (np. „Anna: 5 USDC – Sup
 
 Linki do social mediów twórcy, jeśli podał (ikony YouTube, Twitter itd. – by fan mógł łatwo odwiedzić).
 
-
 Komponent widgetu napiwków: Jest to uproszczona wersja formularza wsparcia, przeznaczona do osadzenia np. na stronie twórcy poza TipJar. Może mieć formę <iframe> lub skryptu dodającego odpowiedni element DOM. Widget pokazuje np. przycisk „Wesprzyj [nazwaTwórcy] przez TipJar”, który po kliknięciu wyświetla okienko modalu z tym samym formularzem co na profilu. Realizuje to API TipJar poprzez JavaScript postMessage lub inny mechanizm komunikacji z rodzicem.
 
 Interakcja z MetaMask/portfelami Web3: Frontend (profil lub widget) wykrywa, czy użytkownik ma zainstalowany portfel (np. window.ethereum). Jeśli fan wybiera „Zapłać USDC (krypto)”, a portfel jest dostępny, aplikacja:
 
 1. Prosi użytkownika o połączenie się (Metamask poprosi o zgodę na udostępnienie adresu).
 
-
 2. Pobiera adres aktywnego konta oraz sieć. Jeśli sieć nie jest obsługiwana (np. fan jest na Ethereum, a twórca preferuje Polygon), może poprosić o przełączenie sieci lub skorzystać z CCTP przez backend.
-
 
 3. Wywołuje odpowiednie funkcje – np. przygotowuje transakcję ERC20 transfer do adresu portfela twórcy. Może tu być wykorzystana biblioteka ethers.js lub viem. Aplikacja wczytuje ABI tokenu USDC (lub korzysta z gotowej instancji kontraktu) i wywołuje contract.transfer(tworcaAdres, kwota), inicjując popup Metamask do akceptacji.
 
-
 4. Po potwierdzeniu wysyła transakcję do sieci – front może nasłuchiwać na jej potwierdzenie (promis z ethers, albo poll status). Równolegle może powiadomić backend (żeby backend też oczekiwał na tę transakcję, ewentualnie zapisując tymczasowo „tip pending”).
-
 
 5. Gdy transakcja ma potwierdzenie (min. 1 block), frontend wyświetla sukces. Backend również wykrywa zdarzenie i finalizuje zapis napiwku.
 
-
-
 Obsługa stanów i błędów: Aplikacja frontendu utrzymuje stan użytkownika (czy zalogowany, czy nie – np. przez context/Redux z informacją o tokenie JWT). W razie utraty sesji czy błędu API – przekierowuje do logowania. Błędy płatności (np. odrzucona karta, brak środków w portfelu fana) są czytelnie komunikowane w UI.
-
 
 Od strony technicznej front-end wykorzystuje:
 
@@ -394,7 +360,6 @@ Komunikacja z backendem: Standardowe wywołania REST API przy użyciu fetch lub 
 Biblioteki web3: Do interakcji z blockchainem używamy ethers.js lub nowszej viem – do obsługi podpisów (SIWE), wywołań kontraktów (transfer USDC) i integracji z Ethereum providerem.
 
 Obsługa animacji i interakcji: Dla lepszego UX, stosowane są drobne animacje – np. animowane przyciski, płynne przewijanie. Można użyć biblioteki Framer Motion lub prostszych CSS transitions. W szczególności ważne jest informowanie użytkownika o trwających operacjach: np. gdy płatność jest w toku, przycisk zmienia się w spinner z komunikatem „Przetwarzanie…”.
-
 
 Procesy Płatności i Integracja z Circle API
 
@@ -422,8 +387,6 @@ Twórca dostaje powiadomienie (realtime lub e-mail). Fan na froncie już wcześn
 
 Gas Station: W tym scenariuszu fan sam zapłacił za gas (transakcja z jego portfela). Alternatywnie, gdyby fan korzystał z portfela Circle, mechanizm Gas Station spowoduje, że TipJar pokryje koszt: np. gdy backend wywołuje circle.transfer() z portfela fana do twórcy, a portfele są typu SCA, Circle automatycznie rozliczy gas w tle (lub obciąży konto platformy).
 
-
-
 Płatność z portfela TipJar (transfer w Circle): Ten wariant zakłada, że fan jest zalogowany i posiada własny portfel utworzony w TipJar (Circle). Wtedy:
 
 Fan wybiera np. kwotę i klika „Wyślij napiwek” – bez przechodzenia przez MetaMask, bo fan ma środki w swoim portfelu (np. doładował wcześniej).
@@ -435,7 +398,6 @@ Backend wywołuje metodę Transfer z API Circle: wskazuje portfel źródłowy fa
 Circle od razu (lub po chwili) zwraca potwierdzenie dokonania transferu USDC wewnątrz ich systemu – środki stają się dostępne w portfelu twórcy praktycznie natychmiast. Ponieważ to transfer w obrębie jednej platformy custodial, nie ma fizycznej transakcji on-chain (lub jest to ujęte w wewn. księgach Circle, ewentualnie netting).
 
 Backend oznacza transakcję jako wykonaną i informuje obie strony. Gas Station tu nie występuje, bo nie było on-chain tx od strony użytkownika (ew. Circle może w tle zrobić jedną zbiorczą transakcję po zsumowaniu wielu transferów).
-
 
 Płatność kartą (fiat on-ramp): Fan wybiera opcję płatności kartą:
 
@@ -449,9 +411,6 @@ Backend TipJar otrzymuje webhook o statusie płatności (np. payment.confirmed) 
 
 Ta ścieżka wymaga spełnienia pewnych wymogów regulacyjnych (TipJar pełni tu rolę pośrednika finansowego). Ale dla mikrotransakcji na początek można to uprościć – np. limitować kwoty fiat lub korzystać z licencji partnera.
 
-
-
-
 2. Zarządzanie portfelami i sponsorowanie gazu (Circle Wallets & Gas Station)
 
 Jak wspomniano, przy rejestracji twórcy TipJar backend wywołuje createWallet w Circle. Circle tworzy custodial wallet przypisany platformie (TipJar jest właścicielem technicznym portfela, twórca jest beneficjentem). Dzięki temu TipJar ma możliwość wykonywać operacje w imieniu twórcy poprzez API – np. inicjować wypłaty czy podpisywać transakcje. Portfele są typu SCA (Smart Contract Account) co oznacza, że transakcje z tych portfeli mogą być opłacane przez zewnętrznego sponsora (czyli platformę).
@@ -462,7 +421,6 @@ Gdy TipJar zleca np. wypłatę 50 USDC z portfela twórcy na zewnętrzny adres E
 
 Podobnie, jeśli fan nie ma ETH/MATIC na opłacenie transferu do twórcy, mechanizm Pay User’s Gas in USDC spowoduje, że TipJar może z tego tytułu pobrać równowartość opłaty w USDC (np. 0.02 USDC) z portfela fana zamiast wymagać tokenów gas. W modelu napiwków często platforma może znieść ten koszt (bo jest niewielki) w ramach swoich 1-2% prowizji.
 
-
 Cross-Chain Transfer (CCTP): W przypadku, gdy fan i twórca działają na różnych sieciach (np. fan ma USDC na Ethereum, ale twórca standardowo na Polygon), TipJar może użyć Circle CCTP do przeniesienia USDC między sieciami. CCTP to protokół spalania USDC na jednej sieci i mintowania na drugiej, sterowany przez Circle. W praktyce:
 
 Fan inicjuje napiwek np. 10 USDC, wskazując że płaci ze swojego portfela Ethereum. Twórca preferuje Polygon.
@@ -471,7 +429,6 @@ TipJar przyjmuje płatność fana na Ethereum (on-chain, fan płaci gas), po czy
 
 Całość dzieje się dość płynnie, choć trwa dłużej niż zwykły transfer na jednej sieci (potrzeba finalizacji transakcji spalania). Jednak fan i tak widzi tylko że zapłacił, a twórca po chwili dostaje środki już na preferowanym chainie.
 
-
 Monitoring i obsługa wyjątków: Wszystkie operacje płatności są monitorowane – jeśli jakikolwiek krok się nie powiedzie (np. transakcja on-chain nie doszła, API Circle zwróciło błąd) – system loguje to i podejmuje próby naprawcze:
 
 W razie niepowodzenia on-chain TipJar może np. powiadomić fana: „Transakcja nie została potwierdzona, spróbuj ponownie” (lub jeśli środki wyszły ale nie dotarły – tu rzadkie, raczej finalność jest pewna po potwierdzeniu blocków).
@@ -479,8 +436,6 @@ W razie niepowodzenia on-chain TipJar może np. powiadomić fana: „Transakcja 
 Jeśli API Circle odmówi (np. limit dzienny, albo portfel nie utworzony jeszcze) – system może odłożyć operację do kolejki i spróbować później, informując użytkownika że transakcja jest opóźniona.
 
 Bardzo ważne jest logowanie audytowe – w razie sporu można prześledzić całą ścieżkę: od żądania fana, przez zapisy w DB, po transakcje Circle i blockchain. Dzięki integracji z Circle dysponujemy unikalnymi ID operacji (transferId, paymentId itp.) które są przechowywane w naszej bazie dla późniejszego wglądu.
-
-
 
 3. Wypłata środków przez twórcę
 
@@ -496,11 +451,9 @@ Inicjuje transakcję on-chain z portfela twórcy na wskazany adres. Dzięki Gas 
 
 Zwraca status (początkowo „pending”). Circle może dostarczyć webhook, gdy transakcja ma hash i gdy zostanie potwierdzona.
 
-
 TipJar backend oznacza wypłatę w bazie i może od razu ująć środki (zamrozić je). Po potwierdzeniu finalnym oznacza wypłatę jako zrealizowaną.
 
 Twórca dostaje potwierdzenie e-mail i/lub notyfikację „Wypłacono X USDC na adres ...”.
-
 
 Jeśli to wypłata fiat (na konto bankowe):
 
@@ -512,11 +465,9 @@ Proces ten trwa dłużej (np. 1-2 dni bankowe). TipJar w panelu twórcy pokazuje
 
 Gdy dostanie potwierdzenie (webhook o sukcesie), oznacza wypłatę jako zrealizowaną.
 
-
 Limity i bezpieczeństwo wypłat: Można wprowadzić minimalną kwotę wypłaty (np. 10 USDC) by unikać zbyt drobnych transferów. Także zabezpieczenia: jeśli wykryto podejrzane działania (np. bardzo wiele napiwków z anonimowych źródeł w krótkim czasie), wypłata może wymagać dodatkowej autoryzacji manualnej przez admina.
 
 Opłaty za wypłatę: TipJar może przerzucić koszt wypłaty na twórcę (np. jeśli wypłaca on-chain, to albo zmniejszyć kwotę o opłatę sieci – choć Gas Station to pokrywa, więc raczej nie – albo doliczyć symboliczną prowizję). To kwestia modelu biznesowego – do decyzji.
-
 
 Design System (UI/UX)
 
@@ -529,7 +480,6 @@ Turkus symbolizuje zaufanie, stabilność i nowoczesność (kojarzy się z techn
 Złoto reprezentuje wartość i nagrodę – idealnie pasuje do idei napiwku jako docenienia twórcy. Używane jest na elementach akcji (CTA), ikonach monet, obramowaniach elementów interaktywnych. Działa jako kolor akcentowy przyciągający wzrok do najważniejszych miejsc (np. przycisk „Wesprzyj” jest złoty, co komunikuje „to jest cenne działanie”).
 
 Barwy uzupełniające: biel (#FFFFFF) dla tekstu na ciemnych tłach (wysoki kontrast dla czytelności), odcienie szarości (#E0E0E0) do mniej istotnych elementów/ikon, jasny turkus lub mięta (#00C4FF) jako ewentualny drugi akcent (np. dla linków).
-
 
 Typografia: Użyto nowoczesnych sans-serifów – np. Montserrat lub Inter – które dobrze wyglądają zarówno w nagłówkach, jak i dłuższym tekście. Nagłówki są pogrubione (Montserrat Bold dla przyciągnięcia uwagi). Tekst paragrafów jest prosty, czytelny (Inter Regular). Czcionki są skalowane responsywnie, by na urządzeniach mobilnych pozostały czytelne.
 
@@ -549,7 +499,6 @@ Pojawianie się elementów przy scrollu: sekcje strony głównej (np. „Jak to 
 
 Powiadomienia w panelu: np. gdy nowy napiwek wpłynie w czasie rzeczywistym, może pokazać się wysuwany toast z informacją („+1 USDC od Jan Kowalski!”) – z animacją wjazdu i znikania.
 
-
 Układ i responsywność: Każdy ekran projektowano w myśl mobile-first – na telefonach układy są jednokolumnowe, z dużymi dotykowymi przyciskami. Na desktopie często stosowane są dwie kolumny:
 
 Np. sekcja hero na landing page: po lewej tekst i CTA, po prawej duża grafika 3D.
@@ -559,7 +508,6 @@ Sekcja „Jak to działa”: trzy kolumny z ikonami i opisami kroków (na mobile
 Karty twórców (carousel) widoczne obok siebie na szerokim ekranie, a przewijane pojedynczo na małym.
 
 Panel twórcy: menu boczne (sidebar) na dużym ekranie, a na mobilnym hamburger menu i ukrywana nawigacja.
-
 
 Komponenty UI:
 
@@ -571,7 +519,6 @@ Karty i listy: Np. lista historii napiwków – na desktopie tabela, ale na mobi
 
 Modalne okienka: np. po kliknięciu „Wesprzyj” na widgetcie – pojawia się modal z ciemnym tłem i złotymi obramowaniami. Przy zamknięciu modala jest animacja zanikania.
 
-
 Ikonografia: Oprócz logo USDC (które jest niebieskie – tu można je tonować na turkusowo, aby pasowało), używane są ikony reprezentujące:
 
 Portfel, monetę, strzałki przepływu – np. ikona portfela może mieć złoty kolor, ikona monety turkusowy akcent.
@@ -579,7 +526,6 @@ Portfel, monetę, strzałki przepływu – np. ikona portfela może mieć złoty
 Ikony mediów społecznościowych w stopce – jednolite białe, z efektem hover zmieniającym na turkus.
 
 Własne logo TipJar – powinno być proste i rozpoznawalne: np. stylizowana ikona słoika (jar) ze znakiem $ lub monetą. W wersji kolorystycznej: złota moneta na tle turkusu lub odwrotnie. Logo pojawia się w navbarze oraz na materiałach marketingowych.
-
 
 Dostępność (UX): Zwrócono uwagę na:
 
@@ -590,8 +536,6 @@ Teksty alternatywne dla ikon/grafik – np. jeśli jest animowana moneta, dodaje
 Możliwość obsługi klawiaturą – wszystkie elementy interaktywne (przyciski, linki) są fokusowalne i sterowalne bez myszy.
 
 Tłumaczenia/internacjonalizacja – od początku teksty w aplikacji są trzymane w plikach językowych, co ułatwi wprowadzenie wielu języków (istotne, bo platforma globalna).
-
-
 
 Podsumowując, UI TipJar stara się łączyć klimat krypto (technologia, nowoczesność) z uczuciem nagrody i wartości (złote akcenty), jednocześnie nie odpychając mniej technicznych użytkowników – dlatego interfejs jest przejrzysty, przypomina raczej nowoczesną aplikację finansową/fintech niż stronę dla programistów blockchain.
 
@@ -607,7 +551,6 @@ Flutter – alternatywa zapewniająca świetny wygląd i wydajność, ale wymaga
 
 Native (Swift/Kotlin) – raczej nie, ze względu na szybko zmieniające się wymagania i ograniczone zasoby, cross-platform wydaje się bardziej efektywny.
 
-
 Funkcjonalności aplikacji mobilnej (dla twórcy):
 
 Dashboard mobilny: Podobny zestaw informacji jak w wersji web, ale dostosowany do mniejszego ekranu. Priorytetem jest szybki wgląd: saldo, ostatnie napiwki (np. jako lista kart przewijanych pionowo), przycisk „Udostępnij profil” (by łatwo skopiować link lub pokazać QR komuś bezpośrednio z telefonu).
@@ -620,7 +563,6 @@ Offline mode i synchronizacja: Przy słabszym Internecie (mobilnym) aplikacja po
 
 Tryb twórcy vs. fana: Można przewidzieć, że aplikacja w przyszłości będzie dwufunkcyjna – podczas logowania wybierasz, czy jesteś twórcą czy fanem, i UI się dostosowuje. Fan mógłby przez aplikację śledzić ulubionych twórców i szybko im wysyłać napiwki mobilnie (np. zintegrować Apple Pay / Google Pay do doładowania portfela TipJar i wspierania jednym kliknięciem). Jednak to dalekosiężna opcja.
 
-
 UI/UX mobilny: Będzie spójny z web, ale dostosowany:
 
 Ciemny motyw turkus-złoto również obowiązuje.
@@ -630,7 +572,6 @@ Nawigacja najpewniej dolnym paskiem (tab bar) – np. zakładki: Napiwki (głów
 Ekrany będą scrollowalne bez przeładowań, płynne interakcje dotykowe (React Native zapewnia animacje, można użyć bibliotek typu Reanimated).
 
 Przykładowy scenariusz mobilny: Twórca otrzymuje powiadomienie push, otwiera aplikację – na głównym ekranie widzi wyróżnioną informację o nowym napiwku (np. zielone tło dla nieprzeczytanych). Może kliknąć by zobaczyć szczegóły i ewentualnie odpowiedzieć fanowi (jeśli taka funkcja by istniała – np. wysłać szybką reakcję „Dziękuję!”). Na ekranie profilu może jednym tapnięciem skopiować link do profilu lub wyświetlić QR pełnoekranowo, by ktoś mógł zeskanować. W ustawieniach może włączyć/wyłączyć powiadomienia, ustawić konto bankowe do wypłat itp.
-
 
 Publikacja i dystrybucja: Aplikacja mobilna będzie dostępna w App Store i Google Play. Z tego powodu kwestia zgodności z wytycznymi sklepów (szczególnie Apple) jest ważna – np. Apple ma restrykcje dot. aplikacji finansowych/kryptowalutowych i opłat in-app. Tutaj potencjalnie napiwki mogą być uznane za płatności peer-to-peer i raczej nie podpadają pod model IAP (wewnątrzaplikacyjny zakup Apple), ponieważ środki nie służą do cyfrowej treści w aplikacji, a idą poza nią. Niemniej, należy przygotować się do argumentacji w razie weryfikacji (podkreślić zdecentralizowany charakter transakcji).
 
@@ -652,7 +593,6 @@ Dostępy do API zewnętrznych: Plik konfiguracyjny .env (nie commitowany) przech
 
 Baza danych dev: Postgres lokalnie w Dockrze. Migracje schematu zarządzane przez Prisma (polecenia npx prisma migrate dev itd.). Można generować przykładowe dane (seedy) – np. kilku testowych twórców i fanów.
 
-
 Kontrola wersji i CI/CD
 
 Repozytorium Git: Cały kod utrzymywany jest w systemie kontroli wersji (GitHub lub GitLab). Obowiązują code review dla wszystkich zmian (pull requesty / merge requesty muszą zostać zaakceptowane przed połączeniem do gałęzi głównej).
@@ -667,7 +607,6 @@ Użyto też narzędzi do skanowania zależności (np. Dependabot automatycznie t
 
 W CI można generować również preview deployments – np. dla frontendu generować wersję podglądową (Vercel preview dla każdej gałęzi PR).
 
-
 Ciągłe dostarczanie (CD): Proces wdrażania na środowiska:
 
 Staging: Każda zmiana po zmergowaniu do main automatycznie trafia na środowisko testowe (staging). Tu wykorzystywane są np. AWS Elastic Beanstalk / Docker do wgrania nowej wersji backendu, a frontendu na np. Vercel (dla spójności można też hostować front w S3/CloudFront czy podobnie). Baza danych staging jest odrębna (często kopia produkcyjnej z anonimizowanymi danymi lub zupełnie testowa). Staging jest miejscem do testów manualnych QA oraz dla wybranych beta-testerów.
@@ -675,7 +614,6 @@ Staging: Każda zmiana po zmergowaniu do main automatycznie trafia na środowisk
 Production: Wdrożenie na produkcję jest również zautomatyzowane, ale wymaga zatwierdzenia (manual approval) – np. release manager zatwierdza pipeline, który aktualizuje infrastrukturę produkcyjną. Tutaj kluczowe jest zachowanie migracji DB (CI/CD najpierw wykonuje migracje, potem wprowadza nowe serwisy).
 
 Roll back: Pipeline posiada mechanizmy rollback (np. w AWS utrzymanie poprzedniej wersji kontenerów, by móc szybko przełączyć ruch w razie krytycznego błędu).
-
 
 Containerization i orkiestracja:
 
@@ -687,7 +625,6 @@ Baza danych produkcyjna – np. AWS RDS (PostgreSQL) z repliką read-only i auto
 
 Sekrety w produkcji przechowywane w AWS Secrets Manager lub odpowiedniku (Google Secret Manager, HashiCorp Vault), a do kontenerów trafiają przez zmienne środowiskowe podczas deploymentu.
 
-
 Monitoring i Logging:
 
 Logi aplikacyjne: W kontenerach logi są zbierane przez system (stdout). Skonfigurowano centralizację logów – np. ELK stack (Elasticsearch + Kibana) lub prostsze Papertrail/Datadog logs. Umożliwia to filtrowanie logów po poziomie (info, warn, error) i szybkie debugowanie problemów.
@@ -697,7 +634,6 @@ Monitoring metryk: Zaimplementowano podstawowe metryki w backendzie (np. liczba 
 Alerting: Ustawiono alerty (np. w Grafanie/Prometheus Alertmanager lub Datadog APM) – powiadomienia na Slack/email gdy: CPU serwera > 80%, pamięć > 90%, czas odpowiedzi API > określonego progu (np. 95 percentyl > 1s), liczba błędów 5xx wzrasta powyżej X na minutę, itp.
 
 Sentry (monitoring błędów): Frontend i backend są zintegrowane z Sentry. Każdy nieobsłużony wyjątek w backendzie skutkuje wysłaniem eventu do Sentry z stack trace. Podobnie w frontendzie – błędy runtime (np. nieobsłużone Promise) trafiają do Sentry. To pozwala wychwycić problemy zanim zgłoszą je użytkownicy.
-
 
 Testowanie:
 
@@ -709,7 +645,6 @@ Testy end-to-end: W miarę możliwości, wykorzystać framework Cypress lub Play
 
 Testy wydajnościowe: Przy rosnącej skali, zaplanowane są testy obciążeniowe, np. narzędziem k6 lub Locust – symulacja tysiąca równoczesnych płatności w ciągu minuty, pomiar czy system nadąża i gdzie ewentualnie występują wąskie gardła.
 
-
 Staging vs Production konfiguracja:
 
 Staging używa Circle sandbox (oddzielny API key), testowego środowiska OAuth (np. Google OAuth aplikacja w trybie test), testowych smart kontraktów USDC (np. USDC na Mumbai testnecie lub sandbox provided by Circle).
@@ -720,9 +655,7 @@ Domena: staging może działać na subdomenie typu staging.tipjar.com.
 
 W pipeline CI/CD tworzone są osobne container images tagowane (tipjar-backend:staging vs tipjar-backend:latest).
 
-
 Bezpieczeństwo w CI/CD: Dostępy do środowisk (klucze deploy, hasła DB) są trzymane w secure storage CI. Każdy build i deploy jest audytowalny. Weryfikujemy też dependencies (Snyk) i mamy politykę odnawiania kluczy/API co jakiś czas. Regularnie (co kwartał) planujemy przeprowadzać testy penetracyjne i code review pod kątem bezpieczeństwa (można zlecić zewnętrznemu audytorowi, szczególnie przed launchem).
-
 
 Dzięki takiemu podejściu DevOps, zespół jest w stanie szybko iterować (regularne deploye na staging, częste release na produkcję), utrzymując wysoką jakość i stabilność platformy.
 
@@ -740,18 +673,15 @@ Funkcje dodatkowe za opłatą: Np. twórca może zakupić boost swojej strony w 
 
 Sklep z gadżetami cyfrowymi: to bardziej eksperymentalny pomysł – TipJar mógłby umożliwić twórcom sprzedawanie drobnych cyfrowych przedmiotów za USDC (np. ekskluzywne naklejki, klipy video z podziękowaniem, NFT kolekcjonerskie). Platforma pobierałaby prowizję od tych transakcji lub listing fee.
 
-
 Odsetki od depozytów (yield): Jeśli platforma osiągnie znaczącą sumę przechowywanych środków (USDC na portfelach), może rozważyć generowanie przychodu od odsetek/yield na tych środkach:
 
 USDC sam w sobie nie rodzi odsetek, ale są możliwości np. lokowania części środków w protokołach DeFi (bezpiecznych) lub programie odsetkowym Circle. Ostrożność: to niesie ryzyko i wymaga zgodności regulacyjnej (staje się to wtedy działalność quasi-bankowa). Na start można założyć, że TipJar nie inwestuje środków użytkowników, trzyma je 1:1 (co zwiększa zaufanie).
-
 
 Partnerstwa i white-label: TipJar może oferować white-label swojej technologii dla innych platform:
 
 Np. integracja TipJar jako modułu napiwków w serwisie streamingowym czy na platformie blogowej, za opłatą licencyjną lub podział przychodów.
 
 Partnerstwa z sieciami MCN (Multi-Channel Network) lub agencjami twórców – TipJar ułatwia im monetyzację, a w zamian dzieli się prowizją lub pobiera opłatę za dostęp premium.
-
 
 Koszty operacyjne: Obejmują:
 
@@ -763,7 +693,6 @@ Obsługa płatności kartą – procesor płatności (np. Stripe, Circle) pobier
 
 Wsparcie użytkowników, marketing, rozwój – stałe koszty firmy.
 
-
 Skalowanie przychodów: Zakładając globalny zasięg i atrakcyjność oferty:
 
 Nawet przy mikropłatnościach, duża liczba użytkowników może wygenerować znaczący wolumen. Np. 100 tys. napiwków miesięcznie o średniej wysokości $3 daje $300k przepływu – 1% z tego to $3k dla platformy. Przy milionach użytkowników skala rośnie wykładniczo.
@@ -772,9 +701,7 @@ Dodatkowo, subskrypcje miesięczne (jeśli wdrożone) zapewniają powtarzalny do
 
 Plany premium (jeśli np. 1000 twórców wykupi premium po $10 = $10k mies. przychodu stałego).
 
-
 Konkurencja i przewagi: Istnieją inne systemy napiwków (np. wysyłanie krypto bezpośrednio, klasyczne platformy typu BuyMeACoffee). TipJar konkuruje niższą prowizją i integracją web3. Model biznesowy zakłada, że pewien % użytkowników i tak będzie preferował istniejące platformy, ale dynamiczny rozwój społeczności krypto i stablecoinów stwarza nową niszę. TipJar może także konkurować oferując np. program poleceń (referral) – fan zapraszający twórcę może dostać jednorazową nagrodę, itd. To jest element marketingu raczej niż modelu biznesowego, ale wspiera wzrost przychodu pośrednio.
-
 
 Podsumowując, monetyzacja TipJar opiera się na małej marży od dużego wolumenu transakcji. Jest to model stosunkowo efektywny kosztowo (platforma opiera się na automatycznych mechanizmach, więc po początkowym nakładzie pracy, obsługa pojedynczych transakcji jest tania). Przy zdrowym wzroście użytkowników i utrzymaniu kosztów technologii w ryzach, nawet 1% prowizji może uczynić projekt zyskownym, jednocześnie dając twórcom więcej zarobku niż jakakolwiek alternatywa – co przyciągnie ich i ich fanów do korzystania z TipJar.
 
@@ -794,7 +721,6 @@ Odznaki i osiągnięcia dla fanów: Fani mogą zdobywać odznaki za różne form
 
 Odznaki będą widoczne opcjonalnie przy nazwie fana (jeśli nie jest anonimowy) – np. fan komentujący napiwek może mieć obok pseudonimu małą ikonę trofeum.
 
-
 Rankingi i Top Fans: Na profilach twórców może pojawić się ranking Top 10 fanów (tych, którzy przekazali najwięcej USDC). To może być tygodniowy/miesięczny ranking albo ogólny. Taka tablica motywuje fanów do „rywalizacji” o bycie najhojniejszym. Oczywiście z uwagą, by nie zniechęcić drobnych darczyńców – być może twórca będzie mógł wyłączyć ranking, jeśli nie pasuje to do jego społeczności.
 
 Cele i społeczna zbiórka: Cele finansowe twórcy (np. 1000 USDC na album muzyczny) same w sobie są gamifikacją – pokazują pasek postępu. Fani widząc, że cel jest blisko, mogą się zmobilizować. Dodatkowo planujemy mechanizm „challenge”: twórca może ogłosić, że jeśli cel zostanie osiągnięty przed czasem X, to zrobi coś specjalnego (np. bonusowy stream). To angażuje społeczność we wspólny wysiłek.
@@ -809,20 +735,17 @@ Level 5: zaawansowany (5000+ USDC zebranych).
 
 Te poziomy mogłyby odblokowywać pewne funkcje lub po prostu być elementem prestiżowym (oznaczonym na profilu gwiazdkami czy innym symbolem). Dodatkowo twórcy z wyższymi poziomami mogliby otrzymywać bonusy od TipJar, np. darmowy miesiąc planu premium, wyróżnienie na stronie głównej, itp.
 
-
 Wyzwania i kampanie czasowe: TipJar może organizować globalne eventy:
 
 Np. „Tydzień nowych twórców” – fani wspierający w tym tygodniu debiutujących twórców dostają podwójne punkty do odznak albo twórcy dostają niższą prowizję w tym okresie.
 
 „Challenge: 100k w 30 dni” – globalny licznik wszystkich napiwków, jeśli społeczność osiągnie dany próg, TipJar np. przekazuje część dochodu na cel charytatywny lub rozdaje limitowane odznaki uczestnikom.
 
-
 Personalizacja i zabawa: Twórcy mogą personalizować swoje strony poprzez motywy kolorystyczne, tła – odblokowywane osiągnięciami lub w planie premium. Fani z kolei mogą wybierać wyświetlane avatary w swoich wiadomościach (np. NFT połączone z portfelem, co integruje środowisko krypto collectibles z TipJar – to przyszłościowe myślenie).
 
 System punktów (lojalności): Można wprowadzić wirtualne punkty lub token (niekoniecznie on-chain) za aktywność. Np. za każdy 1 USDC napiwku fan dostaje 100 pkt „karma”. Punkty te mogłyby służyć do rywalizacji rankingowej albo do drobnych nagród – np. TipJar co miesiąc losuje nagrody rzeczowe lub cyfrowe wśród najbardziej aktywnych.
 
 Grywalizacja procesu rejestracji: Nawet onboarding twórcy można potraktować z nutą gry – np. pasek postępu „Uzupełnij 100% profilu, aby zdobyć odznakę Verified i zyskać zaufanie fanów”. Daje to motywację do pełnego skonfigurowania konta.
-
 
 Oczywiście, wprowadzając gamifikację, należy uważać, by nie przytłoczyć użytkowników i by nie stworzyć wrażenia, że „chodzi o wyścig pieniędzy”. Wszystkie mechanizmy muszą być przemyślane pod kątem społeczności – wielu twórców będzie dbać o to, by fani nie czuli się zmuszani do rywalizacji finansowej. Dlatego TipJar planuje dać twórcom kontrolę:
 
@@ -831,7 +754,6 @@ Możliwość wyłączenia lub ukrycia rankingu top fanów.
 Moderacja treści w shout-outach (twórca może usunąć niestosowny komentarz fana).
 
 Opcje prywatności – fan może również zastrzec, by nie brać udziału w rankingach (anonimowość lub incognito).
-
 
 Docelowo jednak elementy grywalizacji powinny urozmaicić doświadczenie. Drobne osiągnięcia i odznaki mogą sprawić frajdę fanom, a twórcom dodatkowo podpowiedzieć, którzy fani są najbardziej zaangażowani. To wszystko buduje bardziej żywą społeczność wokół platformy, wykraczając poza czysty akt przekazania napiwku.
 
@@ -853,7 +775,6 @@ Przekazywanie danych poza UE: Jeśli TipJar będzie mieć użytkowników z UE (c
 
 Dzieci i dane wrażliwe: Platforma nie jest skierowana do dzieci poniżej 16 lat. Weryfikacja wieku odbywa się przez założenie konta w serwisie społecznościowym (np. Google wymaga 16+ w UE). Nie przetwarzamy danych szczególnych kategorii (typu poglądy polityczne, zdrowotne itp.) – a jeśli twórca coś takiego umieści w opisie, to jest to jego decyzja, nie my.
 
-
 Zgodność finansowa i AML/KYC
 
 Brak pełnego KYC na starcie: Ponieważ TipJar obsługuje mikropłatności, początkowo przyjmujemy, że większość transakcji pojedynczo i sumarycznie mieści się poniżej progów wymagających identyfikacji użytkowników (wg dyrektyw AML wiele jurysdykcji ma próg np. €1000 jednorazowo lub w miesiącu, powyżej którego wymagana jest weryfikacja). Twórcy, otrzymując drobne kwoty, nie muszą być od razu weryfikowani dokumentem. Podobnie fani płacąc drobne sumy.
@@ -866,7 +787,6 @@ Współpracując z Circle, musimy spełniać ich compliance – być może dla u
 
 Fani płacący kartą – tutaj KYC zapewnia sam operator karty (bank). TipJar nie musi ich weryfikować, bo dostaje już środki od instytucji finansowej.
 
-
 AML i przeciwdziałanie nadużyciom: System monitoruje nietypowe aktywności:
 
 Np. jeden fan wysyła do wielu twórców po kolei maksymalne kwoty – może to być pranie pieniędzy lub oszustwo kartowe. TipJar może wtedy oznaczyć takie transakcje do kontroli.
@@ -874,7 +794,6 @@ Np. jeden fan wysyła do wielu twórców po kolei maksymalne kwoty – może to 
 W razie zgłoszenia organów ścigania, TipJar (mając minimalne dane, np. adresy portfeli) współpracuje – to w skrajnych przypadkach. Ważne, by w regulaminie zastrzec sobie prawo zamrożenia środków i kont, jeśli istnieje podejrzenie naruszenia prawa.
 
 Sanctions screening: Ponieważ globalnie różnie bywa, TipJar powinien zapewnić, że nie obsługuje podmiotów objętych sankcjami (OFAC). Circle pewnie to robi po swojej stronie (jeśli np. ktoś z kraju z listy próbowałby).
-
 
 Licencje i regulacje lokalne: TipJar operuje w obszarze, który może podpadać pod definicję usługi przekazu pieniężnego lub portfela elektronicznego. W wielu krajach to regulowane działalności (np. w USA Money Service Business wymaga licencji stanowych, w UE – licencja małej instytucji płatniczej powyżej pewnej skali). Strategią TipJar może być:
 
@@ -884,24 +803,19 @@ W miarę wzrostu, skonsultować się z prawnikami co do konieczności uzyskania 
 
 Ustaliliśmy, że twórcy formalnie posiadają portfele custodial kontrolowane przez TipJar – to rodzi obowiązek odpowiedzialnego przechowywania środków. W regulaminie będzie zapis, że środki nie są ubezpieczone jak depozyty bankowe, ale trzymane 1:1 w rezerwie.
 
-
 Podatki i rozliczenia: TipJar musi umożliwić twórcom dostęp do historii transakcji i sum, aby mogli się rozliczyć w swoim kraju (np. jako darowizny czy przychód). Być może w przyszłości TipJar zaoferuje generowanie raportów podatkowych (np. ile twórca zarobił w roku – ułatwienie dla niego).
 
 Sam TipJar jako firma też odprowadza podatki od swoich prowizji, to już kwestia finansowa firmy.
 
-
 Zgodność z ToS platform zewnętrznych: Jeśli twórca integruje TipJar z YouTube/Twitch (np. daje linki, używa powiadomień), trzeba dbać, by nie łamało to ich regulaminów (niektóre platformy mają własne systemy napiwków i nie lubią konkurencji, ale dopóki TipJar jest zewnętrznym linkiem, zwykle jest ok).
 
 W przypadku Twitcha np. używanie zewnętrznych donosów jest powszechne (Streamlabs), więc tu nie będzie problemu. Dla YouTube – mają SuperChat, ale linki do zewnętrznych darowizn też ludzie dają, to raczej dozwolone.
-
-
 
 Zgodność z przepisami dotyczącymi kryptowalut
 
 Stablecoin USDC zgodny regulacyjnie: USDC jest wydawany przez regulowaną instytucję (Circle, pod nadzorem FinCEN w USA). Korzystanie z USDC daje pewność co do jego rezerwy i stabilności (mniejsze ryzyko niż np. nieaudytowane stablecoiny). TipJar nie emituje własnego tokena, tylko używa istniejącego – to upraszcza sprawy prawne (nie jest emitentem).
 
 Smart kontrakty (jeśli wprowadzone): Na razie TipJar nie planuje własnych smart kontraktów (oprócz ewentualnego użycia gotowego Paymastera lub implementacji subskrypcji). Gdyby jednak coś takiego było potrzebne, ich kod podlega audytowi bezpieczeństwa, a także powinien być licencjonowany i zgodny z prawnymi aspektami (np. jak kontrakty zbierają środki – by nie zostały uznane za nielegalną działalność inwestycyjną, trzeba jasno określić cel).
-
 
 Polityka treści i prawa autorskie
 
@@ -912,7 +826,6 @@ Prawa autorskie: Jeśli twórca użyje np. cudzego loga czy zastrzeżonej grafik
 Prywatność użytkowników: Oprócz danych osobowych, TipJar chroni też prywatność transakcji – tzn. domyślnie, jeśli fan chce zostać anonimowy, to jego tożsamość nie jest ujawniana twórcy ani innym. Nawet jak fan się zaloguje, może wybrać anonimowość per transakcja. TipJar oczywiście widzi powiązanie (bo w bazie ma userId fana), ale nie udostępnia go dalej.
 
 Profilowanie i reklamy: TipJar nie planuje sprzedawać danych użytkowników czy wyświetlać reklam targetowanych. Model biznesowy opiera się na prowizjach, więc nie ma potrzeby naruszać prywatności dla reklam. To warto podkreślać jako zaletę (w odróżnieniu od np. platform społecznościowych).
-
 
 Podsumowując, compliance dla TipJar to ciągły proces: od startu na uproszczonych zasadach (dzięki low-risk na mikropłatnościach) po ewentualne dostosowywanie się do wymogów w miarę rozwoju. Już na etapie projektowania jednak uwzględniamy te aspekty, by uniknąć kosztownych zmian w przyszłości (lepiej mieć moduł KYC gotowy, nawet jeśli wyłączony). Współpraca z doświadczonym doradcą prawnym od fintech/krypto jest przewidziana przed wejściem na rynek, aby upewnić się, że platforma spełnia wymogi w jurysdykcjach, w których będzie działać.
 
@@ -928,25 +841,24 @@ GoogleStrategy – klasa PassportStrategy definiująca, jak pobrać dane profilu
 
 AuthController – endpointy GET /auth/google (inicjujące przekierowanie) i /auth/google/callback (odbierające powrót z tokenem od Google).
 
-
 // google.strategy.ts (NestJS)
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor(private authService: AuthService) {
-    super({
-      clientID: process.env.GOOGLE_CLIENT_ID,        // zdefiniowane w .env
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL,  // np. "https://api.tipjar.com/auth/google/callback"
-      scope: ['email', 'profile'],
-    });
-  }
+constructor(private authService: AuthService) {
+super({
+clientID: process.env.GOOGLE_CLIENT_ID, // zdefiniowane w .env
+clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+callbackURL: process.env.GOOGLE_CALLBACK_URL, // np. "https://api.tipjar.com/auth/google/callback"
+scope: ['email', 'profile'],
+});
+}
 
-  async validate(accessToken: string, refreshToken: string, profile: Profile, done: VerifyCallback): Promise<any> {
-    // Pobieramy najważniejsze dane z profilu Google
-    const { id: googleId, name, emails, photos } = profile;
-    const email = emails?.[0]?.value;
-    const displayName = name?.givenName ? `${name.givenName} ${name.familyName || ''}`.trim() : profile.displayName;
-    const avatarUrl = photos?.[0]?.value;
+async validate(accessToken: string, refreshToken: string, profile: Profile, done: VerifyCallback): Promise<any> {
+// Pobieramy najważniejsze dane z profilu Google
+const { id: googleId, name, emails, photos } = profile;
+const email = emails?.[0]?.value;
+const displayName = name?.givenName ? `${name.givenName} ${name.familyName || ''}`.trim() : profile.displayName;
+const avatarUrl = photos?.[0]?.value;
 
     if (!googleId || !email) {
       // Brak kluczowych danych – przerywamy z błędem
@@ -960,40 +872,41 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     } catch (err) {
       done(err, false);
     }
-  }
+
+}
 }
 
 // auth.controller.ts (NestJS)
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+constructor(private authService: AuthService) {}
 
-  @Get('google')
-  @UseGuards(AuthGuard('google'))
-  googleAuth(@Req() req: Request) {
-    // Ten endpoint służy tylko do przekierowania przez Guard -> PassportStrategy zajmie się przekierowaniem.
-  }
+@Get('google')
+@UseGuards(AuthGuard('google'))
+googleAuth(@Req() req: Request) {
+// Ten endpoint służy tylko do przekierowania przez Guard -> PassportStrategy zajmie się przekierowaniem.
+}
 
-  @Get('google/callback')
-  @UseGuards(AuthGuard('google'))
-  async googleCallback(@Req() req: Request, @Res() res: Response) {
-    // To miejsce trafia użytkownik po pomyślnym zalogowaniu przez Google (Validate zwrócił obiekt user)
-    const user = req.user as TipJarUser;  // zakładamy, że AuthService zwraca obiekt typu TipJarUser
-    if (!user) {
-      throw new HttpException('Uwierzytelnianie Google nie powiodło się', HttpStatus.UNAUTHORIZED);
-    }
-    // Generujemy JWT dla zalogowanego użytkownika
-    const jwtToken = await this.authService.login(user);
-    // Ustawiamy JWT w ciasteczku (HttpOnly) lub zwracamy w body – tutaj przykład cookie:
-    res.cookie('jwt', jwtToken.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 3600 * 1000  // 1h ważności
-    });
-    // Przekierowujemy użytkownika na frontend (np. pulpit twórcy)
-    return res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
-  }
+@Get('google/callback')
+@UseGuards(AuthGuard('google'))
+async googleCallback(@Req() req: Request, @Res() res: Response) {
+// To miejsce trafia użytkownik po pomyślnym zalogowaniu przez Google (Validate zwrócił obiekt user)
+const user = req.user as TipJarUser; // zakładamy, że AuthService zwraca obiekt typu TipJarUser
+if (!user) {
+throw new HttpException('Uwierzytelnianie Google nie powiodło się', HttpStatus.UNAUTHORIZED);
+}
+// Generujemy JWT dla zalogowanego użytkownika
+const jwtToken = await this.authService.login(user);
+// Ustawiamy JWT w ciasteczku (HttpOnly) lub zwracamy w body – tutaj przykład cookie:
+res.cookie('jwt', jwtToken.accessToken, {
+httpOnly: true,
+secure: process.env.NODE_ENV === 'production',
+sameSite: 'lax',
+maxAge: 3600 \* 1000 // 1h ważności
+});
+// Przekierowujemy użytkownika na frontend (np. pulpit twórcy)
+return res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
+}
 }
 
 W powyższym kodzie warto zauważyć:
@@ -1010,11 +923,9 @@ Jeżeli nowo utworzony, inicjuje stworzenie portfela Circle dla tego użytkownik
 
 Zwraca obiekt użytkownika (bezpieczny, np. bez haseł bo tu nie ma haseł).
 
-
 Po udanej autoryzacji generujemy JWT (authService.login(user) może korzystać z biblioteki @nestjs/jwt do wystawienia tokenu podpisanego naszym sekretem, zawierającego np. sub: userId, role itp.). Ten token jest przekazywany frontendowi – w przykładzie poprzez cookie, co jest wygodne bo wtedy kolejne zapytania mogą go wysyłać automatycznie (cookie HttpOnly).
 
 Ostatecznie następuje przekierowanie użytkownika na aplikację frontendową. Frontend po otrzymaniu tego żądania, odczyta cookie JWT i uzna użytkownika za zalogowanego.
-
 
 Przykład (Backend NestJS): Tworzenie portfela Circle dla nowego użytkownika
 
@@ -1023,47 +934,47 @@ Gdy twórca rejestruje się (np. przez Google jak wyżej), TipJar tworzy dla nie
 // circle.service.ts (NestJS) – fragment ilustrujący tworzenie portfela Circle
 @Injectable()
 export class CircleService implements OnModuleInit {
-  private circleClient: CircleSDK;  // zakładamy istnienie klasy SDK od Circle
+private circleClient: CircleSDK; // zakładamy istnienie klasy SDK od Circle
 
-  onModuleInit() {
-    this.circleClient = new CircleSDK({
-      apiKey: process.env.CIRCLE_API_KEY,
-      entityId: process.env.CIRCLE_ENTITY_ID,    // identyfikator podmiotu (TipJar)
-      // ... inne opcje, np. url sandbox/production
-    });
-  }
+onModuleInit() {
+this.circleClient = new CircleSDK({
+apiKey: process.env.CIRCLE_API_KEY,
+entityId: process.env.CIRCLE_ENTITY_ID, // identyfikator podmiotu (TipJar)
+// ... inne opcje, np. url sandbox/production
+});
+}
 
-  async provisionUserWallet(userId: string, email: string): Promise<void> {
-    const idempotencyKey = uuidv4();
-    try {
-      const response = await this.circleClient.wallets.createWallet({
-        idempotencyKey,
-        walletSetId: process.env.CIRCLE_WALLET_SET_ID,       // zdefiniowany zestaw portfeli
-        description: `TipJar Wallet for user ${userId}`,
-        // Tworzymy jeden portfel na sieci (np. Polygon) typu SCA:
-        wallets: [{
-          blockchain: process.env.DEFAULT_BLOCKCHAIN || 'POLYGON',
-          chain: process.env.DEFAULT_BLOCKCHAIN_CHAIN || 'MATIC_MAINNET', 
-          // ^ przykładowe parametry zależne od SDK Circle
-          accountType: 'SCA',
-          metadata: { userId, email }
-        }]
-      });
-      const circleWallet = response.data.wallets[0];
-      // Zakładamy, że otrzymujemy obiekt portfela z polami walletId i addresses:
-      const circleWalletId = circleWallet.walletId;
-      const blockchainAddress = circleWallet.addresses?.[0]?.address;
-      // Zapisujemy te dane w naszej bazie (user.circleWalletId, user.mainWalletAddress)
-      await this.userService.update(userId, {
-        circleWalletId,
-        mainWalletAddress: blockchainAddress
-      });
-      this.logger.log(`Utworzono portfel Circle dla user ${userId}: ${circleWalletId}`);
-    } catch (error) {
-      this.logger.error(`Błąd tworzenia portfela Circle dla ${userId}: ${error.message}`);
-      throw new InternalServerErrorException('Nie udało się utworzyć portfela');
-    }
-  }
+async provisionUserWallet(userId: string, email: string): Promise<void> {
+const idempotencyKey = uuidv4();
+try {
+const response = await this.circleClient.wallets.createWallet({
+idempotencyKey,
+walletSetId: process.env.CIRCLE_WALLET_SET_ID, // zdefiniowany zestaw portfeli
+description: `TipJar Wallet for user ${userId}`,
+// Tworzymy jeden portfel na sieci (np. Polygon) typu SCA:
+wallets: [{
+blockchain: process.env.DEFAULT_BLOCKCHAIN || 'POLYGON',
+chain: process.env.DEFAULT_BLOCKCHAIN_CHAIN || 'MATIC_MAINNET',
+// ^ przykładowe parametry zależne od SDK Circle
+accountType: 'SCA',
+metadata: { userId, email }
+}]
+});
+const circleWallet = response.data.wallets[0];
+// Zakładamy, że otrzymujemy obiekt portfela z polami walletId i addresses:
+const circleWalletId = circleWallet.walletId;
+const blockchainAddress = circleWallet.addresses?.[0]?.address;
+// Zapisujemy te dane w naszej bazie (user.circleWalletId, user.mainWalletAddress)
+await this.userService.update(userId, {
+circleWalletId,
+mainWalletAddress: blockchainAddress
+});
+this.logger.log(`Utworzono portfel Circle dla user ${userId}: ${circleWalletId}`);
+} catch (error) {
+this.logger.error(`Błąd tworzenia portfela Circle dla ${userId}: ${error.message}`);
+throw new InternalServerErrorException('Nie udało się utworzyć portfela');
+}
+}
 }
 
 Kilka wyjaśnień:
@@ -1076,37 +987,36 @@ Te informacje zapisujemy w bazie, by później móc np. wyświetlić adres portf
 
 Obsługa błędów: W przypadku wyjątku rzucamy błąd 500 – choć ta metoda i tak jest wywoływana w tle, więc ewentualnie logujemy i możemy spróbować ponowić (np. mechanizm kolejki z automatycznym retry).
 
-
 Wołamy provisionUserWallet asynchronicznie, np. w AuthService:
 
 // auth.service.ts (fragment)
 async validateOAuthUser(provider: string, providerId: string, email: string, name: string, avatar: string) {
-  let user = await this.userRepository.findOne({ where: { [`${provider}Id`]: providerId } });
-  if (!user) {
-    // Jeśli nie znajdziemy po googleId/twitchId, sprawdzamy e-mail (możliwe, że istnieje konto utworzone inną metodą z tym samym mailem)
-    user = await this.userRepository.findOne({ where: { email } });
-  }
-  if (user) {
-    // Jeśli jest, a nie miał przypisanego tego providerId, to przypisz (łączenie kont)
-    if (!user[`${provider}Id`]) {
-      user[`${provider}Id`] = providerId;
-      await this.userRepository.save(user);
-    }
-  } else {
-    // Tworzymy nowego użytkownika
-    user = this.userRepository.create({
-      email,
-      displayName: name,
-      avatarUrl: avatar,
-      [`${provider}Id`]: providerId,
-      username: this.generateUsernameFromEmail(email),  // prosty alias
-    });
-    await this.userRepository.save(user);
-    // >>> Uruchamiamy asynchronicznie tworzenie portfela (np. dodając do kolejki)
-    this.eventEmitter.emit('user.created', { userId: user.id, email: user.email });
-    // alternatywnie: await this.circleService.provisionUserWallet(user.id, user.email);
-  }
-  return user;
+let user = await this.userRepository.findOne({ where: { [`${provider}Id`]: providerId } });
+if (!user) {
+// Jeśli nie znajdziemy po googleId/twitchId, sprawdzamy e-mail (możliwe, że istnieje konto utworzone inną metodą z tym samym mailem)
+user = await this.userRepository.findOne({ where: { email } });
+}
+if (user) {
+// Jeśli jest, a nie miał przypisanego tego providerId, to przypisz (łączenie kont)
+if (!user[`${provider}Id`]) {
+user[`${provider}Id`] = providerId;
+await this.userRepository.save(user);
+}
+} else {
+// Tworzymy nowego użytkownika
+user = this.userRepository.create({
+email,
+displayName: name,
+avatarUrl: avatar,
+[`${provider}Id`]: providerId,
+username: this.generateUsernameFromEmail(email), // prosty alias
+});
+await this.userRepository.save(user);
+// >>> Uruchamiamy asynchronicznie tworzenie portfela (np. dodając do kolejki)
+this.eventEmitter.emit('user.created', { userId: user.id, email: user.email });
+// alternatywnie: await this.circleService.provisionUserWallet(user.id, user.email);
+}
+return user;
 }
 
 Tutaj po utworzeniu usera wywołujemy asynchronicznie circleService.provisionUserWallet. Można to zrobić eventem (jak wyżej), albo wrzucić zadanie do kolejki BullMQ, jeśli wolimy kolejki.
@@ -1117,41 +1027,35 @@ Ten fragment kodu React (TypeScript, np. używając ethers.js) pokazuje uproszcz
 
 1. Łączy się z MetaMaskem i uzyskuje adres użytkownika.
 
-
 2. Pobiera nonce z backendu (zapobiega replay attacks).
-
 
 3. Tworzy wiadomość wg standardu EIP-4361 i prosi użytkownika o podpis.
 
-
 4. Wysyła podpisaną wiadomość do backendu do weryfikacji i uzyskania JWT.
-
-
 
 // LoginWithEthereum.tsx (React komponent)
 import { providers } from 'ethers';
 
 async function signInWithEthereum() {
-  if (!window.ethereum) {
-    alert('Zainstaluj MetaMask, aby kontynuować');
-    return;
-  }
-  const provider = new providers.Web3Provider(window.ethereum);
-  await provider.send('eth_requestAccounts', []);  // popros o dostep do kont
-  const signer = provider.getSigner();
-  const address = await signer.getAddress();
-  // 1. Pobierz nonce od backendu
-  const nonceResponse = await fetch('/api/auth/siwe/nonce');
-  const nonce = await nonceResponse.text();
+if (!window.ethereum) {
+alert('Zainstaluj MetaMask, aby kontynuować');
+return;
+}
+const provider = new providers.Web3Provider(window.ethereum);
+await provider.send('eth_requestAccounts', []); // popros o dostep do kont
+const signer = provider.getSigner();
+const address = await signer.getAddress();
+// 1. Pobierz nonce od backendu
+const nonceResponse = await fetch('/api/auth/siwe/nonce');
+const nonce = await nonceResponse.text();
 
-  // 2. Zbuduj wiadomość SIWE
-  const domain = window.location.host;
-  const statement = 'Logowanie do TipJar';  // tekst wyświetlany w portfelu
-  const uri = window.location.origin;
-  const version = '1';
-  const chainId = (await provider.getNetwork()).chainId;
-  const message = `
-service: ${domain}
+// 2. Zbuduj wiadomość SIWE
+const domain = window.location.host;
+const statement = 'Logowanie do TipJar'; // tekst wyświetlany w portfelu
+const uri = window.location.origin;
+const version = '1';
+const chainId = (await provider.getNetwork()).chainId;
+const message = `service: ${domain}
 domain: ${domain}
 address: ${address}
 statement: ${statement}
@@ -1159,25 +1063,24 @@ uri: ${uri}
 version: ${version}
 nonce: ${nonce}
 issuedAt: ${new Date().toISOString()}
-chainId: ${chainId}
-`; 
-  // Uwaga: Powyższy format to uproszczenie; zgodnie z EIP-4361 powinna to być sformatowana treść.
+chainId: ${chainId}`;
+// Uwaga: Powyższy format to uproszczenie; zgodnie z EIP-4361 powinna to być sformatowana treść.
 
-  // 3. Poproś użytkownika o podpisanie wiadomości
-  const signature = await signer.signMessage(message);
+// 3. Poproś użytkownika o podpisanie wiadomości
+const signature = await signer.signMessage(message);
 
-  // 4. Wyślij do backendu celem weryfikacji
-  const verifyResponse = await fetch('/api/auth/siwe/verify', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message, signature })
-  });
-  if (verifyResponse.ok) {
-    // Logowanie udane – backend ustawił cookie JWT lub zwrócił token
-    window.location.reload(); // odśwież, by wczytać dane zalogowanego użytkownika
-  } else {
-    alert('Logowanie portfelem nie powiodło się');
-  }
+// 4. Wyślij do backendu celem weryfikacji
+const verifyResponse = await fetch('/api/auth/siwe/verify', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ message, signature })
+});
+if (verifyResponse.ok) {
+// Logowanie udane – backend ustawił cookie JWT lub zwrócił token
+window.location.reload(); // odśwież, by wczytać dane zalogowanego użytkownika
+} else {
+alert('Logowanie portfelem nie powiodło się');
+}
 }
 
 Wyjaśnienia do powyższego:
@@ -1206,9 +1109,7 @@ Jeśli wszystko OK, to albo znajdzie użytkownika z tym adresem, albo go utworzy
 
 Wygeneruje JWT dla tego użytkownika i zwróci sukces (tu zakładamy, że stawia HttpOnly cookie).
 
-
 Po stronie frontendu, jeśli verifyResponse.ok (HTTP 200), to znaczy że zalogowano. Możemy np. przeładować stronę, aby UI zaktualizował się na zalogowany stan. Można też od razu wywołać jakiś kontekst uwierzytelnienia.
-
 
 Przykład (Backend NestJS): Wywołanie transferu USDC poprzez Circle API
 
@@ -1216,55 +1117,55 @@ Załóżmy scenariusz, że fan posiada portfel w TipJar (Circle) z pewnym saldem
 
 // payments.service.ts (NestJS) – fragment obsługi transferu USDC w ramach Circle
 async tipViaInternalTransfer(fanId: string, creatorId: string, amount: number) {
-  // Pobierz dane portfeli z bazy
-  const fan = await this.userRepository.findOne(fanId);
-  const creator = await this.userRepository.findOne(creatorId);
-  if (!fan || !creator) throw new NotFoundException('User not found');
-  if (!fan.circleWalletId || !creator.circleWalletId) {
-    throw new BadRequestException('One of users does not have a Circle wallet');
-  }
-  // Sprawdź saldo fana (np. przechowywane lub poprzez API Circle - tutaj zakładamy, że w bazie lub cache mamy aktualne saldo)
-  if (fan.balance < amount) {
-    throw new BadRequestException('Insufficient balance');
-  }
-  // Przygotuj dane do transferu
-  const idemKey = uuidv4();
-  try {
-    const transferRes = await this.circleService.transferUSDC(fan.circleWalletId, creator.circleWalletId, amount, idemKey);
-    // Załóżmy, że transferUSDC zwraca jakiś obiekt z danymi transferu
-    this.logger.log(`Transfer initiated: ${fan.id} -> ${creator.id}, amount: ${amount} USDC`);
-    // Zapisz w bazie nowy Tip
-    await this.tipRepository.save({
-      fromUserId: fan.id,
-      toUserId: creator.id,
-      amount,
-      status: 'CONFIRMED',  // transfer wewn. zakładamy natychmiastowy
-      method: 'USDC_INTERNAL',
-      timestamp: new Date()
-    });
-    // Zaktualizuj salda lokalnie
-    fan.balance -= amount;
-    creator.balance += amount;
-    await this.userRepository.save([fan, creator]);
-    return transferRes;
-  } catch (error) {
-    this.logger.error(`USDC internal transfer failed: ${error.response?.data || error.message}`);
-    throw new HttpException('Transfer nieudany', HttpStatus.BAD_GATEWAY);
-  }
+// Pobierz dane portfeli z bazy
+const fan = await this.userRepository.findOne(fanId);
+const creator = await this.userRepository.findOne(creatorId);
+if (!fan || !creator) throw new NotFoundException('User not found');
+if (!fan.circleWalletId || !creator.circleWalletId) {
+throw new BadRequestException('One of users does not have a Circle wallet');
+}
+// Sprawdź saldo fana (np. przechowywane lub poprzez API Circle - tutaj zakładamy, że w bazie lub cache mamy aktualne saldo)
+if (fan.balance < amount) {
+throw new BadRequestException('Insufficient balance');
+}
+// Przygotuj dane do transferu
+const idemKey = uuidv4();
+try {
+const transferRes = await this.circleService.transferUSDC(fan.circleWalletId, creator.circleWalletId, amount, idemKey);
+// Załóżmy, że transferUSDC zwraca jakiś obiekt z danymi transferu
+this.logger.log(`Transfer initiated: ${fan.id} -> ${creator.id}, amount: ${amount} USDC`);
+// Zapisz w bazie nowy Tip
+await this.tipRepository.save({
+fromUserId: fan.id,
+toUserId: creator.id,
+amount,
+status: 'CONFIRMED', // transfer wewn. zakładamy natychmiastowy
+method: 'USDC_INTERNAL',
+timestamp: new Date()
+});
+// Zaktualizuj salda lokalnie
+fan.balance -= amount;
+creator.balance += amount;
+await this.userRepository.save([fan, creator]);
+return transferRes;
+} catch (error) {
+this.logger.error(`USDC internal transfer failed: ${error.response?.data || error.message}`);
+throw new HttpException('Transfer nieudany', HttpStatus.BAD_GATEWAY);
+}
 }
 
 I odpowiednia metoda w CircleService:
 
 // circle.service.ts
 async transferUSDC(fromWalletId: string, toWalletId: string, amount: number, idempotencyKey: string) {
-  // Kwota w minimalnych jednostkach? Circle może wymagać np. najpierw stringa lub struktury { amount: '10.00', currency: 'USD' }
-  const transferBody = {
-    idempotencyKey,
-    source: { type: 'wallet', id: fromWalletId },
-    destination: { type: 'wallet', id: toWalletId },
-    amount: { amount: amount.toFixed(2), currency: 'USD' }  // USDC ma 2 miejsca po przecinku jak USD
-  };
-  return await this.circleClient.transfers.createTransfer(transferBody);
+// Kwota w minimalnych jednostkach? Circle może wymagać np. najpierw stringa lub struktury { amount: '10.00', currency: 'USD' }
+const transferBody = {
+idempotencyKey,
+source: { type: 'wallet', id: fromWalletId },
+destination: { type: 'wallet', id: toWalletId },
+amount: { amount: amount.toFixed(2), currency: 'USD' } // USDC ma 2 miejsca po przecinku jak USD
+};
+return await this.circleClient.transfers.createTransfer(transferBody);
 }
 
 Ten kod obrazuje:
@@ -1281,8 +1182,6 @@ W error.response?.data może być informacja od API Circle (np. „insufficient 
 
 Zwracamy błąd 502 (Bad Gateway) lub inny, by frontend wiedział, że coś poszło nie tak z zewnętrznym serwisem.
 
-
-
 Przykład (Frontend React): Formularz wysłania napiwku z użyciem API backendu
 
 Na koniec pokazujemy prosty fragment interfejsu React odpowiedzialnego za wysłanie napiwku poprzez TipJar (np. fan zalogowany, korzysta z salda TipJar – scenariusz wewnętrznego transferu):
@@ -1291,46 +1190,47 @@ Na koniec pokazujemy prosty fragment interfejsu React odpowiedzialnego za wysła
 import { useState } from 'react';
 
 function TipForm({ creatorId }) {
-  const [amount, setAmount] = useState(5);
-  const [message, setMessage] = useState('');
-  const [status, setStatus] = useState(null);
+const [amount, setAmount] = useState(5);
+const [message, setMessage] = useState('');
+const [status, setStatus] = useState(null);
 
-  const submitTip = async (e) => {
-    e.preventDefault();
-    setStatus('pending');
-    try {
-      const res = await fetch('/api/tips', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ creatorId, amount, message })
-      });
-      if (!res.ok) throw new Error('Server error');
-      setStatus('success');
-    } catch (err) {
-      console.error('Tip failed:', err);
-      setStatus('error');
-    }
-  };
+const submitTip = async (e) => {
+e.preventDefault();
+setStatus('pending');
+try {
+const res = await fetch('/api/tips', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ creatorId, amount, message })
+});
+if (!res.ok) throw new Error('Server error');
+setStatus('success');
+} catch (err) {
+console.error('Tip failed:', err);
+setStatus('error');
+}
+};
 
-  if (status === 'success') {
-    return <div className="tip-success">Dziękujemy za napiwek!</div>;
-  }
+if (status === 'success') {
+return <div className="tip-success">Dziękujemy za napiwek!</div>;
+}
 
-  return (
-    <form onSubmit={submitTip}>
-      <label>
-        Kwota (USDC):
-        <input type="number" min="1" max="1000" value={amount} onChange={e => setAmount(+e.target.value)} />
-      </label>
-      <label>
-        Wiadomość (opcjonalnie):
-        <input type="text" maxLength="100" value={message} onChange={e => setMessage(e.target.value)} />
-      </label>
-      <button type="submit">Wesprzyj twórcę</button>
-      {status === 'pending' && <div className="loading">Przetwarzanie...</div>}
-      {status === 'error' && <div className="error">Nie udało się wysłać wsparcia. Spróbuj ponownie.</div>}
-    </form>
-  );
+return (
+
+<form onSubmit={submitTip}>
+<label>
+Kwota (USDC):
+<input type="number" min="1" max="1000" value={amount} onChange={e => setAmount(+e.target.value)} />
+</label>
+<label>
+Wiadomość (opcjonalnie):
+<input type="text" maxLength="100" value={message} onChange={e => setMessage(e.target.value)} />
+</label>
+<button type="submit">Wesprzyj twórcę</button>
+{status === 'pending' && <div className="loading">Przetwarzanie...</div>}
+{status === 'error' && <div className="error">Nie udało się wysłać wsparcia. Spróbuj ponownie.</div>}
+</form>
+);
 }
 
 Co tu się dzieje:
@@ -1343,16 +1243,13 @@ Po submit, wykonujemy fetch('/api/tips', { method: 'POST', body: {...} }).
 
 Zakładamy, że użytkownik (fan) jest zalogowany, więc przeglądarka wyśle JWT w cookie albo my dołączymy nagłówek Authorization – to jest szczegół autoryzacji. Jeśli fan jest gościem, to ten endpoint mógłby wymagać np. podania też danych płatności – w tym scenariuszu uproszczonym skupiamy się na zalogowanym fanie.
 
-
 Backend endpoint /api/tips zidentyfikuje użytkownika z JWT, wyciągnie creatorId z body i kwotę. Dalej wywoła paymentsService.tipViaInternalTransfer(fanId, creatorId, amount) jak pokazano wcześniej.
 
 W UI pokazujemy stan oczekiwania („Przetwarzanie…”) i sukces lub błąd odpowiednio po zakończeniu fetch.
 
 W realnej aplikacji moglibyśmy w przypadku sukcesu np. wyczyścić formularz i zaktualizować listę ostatnich napiwków od razu (optimistic update) albo przekierować gdzieś.
 
-
 Ten fragment nie dotyczy bezpośrednio blockchain czy Circle, ale pokazuje prostotę użycia API przez frontend. Dla fanów niezaznajomionych z krypto, ważne jest, że interfejs jest zwykły – wpisują kwotę, klikają, dostają potwierdzenie – a cała złożoność (transakcje USDC, sponsorowanie gazu) dzieje się „pod maską” w warstwie backend.
-
 
 ---
 
@@ -1370,7 +1267,6 @@ Interakcji frontendu z portfelami Web3 (podpisywanie wiadomości, wysyłanie tra
 
 Ogólnej komunikacji frontend-backend (fetch API).
 
-
 Kod w docelowej bazie będzie oczywiście bardziej rozbudowany (obsługa więcej przypadków brzegowych, walidacje inputów, etc.), ale wyżej przedstawione fragmenty stanowią podstawę, na której budowana jest cała logika TipJar.
 
 Podsumowanie
@@ -1384,5 +1280,3 @@ Z punktu widzenia technologii, zespół deweloperski ma przed sobą wyzwanie int
 Kolejnymi krokami zespołu będzie realizacja MVP zgodnie z wytycznymi tu zawartymi, etapowe testy i wdrożenie – najpierw w środowisku testowym, następnie publicznie. Równolegle należy dopracować kwestie prawne i regulacyjne, by zapewnić pełną zgodność działania platformy.
 
 TipJar jest przedsięwzięciem łączącym innowację technologiczną z realną potrzebą rynkową, i przy odpowiedniej realizacji może z powodzeniem zająć niszę na rynku monetyzacji treści, przynosząc korzyści zarówno twórcom, jak i ich społecznościom fanów. Zespół deweloperski, uzbrojony w niniejszą dokumentację, ma klarowną mapę drogową, by doprowadzić projekt od fazy koncepcji do w pełni funkcjonalnego produktu. Powodzenia w implementacji!
-
-

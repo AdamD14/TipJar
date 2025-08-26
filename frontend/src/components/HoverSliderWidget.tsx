@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 interface HoverSliderWidgetProps {
   handle: string;
   avatar?: string;
 }
 
-export default function HoverSliderWidget({ handle, avatar = '/assets/ja1.jpg' }: HoverSliderWidgetProps) {
+export default function HoverSliderWidget({
+  handle,
+  avatar = "/assets/ja1.jpg",
+}: HoverSliderWidgetProps) {
   const [showSlider, setShowSlider] = useState(false);
   const [amount, setAmount] = useState(5);
   const [open, setOpen] = useState(false);
@@ -22,7 +25,11 @@ export default function HoverSliderWidget({ handle, avatar = '/assets/ja1.jpg' }
   };
 
   return (
-    <div className="relative inline-block" onMouseEnter={() => toggleSlider(true)} onMouseLeave={() => toggleSlider(false)}>
+    <div
+      className="relative inline-block"
+      onMouseEnter={() => toggleSlider(true)}
+      onMouseLeave={() => toggleSlider(false)}
+    >
       <button
         onClick={() => setOpen(true)}
         className="bg-[#006D6D] text-white w-12 h-12 rounded-full flex items-center justify-center shadow-md"
@@ -49,7 +56,10 @@ export default function HoverSliderWidget({ handle, avatar = '/assets/ja1.jpg' }
             <span className="font-semibold">@{handle}</span>
           </div>
           <p className="mb-3">Tip {amount} USDC</p>
-          <button onClick={closeModal} className="bg-[#FFD700] text-black px-3 py-1 rounded w-full">
+          <button
+            onClick={closeModal}
+            className="bg-[#FFD700] text-black px-3 py-1 rounded w-full"
+          >
             Tip Now
           </button>
         </div>

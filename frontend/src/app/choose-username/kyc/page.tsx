@@ -17,7 +17,7 @@ const KycPromptPage = () => {
       router.replace("/explore");
     }
   }, [user, role, router]);
-  
+
   // <<< POPRAWKA: Dodajemy stan ładowania
   // Wyświetl spinner, dopóki dane użytkownika nie zostaną w pełni załadowane
   if (!user) {

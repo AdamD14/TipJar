@@ -15,7 +15,10 @@ interface NavbarProps {
   onClickItem?: () => void;
 }
 
-export default function Navbar({ variant = "desktop", onClickItem }: NavbarProps) {
+export default function Navbar({
+  variant = "desktop",
+  onClickItem,
+}: NavbarProps) {
   if (variant === "desktop") {
     return (
       <ul className="hidden xl:flex gap-5 text-opacity-70 text-[14px] lowercase text-text-secondary">

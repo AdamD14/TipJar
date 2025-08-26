@@ -8,7 +8,7 @@ export class PrismaClient {
 export enum UserRole {
   FAN = 'FAN',
   CREATOR = 'CREATOR',
-  ADMIN = 'ADMIN'
+  ADMIN = 'ADMIN',
 }
 
 export enum TipStatus {
@@ -16,14 +16,14 @@ export enum TipStatus {
   PROCESSING = 'PROCESSING',
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
-  REFUNDED = 'REFUNDED'
+  REFUNDED = 'REFUNDED',
 }
 
 export enum PayoutStatus {
   PENDING = 'PENDING',
   PROCESSING = 'PROCESSING',
   COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED'
+  FAILED = 'FAILED',
 }
 
 export type User = any;

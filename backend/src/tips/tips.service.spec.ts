@@ -57,7 +57,10 @@ describe('TipsService', () => {
       return { id, circleWalletId: 'cwF', role: UserRole.FAN };
     });
     prisma.tip.create.mockResolvedValue({ id: '1' });
-    prisma.tip.update.mockResolvedValue({ id: '1', status: TipStatus.COMPLETED });
+    prisma.tip.update.mockResolvedValue({
+      id: '1',
+      status: TipStatus.COMPLETED,
+    });
     circleService.initiateInternalTipTransfer.mockResolvedValue({
       circleTransactionId: 'tx',
       status: 'complete',
@@ -91,10 +94,16 @@ describe('TipsService', () => {
     });
     prisma.tip.create.mockResolvedValue({ id: '2' });
     prisma.tip.update.mockResolvedValue({ id: '2', status: TipStatus.FAILED });
-    circleService.initiateInternalTipTransfer.mockRejectedValue(new Error('fail'));
+    circleService.initiateInternalTipTransfer.mockRejectedValue(
+      new Error('fail'),
+    );
 
     await expect(
-      service.processNewTip({ amount: '5', creatorId: 'creator', fanId: 'fan' }),
+      service.processNewTip({
+        amount: '5',
+        creatorId: 'creator',
+        fanId: 'fan',
+      }),
     ).rejects.toThrow(InternalServerErrorException);
     expect(prisma.tip.update).toHaveBeenLastCalledWith(
       expect.objectContaining({
@@ -110,7 +119,10 @@ describe('TipsService', () => {
       role: UserRole.CREATOR,
     });
     prisma.tip.create.mockResolvedValue({ id: '3' });
-    prisma.tip.update.mockResolvedValue({ id: '3', status: TipStatus.COMPLETED });
+    prisma.tip.update.mockResolvedValue({
+      id: '3',
+      status: TipStatus.COMPLETED,
+    });
 
     const result = await service.processNewTip({
       amount: '5',

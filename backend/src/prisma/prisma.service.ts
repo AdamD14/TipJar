@@ -1,14 +1,9 @@
-// TipJar/backend/src/prisma/prisma.service.ts
+// backend/src/prisma/prisma.service.ts
 import {
   Injectable,
   OnModuleInit,
   OnModuleDestroy,
-  INestApplication,
-  Logger,
-} from '@nestjs/common';
-// Importuj PrismaClient z poprawnie wygenerowanej lokalizacji
-// Zakładając, że schema.prisma jest w backend/prisma/ a output klienta to ../generated/prisma
-// to klient jest w backend/generated/prisma
+  Logger } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
 @Injectable()
@@ -16,57 +11,29 @@ export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
-  declare tip: any;
-  declare user: any;
-  declare payout: any;
-  declare withdrawal: any;
-  declare hostedDeposit: any;
-  declare socialConnection: any;
-  declare overlaySettings: any;
-  declare notification: any;
-
   private readonly logger = new Logger(PrismaService.name);
+  notification: any;
+
   constructor() {
-    super({
-      // Opcjonalnie: możesz tutaj skonfigurować logowanie zapytań Prisma
-      // log: [
-      //   { emit: 'stdout', level: 'query' },
-      //   { emit: 'stdout', level: 'info' },
-      //   { emit: 'stdout', level: 'warn' },
-      //   { emit: 'stdout', level: 'error' },
-      // ],
-      // Opcjonalnie: obsługa błędów
-      // errorFormat: 'pretty',
-    });
+    // Możesz włączyć logi Prisma: super({ log: ['error', 'warn'] })
+    super();
   }
 
-  async onModuleInit() {
-    // Prisma Client zarządza połączeniami leniwie, ale można jawnie połączyć.
-    // To jest dobre miejsce, aby upewnić się, że połączenie z bazą danych działa przy starcie aplikacji.
+  async onModuleInit(): Promise<void> {
     try {
       await this.$connect();
       this.logger.log('Successfully connected to the database (Prisma)');
-    } catch (error) {
+    } catch (err) {
       this.logger.error(
         'Failed to connect to the database (Prisma)',
-        error.stack,
+        (err as Error)?.stack,
       );
-      // Możesz zdecydować, czy aplikacja powinna się zatrzymać, jeśli nie może połączyć się z bazą
-      // process.exit(1);
+      throw err;
     }
   }
 
-  async onModuleDestroy() {
-    // Zamknij połączenie, gdy aplikacja jest zamykana
+  async onModuleDestroy(): Promise<void> {
     await this.$disconnect();
     this.logger.log('Disconnected from the database (Prisma)');
-  }
-
-  // Opcjonalnie: Hook dla graceful shutdown (zalecane)
-  // Upewnij się, że masz włączone enableShutdownHooks w main.ts: app.enableShutdownHooks();
-  async enableShutdownHooks(app: INestApplication) {
-    process.on('beforeExit', async () => {
-      await app.close();
-    });
   }
 }

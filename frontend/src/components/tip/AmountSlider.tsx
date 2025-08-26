@@ -7,7 +7,12 @@ export interface AmountSliderProps {
   onChange: (value: number) => void;
 }
 
-export const AmountSlider = ({ value, min = 1, max = 100, onChange }: AmountSliderProps) => (
+export const AmountSlider = ({
+  value,
+  min = 1,
+  max = 100,
+  onChange,
+}: AmountSliderProps) => (
   <div className="mb-4">
     <input
       type="range"

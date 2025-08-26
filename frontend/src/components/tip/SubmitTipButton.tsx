@@ -6,7 +6,11 @@ export interface SubmitTipButtonProps {
   onSubmit: () => void;
 }
 
-export const SubmitTipButton = ({ disabled, loading, onSubmit }: SubmitTipButtonProps) => (
+export const SubmitTipButton = ({
+  disabled,
+  loading,
+  onSubmit,
+}: SubmitTipButtonProps) => (
   <button
     type="button"
     onClick={onSubmit}

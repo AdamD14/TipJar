@@ -59,7 +59,9 @@ export class TwitchStrategy extends PassportStrategy(Strategy, 'twitch') {
         const state = JSON.parse(req.query.state as string);
         if (state.role === 'CREATOR' || state.role === 'FAN') {
           role = state.role;
-          this.logger.log(`TwitchStrategy: Role '${role}' extracted from state parameter.`);
+          this.logger.log(
+            `TwitchStrategy: Role '${role}' extracted from state parameter.`,
+          );
         }
       } catch (e) {
         this.logger.warn(
@@ -86,15 +88,29 @@ export class TwitchStrategy extends PassportStrategy(Strategy, 'twitch') {
     } catch (error: unknown) {
       // ... obsługa błędów bez zmian
       if (error instanceof HttpException) {
-        this.logger.error(`TwitchStrategy: Error during user validation/creation for Twitch ID ${twitchId}: ${error.message}`, error.stack);
+        this.logger.error(
+          `TwitchStrategy: Error during user validation/creation for Twitch ID ${twitchId}: ${error.message}`,
+          error.stack,
+        );
         return done(error, false);
       }
       if (error instanceof Error) {
-        this.logger.error(`TwitchStrategy: An unexpected error occurred during user validation/creation for Twitch ID ${twitchId}: ${error.message}`, error.stack);
+        this.logger.error(
+          `TwitchStrategy: An unexpected error occurred during user validation/creation for Twitch ID ${twitchId}: ${error.message}`,
+          error.stack,
+        );
       } else {
-        this.logger.error(`TwitchStrategy: An unknown error occurred during user validation/creation for Twitch ID ${twitchId}.`);
+        this.logger.error(
+          `TwitchStrategy: An unknown error occurred during user validation/creation for Twitch ID ${twitchId}.`,
+        );
       }
-      return done(new HttpException('Wewnętrzny błąd serwera podczas przetwarzania logowania Twitch.', HttpStatus.INTERNAL_SERVER_ERROR), false);
+      return done(
+        new HttpException(
+          'Wewnętrzny błąd serwera podczas przetwarzania logowania Twitch.',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        ),
+        false,
+      );
     }
   }
 }

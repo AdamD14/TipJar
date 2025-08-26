@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 
-export default function AuthTabs({ defaultTab = "login" }: { defaultTab?: "login" | "signup" }) {
+export default function AuthTabs({
+  defaultTab = "login",
+}: {
+  defaultTab?: "login" | "signup";
+}) {
   const [tab, setTab] = useState<"login" | "signup">(defaultTab);
 
   return (
@@ -70,10 +74,16 @@ function LoginForm() {
         <span className="h-px flex-1 bg-white/10" />
       </div>
       <div className="grid grid-cols-2 gap-3">
-        <button type="button" className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 font-semibold text-white/90">
+        <button
+          type="button"
+          className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 font-semibold text-white/90"
+        >
           Kontynuuj z Google
         </button>
-        <button type="button" className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 font-semibold text-white/90">
+        <button
+          type="button"
+          className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 font-semibold text-white/90"
+        >
           Kontynuuj z Twitch
         </button>
       </div>

@@ -6,7 +6,11 @@ export interface MessageTextareaProps {
   onChange: (value: string) => void;
 }
 
-export const MessageTextarea = ({ value, maxLength = 140, onChange }: MessageTextareaProps) => (
+export const MessageTextarea = ({
+  value,
+  maxLength = 140,
+  onChange,
+}: MessageTextareaProps) => (
   <div className="mb-4">
     <textarea
       value={value}

@@ -238,8 +238,12 @@ export class AuthService {
       )}...`,
     );
 
-    const socialConnection: (SocialConnection & { user: UserModelPrisma }) | null =
-      await this.usersService.findSocialConnection(provider, providerId);
+    const socialConnection:
+      | (SocialConnection & { user: UserModelPrisma })
+      | null = await this.usersService.findSocialConnection(
+      provider,
+      providerId,
+    );
     let userFromDb: UserModelPrisma;
 
     if (socialConnection) {

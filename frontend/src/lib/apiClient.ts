@@ -1,7 +1,8 @@
-import axios from 'axios';
+import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:3001/api/v1',
+  baseURL:
+    process.env.NEXT_PUBLIC_BACKEND_API_URL || "http://localhost:3001/api/v1",
   /**
    * To jest kluczowa opcja. Mówi przeglądarce, aby automatycznie
    * dołączała do każdego zapytania ciasteczka (cookies), które

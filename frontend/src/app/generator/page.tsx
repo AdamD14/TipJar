@@ -1,11 +1,11 @@
-'use client';
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+"use client";
+import { useState } from "react";
+import { motion } from "framer-motion";
 
-const PLATFORMS = ['instagram', 'twitter', 'facebook', 'linkedin'];
+const PLATFORMS = ["instagram", "twitter", "facebook", "linkedin"];
 
 export default function GeneratorPage() {
-  const [topic, setTopic] = useState('');
+  const [topic, setTopic] = useState("");
   const [platform, setPlatform] = useState(PLATFORMS[0]);
   const [hashtags, setHashtags] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -16,16 +16,19 @@ export default function GeneratorPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/generate/hashtags`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic, platform }),
-      });
-      if (!res.ok) throw new Error('API error');
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/generate/hashtags`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ topic, platform }),
+        },
+      );
+      if (!res.ok) throw new Error("API error");
       const data = await res.json();
       setHashtags(data.hashtags || []);
     } catch {
-      setError('Błąd podczas pobierania hashtagów');
+      setError("Błąd podczas pobierania hashtagów");
     } finally {
       setLoading(false);
     }
@@ -49,7 +52,9 @@ export default function GeneratorPage() {
           className="w-full border p-2 rounded"
         >
           {PLATFORMS.map((p) => (
-            <option key={p} value={p}>{p}</option>
+            <option key={p} value={p}>
+              {p}
+            </option>
           ))}
         </select>
         <button
@@ -68,7 +73,9 @@ export default function GeneratorPage() {
           className="mt-4 space-y-2"
         >
           {hashtags.map((h) => (
-            <li key={h} className="bg-gray-100 p-2 rounded">{h}</li>
+            <li key={h} className="bg-gray-100 p-2 rounded">
+              {h}
+            </li>
           ))}
         </motion.ul>
       )}

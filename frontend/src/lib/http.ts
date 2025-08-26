@@ -5,12 +5,12 @@ export type FetchOpts = RequestInit & { json?: any };
 export async function http(path: string, opts: FetchOpts = {}) {
   const url = path.startsWith("http") ? path : `${API_BASE}${path}`;
   const headers: Record<string, string> = {
-    Accept: 'application/json',
-    ...(opts.json ? { 'Content-Type': 'application/json' } : {}),
+    Accept: "application/json",
+    ...(opts.json ? { "Content-Type": "application/json" } : {}),
     ...(opts.headers as Record<string, string>),
   };
   const res = await fetch(url, {
-    credentials: 'include',
+    credentials: "include",
     ...opts,
     headers,
     body: opts.json ? JSON.stringify(opts.json) : opts.body,
@@ -23,7 +23,8 @@ export async function http(path: string, opts: FetchOpts = {}) {
     data = text;
   }
   if (!res.ok) {
-    const message = (data && (data.message || data.error)) || `HTTP ${res.status}`;
+    const message =
+      (data && (data.message || data.error)) || `HTTP ${res.status}`;
     throw new Error(message);
   }
   return data;

@@ -8,7 +8,8 @@ import { ConfigService } from '@nestjs/config';
     {
       provide: 'REDIS_CLIENT',
       useFactory: async (configService: ConfigService) => {
-        const url = configService.get<string>('REDIS_URL') || 'redis://localhost:6379';
+        const url =
+          configService.get<string>('REDIS_URL') || 'redis://localhost:6379';
         const client = createClient({ url });
         await client.connect();
         return client;

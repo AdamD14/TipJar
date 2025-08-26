@@ -1,6 +1,6 @@
-"use client"
-import React, { useState, useEffect, FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
+"use client";
+import React, { useState, useEffect, FormEvent } from "react";
+import { useRouter } from "next/navigation";
 
 /**
  * ChooseUsername
@@ -14,16 +14,16 @@ import { useRouter } from 'next/navigation';
  */
 export default function ChooseUsername() {
   const router = useRouter();
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
   const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [user, setUser] = useState<{ role: string } | null>(null);
 
   // Fetch current user
   useEffect(() => {
     const fetchMe = async () => {
       try {
-        const res = await fetch('/api/auth/me');
+        const res = await fetch("/api/auth/me");
         if (res.ok) {
           const data = await res.json();
           setUser(data.user);
@@ -43,7 +43,9 @@ export default function ChooseUsername() {
     }
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/auth/username-check?username=${encodeURIComponent(username)}`);
+        const res = await fetch(
+          `/api/auth/username-check?username=${encodeURIComponent(username)}`,
+        );
         if (res.ok) {
           const data = await res.json();
           setIsAvailable(data.available);
@@ -58,28 +60,28 @@ export default function ChooseUsername() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!username) {
-      setError('Please enter a username');
+      setError("Please enter a username");
       return;
     }
     if (isAvailable === false) {
-      setError('This username is already taken');
+      setError("This username is already taken");
       return;
     }
     try {
-      const res = await fetch('/api/auth/username', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/auth/username", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username }),
       });
       if (!res.ok) throw new Error(await res.text());
       // redirect based on role
-      if (user?.role === 'CREATOR') {
-        router.push('/creator/setup');
+      if (user?.role === "CREATOR") {
+        router.push("/creator/setup");
       } else {
-        router.push('/fan/setup');
+        router.push("/fan/setup");
       }
     } catch (err) {
-      setError('Failed to save username');
+      setError("Failed to save username");
     }
   };
 
@@ -100,7 +102,7 @@ export default function ChooseUsername() {
             value={username}
             onChange={(e) => {
               setUsername(e.target.value.toLowerCase());
-              setError('');
+              setError("");
             }}
             required
             className="w-full border rounded p-2"
@@ -109,7 +111,9 @@ export default function ChooseUsername() {
             <p className="text-red-500 text-sm mt-1">This username is taken</p>
           )}
           {isAvailable === true && (
-            <p className="text-green-600 text-sm mt-1">This username is available</p>
+            <p className="text-green-600 text-sm mt-1">
+              This username is available
+            </p>
           )}
         </div>
         {error && <p className="text-red-500 text-sm">{error}</p>}

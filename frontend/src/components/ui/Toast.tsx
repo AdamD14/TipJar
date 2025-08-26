@@ -1,10 +1,13 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 export function Toast({ msg, onClose }: { msg: string; onClose?: () => void }) {
   const [open, setOpen] = useState(true);
   useEffect(() => {
-    const id = setTimeout(() => { setOpen(false); onClose?.(); }, 4000);
+    const id = setTimeout(() => {
+      setOpen(false);
+      onClose?.();
+    }, 4000);
     return () => clearTimeout(id);
   }, [onClose]);
   if (!open) return null;
