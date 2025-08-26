@@ -47,8 +47,8 @@ export class NotificationController {
   async markAll(
     @Req() req: RequestWithUser,
   ): Promise<{ updatedCount: number }> {
-    const result = await this.notifications.markAllAsRead(req.user.id);
-    return { updatedCount: result.count ?? 0 };
+    const updatedCount = await this.notifications.markAllAsRead(req.user.id);
+    return { updatedCount };
   }
 
   @Post()
