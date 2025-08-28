@@ -6,7 +6,7 @@ const navItems = [
   { label: "why tipjar+?", href: "#why" },
   { label: "how it works?", href: "#how-it-works" },
   { label: "start building / ai studio", href: "#start-building" },
-  { label: "explore creators", href: "#explore" },
+  { label: "Explore", href: "/explore" },
   { label: "learn about web3", href: "#learn" },
 ];
 
