@@ -1,3 +1,6 @@
+"use client";
+
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Page from "@/components/ui/Page";
 import Card from "@/components/ui/Card";
 import SearchBox, { type SearchResult } from "@/components/discover/SearchBox";
@@ -6,11 +9,12 @@ import { collections } from "@/data/collections";
 import CollectionCard from "@/components/explorer/CollectionCard";
 import SortSelect from "@/components/explorer/SortSelect";
 import FilterChips from "@/components/explorer/FilterChips";
-import Suggestions from "@/components/explorer/Suggestions";
+import Suggestions, { type Suggestion } from "@/components/explorer/Suggestions";
 import TrendingClient from "@/components/explorer/TrendingClient";
 import YourPicks from "@/components/explorer/YourPicks";
 import FeaturedGrid from "@/components/explorer/FeaturedGrid";
 import Spotlight from "@/components/explorer/Spotlight";
+import TopTagsCloud from "@/components/explorer/TopTagsCloud";
 import {
   flattenCollections,
   applyFilters,
@@ -19,11 +23,6 @@ import {
   type ExplorerSort,
   topTags,
 } from "@/lib/explorer";
-
-export const metadata = {
-  title: "Discover — tipjar+",
-  alternates: { canonical: "/discover" },
-};
 
 export default function PageDiscover() {
   const items: SearchResult[] = [];
@@ -92,11 +91,6 @@ export default function PageDiscover() {
   );
 }
 
-"use client";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import TopTagsCloud from "@/components/explorer/TopTagsCloud";
-import type { Suggestion } from "@/components/explorer/Suggestions";
-import { collections as D } from "@/data/collections";
 
 function Client({ initial }: { initial: SearchResult[] }) {
   const [direct, setDirect] = useState<SearchResult[]>(initial);
@@ -224,7 +218,7 @@ function useSuggestions(q: string): Suggestion[] {
   if (s.length < 2) return [];
   const fromLocal = Array.from(
     new Set(
-      (D || [])
+      (collections || [])
         .flatMap((c) => (c.handles || []).map((h: any) => (typeof h === "string" ? h : h.handle)))
         .filter(Boolean)
     )
