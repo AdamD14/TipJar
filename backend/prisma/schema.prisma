@@ -64,6 +64,12 @@ model User {
   hasCompletedOnboarding Boolean @default(false)
   consents               Json?
 
+  // Onboarding / publikacja
+  published               Boolean   @default(false)
+  onboardingCompletedAt   DateTime?
+  lastOnboardingEmailAt   DateTime?
+  paymentConnected        Boolean   @default(false)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -78,6 +84,7 @@ model User {
   circleWallet    CircleWallet?
   notifications   Notification[]
   withdrawals     Withdrawal[]
+  onboardingEvents OnboardingEvent[]
 }
 
 model SocialConnection {
@@ -224,4 +231,18 @@ model Notification {
   updatedAt DateTime @updatedAt
 
   @@index([userId, read, createdAt])
+}
+
+/* ======================
+   OnboardingEvent (NOWE)
+   ====================== */
+model OnboardingEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  step      String   // identity|bio|tiers|payments|publish
+  action    String   // view|save|error|complete
+  createdAt DateTime @default(now())
+
+  @@index([userId, step, action, createdAt])
 }

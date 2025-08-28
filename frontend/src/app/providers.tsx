@@ -2,6 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider, createConfig, http } from "wagmi";
+import { injected } from "wagmi/connectors";
 import { mainnet } from "wagmi/chains";
 
 // Konfiguracja wagmi, która mówi, z jakimi sieciami blockchain ma się łączyć.
@@ -10,6 +11,7 @@ export const config = createConfig({
   transports: {
     [mainnet.id]: http(),
   },
+  connectors: [injected()],
 });
 
 const queryClient = new QueryClient();

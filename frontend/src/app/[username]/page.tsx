@@ -1,6 +1,8 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import TipLauncher from "@/components/TipLauncher";
+import SubscribeLauncher from "@/components/SubscribeLauncher";
 import { useEffect, useState } from "react";
 import { getPublicProfile } from "@/lib/users";
 
@@ -67,13 +69,11 @@ export default function CreatorProfile({ params }: { params: { username: string 
         {bio && <p className="mt-4 text-white/80">{bio}</p>}
       </div>
 
-      <div className="px-6 mt-8">
-        <Link
-          href={`/tip/${data.id || username}`}
-          className="font-ui inline-block rounded-xl bg-[#FFD700] px-5 py-3 font-semibold text-[#003737]"
-        >
-          Send a tip
-        </Link>
+      <div className="px-6 mt-8 flex items-center gap-3">
+        <TipLauncher username={data.username || username} />
+        {Array.isArray(data?.tiers) && data.tiers.length > 0 && (
+          <SubscribeLauncher username={data.username || username} tiers={data.tiers} />
+        )}
       </div>
     </div>
   );

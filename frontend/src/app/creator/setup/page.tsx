@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { RoleGuard } from "@/components/guards/RoleGuard";
 
 /**
  * CreatorSetup
@@ -47,7 +48,8 @@ export default function CreatorSetup() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl p-6">
+    <RoleGuard required="CREATOR">
+      <div className="mx-auto max-w-3xl p-6">
       <h1 className="text-3xl font-semibold mb-4">
         Set up your creator profile
       </h1>
@@ -178,6 +180,7 @@ export default function CreatorSetup() {
           </button>
         </div>
       </form>
-    </div>
+      </div>
+    </RoleGuard>
   );
 }

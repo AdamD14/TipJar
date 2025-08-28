@@ -5,6 +5,7 @@ export type RegisterDto = {
   email: string;
   password: string;
   displayName?: string;
+  role?: 'FAN' | 'CREATOR';
 };
 export type LoginDto = { email: string; password: string };
 
