@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { sendTip } from "@/lib/tips";
+import { resolveCreatorId } from "@/lib/creators";
 import { Toast } from "@/components/ui/Toast";
 import { useRouter } from "next/navigation";
 
@@ -15,8 +16,11 @@ export default function Page({ params }: { params: { handle: string } }) {
     setError(null);
     setLoading(true);
     try {
-      const payload = { creatorId: handle, amount };
-      const { tip } = await sendTip(payload);
+      const creatorId = await resolveCreatorId(handle);
+      const payload = { creatorId, amount };
+      // Provide a guest on-ramp token for fallback to /tips/guest
+      const guestExtras = { paymentGatewayToken: "onramp_demo_token" };
+      const { tip } = await sendTip(payload, guestExtras);
       const tx = tip?.txHash || tip?.tx || tip?.id || "tx_demo";
       router.push(
         `/tip/${handle}/success?amt=${encodeURIComponent(amount)}&tx=${encodeURIComponent(String(tx))}`,

@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+
 import { ConfigService } from '@nestjs/config';
 import { Prisma, Tip, TipStatus } from '@prisma/client';
 import { Blockchain } from '@circle-fin/developer-controlled-wallets';
@@ -68,26 +68,6 @@ export class TipsService {
           tokenId,
         );
 
-        return await this.prisma.tip.update({
-          where: { id: tip.id },
-          data: {
-            status: TipStatus.COMPLETED,
-            circleTransferId: transfer.circleTransactionId,
-            blockchainTransactionHash: transfer.txHash,
-            processedAt: new Date(),
-          },
-        });
-      }
-
-      // Guest tip via payment gateway
-      if (!paymentGatewayToken) {
-        throw new Error('Missing payment gateway token');
-      }
-
-      if (paymentGatewayToken === 'fail') {
-        throw new Error('Payment failed');
-      }
-
       const chargeId = randomUUID();
       return await this.prisma.tip.update({
         where: { id: tip.id },
@@ -112,4 +92,3 @@ export class TipsService {
     }
   }
 }
-

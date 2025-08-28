@@ -14,6 +14,14 @@ const config: Config = {
         "brand-gold": "#FFD700",
         "brand-purple": "#4D194D",
 
+        // Paleta z obrazu / przycisków
+        "brand-primary": "#0E2A2D",
+        "brand-primary-alt": "#1E3A3D",
+        // używana z /60 /70 jako warstwa szkła
+        "brand-glass": "#0E2A2D",
+        "brand-drop": "#A9B7B9",
+        "brand-accent": "#C6A66A",
+
         // Teksty
         "text-primary": "#DDE0DA",
         "text-secondary": "#BCC1B6",
@@ -21,6 +29,15 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-body)"], // Mukta (tekst)
         ui: ["var(--font-ui)"], // IBM Plex Sans (UI)
+      },
+      keyframes: {
+        sheen: {
+          "0%": { transform: "translateX(-120%) skewX(-15deg)" },
+          "100%": { transform: "translateX(220%) skewX(-15deg)" },
+        },
+      },
+      animation: {
+        sheen: "sheen 1.2s ease-in-out infinite",
       },
     },
   },

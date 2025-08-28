@@ -8,3 +8,11 @@ export async function checkUsername(u: string) {
 export async function setUsername(username: string) {
   return http(API.USERS.SET_USERNAME, { method: "POST", json: { username } });
 }
+
+export async function getPublicProfile(username: string) {
+  const path = API.USERS.PUBLIC_BY_USERNAME.replace(
+    ":username",
+    encodeURIComponent(username),
+  );
+  return http(path, { method: "GET" });
+}
