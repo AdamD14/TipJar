@@ -384,6 +384,53 @@ export class UsersService {
     });
   }
 
+  /**
+   * Public, read-only projection of a creator/fan by username.
+   * Returns safe fields only and includes the linked profile.
+   */
+  async getPublicProfileByUsername(
+    username: string,
+  ): Promise<
+    | null
+    | {
+        id: string;
+        username: string | null;
+        displayName: string;
+        avatarUrl: string | null;
+        role: UserRole;
+        profile: {
+          bio: string | null;
+          bannerUrl: string | null;
+          websiteUrl: string | null;
+          twitterUrl: string | null;
+          youtubeUrl: string | null;
+          acceptsTips: boolean;
+        } | null;
+      }
+  > {
+    const user = await this.prisma.user.findUnique({
+      where: { username: username.toLowerCase() },
+      select: {
+        id: true,
+        username: true,
+        displayName: true,
+        avatarUrl: true,
+        role: true,
+        profile: {
+          select: {
+            bio: true,
+            bannerUrl: true,
+            websiteUrl: true,
+            twitterUrl: true,
+            youtubeUrl: true,
+            acceptsTips: true,
+          },
+        },
+      },
+    });
+    return user;
+  }
+
   async setUsernameAndConsents(
     userId: string,
     data: SetUsernameDto,

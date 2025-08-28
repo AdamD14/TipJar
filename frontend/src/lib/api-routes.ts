@@ -14,6 +14,7 @@ export const API = {
   USERS: {
     USERNAME_CHECK: "/api/v1/users/username-check",
     SET_USERNAME: "/api/v1/users/set-username",
+    PUBLIC_BY_USERNAME: "/api/v1/users/public/:username",
   },
   TIPS: {
     CREATE: "/api/v1/tips",
