@@ -13,6 +13,9 @@ const Footer = () => (
       <a href="#examples" className="mx-2 hover:underline">
         Examples
       </a>
+      <a href="/explore" className="mx-2 hover:underline">
+        Explore
+      </a>
     </div>
     <div className="mb-2">
       <a href="#" className="mx-2 hover:underline">
