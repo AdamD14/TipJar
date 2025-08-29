@@ -3,11 +3,7 @@ import { useEffect, useState } from "react";
 import { me } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 
-export default function RequireAuth({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RequireAuth({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [state, setState] = useState<"loading" | "ok" | "redir">("loading");
 

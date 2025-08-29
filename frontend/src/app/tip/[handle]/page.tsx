@@ -3,6 +3,7 @@ import { useState } from "react";
 import { sendTip } from "@/lib/tips";
 import { Toast } from "@/components/ui/Toast";
 import { useRouter } from "next/navigation";
+import { toUiError } from "@/lib/errors";
 
 export default function Page({ params }: { params: { handle: string } }) {
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function Page({ params }: { params: { handle: string } }) {
         `/tip/${handle}/success?amt=${encodeURIComponent(amount)}&tx=${encodeURIComponent(String(tx))}`,
       );
     } catch (e: any) {
-      setError(e.message || "Payment failed");
+      setError(toUiError(e).message);
     } finally {
       setLoading(false);
     }

@@ -2,7 +2,9 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { login, me } from "@/lib/auth";
-import { Toast } from "@/components/ui/Toast";
+import { API } from "@/lib/api-routes";
+import FormError from "@/components/ui/FormError";
+import { toUiError } from "@/lib/errors";
 
 export default function Page() {
   const router = useRouter();
@@ -21,7 +23,7 @@ export default function Page() {
       const hasUsername = !!(user && (user.username || user.handle));
       router.push(hasUsername ? "/fan/feed" : "/onboarding/username");
     } catch (e: any) {
-      setError(e.message || "Login failed");
+      setError(toUiError(e).message);
     } finally {
       setLoading(false);
     }
@@ -29,7 +31,6 @@ export default function Page() {
 
   return (
     <main className="min-h-screen bg-[#001F1F] p-6">
-      {error && <Toast msg={error} onClose={() => setError(null)} />}
       <div className="mx-auto max-w-md rounded-2xl border border-white/10 bg-white/5 p-6">
         <h1 className="font-sans text-2xl font-bold text-white">Sign in</h1>
         <form onSubmit={onSubmit} className="mt-4 space-y-3">
@@ -52,7 +53,12 @@ export default function Page() {
           >
             {loading ? "Processing…" : "Sign in"}
           </button>
+          <FormError message={error || undefined} />
         </form>
+        <div className="mt-4 grid grid-cols-1 gap-2">
+          <a href={API.AUTH.GOOGLE} className="font-ui rounded-xl bg-white px-4 py-2 text-center font-semibold text-[#003737]">Continue with Google</a>
+          <a href={API.AUTH.TWITCH} className="font-ui rounded-xl border border-white/15 px-4 py-2 text-center font-semibold text-white/90">Continue with Twitch</a>
+        </div>
         <p className="mt-3 text-sm text-[#BCC1B6]">
           <a className="underline" href="/register">
             Nie masz konta?
