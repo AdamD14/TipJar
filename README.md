@@ -11,6 +11,7 @@ A ChainWorks project by Adam D.
 - [Integracja z Gas Station i Paymaster](docs/gas-station-paymaster.md)
 - [Integracja zewnętrznych API](docs/integrations-overview.md)
 - [Konfiguracja kluczy API](docs/konfiguracja-api.md)
+- [Podsumowanie wszystkich grafik](docs/podsumowanie-grafik.md)
 
 ## Development
 
