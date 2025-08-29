@@ -9,7 +9,9 @@ import {
   HttpCode,
   HttpStatus,
   UnauthorizedException,
+  NotFoundException,
   Logger,
+  Param,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UsersService } from './users.service';
@@ -35,6 +37,16 @@ export class UsersController {
     }
     const user = await this.usersService.findByUsername(username);
     return { available: !user };
+  }
+
+  @Get('profile/:username')
+  @HttpCode(HttpStatus.OK)
+  async getPublicProfile(@Param('username') username: string) {
+    const profile = await this.usersService.getPublicProfile(username);
+    if (!profile) {
+      throw new NotFoundException('User not found');
+    }
+    return profile;
   }
 
   @Post('set-username')
