@@ -49,7 +49,7 @@ export class FanService {
    */
   async getTipsHistory(userId: string) {
     return this.prisma.tip.findMany({
-      where: { fromUserId: userId },
+      where: { fanId: userId },
       orderBy: { createdAt: 'desc' },
     });
   }

@@ -451,7 +451,7 @@ export class UsersService {
       where: { id: userId },
       data: {
         username: data.username.toLowerCase(),
-        consents: data.consents,
+        consents: (data.consents as unknown) as Prisma.InputJsonValue,
         hasCompletedOnboarding: true,
       },
     });

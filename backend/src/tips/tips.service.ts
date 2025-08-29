@@ -1,4 +1,4 @@
-
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Prisma, Tip, TipStatus } from '@prisma/client';
 import { Blockchain } from '@circle-fin/developer-controlled-wallets';
@@ -53,6 +53,12 @@ export class TipsService {
         // Internal USDC tip between registered users
         const creator = await this.usersService.findOneById(creatorId);
         const fan = await this.usersService.findOneById(fanId);
+        if (!creator || !fan) {
+          throw new Error('Creator or fan not found');
+        }
+        if (!creator.circleWalletId || !fan.circleWalletId) {
+          throw new Error('Missing Circle wallet for creator or fan');
+        }
         const blockchain = this.config.get<string>(
           'DEFAULT_BLOCKCHAIN',
         ) as Blockchain;
@@ -67,7 +73,7 @@ export class TipsService {
           blockchain,
           tokenId,
         );
-
+      }
       const chargeId = randomUUID();
       return await this.prisma.tip.update({
         where: { id: tip.id },

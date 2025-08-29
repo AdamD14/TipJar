@@ -3,6 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Roles } from '../../auth/guards/roles.decorator';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { PrismaService } from '../../prisma/prisma.service';
+import { UserRole } from '@prisma/client';
 
 type Steps = {
   identity: boolean;
@@ -18,7 +19,7 @@ function stepsToCompletion(steps: Steps) {
 
 @Controller('/api/v1/creator/onboarding')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles('CREATOR','ADMIN')
+@Roles(UserRole.CREATOR, UserRole.ADMIN)
 export class CreatorOnboardingController {
   constructor(private prisma: PrismaService) {}
 

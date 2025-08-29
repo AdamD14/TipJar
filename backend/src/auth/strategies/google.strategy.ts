@@ -74,7 +74,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       );
     }
 
-    let role = UserRole.FAN;
+    let role: UserRole = UserRole.FAN;
     if (req.query.state) {
       try {
         const state = JSON.parse(
@@ -82,14 +82,12 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         ) as StatePayload;
 
         if (state && (state.role === 'CREATOR' || state.role === 'FAN')) {
-          // <<< POPRAWKA 1: Konwertujemy string na enum
           role = state.role === 'CREATOR' ? UserRole.CREATOR : UserRole.FAN;
           this.logger.log(
-            `GoogleStrategy: Role '${state.role}' extracted from state parameter and set to enum.`,
+            `GoogleStrategy: Role '${state.role}' extracted from state parameter.`,
           );
         }
       } catch (e) {
-        // <<< POPRAWKA 2: Używamy zmiennej 'e'
         this.logger.warn(
           `GoogleStrategy: Could not parse role from state parameter: ${JSON.stringify(
             req.query.state,
