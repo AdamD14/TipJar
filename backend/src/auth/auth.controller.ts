@@ -151,7 +151,7 @@ export class AuthController {
       `${this.configService.get<string>(
         'FRONTEND_URL',
         'http://localhost:3000',
-      )}/choose-username`,
+      )}/onboarding/username`,
     );
   }
 
@@ -191,7 +191,7 @@ export class AuthController {
       `${this.configService.get<string>(
         'FRONTEND_URL',
         'http://localhost:3000',
-      )}/choose-username`,
+      )}/onboarding/username`,
     );
   }
 
@@ -222,7 +222,7 @@ export class AuthController {
       `${this.configService.get<string>(
         'FRONTEND_URL',
         'http://localhost:3000',
-      )}/choose-username`,
+      )}/onboarding/username`,
     );
   }
 

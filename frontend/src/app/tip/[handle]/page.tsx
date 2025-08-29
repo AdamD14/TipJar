@@ -7,6 +7,7 @@ import FeeBreakdown from "@/components/tip/FeeBreakdown";
 import OnrampPanel from "@/components/tip/OnrampPanel";
 import { useRouter } from "next/navigation";
 import { sendTip } from "@/lib/tips";
+import { resolveCreatorId } from "@/lib/creators";
 import { Toast } from "@/components/ui/Toast";
 
 export default function Page({ params }: { params: { handle: string } }) {
@@ -24,10 +25,7 @@ export default function Page({ params }: { params: { handle: string } }) {
     setError(null);
     setSubmitting(true);
     try {
-      const payload = { creatorId: handle, amount: amount.toFixed(2) };
-      const guest = method !== "wallet" ? { paymentGatewayToken: "onramp_demo_token" } : undefined;
-      const { tip } = await sendTip(payload, guest);
-      const tx = tip?.txHash || tip?.tx || tip?.id || "tx_demo";
+ tip?.txHash || tip?.tx || tip?.id || "tx_demo";
       router.push(`/tip/${handle}/success?amt=${amount.toFixed(2)}&tx=${encodeURIComponent(String(tx))}`);
     } catch (e: any) {
       setError(e.message || "Payment failed");

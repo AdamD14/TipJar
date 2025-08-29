@@ -10,7 +10,7 @@ import { FanService } from './fan.service';
  * heavy lifting to the FanService.
  */
 @UseGuards(JwtAuthGuard)
-@Controller('api/v1/fan')
+@Controller('fan')
 export class FanController {
   constructor(private readonly fanService: FanService) {}
 

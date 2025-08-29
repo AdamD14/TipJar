@@ -1,42 +1,26 @@
-// app/fan/notifications/page.tsx
-import Link from "next/link";
+import FanShell from "@/components/fan/FanShell";
 
-export default function FanNotificationsPage() {
+const NOTIFS = [
+  { id: 1, kind: "tip", text: "@creator_1 thanked you for your support!", time: "1h" },
+  { id: 2, kind: "follow", text: "@creator_2 posted a new video.", time: "3h" },
+  { id: 3, kind: "system", text: "Security tip: enable 2FA to protect your account.", time: "1d" },
+];
+
+export default function Page() {
   return (
-    <main
-      className="min-h-screen bg-white"
-      style={{ fontFamily: "Montserrat, sans-serif" }}
-    >
-      <header className="bg-[#003737] text-white p-4 flex justify-between items-center">
-        <h1 className="text-2xl">Notifications</h1>
-        <nav>
-          <Link href="/fan/dashboard" className="px-3 hover:text-[#FFD700]">
-            Dashboard
-          </Link>
-          <Link href="/fan/history" className="px-3 hover:text-[#FFD700]">
-            History
-          </Link>
-          <Link href="/fan/following" className="px-3 hover:text-[#FFD700]">
-            Following
-          </Link>
-          <Link href="/fan/notifications" className="px-3 text-[#FFD700]">
-            Notifications
-          </Link>
-          <Link href="/fan/wallet" className="px-3 hover:text-[#FFD700]">
-            Wallet
-          </Link>
-          <Link href="/" className="px-3 hover:text-[#FFD700]">
-            Logout
-          </Link>
-        </nav>
-      </header>
-      <section className="p-8">
-        <h2 className="text-xl mb-4">Your Notifications</h2>
-        <ul className="list-disc pl-5 text-gray-700">
-          <li>@Alice sent you a message: "Thanks for your tip!"</li>
-          <li>@Bob started a new stream – check it out!</li>
-        </ul>
-      </section>
-    </main>
+    <FanShell title="Notifications">
+      <div className="divide-y divide-white/10 rounded-2xl border border-white/10 bg-white/5">
+        {NOTIFS.map((n) => (
+          <div key={n.id} className="flex items-start justify-between gap-4 p-4">
+            <div className="flex-1">
+              <p className="text-sm text-white/90">{n.text}</p>
+              <p className="mt-1 text-xs text-[#BCC1B6]">{n.time} ago</p>
+            </div>
+            <button className="rounded-lg border border-white/15 px-3 py-1 text-xs text-white/80">Mark read</button>
+          </div>
+        ))}
+      </div>
+    </FanShell>
   );
 }
+

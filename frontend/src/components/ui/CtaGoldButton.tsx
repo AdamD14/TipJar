@@ -9,13 +9,13 @@ type Props = Omit<
   "href" | "children"
 > & {
   href?: string; // domyślnie /register
-  label?: string; // domyślnie "Creare profil"
+  label?: string; // domyślnie "Create profile"
   className?: string;
 };
 
 export default function CtaGoldButton({
   href = "/register",
-  label = "create profil",
+  label = "Create profile",
   className,
   ...rest
 }: Props) {
@@ -30,14 +30,12 @@ export default function CtaGoldButton({
         "hover:shadow-[rgba(45,35,66,0.3)_0_4px_8px,rgba(45,35,66,0.2)_0_7px_13px_-3px,#fff500_0_-3px_0_inset] hover:translate-y-[-2px] hover:scale-[1.02]",
         "[&>span.arrow]:transition-transform [&>span.arrow]:duration-500 [&>span.arrow]:hover:translate-x-2",
         "active:shadow-[inset_8px_8px_16px_#A98C22,inset_-8px_-8px_16px_#ffeb99] active:scale-[0.98]",
-        "focus:shadow-[inset_2.5px_2.5px_0_#fff500,rgba(45,35,66,0.4)_0_2px_4px,rgba(45,35,66,0.3)_0_7px_13px_-3px,#dbb900_-3px_0_0_inset]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD700]",
         className,
       )}
       style={{
         borderRadius: "16px",
         background: "linear-gradient(45deg, #e6c200, #ffe600)",
-        filter:
-          "progid: DXImageTransform.Microsoft.gradient( startColorstr='#FBEB00', endColorstr='#FFEC12', GradientType=1 )",
       }}
       {...rest}
     >

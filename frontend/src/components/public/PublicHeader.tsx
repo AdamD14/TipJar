@@ -33,7 +33,7 @@ export default function PublicHeader() {
           <NavLink href="/why" label="Why tipjar+?" />
           <NavLink href="/how" label="How it works?" />
           <NavLink href="/ai" label="Start building / AI Studio" />
-          <NavLink href="/creators" label="Explore creators" />
+          <NavLink href="/explore" label="Explore" />
           <NavLink href="/learn" label="Learn about WEB3" />
         </div>
 

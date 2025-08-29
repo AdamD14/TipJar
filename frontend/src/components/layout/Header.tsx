@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { User } from "lucide-react";
 import Navbar from "./Navbar";
+import Bell from "@/components/ui/Bell";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -43,7 +44,7 @@ export default function Header() {
               src="/logo.png"
               alt="TipJar+ logo"
               fill={true}
-              objectFit="contain"
+              className="object-contain"
               priority
             />
           </div>
@@ -59,6 +60,7 @@ export default function Header() {
 
         {/* PRZYCISKI — desktop (po prawej) */}
         <div className="hidden xl:flex items-center space-x-4">
+          <Bell href="/fan/notifications" />
           <Link
             href="/login"
             className="
@@ -78,7 +80,7 @@ export default function Header() {
         {/* HAMBURGER — mobile */}
         <button
           onClick={() => setIsMenuOpen((s) => !s)}
-          className="xl:hidden text-text-secondary ml-2"
+          className="xl:hidden ml-2 inline-flex h-11 w-11 items-center justify-center rounded-md text-[#DDE0DA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD700] focus-visible:ring-offset-2 focus-visible:ring-offset-[#003737]"
           aria-label="Toggle Menu"
           aria-expanded={isMenuOpen}
           aria-controls={mobileMenuId}

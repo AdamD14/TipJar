@@ -54,8 +54,8 @@ export default function Hero() {
             <Link
               href="/explore"
               className="inline-flex items-center justify-center rounded-3xl px-8 py-3
-                         border border-white/20 text-white transition
-                         hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/20"
+                         border border-white/40 text-[#DDE0DA] transition
+                         hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD700] focus-visible:ring-offset-2 focus-visible:ring-offset-[#003737]"
             >
               Explore as a fan
             </Link>

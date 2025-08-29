@@ -6,7 +6,7 @@ const navItems = [
   { label: "why tipjar+?", href: "#why" },
   { label: "how it works?", href: "#how-it-works" },
   { label: "start building / ai studio", href: "#start-building" },
-  { label: "explore creators", href: "#explore" },
+  { label: "Explore", href: "/explore" },
   { label: "learn about web3", href: "#learn" },
 ];
 
@@ -21,15 +21,15 @@ export default function Navbar({
 }: NavbarProps) {
   if (variant === "desktop") {
     return (
-      <ul className="hidden xl:flex gap-5 text-opacity-70 text-[14px] lowercase text-text-secondary">
+      <ul className="hidden xl:flex gap-5 text-[14px] lowercase text-[#DDE0DA]">
         {navItems.map((item) => (
           <li
             key={item.href}
-            className="p-2 rounded-lg backdrop-blur-md bg-[#4d194d]/10 shadow-md"
+            className="p-2 rounded-lg backdrop-blur-md bg-black/10 shadow-md"
           >
             <Link
               href={item.href}
-              className="transition hover:text-[#FFD700] hover:underline underline-offset-2 duration-300"
+              className="transition hover:text-[#FFD700] hover:underline underline-offset-2 duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD700] focus-visible:ring-offset-2 focus-visible:ring-offset-[#003737] rounded"
             >
               {item.label}
             </Link>
@@ -46,7 +46,7 @@ export default function Navbar({
           key={item.href}
           href={item.href}
           onClick={onClickItem}
-          className="block py-2 transition hover:text-[#FFD700] hover:underline underline-offset-2"
+          className="block py-2 rounded-md transition hover:text-[#FFD700] hover:underline underline-offset-2 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD700] focus-visible:ring-offset-2 focus-visible:ring-offset-[#003737]"
         >
           {item.label}
         </Link>
