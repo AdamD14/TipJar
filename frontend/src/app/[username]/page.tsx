@@ -4,11 +4,20 @@ import Link from "next/link";
 import TipLauncher from "@/components/TipLauncher";
 import SubscribeLauncher from "@/components/SubscribeLauncher";
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { getPublicProfile } from "@/lib/users";
 
-export default function CreatorProfile({ params }: { params: { username: string } }) {
-  const { username } = params;
-  const [data, setData] = useState<any | null>(null);
+type PublicProfile = {
+  avatarUrl?: string;
+  profile?: { bannerUrl?: string; bio?: string };
+  displayName?: string;
+  username?: string;
+  tiers?: unknown[];
+};
+
+export default function CreatorProfile() {
+  const { username } = useParams<{ username: string }>();
+  const [data, setData] = useState<PublicProfile | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -16,12 +25,12 @@ export default function CreatorProfile({ params }: { params: { username: string 
     let alive = true;
     (async () => {
       try {
-        const res = await getPublicProfile(username);
+        const res: unknown = await getPublicProfile(username);
         if (!alive) return;
-        setData(res);
-      } catch (e: any) {
+        setData(res as PublicProfile);
+      } catch (e: unknown) {
         if (!alive) return;
-        setError(e.message || "Profile not found");
+        setError(e instanceof Error ? e.message : "Profile not found");
       } finally {
         if (alive) setLoading(false);
       }
