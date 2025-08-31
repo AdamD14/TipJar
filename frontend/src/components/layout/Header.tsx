@@ -1,142 +1,163 @@
-"use client";
+// frontend/src/components/layout/Header.tsx
+'use client';
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { User } from "lucide-react";
-import Navbar from "./Navbar";
-import Bell from "@/components/ui/Bell";
+import React, { useEffect, useId, useRef, useState } from 'react';
+import Link from 'next/link';
+import { Inter, IBM_Plex_Sans, Playfair_Display, Mukta } from 'next/font/google';
+import useScrolled from '@/hooks/useScrolled';
+
+const inter = Inter({ subsets: ['latin'], display: 'swap', weight: ['400', '600'] });
+const plex = IBM_Plex_Sans({ subsets: ['latin'], display: 'swap', weight: ['400', '600'] });
+const playfair = Playfair_Display({ subsets: ['latin'], display: 'swap', weight: ['600', '700'] });
+const mukta = Mukta({ subsets: ['latin'], display: 'swap', weight: ['400', '600', '700'] });
+
+const BRAND_DARK = '#003737';
+const GOLD = '#FFD700';
+const GOLD_HOVER = '#E6C200';
+const PURPLE = '#4D194D';
+const TEXT_PRIMARY = '#DDE0DA';
+const TEXT_SECONDARY = '#BCC1B6';
+
+const NAV = [
+  { label: 'Why tipjar+?', href: '/#why' },
+  { label: 'How it works?', href: '/#how' },
+  { label: 'Start building / AI Studio', href: '/ai-studio' },
+  { label: 'Explore creators', href: '/discover' },
+  { label: 'Learn about WEB3', href: '/learn/web3' },
+] as const;
 
 export default function Header() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const mobileMenuId = "mobile-menu";
+  const scrolled = useScrolled(10);
+  const [open, setOpen] = useState(false);
+  const id = useId();
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
+  // Close on route change hash click or Esc
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open]);
+
+  // Click outside to close (mobile)
+  useEffect(() => {
+    if (!open) return;
+    const onClick = (e: MouseEvent) => {
+      if (!panelRef.current) return;
+      if (!panelRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
+  }, [open]);
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-brand-gold shadow-[0_2px_6px_rgba(255,165,0,0.2)]"
-      style={{
-        backgroundImage: "url('/tlo.png')",
-        backgroundAttachment: "fixed",
-        backgroundPosition: "center top",
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-      }}
+      className={[
+        'fixed inset-x-0 top-0 z-40 transition-all',
+        scrolled
+          ? 'bg-[rgba(0,55,55,0.90)] backdrop-blur-md shadow-sm'
+          : 'bg-transparent',
+      ].join(' ')}
+      aria-label="Site header"
     >
-      <div
-        className={`absolute inset-0 transition-all duration-300 pointer-events-none ${
-          isScrolled ? "bg-gradient-main backdrop-blur-md" : "bg-transparent"
-        }`}
-      />
+      {/* Top bar */}
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-6">
+        {/* Left: (no brand text/logo per spec) keep empty spacer for layout balance */}
+        <div aria-hidden className="w-10 md:w-12" />
 
-      <div className="h-full px-2 flex items-center justify-between relative">
-        {/* BRAND - ZMODYFIKOWANA SEKCJA */}
-        <Link href="/" className="flex gap-0.5 items-center">
-          <div className="relative h-14 w-10">
-            <Image
-              src="/logo.png"
-              alt="TipJar+ logo"
-              fill={true}
-              className="object-contain"
-              priority
-            />
-          </div>
-          <span className="text-[24px] font-ui text-text-primary leading-none">
-            tipjar.plus
-          </span>
-        </Link>
+        {/* Center: nav (desktop) */}
+        <nav aria-label="Main" className="hidden md:block">
+          <ul className={`flex items-center gap-7 ${plex.className}`}>
+            {NAV.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className={[
+                    'text-sm font-medium transition underline-offset-4',
+                    'focus-visible:outline-none focus-visible:ring-2',
+                    'focus-visible:ring-[rgba(255,215,0,0.70)] focus-visible:ring-offset-2',
+                  ].join(' ')}
+                  style={{ color: TEXT_PRIMARY }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLAnchorElement).style.color = GOLD_HOVER;
+                    (e.currentTarget as HTMLAnchorElement).style.textDecorationColor = GOLD_HOVER;
+                    (e.currentTarget as HTMLAnchorElement).style.textDecorationLine = 'underline';
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLAnchorElement).style.color = TEXT_PRIMARY;
+                    (e.currentTarget as HTMLAnchorElement).style.textDecorationLine = 'none';
+                  }}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
-        {/* NAVBAR — desktop */}
-        <div className="hidden xl:block">
-          <Navbar variant="desktop" />
-        </div>
-
-        {/* PRZYCISKI — desktop (po prawej) */}
-        <div className="hidden xl:flex items-center space-x-4">
-          <Bell href="/fan/notifications" />
-          <Link
-            href="/login"
-            className="
-              group relative inline-flex items-center justify-center
-              h-10 px-9 text-[14px] font-ui font-semibold
-              text-[#092327]
-              rounded-[33px] border-2 border-[#00ffff] bg-[#EAF4FB]
-              transition-all duration-300 ease-linear
-              hover:rounded-[2px] hover:bg-gradient-to-r hover:from-[#0a5e5e] hover:to-[linear-gradient(352deg, #0cbaba 0%, #1db7ea 50%, #0a5e5e 100%);]              hover:text-[#EAF4FB] active:translate-y-[1px]
-            "
+        {/* Right: mobile hamburger */}
+        <div className="md:hidden">
+          <button
+            ref={btnRef}
+            type="button"
+            aria-label="Open navigation"
+            aria-expanded={open}
+            aria-controls={id}
+            onClick={() => setOpen((s) => !s)}
+            className="rounded-lg p-2 text-[#DDE0DA] outline-none transition hover:text-[#E6C200] focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.70)]"
           >
-            <User className="h-4 w-4 mr-2 transition-transform duration-300 group-hover:translate-x-[5px]" />
-            login
-          </Link>
+            <span className="sr-only">Menu</span>
+            <span aria-hidden className="block h-0.5 w-6 bg-current"></span>
+            <span aria-hidden className="mt-1 block h-0.5 w-6 bg-current"></span>
+            <span aria-hidden className="mt-1 block h-0.5 w-6 bg-current"></span>
+          </button>
         </div>
-
-        {/* HAMBURGER — mobile */}
-        <button
-          onClick={() => setIsMenuOpen((s) => !s)}
-          className="xl:hidden ml-2 inline-flex h-11 w-11 items-center justify-center rounded-md text-[#DDE0DA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD700] focus-visible:ring-offset-2 focus-visible:ring-offset-[#003737]"
-          aria-label="Toggle Menu"
-          aria-expanded={isMenuOpen}
-          aria-controls={mobileMenuId}
-        >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            {isMenuOpen ? (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            ) : (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            )}
-          </svg>
-        </button>
       </div>
 
-      {/* MOBILE NAV — menu + login/register pod menu */}
+      {/* Mobile full panel */}
       <div
-        id={mobileMenuId}
-        className={`xl:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-          isMenuOpen ? "max-h-screen" : "max-h-0"
-        }`}
+        id={id}
+        ref={panelRef}
+        role={open ? 'dialog' : undefined}
+        aria-modal={open || undefined}
+        className={[
+          'md:hidden transition-all',
+          open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0',
+        ].join(' ')}
       >
-        <div className="relative">
-          <Navbar variant="mobile" onClickItem={() => setIsMenuOpen(false)} />
-          <div className="px-4 pb-4 flex flex-col gap-2">
-            <Link
-              href="/login"
-              className="block text-center border border-[#FFD700] text-[#FFD700] rounded-md py-2 hover:bg-[#003737] hover:text-white transition"
-              onClick={() => setIsMenuOpen(false)}
+        <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} aria-hidden />
+        <div className="absolute left-0 right-0 top-0 rounded-b-2xl border-b border-[rgba(255,215,0,0.12)] bg-[rgba(0,55,55,0.96)] p-4 backdrop-blur-md">
+          <nav aria-label="Mobile">
+            <ul className="space-y-1">
+              {NAV.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={`block rounded-lg px-4 py-3 text-base ${mukta.className} text-[#DDE0DA] transition hover:text-[#E6C200] hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.70)]`}
+                    onClick={() => setOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <div className="mt-3 flex justify-end">
+            <button
+              type="button"
+              className="rounded-lg border border-[rgba(255,215,0,0.20)] px-3 py-1.5 text-sm text-[#DDE0DA] transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.70)]"
+              onClick={() => setOpen(false)}
             >
-              login
-            </Link>
-            <Link
-              href="/register"
-              className="block text-center bg-[#FFD700] text-black rounded-md py-2 hover:bg-transparent hover:border hover:border-[#FFD700] hover:text-[#FFD700] transition"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              get started
-            </Link>
+              Close
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Subtle height change for “closing image” feel */}
+      <div className={scrolled ? 'h-2 transition-all' : 'h-4 transition-all'} aria-hidden />
     </header>
   );
 }
