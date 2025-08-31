@@ -12,11 +12,17 @@ export default function NotificationsStep() {
     productUpdates: false,
     hideSupporters: false,
   });
+<<<<<<< HEAD
 
   function toggle<K extends keyof typeof prefs>(k: K) {
     setPrefs((p) => ({ ...p, [k]: !p[k] }));
   }
 
+=======
+  function toggle<K extends keyof typeof prefs>(k: K) {
+    setPrefs((p) => ({ ...p, [k]: !p[k] }));
+  }
+>>>>>>> aacff4d735ea83b0bd34eefd4e7b953f32009701
   return (
     <OnboardingGuard>
       <OnboardingShell title="Notifications & privacy" step={4}>
@@ -32,11 +38,18 @@ export default function NotificationsStep() {
           </p>
         </div>
         <div className="mt-6 flex gap-3">
+<<<<<<< HEAD
           <button type="button" onClick={() => router.back()} className="rounded-xl border border-white/15 px-4 py-3 text-white/80">
             Back
           </button>
           <button
             type="button"
+=======
+          <button onClick={() => router.back()} className="rounded-xl border border-white/15 px-4 py-3 text-white/80">
+            Back
+          </button>
+          <button
+>>>>>>> aacff4d735ea83b0bd34eefd4e7b953f32009701
             onClick={() => router.push("/onboarding/done")}
             className="rounded-xl bg-[#FFD700] px-4 py-3 font-semibold text-[#003737]"
           >
@@ -70,4 +83,7 @@ function Switch({ label, checked, onChange }: { label: string; checked: boolean;
     </button>
   );
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> aacff4d735ea83b0bd34eefd4e7b953f32009701

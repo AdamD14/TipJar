@@ -12,4 +12,7 @@ export default function WalletStep() {
     </OnboardingGuard>
   );
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> aacff4d735ea83b0bd34eefd4e7b953f32009701
