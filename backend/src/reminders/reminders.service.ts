@@ -17,8 +17,11 @@ export class RemindersService {
     const users = await this.prisma.user.findMany({
       where: {
         published: false,
-        OR: [{ onboardingCompletedAt: null }],
-        OR: [{ lastOnboardingEmailAt: null }, { lastOnboardingEmailAt: { lt: since } }],
+        onboardingCompletedAt: null,
+        OR: [
+          { lastOnboardingEmailAt: null },
+          { lastOnboardingEmailAt: { lt: since } },
+        ],
       },
       select: { id: true, email: true, username: true },
     });
