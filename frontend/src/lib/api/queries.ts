@@ -1,17 +1,5 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import api from './http';
-import { EP } from './endpoints';
-import type {
-  CreatorProfile,
-  Goal,
-  Stats,
-  Subscription,
-} from './contracts';
 
-export function useTip() {
-  return useMutation({
-    mutationFn: async (p: { creatorId: string; amount: number; message?: string }) =>
-      (await api.post(EP.tips, p)).data,
+
   });
 }
 

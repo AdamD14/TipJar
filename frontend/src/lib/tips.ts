@@ -1,4 +1,4 @@
-import { http } from "./http";
+import { api } from "./api/http";
 
 export type TipPayload = {
   creatorId: string; // ID twórcy (backend)
@@ -12,15 +12,12 @@ export type GuestExtras = {
 
 export async function sendTip(payload: TipPayload, guest?: GuestExtras) {
   try {
-    const tip = await http("/api/v1/tips", { method: "POST", json: payload });
+    const { data: tip } = await api.post("/api/v1/tips", payload);
     return { tip, guest: false };
   } catch (e: any) {
     if (!/401|unauthorized/i.test(e.message)) throw e;
     const body = { ...payload, ...(guest || {}) };
-    const tip = await http("/api/v1/tips/guest", {
-      method: "POST",
-      json: body,
-    });
+    const { data: tip } = await api.post("/api/v1/tips/guest", body);
     return { tip, guest: true };
   }
 }

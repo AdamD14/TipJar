@@ -1,12 +1,14 @@
-import { http } from "./http";
+import { api } from "./api/http";
 import { API } from "./api-routes";
 
 export async function checkUsername(u: string) {
   const q = new URLSearchParams({ username: u }).toString();
-  return http(`${API.USERS.USERNAME_CHECK}?${q}`);
+  const { data } = await api.get(`${API.USERS.USERNAME_CHECK}?${q}`);
+  return data;
 }
 export async function setUsername(username: string) {
-  return http(API.USERS.SET_USERNAME, { method: "POST", json: { username } });
+  const { data } = await api.post(API.USERS.SET_USERNAME, { username });
+  return data;
 }
 
 export async function getPublicProfile(username: string) {
@@ -14,5 +16,6 @@ export async function getPublicProfile(username: string) {
     ":username",
     encodeURIComponent(username),
   );
-  return http(path, { method: "GET" });
+  const { data } = await api.get(path);
+  return data;
 }
