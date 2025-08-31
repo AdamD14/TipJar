@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { useForm, FormProvider } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Mail, Lock } from "lucide-react";
-import apiClient from "@/lib/apiClient";
-import { registerSchema, RegisterFormValues } from "@/lib/schemas/authSchema";
-import axios from "axios";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { useForm, FormProvider } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import apiClient from '@/lib/apiClient';
+import { normalize } from '@/lib/api/errors';
+import { registerSchema, RegisterFormValues } from '@/lib/schemas/authSchema';
 
 // import { useAuthStore } from "@/lib/stores/authStore";
 
@@ -43,16 +43,11 @@ export default function AuthForm() {
       setEmailSent(true);
       methods.reset();
     } catch (err: unknown) {
-      if (axios.isAxiosError(err) && err.response) {
-        if (err.response.status === 409) {
-          router.push("/login");
-        } else {
-          setApiError(
-            err.response.data?.message || "An unexpected error occurred.",
-          );
-        }
+      const { code, msg } = normalize(err as any);
+      if (code === 409) {
+        router.push('/login');
       } else {
-        setApiError("An unexpected error occurred during registration.");
+        setApiError(msg || 'An unexpected error occurred.');
       }
     } finally {
       setLoading(false);

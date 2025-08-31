@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { apiClient } from "@/lib/apiClient";
+import { useState } from 'react';
+import { apiClient } from '@/lib/apiClient';
+import { normalize } from '@/lib/api/errors';
 
 interface WithdrawFundsModalProps {
   isOpen: boolean;
@@ -32,11 +33,10 @@ export default function WithdrawFundsModal({
         destinationAddress: address,
       });
       onClose();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setError(
-        err?.response?.data?.message || "Wystąpił błąd podczas wypłaty.",
-      );
+      const { msg } = normalize(err as any);
+      setError(msg || 'Wystąpił błąd podczas wypłaty.');
     } finally {
       setLoading(false);
     }
