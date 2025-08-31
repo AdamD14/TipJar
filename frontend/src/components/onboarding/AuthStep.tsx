@@ -10,6 +10,7 @@ import { useAccount, useConnect, useSignMessage, useChainId } from "wagmi";
 
 import { useOnboardingStore } from "@/lib/stores/onboardingStore";
 import apiClient from "@/lib/apiClient";
+import { API } from "@/lib/api-routes";
 import { registerSchema, RegisterFormValues } from "@/lib/schemas/authSchema";
 
 export default function AuthStep() {
@@ -45,8 +46,11 @@ export default function AuthStep() {
 
   const handleSocialLogin = (provider: "google" | "twitch") => {
     setLoading(true);
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
-    window.location.href = `${backendUrl}/api/v1/auth/${provider}?role=${currentRole}`;
+    const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:3001';
+    const payload = JSON.stringify({ role: currentRole });
+    const state = btoa(payload);
+    const target = provider === 'google' ? API.AUTH.GOOGLE : API.AUTH.TWITCH;
+    window.location.href = `${apiBase}${target}?state=${encodeURIComponent(state)}`;
   };
 
   const handleSiweRegister = async () => {

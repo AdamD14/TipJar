@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { me } from "@/lib/auth";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function RequireAuth({
   children,
@@ -9,6 +9,7 @@ export default function RequireAuth({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const path = usePathname();
   const [state, setState] = useState<"loading" | "ok" | "redir">("loading");
 
   useEffect(() => {
@@ -20,11 +21,13 @@ export default function RequireAuth({
         if (u && (u.id || u.email)) setState("ok");
         else {
           setState("redir");
-          router.replace("/login");
+          const returnTo = encodeURIComponent(path || "/");
+          router.replace(`/login?returnTo=${returnTo}`);
         }
       } catch {
         setState("redir");
-        router.replace("/login");
+        const returnTo = encodeURIComponent(path || "/");
+        router.replace(`/login?returnTo=${returnTo}`);
       }
     })();
     return () => {
