@@ -3,15 +3,15 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
 import { login, me } from "@/lib/auth";
-import { Toast } from "@/components/ui/Toast";
+import { useToast } from "@/components/ui/Toast";
 
 export default function Page() {
   const router = useRouter();
   const params = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const toast = useToast();
 
   const handleSocialLogin = (provider: "google" | "twitch") => {
     setLoading(true);
@@ -24,7 +24,6 @@ export default function Page() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
     setLoading(true);
     try {
       await login({ email, password });
@@ -36,8 +35,9 @@ export default function Page() {
       } else {
         router.push(hasUsername ? "/fan/feed" : "/onboarding/username");
       }
-    } catch (e: any) {
-      setError(e.message || "Login failed");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Login failed";
+      toast.push({ type: "error", text: msg });
     } finally {
       setLoading(false);
     }
@@ -45,7 +45,6 @@ export default function Page() {
 
   return (
     <main className="min-h-screen bg-[#001F1F] p-6">
-      {error && <Toast msg={error} onClose={() => setError(null)} />}
       <div className="mx-auto max-w-md rounded-2xl border border-white/10 bg-white/5 p-6">
         <h1 className="font-sans text-2xl font-bold text-white">Sign in</h1>
         <form onSubmit={onSubmit} className="mt-4 space-y-3">
