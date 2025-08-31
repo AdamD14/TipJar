@@ -24,3 +24,8 @@ export async function sendTip(payload: TipPayload, guest?: GuestExtras) {
     return { tip, guest: true };
   }
 }
+
+export async function getCreatorTips(alias: string) {
+  const path = `/api/v1/creators/${encodeURIComponent(alias)}/tips`;
+  return http(path, { method: "GET" });
+}

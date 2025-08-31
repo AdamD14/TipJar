@@ -13,3 +13,16 @@ export async function trackOnboarding(
   }
 }
 
+export async function track(event: string, data?: Record<string, unknown>) {
+  try {
+    await fetch('/api/v1/analytics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ event, data }),
+      keepalive: true,
+    });
+  } catch {
+    // silent
+  }
+}
+

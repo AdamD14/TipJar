@@ -1,5 +1,8 @@
+"use client";
+import { useEffect } from "react";
 import Receipt from "@/components/tip/Receipt";
 import Link from "next/link";
+import { track } from "@/lib/analytics";
 
 export default function Page({
   params,
@@ -11,6 +14,12 @@ export default function Page({
   const handle = params.handle;
   const amount = normAmt(searchParams?.amt);
   const tx = String(searchParams?.tx || "");
+
+  useEffect(() => {
+    if (amount && tx) {
+      track("tip_success", { alias: handle, amount, tx });
+    }
+  }, [amount, tx, handle]);
 
   if (!amount || !tx) {
     return (
