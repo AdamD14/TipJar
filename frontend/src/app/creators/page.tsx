@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { API } from "@/lib/api-routes";
-import { http } from "@/lib/http";
+import { api } from "@/lib/api/http";
 import Image from "next/image";
 
 type Creator = {
@@ -25,8 +25,8 @@ export default function CreatorsPage() {
     setError(null);
     try {
       const path = qs ? `${API.CREATORS}?${qs}` : API.CREATORS;
-      const res = await http(path, { method: "GET" });
-      const list: Creator[] = Array.isArray(res) ? res : res?.items || [];
+      const { data } = await api.get(path);
+      const list: Creator[] = Array.isArray(data) ? data : data?.items || [];
       setItems(list);
     } catch (e: any) {
       setError(e.message || "Failed to load creators");

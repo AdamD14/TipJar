@@ -1,4 +1,4 @@
-import { http } from "./http";
+import { api } from "./api/http";
 
 // Simple UUID v4 matcher (case-insensitive)
 const UUID_V4_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -30,8 +30,8 @@ export async function resolveCreatorId(handleOrId: string): Promise<string> {
     path = `${base}${sep}username=${encodeURIComponent(handleOrId)}`;
   }
 
-  const res = await http(path, { method: "GET" });
-  const id = res?.id || res?.user?.id || res?.creatorId || res?.data?.id;
+  const { data } = await api.get(path);
+  const id = data?.id || data?.user?.id || data?.creatorId || data?.data?.id;
   if (!id || typeof id !== "string") {
     throw new Error("Unknown creator");
   }
