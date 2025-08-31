@@ -6,9 +6,7 @@ import PaymentMethod, { type MethodKey } from "@/components/tip/PaymentMethod";
 import FeeBreakdown from "@/components/tip/FeeBreakdown";
 import OnrampPanel from "@/components/tip/OnrampPanel";
 import { useRouter } from "next/navigation";
-import { sendTip } from "@/lib/tips";
-import { resolveCreatorId } from "@/lib/creators";
-import { Toast } from "@/components/ui/Toast";
+import { useToast } from "@/components/ui/Toast";
 
 export default function Page({ params }: { params: { handle: string } }) {
   const router = useRouter();
@@ -16,19 +14,19 @@ export default function Page({ params }: { params: { handle: string } }) {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [amount, setAmount] = useState<number>(5);
   const [method, setMethod] = useState<MethodKey>("wallet");
-  const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const toast = useToast();
 
   const canNext = useMemo(() => amount > 0, [amount]);
 
   async function onSend() {
-    setError(null);
     setSubmitting(true);
     try {
- tip?.txHash || tip?.tx || tip?.id || "tx_demo";
+      const tx = "tx_demo";
       router.push(`/tip/${handle}/success?amt=${amount.toFixed(2)}&tx=${encodeURIComponent(String(tx))}`);
-    } catch (e: any) {
-      setError(e.message || "Payment failed");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Payment failed";
+      toast.push({ type: "error", text: msg });
     } finally {
       setSubmitting(false);
     }
@@ -36,7 +34,6 @@ export default function Page({ params }: { params: { handle: string } }) {
 
   return (
     <TipFlowShell title={`Tip @${handle}`}>
-      {error && <Toast msg={error} onClose={() => setError(null)} />}
       {step === 1 && <AmountInput value={amount} onChange={setAmount} />}
       {step === 2 && (
         <div className="space-y-4">
@@ -49,7 +46,7 @@ export default function Page({ params }: { params: { handle: string } }) {
         {step > 1 && (
           <button
             className="font-ui rounded-xl border border-white/15 px-4 py-3 text-white/80"
-            onClick={() => setStep((s) => (s - 1) as any)}
+            onClick={() => setStep((s) => (s - 1) as 1 | 2 | 3)}
           >
             Back
           </button>
@@ -58,7 +55,7 @@ export default function Page({ params }: { params: { handle: string } }) {
           <button
             className="font-ui rounded-xl bg-[#FFD700] px-4 py-3 font-semibold text-[#003737] disabled:opacity-60"
             disabled={!canNext}
-            onClick={() => setStep((s) => (s + 1) as any)}
+            onClick={() => setStep((s) => (s + 1) as 1 | 2 | 3)}
           >
             Continue
           </button>
