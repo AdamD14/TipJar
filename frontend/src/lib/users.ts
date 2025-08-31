@@ -7,7 +7,17 @@ export async function checkUsername(u: string) {
   return data;
 }
 export async function setUsername(username: string) {
+  // Deprecated: use setUsernameAndConsents in onboarding flow.
   const { data } = await api.post(API.USERS.SET_USERNAME, { username });
+  return data;
+}
+
+export async function setUsernameAndConsents(
+  username: string,
+  consents: { terms: boolean; privacy: boolean; age: boolean; marketing?: boolean },
+) {
+  const payload = { username, consents } as any;
+  const { data } = await api.post(API.USERS.SET_USERNAME, payload);
   return data;
 }
 

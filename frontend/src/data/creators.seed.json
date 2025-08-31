@@ -1,0 +1,48 @@
+[
+  {
+    "id": "c1",
+    "handle": "janedoe",
+    "name": "Jane Doe",
+    "tagline": "Illustrator & storyteller",
+    "avatarUrl": null,
+    "verified": true,
+    "metricLabel": "patrons",
+    "metricValue": 128,
+    "location": "London, UK",
+    "tags": ["Illustration", "Comics", "Characters"],
+    "category": "Illustrator",
+    "monetization": ["Commissions", "Tips"],
+    "activity": "Active"
+  },
+  {
+    "id": "c2",
+    "handle": "soundsmith",
+    "name": "Sound Smith",
+    "tagline": "Ambient music producer",
+    "avatarUrl": null,
+    "verified": false,
+    "metricLabel": "patrons",
+    "metricValue": 73,
+    "location": "Berlin, DE",
+    "tags": ["Music", "Ambient"],
+    "category": "Musician",
+    "monetization": ["Memberships", "Tips"],
+    "activity": "Trending"
+  },
+  {
+    "id": "c3",
+    "handle": "podkaster",
+    "name": "Cast & Coffee",
+    "tagline": "Weekly conversations on tech & culture",
+    "avatarUrl": null,
+    "verified": true,
+    "metricLabel": "listeners",
+    "metricValue": 5400,
+    "location": "Austin, US",
+    "tags": ["Podcast", "Tech"],
+    "category": "Podcaster",
+    "monetization": ["Memberships"],
+    "activity": "New"
+  }
+]
+

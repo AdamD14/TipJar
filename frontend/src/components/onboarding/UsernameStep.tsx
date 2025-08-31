@@ -3,7 +3,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import OnboardingShell from "@/components/onboarding/OnboardingShell";
 import UsernameForm from "@/components/onboarding/UsernameForm";
-import { setUsername } from "@/lib/users";
 import OnboardingGuard from "@/components/onboarding/OnboardingGuard";
 
 export default function UsernameStep() {
@@ -12,18 +11,11 @@ export default function UsernameStep() {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
-  async function onContinue() {
+  function onContinue() {
     if (!reserved) return;
-    setBusy(true);
-    setErr(null);
-    try {
-      await setUsername(reserved);
-      router.push("/onboarding/wallet");
-    } catch (e: any) {
-      setErr(e?.message || "Could not reserve username");
-    } finally {
-      setBusy(false);
-    }
+    // Przenosimy akceptację zgód na osobny krok.
+    // Username i zgody zostaną zapisane razem w następnym kroku.
+    router.push(`/onboarding/consents?u=${encodeURIComponent(reserved)}`);
   }
 
   return (

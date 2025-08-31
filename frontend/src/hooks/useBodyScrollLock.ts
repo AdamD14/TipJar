@@ -1,18 +1,21 @@
 // frontend/src/hooks/useBodyScrollLock.ts
-'use client';
+// Opis: Blokuje scroll body przy otwartym panelu mobilnym, zgodnie z WCAG (focus zostaje na panelu).
+// Uwaga: Nie dotyka globalnych styli – działa przez style inline na <body>.
 
 import { useEffect } from 'react';
 
-/** Locks <body> scroll when `locked` = true (mobile sheets/modals). */
 export function useBodyScrollLock(locked: boolean) {
   useEffect(() => {
-    const { body } = document;
-    if (!body) return;
-    const prev = body.style.overflow;
-    if (locked) body.style.overflow = 'hidden';
+    const { style } = document.body;
+    const prev = style.overflow;
+    if (locked) {
+      style.overflow = 'hidden';
+    } else {
+      style.overflow = prev || '';
+      style.overflow = '';
+    }
     return () => {
-      body.style.overflow = prev;
+      style.overflow = prev || '';
     };
   }, [locked]);
 }
-export default useBodyScrollLock;

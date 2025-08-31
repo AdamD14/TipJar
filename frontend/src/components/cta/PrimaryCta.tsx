@@ -5,22 +5,24 @@ import Link from 'next/link';
 import React from 'react';
 import styles from './cta.module.css';
 
-export type PrimaryCtaProps =
-  | ({ href: string; onClick?: never } & React.AnchorHTMLAttributes<HTMLAnchorElement>)
-  | ({ href?: never; onClick: React.MouseEventHandler<HTMLButtonElement> } & React.ButtonHTMLAttributes<HTMLButtonElement>);
+type AnchorCtaProps = {
+  href: string;
+} & React.AnchorHTMLAttributes<HTMLAnchorElement>;
+
+type ButtonCtaProps = {
+  href?: never;
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
+
+export type PrimaryCtaProps = AnchorCtaProps | ButtonCtaProps;
 
 type CommonProps = {
-  /** Label (Title Case, EN). Default: "Begin as a Creator" */
-  children?: React.ReactNode;
-  /** Loading state blocks interaction and shows spinner */
+  children?: React.ReactNode;     // Default: "Begin as a Creator"
   isLoading?: boolean;
-  /** data-analytics-id for CTR tracking */
   analyticsId?: string;
-  /** aria-label for SR users; default mirrors text */
   ariaLabel?: string;
 };
 
-function Spinner() {
+function Spinner(): JSX.Element {
   return (
     <span
       aria-hidden
@@ -29,25 +31,46 @@ function Spinner() {
   );
 }
 
-/** Primary CTA — Gold Solid, Pill, lg (h-12). Default route: /onboarding/start */
-export default function PrimaryCta(props: PrimaryCtaProps & CommonProps) {
+function isAnchorProps(
+  p: PrimaryCtaProps,
+): p is AnchorCtaProps {
+  return typeof (p as { href?: unknown }).href === 'string';
+}
+
+/** Primary CTA — glossy gold, hover: white text, warm bottom */
+export default function PrimaryCta(
+  props: PrimaryCtaProps & CommonProps,
+): JSX.Element {
   const {
     children = 'Begin as a Creator',
     isLoading = false,
     analyticsId,
     ariaLabel,
-    ...rest
-  } = props as any;
+    ...passthrough
+  } = props as PrimaryCtaProps & CommonProps;
 
   const base =
-    'relative inline-flex items-center justify-center gap-2 h-12 px-6 text-lg font-semibold rounded-full ' +
-    'bg-[#FFD700] text-[#0B0F12] shadow-[0_6px_16px_rgba(255,215,0,0.18)] ' +
-    'transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.70)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#003737] ' +
-    'hover:bg-[#E6C200] active:bg-[#C9A500] disabled:opacity-60 disabled:cursor-not-allowed ' +
-    styles.sheen;
+    'group relative inline-flex items-center justify-center gap-2 h-12 px-8 text-lg font-bold rounded-[16px] ' +
+    'text-[#0A0A0A] bg-[linear-gradient(180deg,#ebfa15_0%,#ffd700_40%,#FFd700_100%)] ' +
+    'hover:bg-[linear-gradient(180deg,#fff500_0%,#Ffe100_40%,#FFf500_100%)] ' +
+    'active:bg-[linear-gradient(180deg,#FFeb00_0%,#FFf500_38%,#FFeb00_100%)] ' +
+    'shadow-[0_10px_24px_rgba(0,0,0,0.35)] ring-1 ring-black/10 ' +
+    'transform-gpu will-change-transform transition-transform transition-colors duration-150 hover:scale-[1.015] active:translate-y-[1px] ' +
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD700]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#2A0F14] ' +
+  'disabled:opacity-60 disabled:cursor-not-allowed ' +
+  `${styles.sheen} ${styles.bevel}`;
 
-  if ('href' in props && props.href) {
-    const { href, ...a } = rest as React.AnchorHTMLAttributes<HTMLAnchorElement>;
+  if (isAnchorProps(props)) {
+    const { href, onClick, ...anchorAttrs } = props as AnchorCtaProps;
+
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (isLoading) {
+        e.preventDefault();
+        return;
+      }
+      onClick?.(e);
+    };
+
     return (
       <Link
         href={href || '/onboarding/start'}
@@ -56,31 +79,49 @@ export default function PrimaryCta(props: PrimaryCtaProps & CommonProps) {
         className={base}
         aria-busy={isLoading || undefined}
         aria-disabled={isLoading ? true : undefined}
-        onClick={(e) => {
-          if (isLoading) e.preventDefault();
-          (a.onClick as any)?.(e);
-        }}
+        onClick={handleClick}
+        {...anchorAttrs}
       >
         {isLoading ? <Spinner /> : null}
-        <span className={isLoading ? 'opacity-0' : 'opacity-100'}>{children}</span>
+        <span
+          className={
+            (isLoading ? 'opacity-0' : 'opacity-100') +
+            ' transition-colors group-hover:text-[#003737]'
+          }
+        >
+          {children}
+        </span>
       </Link>
     );
   }
 
-  const { onClick, ...btn } = rest as React.ButtonHTMLAttributes<HTMLButtonElement>;
+  const { onClick, disabled, ...btnAttrs } = passthrough as ButtonCtaProps;
+
+  const handleBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (isLoading) return;
+    onClick?.(e);
+  };
+
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={handleBtnClick}
       aria-label={ariaLabel || String(children)}
       data-analytics-id={analyticsId || 'cta-begin'}
       className={base}
-      disabled={isLoading || btn.disabled}
+      disabled={isLoading || Boolean(disabled)}
       aria-busy={isLoading || undefined}
-      {...btn}
+      {...btnAttrs}
     >
       {isLoading ? <Spinner /> : null}
-      <span className={isLoading ? 'opacity-0' : 'opacity-100'}>{children}</span>
+      <span
+        className={
+          (isLoading ? 'opacity-0' : 'opacity-100') +
+          ' transition-colors group-hover:text-white'
+        }
+      >
+        {children}
+      </span>
     </button>
   );
 }

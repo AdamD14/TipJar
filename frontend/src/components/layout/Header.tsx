@@ -22,7 +22,7 @@ const NAV = [
   { label: 'Why tipjar+?', href: '/#why' },
   { label: 'How it works?', href: '/#how' },
   { label: 'Start building / AI Studio', href: '/ai-studio' },
-  { label: 'Explore creators', href: '/discover' },
+  { label: 'Explore creators', href: '/explore' },
   { label: 'Learn about WEB3', href: '/learn/web3' },
 ] as const;
 
