@@ -1,7 +1,4 @@
-"use client";
-import OnboardingShell from "@/components/onboarding/OnboardingShell";
-import WalletConnect from "@/components/onboarding/WalletConnect";
-import OnboardingGuard from "@/components/onboarding/OnboardingGuard";
+import WalletStep from "@/components/onboarding/WalletStep";
 
 export const metadata = {
   title: "Onboarding — wallet • tipjar+",
@@ -10,12 +7,5 @@ export const metadata = {
 };
 
 export default function Page() {
-  return (
-    <OnboardingGuard>
-      <OnboardingShell title="Connect your wallet" step={2}>
-        <WalletConnect />
-      </OnboardingShell>
-    </OnboardingGuard>
-  );
+  return <WalletStep />;
 }
-
