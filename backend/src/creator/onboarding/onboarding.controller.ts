@@ -17,7 +17,7 @@ function stepsToCompletion(steps: Steps) {
   const total = Object.keys(steps).length; const done = Object.values(steps).filter(Boolean).length; return Math.round((done/total)*100);
 }
 
-@Controller('/api/v1/creator/onboarding')
+@Controller('creator/onboarding')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Roles(UserRole.CREATOR, UserRole.ADMIN)
 export class CreatorOnboardingController {

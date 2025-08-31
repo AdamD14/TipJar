@@ -33,10 +33,7 @@ export default function UsernameStep() {
         {err && <p className="mt-3 text-sm text-red-300">{err}</p>}
         <div className="mt-6 flex gap-3">
           <button
-<<<<<<< HEAD
             type="button"
-=======
->>>>>>> aacff4d735ea83b0bd34eefd4e7b953f32009701
             disabled={!reserved || busy}
             onClick={onContinue}
             className="rounded-xl bg-[#FFD700] px-4 py-3 font-semibold text-[#003737] disabled:opacity-60"
@@ -44,10 +41,7 @@ export default function UsernameStep() {
             {busy ? "Saving…" : "Continue"}
           </button>
           <button
-<<<<<<< HEAD
             type="button"
-=======
->>>>>>> aacff4d735ea83b0bd34eefd4e7b953f32009701
             onClick={() => router.push("/")}
             className="rounded-xl border border-white/15 px-4 py-3 text-white/80"
           >
@@ -58,7 +52,3 @@ export default function UsernameStep() {
     </OnboardingGuard>
   );
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> aacff4d735ea83b0bd34eefd4e7b953f32009701
