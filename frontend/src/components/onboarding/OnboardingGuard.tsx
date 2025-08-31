@@ -31,7 +31,8 @@ export default function OnboardingGuard({ children }: { children: React.ReactNod
         if (!alive) return;
         if (!u || !(u.id || u.email)) {
           setGate("redir");
-          router.replace("/login");
+          const returnTo = encodeURIComponent(path || "/");
+          router.replace(`/login?returnTo=${returnTo}`);
           return;
         }
         // 2) Auto-skip Username if already has handle
@@ -64,7 +65,8 @@ export default function OnboardingGuard({ children }: { children: React.ReactNod
         setGate("ok");
       } catch {
         setGate("redir");
-        router.replace("/login");
+        const returnTo = encodeURIComponent(path || "/");
+        router.replace(`/login?returnTo=${returnTo}`);
       }
     })();
     return () => {
@@ -81,4 +83,3 @@ export default function OnboardingGuard({ children }: { children: React.ReactNod
   if (gate === "redir") return null;
   return <>{children}</>;
 }
-
