@@ -1,5 +1,6 @@
 import Sidebar from '@/components/ui/Sidebar';
 import HeaderBar from '@/components/ui/HeaderBar';
+import RQProvider from '@/lib/api/reactQueryProvider';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const items = [
@@ -16,7 +17,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
       <div className="min-h-screen">
         <HeaderBar title="Panel twórcy" />
-        <main className="p-6">{children}</main>
+        <main className="p-6">
+          <RQProvider>{children}</RQProvider>
+        </main>
       </div>
     </div>
   );
