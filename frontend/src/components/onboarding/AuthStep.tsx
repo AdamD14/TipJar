@@ -8,10 +8,11 @@ import { Eye, EyeOff, Mail, Lock, Wallet } from "lucide-react";
 import { SiweMessage } from "siwe";
 import { useAccount, useConnect, useSignMessage, useChainId } from "wagmi";
 
-import { useOnboardingStore } from "@/lib/stores/onboardingStore";
-import apiClient from "@/lib/apiClient";
-import { API } from "@/lib/api-routes";
-import { registerSchema, RegisterFormValues } from "@/lib/schemas/authSchema";
+import { useOnboardingStore } from '@/lib/stores/onboardingStore';
+import apiClient from '@/lib/apiClient';
+import { normalize } from '@/lib/api/errors';
+import { API } from '@/lib/api-routes';
+import { registerSchema, RegisterFormValues } from '@/lib/schemas/authSchema';
 
 export default function AuthStep() {
   const router = useRouter();
@@ -37,8 +38,9 @@ export default function AuthStep() {
       await apiClient.post('/auth/register', { email: data.email, password: data.password, role: currentRole });
       actions.setUserData({ email: data.email });
       actions.nextStep();
-    } catch (err: any) {
-      setApiError(err.response?.data?.message || "An unexpected error occurred.");
+    } catch (err: unknown) {
+      const { msg } = normalize(err as any);
+      setApiError(msg || 'An unexpected error occurred.');
     } finally {
       setLoading(false);
     }
@@ -98,8 +100,9 @@ export default function AuthStep() {
       actions.setTokens({ accessToken });
       actions.setUserData({ email: user.email, walletAddress: user.providerId, username: user.displayName });
       router.push("/choose-username");
-    } catch (err: any) {
-      setApiError(err.response?.data?.message || err.message || "Web3 registration failed.");
+    } catch (err: unknown) {
+      const { msg } = normalize(err as any);
+      setApiError(msg || 'Web3 registration failed.');
     } finally {
       setLoading(false);
     }
