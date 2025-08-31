@@ -12,6 +12,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 
 import { CircleService } from './circle.service';
+import { WebhookEventsService } from '../webhooks/webhook-events.service';
 import { ValidatedUser } from '../auth/auth.service';
 import { UserRole } from '@prisma/client';
 import { TransactionState } from '@circle-fin/developer-controlled-wallets';
@@ -51,7 +52,10 @@ type TxRow = {
 
 @Controller('circle')
 export class CircleController {
-  constructor(private readonly circleService: CircleService) {}
+  constructor(
+    private readonly circleService: CircleService,
+    private readonly webhookEvents: WebhookEventsService,
+  ) {}
 
   @Post('wallet/create')
   @UseGuards(AuthGuard('jwt'))
@@ -134,8 +138,24 @@ export class CircleController {
   }
 
   @Post('webhook')
-  async webhook(@Body() payload: unknown): Promise<WebhookAck> {
-    await this.circleService.handleWebhook(payload);
+  async webhook(@Body() payload: any, @Req() req: Request): Promise<WebhookAck> {
+    const headers: any = (req as any).headers || {};
+    const sig = headers['circle-signature'] || headers['x-circle-signature'] || null;
+    const type = payload?.type || payload?.eventType || payload?.data?.type || 'unknown';
+    const externalId = payload?.id || payload?.data?.id || payload?.eventId || null;
+    const ev = await this.webhookEvents.recordReceived({
+      externalId,
+      type,
+      signature: sig,
+      rawJson: payload,
+    });
+    try {
+      await this.circleService.handleWebhook(payload);
+      await this.webhookEvents.markProcessed(ev.id);
+    } catch (e: any) {
+      await this.webhookEvents.markError(ev.id, e?.message || 'error');
+      throw e;
+    }
     return { received: true };
   }
 

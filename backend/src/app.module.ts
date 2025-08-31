@@ -25,6 +25,8 @@ import { CreatorsModule } from './creators/creators.module';
 
 // Newly added FanModule
 import { FanModule } from './fan/fan.module';
+import { UploadsModule } from './uploads/uploads.module';
+import { RemindersModule } from './reminders/reminders.module';
 
 @Module({
   imports: [
@@ -68,6 +70,8 @@ import { FanModule } from './fan/fan.module';
     AnalyticsModule,
     CreatorOnboardingModule,
     CreatorsModule,
+    UploadsModule,
+    RemindersModule,
     // Import the fan module to enable fan endpoints
     FanModule,
   ],
