@@ -1,24 +1,46 @@
+"use client";
+import { useState } from 'react';
+import { useStats } from '@/lib/api/queries';
+import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
+import ErrorState from '@/components/ui/ErrorState';
 import TipStatistics from '@/components/dashboard/TipStatistics';
 
-export default async function DashboardPage() {
-  const series = [2, 3, 1, 5, 4, 6, 8, 5, 7, 9, 11, 10];
-  const total = 1245;
-  const fans = 86;
-  const lastTips = [{ fan: 'aga42', amount: 5, time: '2h' }];
+export default function DashboardPage() {
+  const [range, setRange] = useState<'7d' | '30d' | '90d'>('30d');
+  const { data, isLoading, isError, refetch } = useStats(range);
 
   return (
     <div className="space-y-6">
-      <TipStatistics series={series} total={total} fans={fans} />
-      <section>
-        <h2 className="text-xl font-semibold">Ostatnie napiwki</h2>
-        <div className="mt-3 grid gap-2">
-          {lastTips.map((t, i) => (
-            <div key={i} className="rounded-xl bg-white/5 border border-white/10 p-3">
-              <span className="font-semibold">{t.fan}</span> • {t.amount} USDC • {t.time} temu
-            </div>
+      <div className="flex gap-2 items-center">
+        <h1 className="text-2xl font-semibold">Pulpit</h1>
+        <div className="ml-auto flex gap-2">
+          {(['7d', '30d', '90d'] as const).map((r) => (
+            <button
+              key={r}
+              onClick={() => setRange(r)}
+              className={`px-3 py-1 rounded-lg border ${
+                range === r ? 'bg-primary text-black border-primary' : 'border-white/15'
+              }`}
+            >
+              {r}
+            </button>
           ))}
         </div>
-      </section>
+      </div>
+
+      {isLoading && <LoadingSkeleton lines={6} />}
+      {isError && <ErrorState onRetry={() => refetch()} />}
+
+      {data && (
+        <>
+          <TipStatistics series={data.series} total={data.total} fans={data.fans} />
+          <section>
+            <h2 className="text-xl font-semibold mt-4">Ostatnie napiwki</h2>
+            {/* TODO: podłącz listę /creator/tips po integracji; tu sam pulpit metryk */}
+            <p className="opacity-70 text-sm mt-2">Lista napiwków pojawi się po spięciu endpointu.</p>
+          </section>
+        </>
+      )}
     </div>
   );
 }

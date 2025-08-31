@@ -10,7 +10,7 @@ function Spark({ series }: { series: number[] }) {
     })
     .join(' ');
   return (
-    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Wykres napiwków">
+    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Wykres sumy napiwków">
       <polyline points={pts} fill="none" stroke="currentColor" strokeOpacity="0.8" strokeWidth="2" />
     </svg>
   );

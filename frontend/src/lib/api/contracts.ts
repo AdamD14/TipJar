@@ -9,19 +9,21 @@ export type User = {
 };
 
 export type CreatorProfile = {
-  name: string;
+  id: string;
   alias: string;
-  bio: string;
+  name: string;
+  bio?: string;
+  avatarUrl?: string;
+  bannerUrl?: string;
   links?: {
     youtube?: string;
     twitch?: string;
     twitter?: string;
     instagram?: string;
-    website?: string;
   };
   goal?: {
     target: number;
-    current?: number;
+    current: number;
   };
 };
 
@@ -55,6 +57,23 @@ export type Stats = {
   series: number[];
   total: number;
   fans: number;
+};
+
+export type Goal = {
+  id?: string;
+  title: string;
+  target: number;
+  current?: number;
+  deadline?: string;
+};
+
+export type Subscription = {
+  id: string;
+  fan: string;
+  amount: number;
+  period: 'mies.' | 'rok';
+  startedAt: string;
+  active: boolean;
 };
 
 export type Notification = {

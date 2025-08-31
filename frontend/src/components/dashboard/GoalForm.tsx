@@ -1,7 +1,6 @@
 "use client";
 import { useState } from 'react';
-
-export type Goal = { title: string; target: number; deadline?: string };
+import type { Goal } from '@/lib/api/contracts';
 
 export default function GoalForm({
   initial,
