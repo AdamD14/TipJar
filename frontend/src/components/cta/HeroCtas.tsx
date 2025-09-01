@@ -12,7 +12,7 @@ type Props = {
 
 export default function HeroCtas({ primaryHref = '/register', secondaryHref = '/explore' }: Props) {
   return (
-    <div className="flex flex-col sm:flex-row items-center gap-4">
+    <div className="flex flex-col font-body font-ui sm:flex-row items-center gap-4">
       <PrimaryCta href={primaryHref}>Begin as a Creator</PrimaryCta>
       <SecondaryCta href={secondaryHref}>Explore as a Fan</SecondaryCta>
     </div>

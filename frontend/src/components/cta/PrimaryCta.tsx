@@ -50,7 +50,7 @@ export default function PrimaryCta(
   } = props as PrimaryCtaProps & CommonProps;
 
   const base =
-    'group relative inline-flex items-center justify-center gap-2 h-12 px-8 text-lg font-bold rounded-[16px] ' +
+    'group relative inline-flex items-center justify-center gap-2 h-12 px-8 text-lg font-ui font-bold rounded-[16px] ' +
     'text-[#0A0A0A] bg-[linear-gradient(180deg,#ebfa15_0%,#ffd700_40%,#FFd700_100%)] ' +
     'hover:bg-[linear-gradient(180deg,#fff500_0%,#Ffe100_40%,#FFf500_100%)] ' +
     'active:bg-[linear-gradient(180deg,#FFeb00_0%,#FFf500_38%,#FFeb00_100%)] ' +

@@ -1,163 +1,223 @@
 // frontend/src/components/layout/Header.tsx
+// Zmiany: Usunięto logo z lewej strony nagłówka.
+
 'use client';
 
-import React, { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useScrollPosition } from '@/hooks/useScrollPosition';
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
+import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
-import { Inter, IBM_Plex_Sans, Playfair_Display, Mukta } from 'next/font/google';
-import useScrolled from '@/hooks/useScrolled';
+import clsx from 'clsx';
+import PrimaryCta from '@/components/cta/PrimaryCta';
+import LoginButton from '@/components/ui/LoginButton';
 
-const inter = Inter({ subsets: ['latin'], display: 'swap', weight: ['400', '600'] });
-const plex = IBM_Plex_Sans({ subsets: ['latin'], display: 'swap', weight: ['400', '600'] });
-const playfair = Playfair_Display({ subsets: ['latin'], display: 'swap', weight: ['600', '700'] });
-const mukta = Mukta({ subsets: ['latin'], display: 'swap', weight: ['400', '600', '700'] });
-
+// --- Constants ---
 const BRAND_DARK = '#003737';
 const GOLD = '#FFD700';
-const GOLD_HOVER = '#E6C200';
-const PURPLE = '#4D194D';
+const GOLD_DARK = '#E6C200';
 const TEXT_PRIMARY = '#DDE0DA';
 const TEXT_SECONDARY = '#BCC1B6';
 
-const NAV = [
-  { label: 'Why tipjar+?', href: '/#why' },
-  { label: 'How it works?', href: '/#how' },
-  { label: 'Start building / AI Studio', href: '/ai-studio' },
-  { label: 'Explore creators', href: '/explore' },
-  { label: 'Learn about WEB3', href: '/learn/web3' },
-] as const;
+type NavItem = {
+  label: string;
+  href: string;
+  'data-testid'?: string;
+};
 
+const NAV_ITEMS: NavItem[] = [
+    { label: 'Why tipjar+?', href: '#why', 'data-testid': 'nav-why' },
+    { label: 'How it works?', href: '#how', 'data-testid': 'nav-how' },
+    { label: 'Start building / AI Studio', href: '#studio', 'data-testid': 'nav-studio' },
+    { label: 'Explore creators', href: '#explore', 'data-testid': 'nav-explore' },
+    { label: 'Learn about WEB3', href: '#learn', 'data-testid': 'nav-learn' },
+];
+
+// --- Main Component ---
 export default function Header() {
-  const scrolled = useScrolled(10);
+  const scrolled = useScrollPosition(16);
   const [open, setOpen] = useState(false);
-  const id = useId();
-  const btnRef = useRef<HTMLButtonElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
 
-  // Close on route change hash click or Esc
+  useBodyScrollLock(open);
+
   useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
-    window.addEventListener('keydown', onKey);
+    if (open && panelRef.current) {
+      panelRef.current.focus();
+    }
+  }, [open]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    if (open) {
+      window.addEventListener('keydown', onKey);
+    }
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
 
-  // Click outside to close (mobile)
-  useEffect(() => {
-    if (!open) return;
-    const onClick = (e: MouseEvent) => {
-      if (!panelRef.current) return;
-      if (!panelRef.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener('click', onClick);
-    return () => document.removeEventListener('click', onClick);
-  }, [open]);
-
   return (
-    <header
-      className={[
-        'fixed inset-x-0 top-0 z-40 transition-all',
-        scrolled
-          ? 'bg-[rgba(0,55,55,0.90)] backdrop-blur-md shadow-sm'
-          : 'bg-transparent',
-      ].join(' ')}
-      aria-label="Site header"
-    >
-      {/* Top bar */}
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-6">
-        {/* Left: (no brand text/logo per spec) keep empty spacer for layout balance */}
-        <div aria-hidden className="w-10 md:w-12" />
+    <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] rounded-md bg-black/80 px-3 py-2 text-white"
+      >
+        Skip to main content
+      </a>
 
-        {/* Center: nav (desktop) */}
-        <nav aria-label="Main" className="hidden md:block">
-          <ul className={`flex items-center gap-7 ${plex.className}`}>
-            {NAV.map((item) => (
-              <li key={item.href}>
-                <Link
+      <header
+        role="banner"
+        data-testid="navbar"
+        className={clsx(
+          'fixed inset-x-0 top-0 z-50 transition-all duration-300',
+          'border-b',
+          scrolled
+            ? 'backdrop-blur-md bg-[rgba(0,55,55,0.82)] border-cyan-300/20'
+            : 'bg-transparent border-transparent'
+        )}
+        aria-label="Primary"
+      >
+        <nav className="mx-auto w-full px-4 md:px-6" aria-label="Main">
+          <div className="flex py-1 items-center justify-between">
+            
+            {/* 1. Kolumna Lewa: Pusta przestrzeń dla zachowania symetrii */}
+            <div className="flex-1 flex justify-start">
+              {/* Logo usunięte */}
+            </div>
+
+            {/* 2. Kolumna Środkowa: Linki Nawigacji */}
+            <div className="flex-shrink-0 flex justify-center">
+              <ul className="hidden md:flex items-center gap-8 text-sm">
+                {NAV_ITEMS.map((item) => (
+                  <li key={item.label}>
+                    <HeaderLink href={item.href} data-testid={item['data-testid']}>
+                      {item.label}
+                    </HeaderLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* 3. Kolumna Prawa: Przyciski */}
+            <div className="flex-1 flex justify-end items-center">
+              <div className="hidden md:block">
+                 <LoginButton data-testid="desktop-login">Log in</LoginButton>
+              </div>
+              <button
+                type="button"
+                aria-controls="mobile-menu"
+                aria-expanded={open}
+                aria-label="Open menu"
+                onClick={() => setOpen(true)}
+                className={clsx(
+                  'md:hidden',
+                  'inline-flex items-center justify-center rounded-md p-2 outline-none ring-offset-2 transition-all',
+                  'focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.7)]',
+                  'text-[color:var(--tj-text-secondary)] hover:text-[color:var(--tj-text-primary)]',
+                  open && 'pointer-events-none opacity-0'
+                )}
+                data-testid="hamburger"
+              >
+                <Menu aria-hidden size={22} />
+              </button>
+            </div>
+          </div>
+        </nav>
+      </header>
+
+      <div
+        id="mobile-menu"
+        ref={panelRef}
+        tabIndex={-1}
+        aria-modal={open ? 'true' : undefined}
+        role={open ? 'dialog' : undefined}
+        className={clsx(
+          'md:hidden fixed inset-0 z-[60] origin-top transition-transform duration-300',
+          open ? 'pointer-events-auto opacity-100 scale-100' : 'pointer-events-none opacity-0 scale-95'
+        )}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) setOpen(false);
+        }}
+      >
+        <div className="absolute inset-0 bg-brand-dark" style={{ backgroundColor: BRAND_DARK }} aria-hidden />
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" aria-hidden />
+
+        <button
+          type="button"
+          aria-label="Close menu"
+          onClick={() => setOpen(false)}
+          className="absolute top-4 right-4 z-10 rounded-md p-2 text-gray-400 transition-colors hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+        >
+          <X size={24} />
+        </button>
+
+        <div className="relative mx-auto w-full max-w-7xl px-4 pt-16 sm:pt-20">
+          <ul className="flex flex-col gap-3 border-t border-cyan-300/20 pt-6">
+            {NAV_ITEMS.map((item) => (
+              <li key={item.label}>
+                <MobileLink
                   href={item.href}
-                  className={[
-                    'text-sm font-medium transition underline-offset-4',
-                    'focus-visible:outline-none focus-visible:ring-2',
-                    'focus-visible:ring-[rgba(255,215,0,0.70)] focus-visible:ring-offset-2',
-                  ].join(' ')}
-                  style={{ color: TEXT_PRIMARY }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLAnchorElement).style.color = GOLD_HOVER;
-                    (e.currentTarget as HTMLAnchorElement).style.textDecorationColor = GOLD_HOVER;
-                    (e.currentTarget as HTMLAnchorElement).style.textDecorationLine = 'underline';
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLAnchorElement).style.color = TEXT_PRIMARY;
-                    (e.currentTarget as HTMLAnchorElement).style.textDecorationLine = 'none';
-                  }}
+                  onClick={() => setOpen(false)}
+                  data-testid={`${item['data-testid']}-mobile`}
                 >
                   {item.label}
-                </Link>
+                </MobileLink>
               </li>
             ))}
           </ul>
-        </nav>
 
-        {/* Right: mobile hamburger */}
-        <div className="md:hidden">
-          <button
-            ref={btnRef}
-            type="button"
-            aria-label="Open navigation"
-            aria-expanded={open}
-            aria-controls={id}
-            onClick={() => setOpen((s) => !s)}
-            className="rounded-lg p-2 text-[#DDE0DA] outline-none transition hover:text-[#E6C200] focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.70)]"
-          >
-            <span className="sr-only">Menu</span>
-            <span aria-hidden className="block h-0.5 w-6 bg-current"></span>
-            <span aria-hidden className="mt-1 block h-0.5 w-6 bg-current"></span>
-            <span aria-hidden className="mt-1 block h-0.5 w-6 bg-current"></span>
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile full panel */}
-      <div
-        id={id}
-        ref={panelRef}
-        role={open ? 'dialog' : undefined}
-        aria-modal={open || undefined}
-        className={[
-          'md:hidden transition-all',
-          open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0',
-        ].join(' ')}
-      >
-        <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} aria-hidden />
-        <div className="absolute left-0 right-0 top-0 rounded-b-2xl border-b border-[rgba(255,215,0,0.12)] bg-[rgba(0,55,55,0.96)] p-4 backdrop-blur-md">
-          <nav aria-label="Mobile">
-            <ul className="space-y-1">
-              {NAV.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={`block rounded-lg px-4 py-3 text-base ${mukta.className} text-[#DDE0DA] transition hover:text-[#E6C200] hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.70)]`}
-                    onClick={() => setOpen(false)}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          <div className="mt-3 flex justify-end">
-            <button
-              type="button"
-              className="rounded-lg border border-[rgba(255,215,0,0.20)] px-3 py-1.5 text-sm text-[#DDE0DA] transition hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.70)]"
-              onClick={() => setOpen(false)}
-            >
-              Close
-            </button>
+          <div className="mt-6 flex flex-col gap-3 border-t border-white/10 pt-6">
+            <LoginButton data-testid="mobile-login">Log in</LoginButton>
+            <PrimaryCta href="/signup" data-testid="mobile-signup">Sign up</PrimaryCta>
           </div>
         </div>
       </div>
-
-      {/* Subtle height change for “closing image” feel */}
-      <div className={scrolled ? 'h-2 transition-all' : 'h-4 transition-all'} aria-hidden />
-    </header>
+    </>
   );
 }
+
+// --- Helper Components ---
+function HeaderLink(props: React.PropsWithChildren<{ href: string; 'data-testid'?: string }>) {
+  return (
+    <Link
+      href={props.href}
+      data-testid={props['data-testid']}
+      className={clsx(
+        'relative outline-none text-sm font-medium transition-colors duration-200',
+        'focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.7)] focus-visible:rounded',
+        'text-[var(--tj-text-secondary)] hover:text-[var(--tj-gold-dark)]',
+        'hover:underline hover:decoration-[var(--tj-gold-dark)] hover:underline-offset-4 hover:decoration-1'
+      )}
+      style={
+        {
+          '--tj-text-secondary': TEXT_SECONDARY,
+          '--tj-gold-dark': GOLD_DARK,
+        } as React.CSSProperties
+      }
+    >
+      {props.children}
+    </Link>
+  );
+}
+
+function MobileLink(
+  props: React.PropsWithChildren<{ href: string; onClick?: () => void; 'data-testid'?: string }>
+) {
+  return (
+    <Link
+      href={props.href}
+      onClick={props.onClick}
+      data-testid={props['data-testid']}
+      className={clsx(
+        'block rounded-md px-4 py-3 text-base font-medium transition',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.7)]',
+        'hover:bg-white/10'
+      )}
+      style={{ color: TEXT_PRIMARY }}
+    >
+      {props.children}
+    </Link>
+  );
+}
+

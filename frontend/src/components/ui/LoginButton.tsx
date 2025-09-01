@@ -7,7 +7,7 @@ type Props = {
   isLoading?: boolean;
   /** Zablokowany przycisk. */
   disabled?: boolean;
-  /** Treść widoczna (domyślnie „Zaloguj się”). */
+  /** Treść widoczna (domyślnie „login”). */
   children?: React.ReactNode;
   /** Atrybut type – domyślnie "button". */
   type?: 'button' | 'submit' | 'reset';
@@ -17,7 +17,7 @@ type Props = {
 export const LoginButton: React.FC<Props> = ({
   isLoading = false,
   disabled,
-  children = 'Zaloguj się',
+  children = 'Login',
   type = 'button',
   className = '',
   ...rest
@@ -27,24 +27,25 @@ export const LoginButton: React.FC<Props> = ({
   return (
     <button
       type={type}
-      aria-label="Zaloguj się"
+      aria-label="login"
       aria-busy={isLoading || undefined}
       aria-disabled={isDisabled || undefined}
       disabled={isDisabled}
       className={[
         // Layout / typografia
         'relative inline-flex select-none items-center justify-center',
-        'h-11 px-5 text-base font-semibold',
-        'rounded-[12px]',
+        'h-10  px-10 text-base font-ui font-bold',
+        'rounded-[14px]',
         // „Mokre szkło” (glass)
         'backdrop-blur-md',
         'bg-brandPrimary/35',
         'border border-[#cfd6d8]/15',
-        'text-[#cfd6d8]',
-        'shadow-[0_6px_16px_rgba(210,168,102,0.18)]',
+        'text-[#DDE0DA]',
+        // Cień (efekt wypukłości)
+        'shadow-[0_8px_18px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.50),inset_0_-6px_10px_rgba(0,0,0,0.10)]', // <<< ZMIANA TUTAJ
         // Interakcje
         'transition-all duration-200',
-        'hover:bg-brandPrimary/45',
+        'hover:bg-brandPrimary/45 hover:scale-[1.02]',
         'active:scale-[0.99] active:bg-brandPrimary/55',
         // Dostępność – focus-visible
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brandAccent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f10]',

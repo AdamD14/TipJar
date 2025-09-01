@@ -7,19 +7,17 @@ import HeroCtas from "@/components/cta/HeroCtas";
 export default function Hero() {
   return (
     <section className="relative overflow-hidden text-white" aria-labelledby="hero-heading">
-      <div className="mx-auto max-w-6xl px-6 pt-28 pb-20">
+      <div className="mx-auto  px-6 pt-28 pb-20">
         <div className="max-w-3xl">
-          <p className="mb-4 text-sm uppercase tracking-[0.2em] text-white/70">
-            tipjar.plus
-          </p>
+         
 
-          <h1 id="hero-heading" className="text-5xl md:text-7xl font-extrabold leading-[1.05]">
+          <h1 id="hero-heading" className="text-5xl md:text-7xl font-ui  leading-[1.05]">
             support creativity,
             <br className="hidden sm:block" />
             <span className="text-white">get paid instantly</span>
           </h1>
 
-          <p className="mt-6 text-lg md:text-2xl text-white/80 max-w-2xl">
+          <p className="mt-6 text-lg font-ui md:text-2xl text-white/80 max-w-2xl">
             Instant micro-payments in USDC for creators streamers, YouTubers,
             digital models, musicians, artists, bloggers, coaches, educators,
             journalists, influencers.
@@ -32,8 +30,8 @@ export default function Hero() {
           <div className="mt-10 flex items-center gap-5 text-white/70">
             <Image
               src="/usdc.png"
-              width={28}
-              height={28}
+              width={48}
+              height={48}
               alt="USDC"
               className="opacity-80"
               priority
