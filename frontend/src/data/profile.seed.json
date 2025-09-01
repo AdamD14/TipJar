@@ -1,0 +1,22 @@
+[
+  {
+    "handle": "janedoe",
+    "name": "Jane Doe",
+    "tagline": "Illustrator & storyteller",
+    "portraitUrl": null,
+    "bannerUrl": null,
+    "currency": "USD",
+    "tiers": [
+      { "id": "t1", "name": "Silver", "priceMonthly": 5, "perks": ["Early access", "Behind-the-scenes"] },
+      { "id": "t2", "name": "Gold", "priceMonthly": 10, "perks": ["All Silver perks", "Exclusive downloads"], "recommended": true }
+    ],
+    "posts": [
+      { "id": "p1", "title": "Sketchbook drop — September", "coverUrl": null, "locked": false },
+      { "id": "p2", "title": "Character pack (WIP)", "coverUrl": null, "locked": true }
+    ],
+    "communityLinks": [
+      { "label": "Discord", "href": "https://example.com/discord" },
+      { "label": "Twitter/X", "href": "https://example.com/twitter" }
+    ]
+  }
+]

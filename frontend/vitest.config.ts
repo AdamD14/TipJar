@@ -2,8 +2,12 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    environment: 'node',
-    include: ['src/**/*.spec.ts'],
+    environment: 'jsdom',
+    include: ['src/**/*.test.ts', 'src/**/*.test.tsx', 'src/**/*.spec.ts', 'src/**/*.spec.tsx'],
     exclude: ['tests/**/*'],
+    setupFiles: ['./vitest.setup.ts'],
+  },
+  esbuild: {
+    jsx: 'automatic',
   },
 });
