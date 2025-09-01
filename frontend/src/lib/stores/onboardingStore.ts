@@ -1,63 +1,69 @@
+"use client";
+
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
-type OnboardingStep =
-  | 'ROLE_SELECTION'
-  | 'AUTH_DETAILS'
-  | 'CHOOSE_USERNAME'
-  | 'CONSENTS'
-  | 'CREATOR_SETUP'
-  | 'COMPLETED';
+type Role = 'FAN' | 'CREATOR';
+type Step = 'REGISTER' | 'CHOOSE_USERNAME' | 'CONSENTS' | 'COMPLETED';
 
-interface OnboardingState {
-  step: OnboardingStep;
-  role: 'FAN' | 'CREATOR' | null;
-  tokens: { accessToken: string | null };
-  userData: { email?: string; walletAddress?: string; username?: string };
-}
-
-interface OnboardingActions {
-  setStep: (step: OnboardingStep) => void;
-  setRole: (role: 'FAN' | 'CREATOR') => void;
-  setTokens: (tokens: { accessToken: string | null }) => void;
-  setUserData: (data: Partial<OnboardingState['userData']>) => void;
-  nextStep: () => void;
-  reset: () => void;
-}
-
-const stepsOrder: OnboardingStep[] = [
-  'ROLE_SELECTION',
-  'AUTH_DETAILS',
-  'CHOOSE_USERNAME',
-  'CONSENTS',
-  'CREATOR_SETUP',
-  'COMPLETED',
-];
-
-const initialState: OnboardingState = {
-  step: 'ROLE_SELECTION',
-  role: null,
-  tokens: { accessToken: null },
-  userData: {},
+export type UserLite = {
+  id: string;
+  email?: string | null;
+  role?: Role | null;
+  username?: string | null;
+  hasCompletedOnboarding?: boolean;
 };
 
-export const useOnboardingStore = create<OnboardingState & { actions: OnboardingActions }>()((set, get) => ({
-  ...initialState,
-  actions: {
-    setStep: (step) => set({ step }),
-    setRole: (role) => set({ role }),
-    setTokens: (tokens) => set({ tokens }),
-    setUserData: (data) => set((state) => ({ userData: { ...state.userData, ...data } })),
-    nextStep: () => {
-      const currentStepIndex = stepsOrder.indexOf(get().step);
-      if (currentStepIndex < stepsOrder.length - 1) {
-        let nextStep = stepsOrder[currentStepIndex + 1];
-        if (nextStep === 'CREATOR_SETUP' && get().role === 'FAN') {
-          nextStep = stepsOrder[currentStepIndex + 2];
-        }
-        set({ step: nextStep });
-      }
-    },
-    reset: () => set(initialState),
+type State = {
+  step: Step;
+  role: Role;
+  tokens: { accessToken: string | null };
+  user: UserLite | null;
+  drafts: {
+    email?: string;
+    password?: string;
+    username?: string;
+    consents?: { termsAccepted: boolean; marketing: boolean };
+  };
+};
+
+type Actions = {
+  setStep: (s: Step) => void;
+  setRole: (r: Role) => void;
+  setTokens: (t: { accessToken: string | null }) => void;
+  setUser: (u: UserLite | null) => void;
+  setDraft: (p: Partial<State['drafts']>) => void;
+  reset: () => void;
+};
+
+const initial: State = {
+  step: 'REGISTER',
+  role: 'CREATOR',
+  tokens: { accessToken: null },
+  user: null,
+  drafts: {
+    consents: { termsAccepted: false, marketing: false },
   },
-}));
+};
+
+export const useOnboardingStore = create<State & Actions>()(
+  persist(
+    (set) => ({
+      ...initial,
+      setStep: (s) => set({ step: s }),
+      setRole: (r) => set({ role: r, user: { ...(useOnboardingStore.getState().user ?? {}), role: r } }),
+      setTokens: (t) => set({ tokens: t }),
+      setUser: (u) => set({ user: u ?? null }),
+      setDraft: (p) => set((s) => ({ drafts: { ...s.drafts, ...p } })),
+      reset: () => set(initial),
+    }),
+    {
+      name: 'tj+_onboarding_v1',
+      storage: createJSONStorage(() => localStorage),
+      version: 1,
+      migrate: (state) => state as any,
+      partialize: (s) => s,
+    },
+  ),
+);
 
