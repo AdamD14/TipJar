@@ -10,7 +10,7 @@
     "start": "next start",
     "lint": "next lint",
     "clean": "rm -rf .next",
-    "test": "vitest",
+    "test": "vitest --environment jsdom",
     "test:e2e": "playwright test"
   },
   "dependencies": {
@@ -47,21 +47,27 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.30.0",
+    "@playwright/test": "^1.51.1",
     "@tailwindcss/postcss": "^4.1.11",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
     "@types/next": "^8.0.7",
     "@types/node": "^24.0.1",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^5.0.2",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.30.0",
     "eslint-config-next": "^15.3.4",
     "eslint-config-prettier": "^10.1.5",
+    "jsdom": "^26.1.0",
     "pino-pretty": "^13.0.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.11",
     "typescript": "^5.5.2",
     "vite": "^6.3.5",
-    "@playwright/test": "^1.51.1",
+    "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^2.1.4"
   }
 }
