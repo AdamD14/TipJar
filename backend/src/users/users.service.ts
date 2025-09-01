@@ -384,24 +384,7 @@ export class UsersService {
     });
   }
 
-  async getPublicProfile(username: string): Promise<{
-    username: string;
-    displayName: string;
-    avatarUrl: string | null;
-    profile: {
-      bio: string | null;
-      bannerUrl: string | null;
-      websiteUrl: string | null;
-      twitterUrl: string | null;
-      youtubeUrl: string | null;
-    } | null;
-  } | null> {
-    return this.prisma.user.findUnique({
-      where: { username: username.toLowerCase() },
-      select: {
-        username: true,
-        displayName: true,
-        avatarUrl: true,
+
         profile: {
           select: {
             bio: true,
@@ -409,10 +392,7 @@ export class UsersService {
             websiteUrl: true,
             twitterUrl: true,
             youtubeUrl: true,
-          },
-        },
-      },
-    });
+
   }
 
   async setUsernameAndConsents(
@@ -435,7 +415,7 @@ export class UsersService {
       where: { id: userId },
       data: {
         username: data.username.toLowerCase(),
-        consents: data.consents,
+        consents: (data.consents as unknown) as Prisma.InputJsonValue,
         hasCompletedOnboarding: true,
       },
     });

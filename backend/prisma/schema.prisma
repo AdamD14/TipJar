@@ -46,6 +46,7 @@ model User {
   username    String?  @unique
   avatarUrl   String?
   role        UserRole @default(FAN)
+  autoApproveTierChanges Boolean @default(true)
 
   // Status/weryfikacja
   isActive                        Boolean   @default(true)
@@ -64,6 +65,12 @@ model User {
   hasCompletedOnboarding Boolean @default(false)
   consents               Json?
 
+  // Onboarding / publikacja
+  published               Boolean   @default(false)
+  onboardingCompletedAt   DateTime?
+  lastOnboardingEmailAt   DateTime?
+  paymentConnected        Boolean   @default(false)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -78,6 +85,9 @@ model User {
   circleWallet    CircleWallet?
   notifications   Notification[]
   withdrawals     Withdrawal[]
+  onboardingEvents OnboardingEvent[]
+  // Multi-role mapping (in addition to primary role)
+  userRoles   UserRoleMap[]
 }
 
 model SocialConnection {
@@ -224,4 +234,49 @@ model Notification {
   updatedAt DateTime @updatedAt
 
   @@index([userId, read, createdAt])
+}
+
+/* ======================
+   OnboardingEvent (NOWE)
+   ====================== */
+model OnboardingEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  step      String   // identity|bio|tiers|payments|publish
+  action    String   // view|save|error|complete
+  createdAt DateTime @default(now())
+
+  @@index([userId, step, action, createdAt])
+}
+
+// Additional mapping table for multi-role support
+model UserRoleMap {
+  id     String    @id @default(cuid())
+  userId String
+  role   UserRole
+
+  user   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, role])
+  @@index([role, createdAt])
+}
+
+// Store incoming webhooks for auditing and retry
+model WebhookEvent {
+  id          String   @id @default(cuid())
+  externalId  String?
+  type        String
+  signature   String?
+  rawBody     String?
+  rawJson     Json?
+  status      String   @default("received") // received|processed|error
+  error       String?
+  createdAt   DateTime @default(now())
+  processedAt DateTime?
+
+  @@index([type, status, createdAt])
 }

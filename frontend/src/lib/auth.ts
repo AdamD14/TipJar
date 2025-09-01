@@ -1,25 +1,31 @@
-import { http } from "./http";
+import { api } from "./api/http";
 import { API } from "./api-routes";
 
 export type RegisterDto = {
   email: string;
   password: string;
   displayName?: string;
+  role?: 'FAN' | 'CREATOR';
 };
 export type LoginDto = { email: string; password: string };
 
 export async function register(dto: RegisterDto) {
-  return http(API.AUTH.REGISTER, { method: "POST", json: dto });
+  const { data } = await api.post(API.AUTH.REGISTER, dto);
+  return data;
 }
 export async function login(dto: LoginDto) {
-  return http(API.AUTH.LOGIN, { method: "POST", json: dto });
+  const { data } = await api.post(API.AUTH.LOGIN, dto);
+  return data;
 }
 export async function me() {
-  return http(API.AUTH.ME, { method: "GET" });
+  const { data } = await api.get(API.AUTH.ME);
+  return data;
 }
 export async function refresh() {
-  return http(API.AUTH.REFRESH, { method: "POST" });
+  const { data } = await api.post(API.AUTH.REFRESH);
+  return data;
 }
 export async function logout() {
-  return http(API.AUTH.LOGOUT, { method: "POST" });
+  const { data } = await api.post(API.AUTH.LOGOUT);
+  return data;
 }

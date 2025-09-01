@@ -18,8 +18,8 @@ export class OverlaySettingsService {
       where: { creatorId },
       update: data,
       create: {
-        creatorId,
         ...(data as Prisma.OverlaySettingsUncheckedCreateInput),
+        creatorId,
       },
     });
   }

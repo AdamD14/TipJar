@@ -19,9 +19,14 @@ import { CircleModule } from './circle/circle.module';
 import { TipsModule } from './tips/tips.module';
 import { PayoutsModule } from './payouts/payouts.module';
 import { NotificationModule } from './notification/notification.module';
+import { AnalyticsModule } from './analytics/analytics.module';
+import { CreatorOnboardingModule } from './creator/onboarding/onboarding.module';
+import { CreatorsModule } from './creators/creators.module';
 
 // Newly added FanModule
 import { FanModule } from './fan/fan.module';
+import { UploadsModule } from './uploads/uploads.module';
+import { RemindersModule } from './reminders/reminders.module';
 
 @Module({
   imports: [
@@ -62,6 +67,11 @@ import { FanModule } from './fan/fan.module';
     TipsModule,
     PayoutsModule,
     NotificationModule,
+    AnalyticsModule,
+    CreatorOnboardingModule,
+    CreatorsModule,
+    UploadsModule,
+    RemindersModule,
     // Import the fan module to enable fan endpoints
     FanModule,
   ],

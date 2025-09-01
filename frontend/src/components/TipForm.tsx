@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import apiClient from "@/lib/apiClient";
-import { useAuthStore } from "@/lib/stores/authStore";
+import React, { useState } from 'react';
+import apiClient from '@/lib/apiClient';
+import { normalize } from '@/lib/api/errors';
+import { useAuthStore } from '@/lib/stores/authStore';
 
 interface TipFormProps {
   /**
@@ -78,12 +79,9 @@ const TipForm: React.FC<TipFormProps> = ({ creatorId, onComplete }) => {
       setCustomAmount("");
       setMessage("");
       setIsAnonymous(false);
-    } catch (err: any) {
-      const msg =
-        err?.response?.data?.message ||
-        err?.message ||
-        "Nie udało się wysłać napiwku.";
-      setError(msg);
+    } catch (err: unknown) {
+      const { msg } = normalize(err as any);
+      setError(msg || 'Nie udało się wysłać napiwku.');
     } finally {
       setLoading(false);
     }

@@ -1,6 +1,7 @@
-import { http } from "./http";
+import { api } from "./api/http";
 import { API } from "./api-routes";
 
 export async function fetchNotifications() {
-  return http(API.NOTIFICATIONS, { method: "GET" });
+  const { data } = await api.get(API.NOTIFICATIONS);
+  return data;
 }

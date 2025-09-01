@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { http } from "@/lib/http";
+import { api } from "@/lib/api/http";
 import { API } from "@/lib/api-routes";
 
 export type NotificationItem = {
@@ -24,15 +24,15 @@ export function useNotifications(opts: Options = {}) {
   async function load() {
     setError(null);
     setLoading(true);
-    try {
-      const res = await http(API.NOTIFICATIONS);
-      const list = Array.isArray(res) ? res : res?.items || [];
-      setItems(list);
-    } catch (e: any) {
-      setError(e.message || "Failed to fetch notifications");
-    } finally {
-      setLoading(false);
-    }
+      try {
+        const { data } = await api.get(API.NOTIFICATIONS);
+        const list = Array.isArray(data) ? data : data?.items || [];
+        setItems(list);
+      } catch (e: any) {
+        setError(e.message || "Failed to fetch notifications");
+      } finally {
+        setLoading(false);
+      }
   }
 
   useEffect(() => {

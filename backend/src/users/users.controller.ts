@@ -6,6 +6,7 @@ import {
   Query,
   UseGuards,
   Req,
+  Param,
   HttpCode,
   HttpStatus,
   UnauthorizedException,
@@ -65,5 +66,14 @@ export class UsersController {
     this.logger.log(`User ${user.id} is setting username to ${body.username}`);
     await this.usersService.setUsernameAndConsents(user.id, body);
     return { message: 'Username and consents updated successfully.' };
+  }
+
+  // Public, read-only endpoint to fetch a profile by username
+  @Get('public/:username')
+  @HttpCode(HttpStatus.OK)
+  async getPublicProfile(@Param('username') username: string) {
+    const pub = await this.usersService.getPublicProfileByUsername(username);
+    if (!pub) throw new NotFoundException('User not found');
+    return pub;
   }
 }

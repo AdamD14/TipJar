@@ -1,25 +1,22 @@
-"use client";
+// Server Component: przekazuje searchParams do klienta
+import OverlayClient from './view';
 
-import { useSearchParams } from "next/navigation";
-
-export default function OverlayPage() {
-  const searchParams = useSearchParams();
-  const creatorId = searchParams.get("creatorId") || "me";
-  const showQR = searchParams.get("qr") === "true";
+export default function OverlayPage({ searchParams }:{
+  searchParams: { [k:string]: string | string[] | undefined }
+}){
+  const creator = String(searchParams.creator || '').replace(/^@/,'');
+  const theme = (searchParams.theme==='light' || searchParams.theme==='gold') ? String(searchParams.theme) : 'dark';
+  const posVal = String(searchParams.pos || 'TR');
+  const pos = (['TR','TL','BR','BL'] as const).includes(posVal as any) ? posVal : 'TR';
+  const showQr = String(searchParams.qr||'1') !== '0';
+  const duration = Math.max(2000, Math.min(10000, Number(searchParams.dur||5000)));
 
   return (
-    <div className="relative w-full h-screen bg-transparent">
-      {/* Example tip alert */}
-      <div className="absolute top-10 left-10 text-white text-2xl bg-black/50 px-4 py-2 rounded-lg">
-        Nowy tip od @fan123: 5 USDC 💸
-      </div>
-      {showQR && (
-        <img
-          src={`/api/qr?handle=${creatorId}`}
-          alt="QR Tip Link"
-          className="absolute bottom-4 right-4 w-24 h-24 bg-white p-1 rounded shadow-xl"
-        />
-      )}
-    </div>
+    <html>
+      <body style={{ margin:0, background:'transparent' }}>
+        <OverlayClient creator={creator} theme={theme as any} pos={pos as any} showQr={showQr} duration={duration}/>
+      </body>
+    </html>
   );
 }
+
