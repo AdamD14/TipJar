@@ -113,3 +113,5 @@ export function ButtonLink({
     </Link>
   );
 }
+
+export default Button;

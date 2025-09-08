@@ -10,10 +10,10 @@ export type HttpError = {
   message?: string;
 };
 
-export function normalize(err: HttpError) {
-  const code = err.response?.status;
-  const msg =
-    err.response?.data?.message || err.message || 'Unexpected error';
-  const fields = err.response?.data?.errors;
+export function normalize(err: unknown) {
+  const e = err as HttpError;
+  const code = e.response?.status;
+  const msg = e.response?.data?.message || e.message || 'Unexpected error';
+  const fields = e.response?.data?.errors;
   return { code, msg, fields };
 }

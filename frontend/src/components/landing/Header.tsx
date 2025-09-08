@@ -1,4 +1,4 @@
-// frontend/src/components/layout/Header.tsx
+// frontend/src/components/landing/Header.tsx
 // Zmiany: Usunięto logo z lewej strony nagłówka.
 
 'use client';
@@ -14,7 +14,6 @@ import LoginButton from '@/components/ui/LoginButton';
 
 // --- Constants ---
 const BRAND_DARK = '#003737';
-const GOLD = '#FFD700';
 const GOLD_DARK = '#E6C200';
 const TEXT_PRIMARY = '#DDE0DA';
 const TEXT_SECONDARY = '#BCC1B6';

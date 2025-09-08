@@ -1,6 +1,12 @@
 // src/auth/dto/register-user.dto.ts
-import { IsEmail, IsString, MinLength, IsOptional } from 'class-validator';
-import { UserRole } from '@prisma/client'; // Upewnij się, że UserRole jest importowane z Prisma
+import {
+  IsEmail,
+  IsString,
+  MinLength,
+  IsEnum,
+  IsNotEmpty,
+} from 'class-validator';
+import { UserRole } from '@prisma/client';
 
 export class RegisterUserDto {
   @IsEmail({}, { message: 'Enter a valid email address' })
@@ -10,6 +16,7 @@ export class RegisterUserDto {
   @MinLength(6, { message: 'Password must be at least 6 characters' })
   password: string;
 
-  @IsOptional()
-  role?: UserRole; // Dodano pole 'role'
+  @IsEnum(UserRole, { message: 'Role must be either FAN or CREATOR' })
+  @IsNotEmpty({ message: 'Role is required' })
+  role: UserRole;
 }

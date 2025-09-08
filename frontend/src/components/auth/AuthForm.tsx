@@ -43,7 +43,7 @@ export default function AuthForm() {
       setEmailSent(true);
       methods.reset();
     } catch (err: unknown) {
-      const { code, msg } = normalize(err as any);
+      const { code, msg } = normalize(err as unknown);
       if (code === 409) {
         router.push('/login');
       } else {

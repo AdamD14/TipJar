@@ -2,53 +2,72 @@
 'use client';
 
 import Link from 'next/link';
-import * as React from 'react';
+import React from 'react';
+import styles from './cta.module.css';
 
-type AnchorCtaProps = { href: string } & React.AnchorHTMLAttributes<HTMLAnchorElement>;
-type ButtonCtaProps = { href?: never } & React.ButtonHTMLAttributes<HTMLButtonElement>;
+type AnchorCtaProps = {
+  href: string;
+} & React.AnchorHTMLAttributes<HTMLAnchorElement>;
 
-type SharedProps = {
-  children?: React.ReactNode;
+type ButtonCtaProps = {
+  href?: never;
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
+
+export type SecondaryCtaProps = AnchorCtaProps | ButtonCtaProps;
+
+type CommonProps = {
+  children?: React.ReactNode;    // Default: "Explore as a Fan"
   isLoading?: boolean;
   analyticsId?: string;
   ariaLabel?: string;
 };
 
-export type SecondaryCtaProps = (AnchorCtaProps | ButtonCtaProps) & SharedProps;
-
 function Spinner(): JSX.Element {
   return (
     <span
       aria-hidden
-      className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-[#FFD700] border-t-transparent"
+      className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-[#4d194d] border-t-transparent"
     />
   );
 }
 
-function isAnchorProps(p: SecondaryCtaProps): p is AnchorCtaProps & SharedProps {
+function isAnchorProps(
+  p: SecondaryCtaProps,
+): p is AnchorCtaProps {
   return typeof (p as { href?: unknown }).href === 'string';
 }
 
-/** Secondary CTA — outline, size parity with Primary, gentle hover scale */
-export default function SecondaryCta(props: SecondaryCtaProps): JSX.Element {
-  const { children = 'Explore as a Fan', isLoading = false, analyticsId, ariaLabel, ...rest } = props;
+/** Secondary CTA — glossy purple, hover: white text, dark purple bottom */
+export default function SecondaryCta(
+  props: SecondaryCtaProps & CommonProps,
+): JSX.Element {
+  const {
+    children = 'Explore as a Fan',
+    isLoading = false,
+    analyticsId,
+    ariaLabel,
+    ...passthrough
+  } = props as SecondaryCtaProps & CommonProps;
 
-const base =
-  'inline-flex items-center justify-center gap-2 h-12 px-8 text-lg font-bold rounded-[16px] ' +
-  'border-[3px] border-[#FFF500]/80 text-[#FFF500] bg-transparent ' +
-  'shadow-[0_8px_18px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.70),inset_0_-6px_10px_rgba(0,0,0,0.12)] ' +
-  'transition-colors transform-gpu will-change-transform transition-transform duration-150 ' +
-  'hover:scale-[1.015] active:translate-y-[1px] ' +
-  'hover:border-[#FFFF00] hover:text-[#FFd700] ' +
-  'hover:bg-[rgba(255,200,0,0.10)] active:bg-[rgba(255,215,0,0.20)] ' +
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.70)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#003737] ' +
-  'disabled:opacity-60 disabled:cursor-not-allowed';
+  const base =
+    'group relative inline-flex items-center justify-center gap-2 h-12 px-10 text-lg font-ui font-bold rounded-[16px] ' +
+    'text-white bg-[linear-gradient(180deg,#8b5cf6_0%,#7c3aed_40%,#4d194d_100%)] ' +
+    'hover:bg-[linear-gradient(180deg,#a855f7_0%,#8b5cf6_40%,#6b21a8_100%)] ' +
+    'active:bg-[linear-gradient(180deg,#7c3aed_0%,#6b21a8_38%,#4d194d_100%)] ' +
+    'shadow-[0_10px_24px_rgba(0,0,0,0.35)] ring-1 ring-black/10 ' +
+    'transform-gpu will-change-transform transition-transform transition-colors duration-150 hover:scale-[1.015] active:translate-y-[1px] ' +
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8b5cf6]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#2A0F14] ' +
+    'disabled:opacity-60 disabled:cursor-not-allowed ' +
+    `${styles.sheen} ${styles.bevel}`;
 
   if (isAnchorProps(props)) {
-    const { href, onClick, ...anchorAttrs } = rest as React.AnchorHTMLAttributes<HTMLAnchorElement>;
+    const { href, onClick, ...anchorAttrs } = props as AnchorCtaProps;
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-      if (isLoading) { e.preventDefault(); return; }
+      if (isLoading) {
+        e.preventDefault();
+        return;
+      }
       onClick?.(e);
     };
 
@@ -64,12 +83,19 @@ const base =
         {...anchorAttrs}
       >
         {isLoading ? <Spinner /> : null}
-        <span className={isLoading ? 'opacity-0' : 'opacity-100'}>{children}</span>
+        <span
+          className={
+            (isLoading ? 'opacity-0' : 'opacity-100') +
+            ' transition-colors group-hover:text-[#003737]'
+          }
+        >
+          {children}
+        </span>
       </Link>
     );
   }
 
-  const { onClick, disabled, ...btnAttrs } = rest as React.ButtonHTMLAttributes<HTMLButtonElement>;
+  const { onClick, disabled, ...btnAttrs } = passthrough as ButtonCtaProps;
 
   const handleBtnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (isLoading) return;
@@ -88,7 +114,14 @@ const base =
       {...btnAttrs}
     >
       {isLoading ? <Spinner /> : null}
-      <span className={isLoading ? 'opacity-0' : 'opacity-100'}>{children}</span>
+      <span
+        className={
+          (isLoading ? 'opacity-0' : 'opacity-100') +
+          ' transition-colors group-hover:text-[#003737]'
+        }
+      >
+        {children}
+      </span>
     </button>
   );
 }

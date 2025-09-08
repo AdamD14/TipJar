@@ -50,11 +50,11 @@ export const useOnboardingStore = create<State & Actions>()(
   persist(
     (set) => ({
       ...initial,
-      setStep: (s) => set({ step: s }),
-      setRole: (r) => set({ role: r, user: { ...(useOnboardingStore.getState().user ?? {}), role: r } }),
-      setTokens: (t) => set({ tokens: t }),
-      setUser: (u) => set({ user: u ?? null }),
-      setDraft: (p) => set((s) => ({ drafts: { ...s.drafts, ...p } })),
+      setStep: (s: Step) => set({ step: s }),
+      setRole: (r: Role) => set((state) => ({ role: r, user: { ...(state.user ?? {}), role: r } })),
+      setTokens: (t: { accessToken: string | null }) => set({ tokens: t }),
+      setUser: (u: UserLite | null) => set({ user: u ?? null }),
+      setDraft: (p: Partial<State['drafts']>) => set((s) => ({ drafts: { ...s.drafts, ...p } })),
       reset: () => set(initial),
     }),
     {
@@ -66,4 +66,3 @@ export const useOnboardingStore = create<State & Actions>()(
     },
   ),
 );
-
