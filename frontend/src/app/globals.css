@@ -52,13 +52,60 @@ body {
   padding: 0;
 }
 
-/* Gradient tła */
+/* Rozszerzony, wielowarstwowy gradient tła (bazowy teal + akcenty fiolet/złoto + winieta) */
 .bg-gradient-main {
-  background: linear-gradient(
-    135deg,
-    hsla(180, 100%, 7%, 1) 0%,
-    hsla(180, 100%, 8%, 1) 33%,
-    hsla(195, 100%, 13%, 1) 60%,
-    hsla(215, 100%, 11%, 1) 100%
-  );
+  /* Bazowy kolor awaryjny */
+  background-color: #021a1a;
+
+  /* 4 warstwy: aurora fiolet, aurora teal, miękki akcent złota, bazowy wielostopniowy gradient */
+  background-image:
+    radial-gradient(1100px 520px at 110% -8%, rgba(131, 80, 159, 0.24) 0%, rgba(131, 80, 159, 0.00) 62%),  /* glow purple top-right */
+    radial-gradient(900px 520px at -10% 112%, rgba(39, 151, 151, 0.22) 0%, rgba(39, 151, 151, 0.00) 68%),  /* glow teal bottom-left */
+    radial-gradient(600px 320px at 76% 34%, rgba(255, 215, 0, 0.14) 0%, rgba(255, 215, 0, 0.00) 60%),      /* subtle gold accent */
+    linear-gradient(
+      135deg,
+      hsl(180 100% 7%)   0%,
+      hsl(180 100% 8%)  10%,
+      hsl(178  60% 11%) 20%,
+      hsl(185  62% 12%) 30%,
+      hsl(192  68% 13%) 40%,
+      hsl(196  72% 13%) 50%,
+      hsl(202  78% 12%) 60%,
+      hsl(208  80% 11%) 70%,
+      hsl(212  82% 11%) 82%,
+      hsl(215 100% 11%) 100%
+    );
+
+  background-repeat: no-repeat;
+  background-size: auto, auto, auto, cover;
+  background-position: center;
+
+  /* Delikatna winieta przy krawędziach, żeby „zamykać” kadr */
+  /* (działa w nowoczesnych przeglądarkach) */
+  -webkit-mask-image: radial-gradient(140% 140% at 50% 40%, #000 60%, transparent 100%);
+          mask-image: radial-gradient(140% 140% at 50% 40%, #000 60%, transparent 100%);
+}
+
+/* Drobne dostrojenie na większych ekranach */
+@media (min-width: 1024px) {
+  .bg-gradient-main {
+    background-image:
+      radial-gradient(1200px 560px at 115% -10%, rgba(131, 80, 159, 0.22) 0%, rgba(131, 80, 159, 0.00) 64%),
+      radial-gradient(1000px 560px at -12% 120%, rgba(39, 151, 151, 0.20) 0%, rgba(39, 151, 151, 0.00) 70%),
+      radial-gradient(660px 360px at 78% 30%, rgba(255, 215, 0, 0.12) 0%, rgba(255, 215, 0, 0.00) 62%),
+      linear-gradient(
+        135deg,
+        hsl(180 100% 7%)   0%,
+        hsl(180 100% 8%)  12%,
+        hsl(178  60% 11%) 24%,
+        hsl(185  62% 12%) 36%,
+        hsl(192  68% 13%) 48%,
+        hsl(196  72% 13%) 60%,
+        hsl(202  78% 12%) 72%,
+        hsl(208  80% 11%) 84%,
+        hsl(215 100% 11%) 100%
+      );
+    -webkit-mask-image: radial-gradient(135% 135% at 50% 42%, #000 62%, transparent 100%);
+            mask-image: radial-gradient(135% 135% at 50% 42%, #000 62%, transparent 100%);
+  }
 }

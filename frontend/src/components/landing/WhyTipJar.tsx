@@ -1,84 +1,106 @@
-'use client'
+// frontend/src/components/landing/WhyTipJar.tsx
+'use client';
 
-import Link from "next/link";
-import React from "react";
-
+import Link from 'next/link';
+import Image from 'next/image';
+import { CreditCard, ShieldCheck, Globe2, Clock3 } from 'lucide-react';
+import React from 'react';
 
 export default function WhyTipJar() {
   return (
-    <section id="why-tipjar" aria-labelledby="whyTipJarHeading" className="py-20 md:py-20">
-      <div className="mt-10 sm:mt-16 md:mt-24 mx-auto max-w-7xl px-2 text-[#DDE0DA]">
-        
-        {/* Tytuł sekcji na środku */}
-        <div className="text-center mb-20 md:mb-20">
-          <h2 
-            id="whyTipJarHeading" 
-            className="text-3xl md:text-4xl font-bold text-[#DDE0DA] transition-colors duration-300 hover:text-[#FFD700]"
+    <section id="why" aria-labelledby="whyTipJarHeading" className="relative py-20 md:py-20">
+      {/* FULL-BLEED background */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <Image src="/2.png" alt="" fill priority sizes="100vw" className="object-cover" />
+        {/* lekki przyciemniacz dla czytelności */}
+        <div className="absolute inset-0 bg-[radial-gradient(1200px_600px_at_50%_0%,rgba(0,0,0,.45),transparent_60%),linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.1))]" />
+      </div>
+
+      <div className="mx-auto max-w-7xl px-2 pt-4 text-[#DDE0DA]">
+        {/* Tytuł */}
+        <div className="mb-20 text-center">
+          <h2
+            id="whyTipJarHeading"
+            className="text-3xl md:text-4xl font-bold transition-colors duration-300 hover:text-[#FFD700]"
           >
             Why TipJar+
           </h2>
         </div>
 
         {/* 1) Simplicity — poziomo */}
-        <article className="group rounded-[16px] border border-white/10 bg-card p-6 md:p-8 transition hover:-translate-y-[2px] hover:border-[#FFD700]/60 hover:shadow-[0_0_0_4px_rgba(255,215,0,0.10)_inset]">
-          <h3 className="mb-3 text-base font-semibold leading-[1.5]">Simplicity &amp; Payment Flexibility</h3>
-          <p className="text-[14px] leading-[1.5] text-[#BCC1B6]">
-            No sign-up required, no crypto experience needed. Fans can tip using cards, Google Pay, Apple Pay, Revolut, bank transfer or Crypto wallet —{" "}
-            <span className="text-[#FFD700] transition-colors group-hover:text-[#FFEA70]">creators always receive USDC</span>. Just tap, scan, or click — done in seconds.
-          </p>
-        </article>
+        <Card>
+          <CardTitle icon={<CreditCard className="h-5 w-5 text-[#FFD700]" />}>
+            Simplicity &amp; Payment Flexibility
+          </CardTitle>
+          <CardBody>
+            No sign-up required, no crypto experience needed. Fans can tip using cards, Google Pay, Apple Pay,
+            Revolut, bank transfer or Crypto wallet —{' '}
+            <span className="text-[#FFD700]">creators always receive USDC</span>. Just tap, scan, or click —
+            done in seconds.
+          </CardBody>
+        </Card>
 
         {/* 2) Trzy karty pionowo (środkowa wyróżniona) */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <article className="group rounded-[16px] border border-white/10 bg-card p-6 md:p-8 transition hover:-translate-y-[2px] hover:border-[#FFD700]/60 hover:shadow-[0_0_0_4px_rgba(255,215,0,0.10)_inset]">
-            <h3 className="mb-3 text-base font-semibold leading-[1.5]">Secure and Transparent</h3>
-            <p className="text-[14px] leading-[1.5] text-[#BCC1B6]">
-              Built on Web3 technology, tipjar ensures secure and transparent transactions. Powered by blockchain and USDC — a fully-reserved, regulated stablecoin{" "}
-              <span className="text-[#FFD700] transition-colors group-hover:text-[#FFEA70]">issued by Circle.com</span> . No custodians, no banks — you stay in full control.
-            </p>
-          </article>
+        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <Card>
+            <CardTitle icon={<ShieldCheck className="h-5 w-5 text-[#FFD700]" />}>
+              Secure and Transparent
+            </CardTitle>
+            <CardBody className="md:text-[16px]">
+              Built on Web3 technology, tipjar ensures secure and transparent transactions. Powered by blockchain
+              and USDC — a fully-reserved, regulated stablecoin{' '}
+              <span className="text-[#FFD700]">issued by Circle.com</span>. No custodians, no banks — you stay in
+              full control.
+            </CardBody>
+          </Card>
 
-          <article className="group rounded-[16px] border-2 border-[#FFD700] bg-card p-6 md:p-8 transition hover:-translate-y-[2px] hover:shadow-[0_0_0_6px_rgba(255,215,0,0.15)_inset]">
-            <h3 className="mb-3 text-base font-semibold leading-[1.5] text-[#FFD700]">LOW FEES &amp; Direct Support</h3>
-            <p className="text-[14px] leading-[1.5] text-[#DDE0DA]">
-              A simple, <span className="text-[#FFD700] transition-colors group-hover:text-[#FFEA70]">flat 5% service</span> fee ensures creators receive the majority of their earnings. Creators receive tips directly from their fans, eliminating intermediaries and maximizing earnings.
-            </p>
-          </article>
+          <Card highlight>
+            <CardTitle className="text-[#FFD700]">LOW FEES &amp; Direct Support</CardTitle>
+            <CardBody className="text-[#DDE0DA] md:text-[16px]">
+              A simple, <span className="text-[#FFD700]">flat 5% service</span> fee ensures creators receive the
+              majority of their earnings. Creators receive tips directly from their fans, eliminating
+              intermediaries and maximizing earnings.
+            </CardBody>
+          </Card>
 
-          <article className="group rounded-[16px] border border-white/10 bg-card p-6 md:p-8 transition hover:-translate-y-[2px] hover:border-[#FFD700]/60 hover:shadow-[0_0_0_4px_rgba(255,215,0,0.10)_inset]">
-            <h3 className="mb-3 text-base font-semibold leading-[1.5]">Global</h3>
-            <p className="text-[14px] leading-[1.5] text-[#BCC1B6]">
-              Send or receive support from <span className="text-[#FFD700] transition-colors group-hover:text-[#FFEA70]">anywhere in the world</span> — no banks, no borders, no limits. Circle enables fans to tip using over 80 fiat currencies including USD, EUR, GBP, JPY. Creators get paid instantly in USDC, directly to their wallets. Fast, borderless, censorship-free.
-            </p>
-          </article>
+          <Card>
+            <CardTitle icon={<Globe2 className="h-5 w-5 text-[#FFD700]" />}>Global</CardTitle>
+            <CardBody className="md:text-[16px]">
+              Send or receive support from <span className="text-[#FFD700]">anywhere in the world</span> — no
+              banks, no borders, no limits. Circle enables fans to tip using 80+ fiat currencies (USD, EUR, GBP,
+              JPY). Creators get paid instantly in USDC. Fast, borderless, censorship-free.
+            </CardBody>
+          </Card>
         </div>
 
         {/* 3) Instant Payouts — poziomo */}
-        <article className="mt-6 group rounded-[16px] border border-white/10 bg-card p-6 md:p-8 transition hover:-translate-y-[2px] hover:border-[#FFD700]/60 hover:shadow-[0_0_0_4px_rgba(255,215,0,0.10)_inset]">
-          <h3 className="mb-3 text-base font-semibold leading-[1.5]">Instant Payouts</h3>
-          <p className="text-[14px] leading-[1.5] text-[#BCC1B6]">
-            Funds are delivered instantly to the creator's wallet — with no delays, no holds, and no frozen assets. You earn it, you own it — right away. Need cash? You can{" "}
-            <span className="text-[#FFD700] transition-colors group-hover:text-[#FFEA70]">easily convert and withdraw to your local currency</span> anytime via Circle's off-ramps.
-          </p>
-        </article>
+        <Card className="mt-6">
+          <CardTitle icon={<Clock3 className="h-5 w-5 text-[#FFD700]" />}>Instant Payouts</CardTitle>
+          <CardBody className="md:text-[16px]">
+            Funds are delivered instantly to the creator&apos;s wallet — with no delays, no holds, and no frozen
+            assets. You earn it, you own it — right away. Need cash? You can{' '}
+            <span className="text-[#FFD700]">convert &amp; withdraw to local currency</span> anytime via Circle&apos;s
+            off-ramps.
+          </CardBody>
+        </Card>
 
-        {/* 4) Learn more (lewo) + Back to top (prawo) */}
+        {/* 4) Learn more / Back to top */}
         <div className="mt-6 flex items-center justify-between">
           <Link
             href="#learn"
             className="group inline-flex items-center gap-1 text-sm font-medium text-[#FFD700] underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD700]/60 rounded transition"
           >
-            Learn more about Web3 <span aria-hidden className="transition-transform group-hover:translate-x-0.5">→</span>
+            Learn more about Web3 <span className="transition-transform group-hover:translate-x-0.5">→</span>
           </Link>
 
           <button
             type="button"
             aria-label="Back to top"
             title="Back to top"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#FFD700]/60 text-[#FFD700] transition hover:-translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD700]/60"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M12 19V5" />
               <path d="M5 12l7-7 7 7" />
             </svg>
@@ -87,4 +109,49 @@ export default function WhyTipJar() {
       </div>
     </section>
   );
+}
+
+/* ===== Helpers ===== */
+
+function Card({
+  children,
+  className = '',
+  highlight = false,
+}: React.PropsWithChildren<{ className?: string; highlight?: boolean }>) {
+  return (
+    <article
+      className={[
+        'rounded-[16px] p-6 md:p-8 transition will-change-transform',
+        highlight
+          ? 'border-2 border-[#FFD700] bg-card hover:shadow-[0_0_0_6px_rgba(255,215,0,0.15)_inset]'
+          : 'border border-white/10 bg-card hover:border-[#FFD700]/60 hover:shadow-[0_0_0_4px_rgba(255,215,0,0.10)_inset]',
+        // relief
+        'shadow-[inset_0_1px_0_rgba(255,255,255,.06),inset_0_-10px_16px_rgba(0,0,0,.35),0_10px_22px_rgba(0,0,0,.30)]',
+        'hover:-translate-y-[2px]',
+        className,
+      ].join(' ')}
+    >
+      {children}
+    </article>
+  );
+}
+
+function CardTitle({
+  children,
+  icon,
+  className = '',
+}: React.PropsWithChildren<{ icon?: React.ReactNode; className?: string }>) {
+  return (
+    <h3 className={['mb-3 flex items-center gap-2 font-semibold leading-[1.5] text-base md:text-xl', className].join(' ')}>
+      {icon ? <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[#FFD700]/10">{icon}</span> : null}
+      <span>{children}</span>
+    </h3>
+  );
+}
+
+function CardBody({
+  children,
+  className = '',
+}: React.PropsWithChildren<{ className?: string }>) {
+  return <p className={['text-[14px] leading-[1.6] text-[#BCC1B6] md:text-[16px]', className].join(' ')}>{children}</p>;
 }

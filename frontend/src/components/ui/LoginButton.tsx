@@ -1,3 +1,4 @@
+// frontend/src/components/ui/LoginButton.tsx
 'use client';
 
 import React from 'react';
@@ -9,13 +10,12 @@ type Props = {
   isLoading?: boolean;
   /** Zablokowany przycisk. */
   disabled?: boolean;
-  /** Treść widoczna (domyślnie „login"). */
+  /** Treść widoczna (domyślnie „Login"). */
   children?: React.ReactNode;
   /** Atrybut type – domyślnie "button". */
   type?: 'button' | 'submit' | 'reset';
   /** Href do przekierowania - domyślnie /login */
   href?: string;
-  /** Zdarzenia i reszta atrybutów button. */
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 export const LoginButton: React.FC<Props> = ({
@@ -29,6 +29,10 @@ export const LoginButton: React.FC<Props> = ({
 }) => {
   const isDisabled = disabled || isLoading;
 
+  // jeśli z zewnątrz przekazano w-full — wrapper <Link> będzie block w-full
+  const wantsFullWidth = typeof className === 'string' && className.includes('w-full');
+  const wrapperClass = wantsFullWidth ? 'block w-full' : 'inline-block';
+
   const buttonElement = (
     <button
       type={type}
@@ -37,10 +41,10 @@ export const LoginButton: React.FC<Props> = ({
       aria-disabled={isDisabled || undefined}
       disabled={isDisabled}
       className={[
-        // Layout / typografia
-        'relative inline-flex select-none items-center justify-center',
-        'h-10  px-10 text-base font-ui font-bold',
-        'rounded-[14px]',
+        // Layout / typografia — DOPASOWANIE WYMIARÓW do PrimaryCta
+        'relative inline-flex select-none items-center justify-center gap-2',
+        'h-10 px-8 text-lg font-ui font-lighter',
+        'rounded-[16px]',
         // „Mokre szkło" (glass) z kolorem teal
         'backdrop-blur-md',
         'bg-[#1a4d4d]/35',
@@ -48,7 +52,7 @@ export const LoginButton: React.FC<Props> = ({
         'text-[#DDE0DA]',
         // Cień (efekt wypukłości)
         'shadow-[0_8px_18px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.50),inset_0_-6px_10px_rgba(0,0,0,0.10)]',
-        // Interakcje z kolorem teal
+        // Interakcje
         'transition-all duration-200',
         'hover:bg-[#1a4d4d]/45 hover:scale-[1.02]',
         'active:scale-[0.99] active:bg-[#1a4d4d]/55',
@@ -56,15 +60,15 @@ export const LoginButton: React.FC<Props> = ({
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4d4d]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f10]',
         // Blokada
         'disabled:opacity-60 disabled:cursor-not-allowed',
-        // Pseudo-elementy tła z akcentem teal
+        // Tła (akcent teal)
         'before:absolute before:inset-0 before:rounded-[inherit] before:pointer-events-none',
         'before:bg-[radial-gradient(12px_12px_at_20%_30%,rgba(26,77,77,0.12)_0%,rgba(26,77,77,0.00)_60%),radial-gradient(10px_10px_at_70%_60%,rgba(26,77,77,0.10)_0%,rgba(26,77,77,0.00)_70%)]',
-        // Sheen z akcentem teal
+        // Sheen
         'after:absolute after:inset-0 after:rounded-[inherit] after:pointer-events-none',
         'after:bg-gradient-to-r after:from-transparent after:via-[#1a4d4d]/25 after:to-transparent',
         'after:-translate-x-[140%] after:will-change-transform',
         'after:animate-sheen',
-        className,
+        className, // ← MERGE klas z zewnątrz (np. w-full, justify-center)
       ].join(' ')}
       {...rest}
     >
@@ -84,14 +88,12 @@ export const LoginButton: React.FC<Props> = ({
     </button>
   );
 
-  // Jeśli button jest disabled lub loading, nie wrapuj w Link
-  if (isDisabled) {
-    return buttonElement;
-  }
+  // Disabled/loading — bez linka
+  if (isDisabled) return buttonElement;
 
-  // W przeciwnym razie wrapuj w Link
+  // Aktywny — wrap w Link; jeśli prosimy o pełną szerokość, wrapper też ją dostaje
   return (
-    <Link href={href} className="inline-block">
+    <Link href={href} className={wrapperClass}>
       {buttonElement}
     </Link>
   );

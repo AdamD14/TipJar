@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Search, Clock, Shield, Zap, Globe, Coins, ArrowUp, BookOpen, ExternalLink, Wallet, DollarSign } from 'lucide-react';
+import { Search, Clock, Shield, Zap, Globe, Coins, ArrowUp, BookOpen, ExternalLink } from 'lucide-react';
 
 const NAV = [
   { id: 'essentials', label: 'Essentials', icon: BookOpen },
@@ -11,148 +11,12 @@ const NAV = [
   { id: 'guides', label: 'Product guides', icon: ExternalLink },
 ] as const;
 
-// Complete topics data
-const TOPICS = [
-  {
-    id: 'usdc',
-    title: 'What is USDC? Why it matters',
-    teaser: 'Fully-reserved stablecoin issued by Circle. 1 USDC ≈ 1 USD.',
-    icon: Coins,
-    readTime: '3 min',
-    bullets: [
-      'Stability for tips and payouts',
-      'Fast settlement, global reach', 
-      'Works without a bank account',
-    ],
-    more: (
-      <div className="space-y-2">
-        <p>
-          USDC is a regulated, fully-reserved stablecoin. Funds are redeemable for USD through
-          licensed partners. It reduces volatility and enables instant, low-fee transfers.
-        </p>
-        <p className="text-[#FFD700]">TipJar pays creators in USDC by default.</p>
-      </div>
-    ),
-  },
-  {
-    id: 'wallets',
-    title: 'Wallet basics: custody & safety',
-    teaser: 'Two models: self-custody and custodial.',
-    icon: Wallet,
-    readTime: '4 min',
-    bullets: [
-      'Self-custody: you own keys; back up seed',
-      'Custodial: third party manages keys',
-      'Never share seed phrase or private key',
-    ],
-    more: (
-      <div className="space-y-2">
-        <p>
-          For beginners, start without a wallet. You can receive tips and later withdraw via
-          on/off-ramps. When ready, use a reputable wallet and hardware device for larger balances.
-        </p>
-        <p className="text-[#FFD700]">
-          MetaMask, Coinbase Wallet, and hardware wallets like Ledger are popular choices.
-        </p>
-      </div>
-    ),
-  },
-  {
-    id: 'tipping',
-    title: 'How tipping works on TipJar',
-    teaser: 'Fans pay with card/fiat or crypto. Creator receives USDC.',
-    icon: DollarSign,
-    readTime: '5 min',
-    bullets: [
-      'No account required for fans',
-      'Instant confirmation for creators',
-      'QR, link, widget, or overlay',
-    ],
-    more: (
-      <div className="space-y-2">
-        <p>
-          The flow: fan opens your link → chooses amount → pays by card, Apple/Google Pay,
-          bank transfer or crypto → smart contract/processor settles → you get USDC to your wallet.
-        </p>
-        <p className="text-[#FFD700]">
-          Tips appear in your dashboard instantly, with blockchain confirmation within minutes.
-        </p>
-      </div>
-    ),
-  },
-  {
-    id: 'fees-finality',
-    title: 'Fees, finality, refunds',
-    teaser: 'Flat 5% service fee. Crypto finality differs from chargebacks.',
-    icon: Shield,
-    readTime: '4 min',
-    bullets: [
-      'Clear pricing, no hidden spreads',
-      'On-chain finality ≠ card chargebacks',
-      'Refunds require creator approval',
-    ],
-    more: (
-      <div className="space-y-2">
-        <p>
-          Finalized on-chain transfers are irreversible. For card payments, processors may handle
-          disputes per their rules. Refunds are manual and at creator's discretion.
-        </p>
-        <p className="text-[#FFD700]">
-          Gas fees are covered by TipJar for transactions under $50.
-        </p>
-      </div>
-    ),
-  },
-  {
-    id: 'networks-gas',
-    title: 'Networks, gas, and why fans don\'t need a wallet',
-    teaser: 'We abstract networks for fans. Gas is handled behind the scenes.',
-    icon: Zap,
-    readTime: '6 min',
-    bullets: [
-      'No wallet needed to tip',
-      'Network selected automatically',
-      'Gas fees minimized/covered',
-    ],
-    more: (
-      <div className="space-y-2">
-        <p>
-          Advanced users can connect a wallet and pick networks later. For everyone else,
-          TipJar routes payments to keep costs low and UX simple.
-        </p>
-        <p className="text-[#FFD700]">
-          We primarily use Polygon and Base for low-cost transactions.
-        </p>
-      </div>
-    ),
-  },
-];
-
 export default function LearnPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [readTopics, setReadTopics] = useState<Set<string>>(new Set());
 
-  // Load progress from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem('tipjar-read-topics');
-    if (saved) {
-      setReadTopics(new Set(JSON.parse(saved)));
-    }
-  }, []);
-
-  // Save progress to localStorage
   const markAsRead = (topicId: string) => {
-    const newReadTopics = new Set([...readTopics, topicId]);
-    setReadTopics(newReadTopics);
-    localStorage.setItem('tipjar-read-topics', JSON.stringify([...newReadTopics]));
-  };
-
-  // Smooth scroll to sections
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    setReadTopics(prev => new Set([...prev, topicId]));
   };
 
   return (
@@ -160,7 +24,7 @@ export default function LearnPage() {
       <LearnHero searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
       <div className="mx-auto grid max-w-[1480px] grid-cols-1 gap-8 px-4 py-8 lg:grid-cols-[280px_1fr]">
-        <LearnNav readTopics={readTopics} onNavigate={scrollToSection} totalTopics={TOPICS.length} />
+        <LearnNav readTopics={readTopics} />
 
         <div className="space-y-16">
           {/* Essentials */}
@@ -169,7 +33,6 @@ export default function LearnPage() {
               searchTerm={searchTerm} 
               onTopicRead={markAsRead}
               readTopics={readTopics}
-              topics={TOPICS}
             />
           </section>
 
@@ -267,12 +130,9 @@ function LearnHero({ searchTerm, setSearchTerm }: {
   );
 }
 
-function LearnNav({ readTopics, onNavigate, totalTopics }: { 
-  readTopics: Set<string>; 
-  onNavigate: (id: string) => void;
-  totalTopics: number;
-}) {
+function LearnNav({ readTopics }: { readTopics: Set<string> }) {
   const progressCount = readTopics.size;
+  const totalTopics = 5; // Update based on actual topics count
 
   return (
     <nav className="lg:sticky lg:top-20 space-y-4">
@@ -288,9 +148,6 @@ function LearnNav({ readTopics, onNavigate, totalTopics }: {
             style={{ width: `${(progressCount / totalTopics) * 100}%` }}
           />
         </div>
-        {progressCount === totalTopics && (
-          <p className="text-xs text-[#FFD700] mt-2 font-medium">All topics completed!</p>
-        )}
       </div>
 
       {/* Navigation */}
@@ -299,13 +156,13 @@ function LearnNav({ readTopics, onNavigate, totalTopics }: {
           const Icon = n.icon;
           return (
             <li key={n.id}>
-              <button
-                onClick={() => onNavigate(n.id)}
-                className="flex items-center gap-3 rounded-[10px] border border-white/10 bg-card px-3 py-2 text-sm hover:bg-white/5 transition-colors w-full text-left"
+              <a
+                href={`#${n.id}`}
+                className="flex items-center gap-3 rounded-[10px] border border-white/10 bg-card px-3 py-2 text-sm hover:bg-white/5 transition-colors"
               >
                 <Icon size={16} className="text-[#FFD700]" />
                 {n.label}
-              </button>
+              </a>
             </li>
           );
         })}
@@ -413,14 +270,57 @@ function BackToTop() {
 function LearnEssentials({ 
   searchTerm, 
   onTopicRead, 
-  readTopics,
-  topics
+  readTopics 
 }: { 
   searchTerm: string; 
   onTopicRead: (id: string) => void;
   readTopics: Set<string>;
-  topics: any[];
 }) {
+  const topics = [
+    {
+      id: 'usdc',
+      title: 'What is USDC? Why it matters',
+      teaser: 'Fully-reserved stablecoin issued by Circle. 1 USDC ≈ 1 USD.',
+      icon: Coins,
+      readTime: '3 min',
+      bullets: [
+        'Stability for tips and payouts',
+        'Fast settlement, global reach', 
+        'Works without a bank account',
+      ],
+      more: (
+        <div className="space-y-2">
+          <p>
+            USDC is a regulated, fully-reserved stablecoin. Funds are redeemable for USD through
+            licensed partners. It reduces volatility and enables instant, low-fee transfers.
+          </p>
+          <p className="text-[#FFD700]">TipJar pays creators in USDC by default.</p>
+        </div>
+      ),
+    },
+    {
+      id: 'wallets',
+      title: 'Wallet basics: custody & safety',
+      teaser: 'Two models: self-custody and custodial.',
+      icon: Shield,
+      readTime: '4 min',
+      bullets: [
+        'Self-custody: you own keys; back up seed',
+        'Custodial: third party manages keys',
+        'Never share seed phrase or private key',
+      ],
+      more: (
+        <div className="space-y-2">
+          <p>
+            For beginners, start without a wallet. You can receive tips and later withdraw via
+            on/off-ramps. When ready, use a reputable wallet and hardware device for larger balances.
+          </p>
+        </div>
+      ),
+    },
+    // Add more topics here...
+  ];
+
   const filteredTopics = topics.filter(topic =>
     topic.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     topic.teaser.toLowerCase().includes(searchTerm.toLowerCase())
@@ -465,15 +365,12 @@ function EssentialItem({
   isRead: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const [copyFeedback, setCopyFeedback] = useState(false);
   const Icon = topic.icon;
 
   const copyAnchor = async () => {
     try {
       const href = `${location.origin}${location.pathname}#${topic.id}`;
       await navigator.clipboard.writeText(href);
-      setCopyFeedback(true);
-      setTimeout(() => setCopyFeedback(false), 2000);
     } catch {}
   };
 
@@ -517,7 +414,7 @@ function EssentialItem({
             className="rounded-[10px] border border-white/10 px-2.5 py-1.5 text-[12px] hover:bg-white/5 transition-colors"
             title="Copy link"
           >
-            {copyFeedback ? 'Copied!' : 'Link'}
+            Link
           </button>
           <button
             onClick={handleToggle}
