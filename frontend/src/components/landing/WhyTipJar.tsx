@@ -3,12 +3,12 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { CreditCard, ShieldCheck, Globe2, Clock3 } from 'lucide-react';
+import { CreditCard, ShieldCheck, Globe2, Clock3, DollarSign } from 'lucide-react';
 import React from 'react';
 
 export default function WhyTipJar() {
   return (
-    <section id="why" aria-labelledby="whyTipJarHeading" className="relative py-20 md:py-20">
+    <section id="why" aria-labelledby="whyTipJarHeading" className="relative py-12 md:py-16">
       {/* FULL-BLEED background */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <Image src="/2.png" alt="" fill priority sizes="100vw" className="object-cover" />
@@ -16,17 +16,7 @@ export default function WhyTipJar() {
         <div className="absolute inset-0 bg-[radial-gradient(1200px_600px_at_50%_0%,rgba(0,0,0,.45),transparent_60%),linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.1))]" />
       </div>
 
-      <div className="mx-auto max-w-7xl px-2 pt-4 text-[#DDE0DA]">
-        {/* Tytuł */}
-        <div className="mb-20 text-center">
-          <h2
-            id="whyTipJarHeading"
-            className="text-3xl md:text-4xl font-bold transition-colors duration-300 hover:text-[#FFD700]"
-          >
-            Why TipJar+
-          </h2>
-        </div>
-
+      <div className="mx-auto max-w-7xl px-4 pt-4 text-[#DDE0DA]">
         {/* 1) Simplicity — poziomo */}
         <Card>
           <CardTitle icon={<CreditCard className="h-5 w-5 text-[#FFD700]" />}>
@@ -41,7 +31,7 @@ export default function WhyTipJar() {
         </Card>
 
         {/* 2) Trzy karty pionowo (środkowa wyróżniona) */}
-        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
           <Card>
             <CardTitle icon={<ShieldCheck className="h-5 w-5 text-[#FFD700]" />}>
               Secure and Transparent
@@ -55,7 +45,9 @@ export default function WhyTipJar() {
           </Card>
 
           <Card highlight>
-            <CardTitle className="text-[#FFD700]">LOW FEES &amp; Direct Support</CardTitle>
+            <CardTitle icon={<DollarSign className="h-5 w-5 text-[#FFD700]" />} className="text-[#FFD700]">
+              LOW FEES &amp; Direct Support
+            </CardTitle>
             <CardBody className="text-[#DDE0DA] md:text-[16px]">
               A simple, <span className="text-[#FFD700]">flat 5% service</span> fee ensures creators receive the
               majority of their earnings. Creators receive tips directly from their fans, eliminating
@@ -74,7 +66,7 @@ export default function WhyTipJar() {
         </div>
 
         {/* 3) Instant Payouts — poziomo */}
-        <Card className="mt-6">
+        <Card className="mt-4">
           <CardTitle icon={<Clock3 className="h-5 w-5 text-[#FFD700]" />}>Instant Payouts</CardTitle>
           <CardBody className="md:text-[16px]">
             Funds are delivered instantly to the creator&apos;s wallet — with no delays, no holds, and no frozen
@@ -84,8 +76,8 @@ export default function WhyTipJar() {
           </CardBody>
         </Card>
 
-        {/* 4) Learn more / Back to top */}
-        <div className="mt-6 flex items-center justify-between">
+        {/* 4) Learn more / Back to top - space-between */}
+        <div className="mt-4 flex items-center justify-between">
           <Link
             href="#learn"
             className="group inline-flex items-center gap-1 text-sm font-medium text-[#FFD700] underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD700]/60 rounded transition"

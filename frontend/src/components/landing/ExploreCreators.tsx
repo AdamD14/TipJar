@@ -4,26 +4,62 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
-import GoalBadge from '@/components/profile/GoalBadge';
 
-export type Creator = {
-  id: string;
-  displayName: string;
-  handle: string; // bez @
-  avatarUrl: string;
-  industry: string;
-  headline?: string;
-  goal?: { label: string; amount: number; current: number; currency: 'USDC'|'USD'|'PLN' };
-};
+// Przykładowe dane twórców
+const EXAMPLE_CREATORS = [
+  {
+    category: 'Digital Art',
+    initial: 'E',
+    name: 'Elena Moreau',
+    handle: '@elenart',
+    role: 'Illustrator',
+    bio: 'Creating vibrant worlds with a touch of magic and surrealism.',
+    avatarUrl: '/avatar-fallback.png',
+    goalPercent: 68,
+  },
+  {
+    category: 'Music',
+    initial: 'L',
+    name: 'Leo Maxwell',
+    handle: '@leosonix',
+    role: 'Producer',
+    bio: 'Crafting electronic beats that move your soul and feet.',
+    avatarUrl: '/avatar-fallback.png',
+    goalPercent: 45,
+  },
+  {
+    category: 'Gaming',
+    initial: 'R',
+    name: 'Riley Chen',
+    handle: '@rileyplays',
+    role: 'Streamer',
+    bio: 'Exploring new worlds and sharing the adventure with you.',
+    avatarUrl: '/avatar-fallback.png',
+    goalPercent: 89,
+  },
+  {
+    category: 'Education',
+    initial: 'S',
+    name: 'Sarah Mitchell',
+    handle: '@teachsarah',
+    role: 'Educator',
+    bio: 'Making complex topics simple and fun to learn.',
+    avatarUrl: '/avatar-fallback.png',
+    goalPercent: 72,
+  },
+  {
+    category: 'Fitness',
+    initial: 'M',
+    name: 'Marcus Johnson',
+    handle: '@fitmarc',
+    role: 'Coach',
+    bio: 'Your journey to a healthier you starts here.',
+    avatarUrl: '/avatar-fallback.png',
+    goalPercent: 55,
+  },
+];
 
-export type ExploreItem = { category: string; creator: Creator };
-
-type Props = {
-  items: ExploreItem[]; // jeden twórca na kategorię
-  onTip?: (c: Creator) => void; // opcjonalny handler do otwarcia Tip Modala
-};
-
-export default function ExploreCreators({ items, onTip }: Props) {
+export default function ExploreCreators() {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
@@ -44,130 +80,112 @@ export default function ExploreCreators({ items, onTip }: Props) {
   const scrollByView = (dir: -1 | 1) => {
     const el = scrollerRef.current;
     if (!el) return;
-    const amount = Math.round(el.clientWidth * 0.92);
+    const amount = Math.round(el.clientWidth * 0.8);
     el.scrollBy({ left: dir * amount, behavior: 'smooth' });
   };
 
   return (
-    <section aria-labelledby="exploreHeading" className="py-12 md:py-16">
-      <div className="mx-auto max-w-[1480px] px-4 text-[#DDE0DA]">
-        <div className="mb-3 flex items-end justify-between gap-3">
+    <section className="py-12 md:py-16 bg-gradient-to-b from-[#0a1f2e] to-[#0c2a3d]">
+      <div className="mx-auto max-w-[1480px] px-4">
+        <div className="mb-6 flex items-center justify-between">
           <div>
-            <h2 id="exploreHeading" className="text-2xl md:text-3xl font-semibold">Explore creators</h2>
-            <p className="text-[14px] leading-[1.5] text-[#BCC1B6]">Featured by category. Scroll or use arrows.</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">Explore creators</h2>
+            <p className="text-gray-400">Featured by category. Scroll or use arrows.</p>
           </div>
           <Link
-            href="/discover"
-            className="hidden md:inline-flex rounded-[12px] border border-[#FFD700] px-4 py-2 text-sm font-medium text-[#FFD700] hover:-translate-y-[1px] transition"
+            href="#"
+            className="hidden md:inline-flex rounded-full border-2 border-[#FFD700] px-6 py-2 text-[#FFD700] font-semibold hover:bg-[#FFD700] hover:text-black transition-all"
           >
             Discover all creators
           </Link>
         </div>
 
         <div className="relative">
-          {/* gradient edges */}
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-[#001414] to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#001414] to-transparent" />
-
-          {/* scroller */}
+          {/* Karuzela */}
           <div
             ref={scrollerRef}
-            role="region"
-            aria-label="Creators carousel"
-            className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-4 pb-2"
+            className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            {items.map(({ category, creator }) => (
-              <CreatorCard key={`${category}-${creator.id}`} category={category} c={creator} onTip={onTip} />
+            {EXAMPLE_CREATORS.map((creator) => (
+              <CreatorCard key={creator.handle} {...creator} />
             ))}
           </div>
 
-          {/* arrows */}
+          {/* Strzałki nawigacji */}
           <button
-            type="button"
-            aria-label="Scroll left"
             onClick={() => scrollByView(-1)}
             disabled={atStart}
-            className="absolute left-1 top-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-black/40 px-2 py-2 text-sm backdrop-blur disabled:opacity-40"
+            className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/60 text-white rounded-full w-10 h-10 flex items-center justify-center disabled:opacity-30 hover:bg-black/80 transition-all"
           >
             ‹
           </button>
           <button
-            type="button"
-            aria-label="Scroll right"
             onClick={() => scrollByView(1)}
             disabled={atEnd}
-            className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-black/40 px-2 py-2 text-sm backdrop-blur disabled:opacity-40"
+            className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/60 text-white rounded-full w-10 h-10 flex items-center justify-center disabled:opacity-30 hover:bg-black/80 transition-all"
           >
             ›
           </button>
-        </div>
-
-        <div className="mt-4 md:hidden">
-          <Link
-            href="/discover"
-            className="inline-flex rounded-[12px] border border-[#FFD700] px-4 py-2 text-sm font-medium text-[#FFD700]"
-          >
-            Discover all creators
-          </Link>
         </div>
       </div>
     </section>
   );
 }
 
-/* ===== card ===== */
-
-function CreatorCard({ category, c, onTip }: { category: string; c: Creator; onTip?: (c: Creator) => void }) {
+function CreatorCard({
+  category,
+  initial,
+  name,
+  handle,
+  role,
+  bio,
+  goalPercent,
+}: {
+  category: string;
+  initial: string;
+  name: string;
+  handle: string;
+  role: string;
+  bio: string;
+  goalPercent: number;
+}) {
   return (
-    <article className="snap-start">
-      <div className="w-[288px] sm:w-[300px] lg:w-[320px] h-[420px] overflow-hidden rounded-[16px] border border-white/10 bg-card p-4 flex flex-col">
-        <div className="mb-3 flex items-center justify-between">
-          <span className="rounded-[999px] border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] text-[#DDE0DA]">
-            {category}
-          </span>
-          {c.goal ? (
-            <GoalBadge
-              percent={Math.min(100, Math.round((c.goal.current / Math.max(c.goal.amount, 0.01)) * 100))}
-              amount={c.goal.current}
-              goal={c.goal.amount}
-              currency={c.goal.currency}
-            />
-          ) : null}
-        </div>
+    <article className="min-w-[320px] bg-[#0f3847] rounded-2xl p-6 border border-gray-700/50">
+      <div className="flex items-center justify-between mb-6">
+        <span className="px-3 py-1 bg-gray-800 text-gray-300 rounded-full text-sm">{category}</span>
+        {goalPercent && (
+          <div className="flex items-center gap-2">
+            <div className="w-20 h-2 bg-gray-700 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-[#FFD700] rounded-full"
+                style={{ width: `${goalPercent}%` }}
+              />
+            </div>
+            <span className="text-[#FFD700] text-sm font-bold">{goalPercent}%</span>
+          </div>
+        )}
+      </div>
 
-        <div className="relative mx-auto mb-3 h-[140px] w-[140px]">
-          <Image
-            src={c.avatarUrl || '/avatar-fallback.png'}
-            alt={c.displayName}
-            fill
-            sizes="140px"
-            className="rounded-full object-cover"
-          />
-        </div>
+      {/* Avatar placeholder */}
+      <div className="w-32 h-32 mx-auto mb-4 bg-[#FFD700] rounded-full flex items-center justify-center">
+        <span className="text-5xl font-bold text-black">{initial}</span>
+      </div>
 
-        <div className="mb-1 text-[15px] font-semibold leading-tight">{c.displayName}</div>
-        <div className="mb-2 text-[12px] text-[#8F9687]">@{c.handle} · {c.industry}</div>
-        {c.headline ? (
-          <p className="mb-4 h-[44px] overflow-hidden text-[13px] leading-snug text-[#BCC1B6]">
-            {c.headline}
-          </p>
-        ) : <div className="mb-4 h-[44px]" />}
+      <div className="text-center mb-4">
+        <h3 className="text-xl font-bold text-white mb-1">{name}</h3>
+        <p className="text-gray-400 text-sm">{handle} · {role}</p>
+      </div>
 
-        <div className="mt-auto flex items-center gap-2">
-          <Link
-            href={`/@${c.handle}`}
-            className="inline-flex flex-1 items-center justify-center rounded-[12px] border border-white/10 px-3 py-2 text-sm hover:bg-white/5"
-          >
-            View profile
-          </Link>
-          <button
-            type="button"
-            onClick={() => onTip?.(c)}
-            className="inline-flex items-center justify-center rounded-[12px] bg-[#FFD700] px-3 py-2 text-sm font-semibold text-[#003737]"
-          >
-            Tip
-          </button>
-        </div>
+      <p className="text-gray-300 text-center mb-6 text-sm">{bio}</p>
+
+      <div className="flex gap-3">
+        <button className="flex-1 py-2 px-4 bg-transparent border border-gray-600 text-white rounded-lg hover:bg-gray-700/50 transition-all">
+          View profile
+        </button>
+        <button className="py-2 px-6 bg-[#FFD700] text-black font-bold rounded-lg hover:bg-[#FFC700] transition-all">
+          Tip
+        </button>
       </div>
     </article>
   );
