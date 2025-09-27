@@ -12,63 +12,28 @@ export default function Hero() {
     >
       {/* FULL-BLEED background /1.png — zawsze 100vw × 100vh */}
       <div className="pointer-events-none absolute inset-0 -z-20 overflow-hidden" aria-hidden>
-        <Image src="/1.png" alt="" fill priority sizes="100vw" className="object-cover" />
+        <Image src="/1.png" alt="" fill priority sizes="100vw" className="object-cover object-[75%] lg:object-center" />
       </div>
 
-      {/* Logo desktop - prawy górny róg */}
-      <Image
-        src="/logo.png"
-        alt=""
-        priority
-        width={160}
-        height={160}
-        aria-hidden
-        className="
-          hidden lg:block
-          pointer-events-none select-none 
-          fixed top-16 right-4 z-30
-          w-auto max-h-[160px]
-          opacity-90 drop-shadow-[0_10px_28px_rgba(0,0,0,.35)]
-        "
-      />
+
 
       <div className="mx-auto px-4 md:px-6">
         {/* kontener referencyjny */}
-        <div className="relative max-w-7xl min-h-screen flex flex-col justify-center">
+        <div className="relative max-w-7xl min-h-screen flex flex-col justify-start pt-40 lg:pt-28">
           <h1
             id="hero-heading"
             className="font-ui font-bold tracking-tight leading-[1.15] text-5xl sm:text-6xl md:text-6xl lg:text-7xl"
           >
-            <span className="block relative before:content-['\00a0\00a0\00a0\00a0\0009'] before:inline-block">
+            <span className="block relative before:content-['\00a0\00a0\00a0\00a0\0009'] before:inline-block bg-gradient-to-r from-white via-yellow-200 to-white bg-clip-text text-transparent drop-shadow-lg">
               Support creativity
             </span>
-
-            {/* druga linia + logo mobile - mniejszy enter */}
-            <span className="relative block mt-1 sm:mt-2 overflow-visible">
-              {/* Logo mobile - tylko na mobile */}
-              <Image
-                src="/logo.png"
-                alt=""
-                priority
-                width={240}
-                height={240}
-                aria-hidden
-                className="
-                  lg:hidden
-                  pointer-events-none select-none absolute z-0
-                  bottom-0 left-[-0.5rem] w-[min(88vw,240px)] h-auto object-left-bottom
-                  opacity-90 drop-shadow-[0_10px_28px_rgba(0,0,0,.35)]
-                "
-              />
-              <span className="relative z-10 text-[#FFD700]">Get paid instantly</span>
+            <span className="block mt-1 sm:mt-2 bg-gradient-to-r from-blue-200 via-white to-cyan-200 bg-clip-text text-transparent drop-shadow-lg">
+              Get paid instantly
             </span>
           </h1>
 
-          {/* "Enter" wysokość między H1 a subhero */}
-          <p className="mt-6 lg:mt-8 text-base sm:text-xl md:text-2xl font-ui text-white/80 max-w-2xl">
-            Instant micro-payments in <span className="text-[#004abe] font-semibold">USDC</span> for
-            creators: streamers, YouTubers, digital models, musicians, artists, bloggers, coaches,
-            educators, journalists, influencers — simply anyone creating valuable content.
+          <p className="mt-6 lg:mt-8 text-lg sm:text-xl md:text-2xl font-ui text-white max-w-2xl">
+            Instant micro-payments in USDC for creators: podcasters, streamers, YouTubers, digital models, musicians, artists, bloggers, coaches, educators, journalists, influencers - simply anyone creating valuable content.
           </p>
 
           {/* "Enter" wysokość między subhero a trust strip */}
@@ -101,8 +66,41 @@ export default function Hero() {
             </span>
           </div>
 
+          {/* Dodatkowe badges pod spodem */}
+          <div className="mt-3 flex flex-nowrap items-center gap-3 text-sm text-white/70 whitespace-nowrap overflow-x-auto">
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 ring-1 ring-white/10">
+              <svg
+                viewBox="0 0 24 24"
+                className="h-4 w-4"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+              >
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+              </svg>
+              <span>3.5% transaction fee</span>
+            </span>
+
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 ring-1 ring-white/10">
+              <svg
+                viewBox="0 0 24 24"
+                className="h-4 w-4"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+              >
+                <rect x="3" y="11" width="18" height="10" rx="2" ry="2" />
+                <circle cx="12" cy="16" r="1" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              <span>Smart contract transparency</span>
+            </span>
+          </div>
+
           {/* "Enter" wysokość między trust strip a buttonami - zwiększony na mobile */}
-          <div className="mt-12 lg:mt-8 flex w-full flex-nowrap items-center justify-start gap-3">
+          <div className="mt-16 lg:mt-12 flex w-full flex-nowrap items-center justify-start gap-3">
             <PrimaryCta href="/register">Begin as a Creator</PrimaryCta>
             <SecondaryCta href="/explore">Explore as a Fan</SecondaryCta>
           </div>

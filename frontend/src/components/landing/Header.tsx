@@ -1,7 +1,8 @@
 // frontend/src/components/landing/Header.tsx
-// Branding po lewej: stały tekst "TIPJAR.PLUS" (bez logo),
-// mobilne Log in / Sign up obok siebie i równe, płynne przewijanie do #sekcji,
-// kolory z tailwind.config, jawne typy zdarzeń (noImplicitAny), złote podkreślenia na hover.
+// Branding po lewej: stały tekst "TIPJAR.PLUS" (bez logo).
+// Nawigacja: etykiety UPPERCASE + złote podkreślenie (desktop + hamburger).
+// Mobile panel: tło /public/logo.png po prawej, wysokość ≈ 5× wysokości tekstu.
+// Desktop: BEZ przycisku Sign up (usunięty). Mobile: Log in / Sign up obok siebie; Sign up -> /register.
 
 'use client';
 
@@ -29,6 +30,34 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Learn about WEB3', href: '#learn', 'data-testid': 'nav-learn' },
 ];
 
+// Animated Brand Component
+function AnimatedBrand() {
+  const letters = ['T', 'I', 'P', 'J', 'A', 'R', '.', 'P', 'L', 'U', 'S'];
+  
+  return (
+    <span className="text-[13px] md:text-sm font-semibold tracking-[0.20em] uppercase text-text-secondary transition-colors inline-flex">
+      {letters.map((letter, index) => (
+        <span
+          key={index}
+          className="inline-block hover:text-[#FFD700] transition-all duration-300 hover:scale-110 hover:-translate-y-1"
+          style={{
+            animationDelay: `${index * 0.1}s`,
+            animation: 'letterFloat 3s ease-in-out infinite'
+          }}
+        >
+          {letter}
+        </span>
+      ))}
+      <style jsx>{`
+        @keyframes letterFloat {
+          0%, 90%, 100% { transform: translateY(0); }
+          45% { transform: translateY(-2px); }
+        }
+      `}</style>
+    </span>
+  );
+}
+
 export default function Header() {
   const scrolled = useScrollPosition(16);
   const [open, setOpen] = useState(false);
@@ -41,9 +70,7 @@ export default function Header() {
   }, [open]);
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
-    };
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
     if (open) window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
@@ -78,18 +105,16 @@ export default function Header() {
       >
         <nav className="mx-auto w-full px-4 md:px-6" aria-label="Main">
           <div className="flex py-1 items-center justify-between">
-            {/* 1) Lewa: Branding — zawsze tekst */}
+            {/* 1) Lewa: Branding — tekst z animacją */}
             <div className="flex-1 flex items-center justify-start">
               <Link href="/" aria-label="tipjar.plus — homepage" className="flex items-center gap-2">
-                <span className="text-[13px] md:text-sm font-semibold tracking-[0.20em] uppercase text-text-secondary transition-colors">
-                  TIPJAR.PLUS
-                </span>
+                <AnimatedBrand />
               </Link>
             </div>
 
-            {/* 2) Środek: Linki nawigacji */}
+            {/* 2) Środek: Linki */}
             <div className="flex-shrink-0 flex justify-center">
-              <ul className="hidden md:flex items-center gap-8 text-sm">
+              <ul className="hidden md:flex items-center gap-6 md:gap-8 text-xs">
                 {NAV_ITEMS.map((item) => (
                   <li key={item.label}>
                     <HeaderLink
@@ -104,7 +129,7 @@ export default function Header() {
               </ul>
             </div>
 
-            {/* 3) Prawa: Przyciski / Hamburger */}
+            {/* 3) Prawa: Log in + Hamburger (BEZ Sign up na desktopie) */}
             <div className="flex-1 flex justify-end items-center">
               <div className="hidden md:block">
                 <LoginButton data-testid="desktop-login">Log in</LoginButton>
@@ -118,7 +143,7 @@ export default function Header() {
                 className={clsx(
                   'md:hidden inline-flex items-center justify-center rounded-md p-2 outline-none ring-offset-2 transition-all',
                   'focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.7)]',
-                  'text-text-secondary hover:text-text-primary',
+                  'text-text-secondary hover:text-[#FFD700]',
                   open && 'pointer-events-none opacity-0'
                 )}
                 data-testid="hamburger"
@@ -145,8 +170,21 @@ export default function Header() {
           if (e.target === e.currentTarget) setOpen(false);
         }}
       >
+        {/* tło */}
         <div className="absolute inset-0 bg-brand-dark" aria-hidden />
         <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" aria-hidden />
+        
+        {/* LOGO po prawej: podniesione do 85% strony, lepiej widoczne */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute right-4 top-[15%] w-60 h-60 opacity-90"
+          style={{
+            backgroundImage: "url('/logo.png')",
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
+          }}
+        />
 
         <button
           type="button"
@@ -158,7 +196,7 @@ export default function Header() {
         </button>
 
         <div className="relative mx-auto w-full max-w-7xl px-4 pt-16 sm:pt-20">
-          <ul className="flex flex-col gap-3 border-t border-cyan-300/20 pt-6">
+          <ul className="flex flex-col gap-4 border-t border-cyan-300/20 pt-6">
             {NAV_ITEMS.map((item) => (
               <li key={item.label}>
                 <MobileLink
@@ -172,7 +210,7 @@ export default function Header() {
             ))}
           </ul>
 
-          {/* Log in / Sign up — obok siebie, ta sama szerokość */}
+          {/* Mobile CTA — zostaje, Sign up -> /register */}
           <div className="mt-6 flex gap-3 border-t border-white/10 pt-6">
             <div className="flex-1">
               <LoginButton data-testid="mobile-login" className="w-full h-12">
@@ -180,7 +218,7 @@ export default function Header() {
               </LoginButton>
             </div>
             <div className="flex-1">
-              <PrimaryCta href="/signup" data-testid="mobile-signup" className="w-full h-12">
+              <PrimaryCta href="/register" data-testid="mobile-signup" className="w-full h-12">
                 Sign up
               </PrimaryCta>
             </div>
@@ -205,11 +243,10 @@ function HeaderLink(
       data-testid={props['data-testid']}
       onClick={(e: React.MouseEvent<HTMLAnchorElement>) => onAnchorClick(e, href)}
       className={clsx(
-        'relative outline-none text-sm font-medium transition-colors duration-200',
+        'relative inline-block outline-none text-xs font-semibold tracking-[0.18em] uppercase transition-colors duration-200',
         'focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.7)] focus-visible:rounded',
-        'text-text-secondary hover:text-[#FFD700]', // złoty tekst na hover
-        // złote, animowane podkreślenie
-        'after:absolute after:left-0 after:right-0 after:-bottom-[6px] after:h-[2px] after:rounded-full after:bg-[#FFD700]',
+        'text-text-secondary hover:text-[#FFD700]',
+        'after:absolute after:left-0 after:bottom-[-4px] after:h-[1px] after:w-full after:rounded-full after:bg-[#FFD700]',
         'after:scale-x-0 hover:after:scale-x-100 focus-visible:after:scale-x-100 after:origin-left after:transition-transform after:duration-200'
       )}
     >
@@ -231,12 +268,19 @@ function MobileLink(
       onClick={props.onClick}
       data-testid={props['data-testid']}
       className={clsx(
-        'block rounded-md px-4 py-3 text-base font-medium transition text-text-primary',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.7)]',
-        'hover:bg-white/10'
+        'block rounded-md px-3 py-2 transition text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.7)] hover:bg-white/5'
       )}
     >
-      {props.children}
+      <span
+        className={clsx(
+          'relative inline-block text-sm font-semibold tracking-[0.16em] uppercase transition-colors',
+          'text-text-secondary hover:text-[#FFD700]',
+          'after:absolute after:left-0 after:bottom-[-4px] after:h-[1px] after:w-full after:rounded-full after:bg-[#FFD700]',
+          'after:scale-x-0 hover:after:scale-x-100 focus-visible:after:scale-x-100 after:origin-left after:transition-transform after:duration-200'
+        )}
+      >
+        {props.children}
+      </span>
     </Link>
   );
 }
