@@ -1,4 +1,3 @@
-// frontend/src/components/landing/WhyTipJar.tsx
 'use client';
 
 import Link from 'next/link';
@@ -8,142 +7,132 @@ import React from 'react';
 
 export default function WhyTipJar() {
   return (
-    <section id="why" aria-labelledby="whyTipJarHeading" className="relative py-12 md:py-16">
-      {/* FULL-BLEED background */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <Image src="/2.png" alt="" fill priority sizes="100vw" className="object-cover" />
-        {/* lekki przyciemniacz dla czytelności */}
-        <div className="absolute inset-0 bg-[radial-gradient(1200px_600px_at_50%_0%,rgba(0,0,0,.45),transparent_60%),linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.1))]" />
+    <section className="relative w-full min-h-screen">
+      {/* Background image */}
+      <div className="absolute inset-0 w-full h-full">
+        <Image 
+          src="/2.png" 
+          alt="" 
+          fill 
+          priority 
+          sizes="100vw" 
+          quality={90}
+          className="object-cover rounded-2xl pointer-events-none select-none" 
+        />
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 pt-4 text-[#DDE0DA]">
-        {/* 1) Simplicity — poziomo */}
-        <Card>
-          <CardTitle icon={<CreditCard className="h-5 w-5 text-[#FFD700]" />}>
-            Simplicity &amp; Payment Flexibility
-          </CardTitle>
-          <CardBody>
-            No sign-up required, no crypto experience needed. Fans can tip using cards, Google Pay, Apple Pay,
-            Revolut, bank transfer or Crypto wallet —{' '}
-            <span className="text-[#FFD700]">creators always receive USDC</span>. Just tap, scan, or click —
-            done in seconds.
-          </CardBody>
-        </Card>
+      {/* Content overlay */}
+      <div className="relative z-10 w-full min-h-screen py-24 px-4 md:px-8">
+        <div className="max-w-7xl mx-auto h-full flex flex-col justify-center gap-10">
+          
+          {/* Container 1 - Top full width */}
+          <div className="w-full">
+            <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg p-6">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-8 h-8 bg-[#FFD700]/10 rounded flex items-center justify-center flex-shrink-0">
+                  <CreditCard className="w-5 h-5 text-[#FFD700]" />
+                </div>
+                <h3 className="text-lg font-semibold text-[#DDE0DA]">Simplicity &amp; Payment Flexibility</h3>
+              </div>
+              <p className="text-sm text-[#DDE0DA] leading-relaxed">
+                No sign-up required, no crypto experience needed. Fans can tip using cards, Google Pay, Apple Pay,
+                Revolut, bank transfer or Crypto wallet — <span className="text-[#FFD700]">creators always receive USDC</span>. Just tap, scan, or click — done in seconds.
+              </p>
+            </div>
+          </div>
 
-        {/* 2) Trzy karty pionowo (środkowa wyróżniona) */}
-        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
-          <Card>
-            <CardTitle icon={<ShieldCheck className="h-5 w-5 text-[#FFD700]" />}>
-              Secure and Transparent
-            </CardTitle>
-            <CardBody className="md:text-[16px]">
-              Built on Web3 technology, tipjar ensures secure and transparent transactions. Powered by blockchain
-              and USDC — a fully-reserved, regulated stablecoin{' '}
-              <span className="text-[#FFD700]">issued by Circle.com</span>. No custodians, no banks — you stay in
-              full control.
-            </CardBody>
-          </Card>
+          {/* Containers 2, 3, 4 - Middle row with 3 columns */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            
+            {/* Container 2 */}
+            <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg p-6">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-8 h-8 bg-[#FFD700]/10 rounded flex items-center justify-center flex-shrink-0">
+                  <ShieldCheck className="w-5 h-5 text-[#FFD700]" />
+                </div>
+                <h3 className="text-base font-semibold text-[#DDE0DA]">Secure and Transparent</h3>
+              </div>
+              <p className="text-sm text-[#DDE0DA] leading-relaxed">
+                Built on Web3 technology, tipjar ensures secure and transparent transactions. Powered by blockchain
+                and USDC — a fully-reserved, regulated stablecoin <span className="text-[#FFD700]">issued by Circle.com</span>. No custodians, no banks — you stay in full control.
+              </p>
+            </div>
 
-          <Card highlight>
-            <CardTitle icon={<DollarSign className="h-5 w-5 text-[#FFD700]" />} className="text-[#FFD700]">
-              LOW FEES &amp; Direct Support
-            </CardTitle>
-            <CardBody className="text-[#DDE0DA] md:text-[16px]">
-              A simple, <span className="text-[#FFD700]">flat 5% service</span> fee ensures creators receive the
-              majority of their earnings. Creators receive tips directly from their fans, eliminating
-              intermediaries and maximizing earnings.
-            </CardBody>
-          </Card>
+            {/* Container 3 - Featured */}
+            <div className="bg-black/40 backdrop-blur-sm border-2 border-[#FFD700] rounded-lg p-6">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-8 h-8 bg-[#FFD700]/10 rounded flex items-center justify-center flex-shrink-0">
+                  <DollarSign className="w-5 h-5 text-[#FFD700]" />
+                </div>
+                <h3 className="text-base font-semibold text-[#FFD700]">LOW FEES &amp; Direct Support</h3>
+              </div>
+              <p className="text-sm text-[#DDE0DA] leading-relaxed">
+                A simple, <span className="text-[#FFD700]">flat 5% service</span> fee ensures creators receive the
+                majority of their earnings. Creators receive tips directly from their fans, eliminating
+                intermediaries and maximizing earnings.
+              </p>
+            </div>
 
-          <Card>
-            <CardTitle icon={<Globe2 className="h-5 w-5 text-[#FFD700]" />}>Global</CardTitle>
-            <CardBody className="md:text-[16px]">
-              Send or receive support from <span className="text-[#FFD700]">anywhere in the world</span> — no
-              banks, no borders, no limits. Circle enables fans to tip using 80+ fiat currencies (USD, EUR, GBP,
-              JPY). Creators get paid instantly in USDC. Fast, borderless, censorship-free.
-            </CardBody>
-          </Card>
-        </div>
+            {/* Container 4 */}
+            <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg p-6">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-8 h-8 bg-[#FFD700]/10 rounded flex items-center justify-center flex-shrink-0">
+                  <Globe2 className="w-5 h-5 text-[#FFD700]" />
+                </div>
+                <h3 className="text-base font-semibold text-[#DDE0DA]">Global</h3>
+              </div>
+              <p className="text-sm text-[#DDE0DA] leading-relaxed">
+                Send or receive support from <span className="text-[#FFD700]">anywhere in the world</span> — no
+                banks, no borders, no limits. Circle enables fans to tip using 80+ fiat currencies (USD, EUR, GBP, JPY). Creators get paid instantly in USDC. Fast, borderless, censorship-free.
+              </p>
+            </div>
 
-        {/* 3) Instant Payouts — poziomo */}
-        <Card className="mt-4">
-          <CardTitle icon={<Clock3 className="h-5 w-5 text-[#FFD700]" />}>Instant Payouts</CardTitle>
-          <CardBody className="md:text-[16px]">
-            Funds are delivered instantly to the creator&apos;s wallet — with no delays, no holds, and no frozen
-            assets. You earn it, you own it — right away. Need cash? You can{' '}
-            <span className="text-[#FFD700]">convert &amp; withdraw to local currency</span> anytime via Circle&apos;s
-            off-ramps.
-          </CardBody>
-        </Card>
+          </div>
 
-        {/* 4) Learn more / Back to top - space-between */}
-        <div className="mt-4 flex items-center justify-between">
-          <Link
-            href="#learn"
-            className="group inline-flex items-center gap-1 text-sm font-medium text-[#FFD700] underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD700]/60 rounded transition"
-          >
-            Learn more about Web3 <span className="transition-transform group-hover:translate-x-0.5">→</span>
-          </Link>
+          {/* Container 5 - Bottom full width */}
+          <div className="w-full">
+            <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg p-6">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-8 h-8 bg-[#FFD700]/10 rounded flex items-center justify-center flex-shrink-0">
+                  <Clock3 className="w-5 h-5 text-[#FFD700]" />
+                </div>
+                <h3 className="text-lg font-semibold text-[#DDE0DA]">Instant Payouts</h3>
+              </div>
+              <p className="text-sm text-[#DDE0DA] leading-relaxed">
+                Funds are delivered instantly to the creator&apos;s wallet — with no delays, no holds, and no frozen
+                assets. You earn it, you own it — right away. Need cash? You can{' '}
+                <span className="text-[#FFD700]">convert &amp; withdraw to local currency</span> anytime via Circle&apos;s off-ramps.
+              </p>
+            </div>
+          </div>
 
-          <button
-            type="button"
-            aria-label="Back to top"
-            title="Back to top"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#FFD700]/60 text-[#FFD700] transition hover:-translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD700]/60"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M12 19V5" />
-              <path d="M5 12l7-7 7 7" />
-            </svg>
-          </button>
+          {/* Navigation - na dole strony */}
+          <div className="w-full mt-6">
+            <div className="flex items-center justify-between">
+              <Link
+                href="#learn"
+                className="group inline-flex items-center gap-2 text-sm font-medium text-[#FFD700] underline-offset-4 hover:underline transition"
+              >
+                Learn more about Web3 <span className="transition-transform group-hover:translate-x-0.5">→</span>
+              </Link>
+
+              <button
+                type="button"
+                aria-label="Back to top"
+                title="Back to top"
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#FFD700]/60 text-[#FFD700] transition hover:-translate-y-0.5 hover:bg-[#FFD700]/10"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 19V5" />
+                  <path d="M5 12l7-7 7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
   );
-}
-
-/* ===== Helpers ===== */
-
-function Card({
-  children,
-  className = '',
-  highlight = false,
-}: React.PropsWithChildren<{ className?: string; highlight?: boolean }>) {
-  return (
-    <article
-      className={[
-        'rounded-[16px] p-6 md:p-8 transition will-change-transform',
-        highlight
-          ? 'border-2 border-[#FFD700] bg-card hover:shadow-[0_0_0_6px_rgba(255,215,0,0.15)_inset]'
-          : 'border border-white/10 bg-card hover:border-[#FFD700]/60 hover:shadow-[0_0_0_4px_rgba(255,215,0,0.10)_inset]',
-        // relief
-        'shadow-[inset_0_1px_0_rgba(255,255,255,.06),inset_0_-10px_16px_rgba(0,0,0,.35),0_10px_22px_rgba(0,0,0,.30)]',
-        'hover:-translate-y-[2px]',
-        className,
-      ].join(' ')}
-    >
-      {children}
-    </article>
-  );
-}
-
-function CardTitle({
-  children,
-  icon,
-  className = '',
-}: React.PropsWithChildren<{ icon?: React.ReactNode; className?: string }>) {
-  return (
-    <h3 className={['mb-3 flex items-center gap-2 font-semibold leading-[1.5] text-base md:text-xl', className].join(' ')}>
-      {icon ? <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[#FFD700]/10">{icon}</span> : null}
-      <span>{children}</span>
-    </h3>
-  );
-}
-
-function CardBody({
-  children,
-  className = '',
-}: React.PropsWithChildren<{ className?: string }>) {
-  return <p className={['text-[14px] leading-[1.6] text-[#BCC1B6] md:text-[16px]', className].join(' ')}>{children}</p>;
 }

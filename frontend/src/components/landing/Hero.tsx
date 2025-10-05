@@ -11,11 +11,17 @@ export default function Hero() {
       aria-labelledby="hero-heading"
     >
       {/* FULL-BLEED background /1.png — zawsze 100vw × 100vh */}
-      <div className="pointer-events-none absolute inset-0 -z-20 overflow-hidden" aria-hidden>
-        <Image src="/1.png" alt="" fill priority sizes="100vw" className="object-cover object-[75%] lg:object-center" />
+      <div className="pointer-events-none absolute inset-0 -z-20" aria-hidden>
+        <Image 
+          src="/1.png" 
+          alt="" 
+          fill 
+          priority 
+          sizes="100vw" 
+          quality={90}
+          className="object-cover rounded-2xl pointer-events-none select-none" 
+        />
       </div>
-
-
 
       <div className="mx-auto px-4 md:px-6">
         {/* kontener referencyjny */}
@@ -24,7 +30,7 @@ export default function Hero() {
             id="hero-heading"
             className="font-ui font-bold tracking-tight leading-[1.15] text-5xl sm:text-6xl md:text-6xl lg:text-7xl"
           >
-            <span className="block relative before:content-['\00a0\00a0\00a0\00a0\0009'] before:inline-block bg-gradient-to-r from-white via-yellow-200 to-white bg-clip-text text-transparent drop-shadow-lg">
+            <span className="block relative before:content-['\00a0\00a0\0009'] before:inline-block bg-gradient-to-r from-white via-yellow-200 to-white bg-clip-text text-transparent drop-shadow-lg">
               Support creativity
             </span>
             <span className="block mt-1 sm:mt-2 bg-gradient-to-r from-blue-200 via-white to-cyan-200 bg-clip-text text-transparent drop-shadow-lg">
@@ -37,7 +43,7 @@ export default function Hero() {
           </p>
 
           {/* "Enter" wysokość między subhero a trust strip */}
-          <div className="mt-6 lg:mt-8 flex flex-nowrap items-center gap-3 text-sm text-white/70 whitespace-nowrap overflow-x-auto">
+          <div className="mt-10 lg:mt-12 flex flex-nowrap items-center gap-3 text-sm text-white/70 whitespace-nowrap overflow-x-auto">
             <a
               href="https://circle.com"
               target="_blank"
