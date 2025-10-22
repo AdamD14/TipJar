@@ -3,6 +3,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
 import { login, me } from "@/lib/auth";
+import { useOnboardingStore } from "@/lib/stores/onboardingStore";
 import { useToast } from "@/components/ui/Toast";
 
 export default function Page() {
@@ -12,6 +13,7 @@ export default function Page() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const toast = useToast();
+  const { setRole, setUser: setOnboardingUser } = useOnboardingStore();
 
   const handleSocialLogin = (provider: "google" | "twitch") => {
     setLoading(true);
@@ -28,12 +30,39 @@ export default function Page() {
     try {
       await login({ email, password });
       const user = await me().catch(() => null);
-      const hasUsername = !!(user && (user.username || user.handle));
+      if (user) {
+        const normalizedRole = user.role === "CREATOR" ? "CREATOR" : "FAN";
+        setRole(normalizedRole);
+        setOnboardingUser({
+          id: user.id,
+          email: user.email ?? undefined,
+          role: normalizedRole,
+          username: user.username ?? undefined,
+          hasCompletedOnboarding: user.hasCompletedOnboarding,
+        });
+      } else {
+        setOnboardingUser(null);
+      }
+
+      const hasUsername = Boolean(user?.username);
+      const onboardingDone = Boolean(user?.hasCompletedOnboarding);
+      const normalizedRole = user?.role === "CREATOR" ? "CREATOR" : "FAN";
+      const fallbackTarget =
+        hasUsername && onboardingDone
+          ? normalizedRole === "CREATOR"
+            ? "/creator/dashboard"
+            : "/fan/dashboard"
+          : "/choose-username";
       const returnTo = params?.get("returnTo");
-      if (returnTo && returnTo.startsWith("/")) {
+      if (
+        returnTo &&
+        returnTo.startsWith("/") &&
+        hasUsername &&
+        onboardingDone
+      ) {
         router.push(returnTo);
       } else {
-        router.push(hasUsername ? "/fan/feed" : "/onboarding/username");
+        router.push(fallbackTarget);
       }
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Login failed";

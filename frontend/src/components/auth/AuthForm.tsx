@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
-import { api } from "@/lib/api";
 import { normalize } from "@/lib/api/errors";
+import { register as registerUser } from "@/lib/auth";
+import { useOnboardingStore } from "@/lib/stores/onboardingStore";
 import { registerSchema, RegisterFormValues } from "@/lib/schemas/authSchema";
 
 // ten komponent zostaje jako docelowy UI rejestracji
@@ -19,11 +20,21 @@ export default function AuthForm() {
   const [apiError, setApiError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
+  const { setRole, setUser, setTokens } = useOnboardingStore();
 
   const methods = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
   });
+
+  useEffect(() => {
+    setRole(tab);
+  }, [setRole, tab]);
+
+  const handleTabChange = (role: "CREATOR" | "FAN") => {
+    if (loading) return;
+    setTab(role);
+    setRole(role);
+  };
 
   // 1) blokada podwójnego submita + czyszczenie stanów
   const onEmailSubmit = async (data: RegisterFormValues) => {
@@ -31,20 +42,35 @@ export default function AuthForm() {
     setLoading(true);
     setApiError("");
     setMessage("");
-    setEmailSent(false);
     try {
-      await api("/api/v1/auth/register", {
-        method: "POST",
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-          role: tab, // "CREATOR" | "FAN"
-        }),
+      const response = await registerUser({
+        email: data.email,
+        password: data.password,
+        role: tab,
       });
-      setMessage(
-        "Registration successful! Please check your email to verify your account."
-      );
-      setEmailSent(true);
+
+      const nextRole = response.user.role === "FAN" ? "FAN" : "CREATOR";
+
+      setRole(nextRole);
+      setUser({
+        id: response.user.id,
+        email: response.user.email ?? undefined,
+        role: nextRole,
+        username: response.user.username ?? undefined,
+        hasCompletedOnboarding: response.user.hasCompletedOnboarding,
+      });
+      setTokens({ accessToken: response.accessToken });
+
+      const hasUsername = Boolean(response.user.username);
+      const completed = Boolean(response.user.hasCompletedOnboarding);
+      const target =
+        hasUsername && completed
+          ? nextRole === "FAN"
+            ? "/fan/dashboard"
+            : "/creator/dashboard"
+          : "/choose-username";
+
+      router.replace(target);
       methods.reset();
     } catch (err: unknown) {
       const { code, msg } = normalize(err as unknown);
@@ -81,10 +107,6 @@ export default function AuthForm() {
     )}`;
   };
 
-  const handleOpenEmailClient = () => {
-    // opcjonalnie: window.location.href = "mailto:";
-  };
-
   const showInfoMessage = (infoType: string) => {
     setMessage(`${infoType} – coming soon`);
   };
@@ -112,7 +134,7 @@ export default function AuthForm() {
               ? "bg-gradient-to-r from-teal-500 to-purple-500 text-white shadow-lg"
               : "text-white hover:bg-teal-500/20"
           }`}
-          onClick={() => setTab("FAN")}
+          onClick={() => handleTabChange("FAN")}
           type="button"
           disabled={loading}
         >
@@ -124,7 +146,7 @@ export default function AuthForm() {
               ? "bg-gradient-to-r from-teal-500 to-purple-500 text-white shadow-lg"
               : "text-white hover:bg-teal-500/20"
           }`}
-          onClick={() => setTab("CREATOR")}
+          onClick={() => handleTabChange("CREATOR")}
           type="button"
           disabled={loading}
         >
@@ -245,14 +267,9 @@ export default function AuthForm() {
             </div>
           )}
           {message && (
-            <div className="text-green-400 text-sm text-center bg-green-900/30 border border-green-500/50 rounded-lg p-3 mt-2">
+            <div className="text-amber-300 text-sm text-center bg-amber-900/20 border border-amber-400/40 rounded-lg p-3 mt-2">
               {message}
             </div>
-          )}
-          {emailSent && (
-            <button type="button" onClick={handleOpenEmailClient}>
-              Open Email Client
-            </button>
           )}
         </form>
       </FormProvider>
