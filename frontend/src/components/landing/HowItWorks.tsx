@@ -35,41 +35,40 @@ export default function HowItWorks() {
         {/* Full-bleed background */}
         <div className="pointer-events-none absolute inset-0 -z-10">
           <Image 
-                    src="/3.png" 
-                    alt="" 
-                    fill 
-                    priority 
-                    sizes="100vw" 
-                    quality={90}
-                    className="object-cover rounded-2xl pointer-events-none select-none" 
-                  />
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-[radial-gradient(1200px_600px_at_50%_0%,rgba(0,0,0,.45),transparent_60%),linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.1))]" />
+            src="/3.png" 
+            alt="" 
+            fill 
+            priority 
+            sizes="100vw" 
+            quality={90}
+            className="object-cover rounded-2xl pointer-events-none select-none" 
+          />
         </div>
 
         <div className="mx-auto max-w-[1600px] px-4 md:px-8 text-[#DDE0DA]">
           
           {/* Mobile Tabs - tylko na mobile */}
           <div className="mb-8 flex justify-center lg:hidden">
-            <div className="inline-flex rounded-2xl border-2 border-[#FFD700]/30 bg-card/80 backdrop-blur-md p-1.5 shadow-lg">
+            <div className="inline-flex gap-2">
               <button
                 type="button"
                 onClick={() => setTab('fans')}
-                className={`px-8 py-3 text-base font-semibold rounded-xl transition-all duration-300 ${
+                className={`px-8 py-3 text-lg font-semibold rounded-[16px] transition-all duration-300 ${
                   tab === 'fans'
-                    ? 'bg-[#FFD700] text-[#003737] shadow-md'
-                    : 'text-[#DDE0DA] hover:bg-[#FFD700]/10 hover:text-[#FFD700]'
+                    ? 'bg-transparent text-[#4d194d] ring-2 ring-[#4d194d]'
+                    : 'bg-transparent text-[#DDE0DA] hover:bg-[#4d194d]/10 hover:text-[#4d194d]'
                 }`}
               >
                 For Fans
               </button>
+              
               <button
                 type="button"
                 onClick={() => setTab('creators')}
-                className={`px-8 py-3 text-base font-semibold rounded-xl transition-all duration-300 ${
+                className={`px-8 py-3 text-base font-semibold rounded-[16px] transition-all duration-300 ${
                   tab === 'creators'
-                    ? 'bg-[#FFD700] text-[#003737] shadow-md'
-                    : 'text-[#DDE0DA] hover:bg-[#FFD700]/10 hover:text-[#FFD700]'
+                    ? 'bg-transparent text-[#FFD700] ring-2 ring-[#FFD700]'
+                    : 'bg-transparent text-[#DDE0DA] hover:bg-[#FFD700]/10 hover:text-[#FFD700]'
                 }`}
               >
                 For Creators
@@ -81,9 +80,11 @@ export default function HowItWorks() {
           <div className="hidden lg:grid lg:grid-cols-2 lg:gap-12">
             {/* For Fans - Lewa strona */}
             <div>
-              <h2 className="text-3xl xl:text-4xl font-bold text-[#FFD700] mb-8 text-center">
-                For Fans
-              </h2>
+              <div className="flex justify-center mb-8">
+                <h2 className="text-3xl xl:text-4xl font-bold text-[#4d194d] border-2 border-[#4d194d] bg-transparent rounded-[16px] py-3 px-8">
+                  For Fans
+                </h2>
+              </div>
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                 <TileCard
                   icon="https://cdn.lordicon.com/bhfjfgqz.json"
@@ -125,9 +126,11 @@ export default function HowItWorks() {
 
             {/* For Creators - Prawa strona */}
             <div>
-              <h2 className="text-3xl xl:text-4xl font-bold text-[#FFD700] mb-8 text-center">
-                For Creators
-              </h2>
+              <div className="flex justify-center mb-8">
+                <h2 className="text-3xl xl:text-4xl font-bold text-[#FFD700] border-2 border-[#FFD700] bg-transparent rounded-[16px] py-3 px-8">
+                  For Creators
+                </h2>
+              </div>
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                 <TileCard
                   icon="https://cdn.lordicon.com/kthelypq.json"
@@ -278,26 +281,26 @@ function TileCard({
   description: string;
 }) {
   return (
-    <article className="group rounded-xl border border-white/10 bg-card/80 backdrop-blur-sm p-4 transition-all duration-300 hover:border-[#FFD700]/60 hover:bg-card/90 hover:shadow-[0_0_0_4px_rgba(255,215,0,0.10)_inset] shadow-[inset_0_1px_0_rgba(255,255,255,.06),0_8px_20px_rgba(0,0,0,.30)]">
+    <article className="group rounded-xl border border-white/10 bg-black/40 backdrop-blur-sm p-6 transition-all duration-300 hover:border-[#FFD700]/60 hover:shadow-[0_0_0_4px_rgba(255,215,0,0.10)_inset]">
       <div className="flex flex-col items-center text-center space-y-3">
         {/* Icon */}
-        <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#FFD700]/10 ring-2 ring-[#FFD700]/30 group-hover:ring-[#FFD700]/60 transition-all duration-300">
+        <div className="w-8 h-8 bg-[#FFD700]/10 rounded flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-[#FFD700]/20">
           {/* @ts-expect-error - lord-icon is a custom web component */}
           <lord-icon
             src={icon}
             trigger="loop"
             colors="primary:#FFD700,secondary:#FFA500"
-            style={{ width: '32px', height: '32px' }}
+            style={{ width: '20px', height: '20px' }}
           />
         </div>
 
         {/* Title */}
-        <h3 className="text-base md:text-lg font-bold text-[#DDE0DA] leading-tight uppercase tracking-wide">
+        <h3 className="text-lg sm:text-lg md:text-lg lg:text-xl font-semibold text-[#DDE0DA] uppercase">
           {title}
         </h3>
 
         {/* Description */}
-        <p className="text-xs md:text-sm leading-relaxed text-[#BCC1B6]">
+        <p className="text-base md:text-base lg:text-md text-[#DDE0DA] leading-relaxed">
           {description}
         </p>
       </div>

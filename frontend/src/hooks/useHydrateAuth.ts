@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import apiClient from '@/lib/apiClient';
+import { api } from '@/lib/api';
+import { API } from '@/lib/api-routes';
 import { useOnboardingStore } from '@/lib/stores/onboardingStore';
 
 export default function useHydrateAuth() {
@@ -12,9 +13,9 @@ export default function useHydrateAuth() {
     hydrated.current = true;
     (async () => {
       try {
-        // Jeśli backend ustawił cookie po OAuth, to /auth/me zwróci użytkownika
-        const res = await apiClient.get('/auth/me');
-        if (res?.data) setUser(res.data);
+         // Jeśli backend ustawił HttpOnly cookies, /api/v1/auth/me zwróci użytkownika
+        const me = await api(API.AUTH.ME); // fetch z credentials: 'include'
+        if (me) setUser(me as any);
       } catch {
         // brak sesji – ignoruj
       }

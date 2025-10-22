@@ -15,7 +15,7 @@ export default function Page() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
-    <main id="main-content" className="bg-gradient-main">
+    <main id="main-content" >
       <Header />
 
       <Hero />

@@ -1,17 +1,16 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { useForm, FormProvider } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
-import apiClient from '@/lib/apiClient';
-import { normalize } from '@/lib/api/errors';
-import { registerSchema, RegisterFormValues } from '@/lib/schemas/authSchema';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { api } from "@/lib/api";
+import { normalize } from "@/lib/api/errors";
+import { registerSchema, RegisterFormValues } from "@/lib/schemas/authSchema";
 
-// import { useAuthStore } from "@/lib/stores/authStore";
-
+// ten komponent zostaje jako docelowy UI rejestracji
 export default function AuthForm() {
   const router = useRouter();
   const [tab, setTab] = useState<"CREATOR" | "FAN">("CREATOR");
@@ -26,44 +25,65 @@ export default function AuthForm() {
     resolver: zodResolver(registerSchema),
   });
 
+  // 1) blokada podwójnego submita + czyszczenie stanów
   const onEmailSubmit = async (data: RegisterFormValues) => {
+    if (loading) return;
     setLoading(true);
     setApiError("");
     setMessage("");
     setEmailSent(false);
     try {
-      await apiClient.post("/auth/register", {
-        email: data.email,
-        password: data.password,
-        role: tab,
+      await api("/api/v1/auth/register", {
+        method: "POST",
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+          role: tab, // "CREATOR" | "FAN"
+        }),
       });
       setMessage(
-        "Registration successful! Please check your email to verify your account.",
+        "Registration successful! Please check your email to verify your account."
       );
       setEmailSent(true);
       methods.reset();
     } catch (err: unknown) {
       const { code, msg } = normalize(err as unknown);
       if (code === 409) {
-        router.push('/login');
+        router.push("/login");
       } else {
-        setApiError(msg || 'An unexpected error occurred.');
+        setApiError(msg || "An unexpected error occurred.");
       }
     } finally {
       setLoading(false);
     }
   };
 
+  // 2) Google = base64 state, Twitch = czysty JSON
   const handleSocialLogin = (provider: "google" | "twitch") => {
+    if (loading) return;
     setLoading(true);
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:3001";
-    const payload = JSON.stringify({ role: tab });
-    const state = btoa(payload);
-    const target = provider === 'google' ? "/api/v1/auth/google" : "/api/v1/auth/twitch";
-    window.location.href = `${apiBase}${target}?state=${encodeURIComponent(state)}`;
+
+    // 3) unikamy podwójnych / w ORIGIN
+    const ORIGIN = (
+      process.env.NEXT_PUBLIC_BACKEND_ORIGIN || "http://localhost:3001"
+    ).replace(/\/+$/, "");
+
+    const target =
+      provider === "google" ? "/api/v1/auth/google" : "/api/v1/auth/twitch";
+
+    const state =
+      provider === "google"
+        ? btoa(JSON.stringify({ role: tab })) // Google: base64
+        : JSON.stringify({ role: tab }); // Twitch: plain JSON
+
+    window.location.href = `${ORIGIN}${target}?state=${encodeURIComponent(
+      state
+    )}`;
   };
 
-  const handleOpenEmailClient = () => {};
+  const handleOpenEmailClient = () => {
+    // opcjonalnie: window.location.href = "mailto:";
+  };
 
   const showInfoMessage = (infoType: string) => {
     setMessage(`${infoType} – coming soon`);
@@ -74,7 +94,7 @@ export default function AuthForm() {
       <div className="flex justify-center mb-6">
         <div className="bg-gradient-to-r from-teal-500 to-purple-500 text-white px-4 py-2 rounded-xl font-bold text-xl shadow-lg flex items-center gap-3">
           <Image
-            src="/assets/icon-tipjarnone.svg"
+            src="/logo.png"
             alt="TipJar+ icon"
             width={48}
             height={48}
@@ -84,6 +104,7 @@ export default function AuthForm() {
           tipjar.plus
         </div>
       </div>
+
       <div className="flex mb-6 overflow-hidden rounded-xl border border-teal-400/30 bg-teal-900/20">
         <button
           className={`flex-1 py-2 font-semibold text-sm sm:text-base transition-all duration-200 ${
@@ -93,6 +114,7 @@ export default function AuthForm() {
           }`}
           onClick={() => setTab("FAN")}
           type="button"
+          disabled={loading}
         >
           Register as a Fan
         </button>
@@ -104,25 +126,20 @@ export default function AuthForm() {
           }`}
           onClick={() => setTab("CREATOR")}
           type="button"
+          disabled={loading}
         >
           Register as a Creator
         </button>
       </div>
 
       <FormProvider {...methods}>
-        <form
-          className="space-y-2"
-          onSubmit={methods.handleSubmit(onEmailSubmit)}
-        >
+        <form className="space-y-2" onSubmit={methods.handleSubmit(onEmailSubmit)}>
           <div>
-            <label
-              htmlFor="email"
-              className="block text-white text-sm mb-2 font-medium"
-            >
+            <label htmlFor="email" className="block text-white text-sm mb-2 font-medium">
               Email
             </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-teal-400 w-5 h-5" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-teal-400 w-5 h-5" />
               <input
                 id="email"
                 type="email"
@@ -130,6 +147,7 @@ export default function AuthForm() {
                 className="w-full bg-slate-900/60 border border-teal-400/40 rounded-lg pl-11 pr-4 py-3 text-white placeholder-gray-300 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all"
                 placeholder="e.g. john@tipjar.plus"
                 {...methods.register("email")}
+                disabled={loading}
               />
             </div>
             {methods.formState.errors.email && (
@@ -138,15 +156,13 @@ export default function AuthForm() {
               </p>
             )}
           </div>
+
           <div className="relative">
-            <label
-              htmlFor="password"
-              className="block text-white text-sm mb-2 font-medium"
-            >
+            <label htmlFor="password" className="block text-white text-sm mb-2 font-medium">
               Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-teal-400 w-5 h-5" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-teal-400 w-5 h-5" />
               <input
                 id="password"
                 type={showPwd ? "text" : "password"}
@@ -154,18 +170,16 @@ export default function AuthForm() {
                 className="w-full bg-slate-900/60 border border-teal-400/40 rounded-lg pl-11 pr-12 py-3 text-white placeholder-gray-300 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all"
                 placeholder="Enter your password"
                 {...methods.register("password")}
+                disabled={loading}
               />
               <button
                 type="button"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-teal-400 hover:text-teal-300 transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-teal-400 hover:text-teal-300 transition-colors"
                 onClick={() => setShowPwd(!showPwd)}
                 aria-label={showPwd ? "Hide password" : "Show password"}
+                disabled={loading}
               >
-                {showPwd ? (
-                  <EyeOff className="w-5 h-5" />
-                ) : (
-                  <Eye className="w-5 h-5" />
-                )}
+                {showPwd ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
             {methods.formState.errors.password && (
@@ -174,6 +188,7 @@ export default function AuthForm() {
               </p>
             )}
           </div>
+
           <div className="relative">
             <label
               htmlFor="confirmPassword"
@@ -182,7 +197,7 @@ export default function AuthForm() {
               Repeat password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-teal-400 w-5 h-5" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-teal-400 w-5 h-5" />
               <input
                 id="confirmPassword"
                 type={showPwd2 ? "text" : "password"}
@@ -190,18 +205,16 @@ export default function AuthForm() {
                 className="w-full bg-slate-900/60 border border-teal-400/40 rounded-lg pl-11 pr-12 py-3 text-white placeholder-gray-300 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all"
                 placeholder="Repeat your password"
                 {...methods.register("confirmPassword")}
+                disabled={loading}
               />
               <button
                 type="button"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-teal-400 hover:text-teal-300 transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-teal-400 hover:text-teal-300 transition-colors"
                 onClick={() => setShowPwd2(!showPwd2)}
                 aria-label={showPwd2 ? "Hide password" : "Show password"}
+                disabled={loading}
               >
-                {showPwd2 ? (
-                  <EyeOff className="w-5 h-5" />
-                ) : (
-                  <Eye className="w-5 h-5" />
-                )}
+                {showPwd2 ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
             {methods.formState.errors.confirmPassword && (
@@ -218,7 +231,7 @@ export default function AuthForm() {
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 Processing...
               </span>
             ) : (
@@ -250,6 +263,7 @@ export default function AuthForm() {
         </div>
         <div className="relative bg-teal-900/60 px-4">or</div>
       </div>
+
       <div className="flex flex-col gap-3">
         <button
           type="button"
@@ -282,6 +296,7 @@ export default function AuthForm() {
           Continue with Twitch
         </button>
       </div>
+
       <div className="text-center text-xs mt-4 text-white/50">
         <button
           type="button"

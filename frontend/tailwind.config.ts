@@ -26,11 +26,12 @@ const config: Config = {
         "text-primary": "#DDE0DA",
         "text-secondary": "#BCC1B6",
       },
-      fontFamily: {
-        sans: ["var(--font-body)"], // Mukta (tekst)
-        ui: ["var(--font-ui)"], // IBM Plex Sans (UI)
-      },
-      keyframes: {
+        
+    fontFamily: {
+       sans: ["var(--font-body)", "system-ui", "ui-sans-serif", "sans-serif"],
+      ui: ["var(--font-ui)", "system-ui", "ui-sans-serif", "sans-serif"],
+     },
+     keyframes: {
         sheen: {
           "0%": { transform: "translateX(-120%) skewX(-15deg)" },
           "100%": { transform: "translateX(220%) skewX(-15deg)" },

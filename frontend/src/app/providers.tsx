@@ -15,13 +15,17 @@ export const config = createConfig({
   connectors: [injected()],
 });
 
-const queryClient = new QueryClient();
+let _qc: QueryClient | undefined;
+function getQueryClient() {
+  if (!_qc) _qc = new QueryClient();
+  return _qc;
+}
 
 // Komponent, który będzie dostarczał kontekst wagmi i react-query do całej aplikacji.
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={getQueryClient()}>
         {children}
         <ToastHost />
       </QueryClientProvider>

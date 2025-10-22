@@ -1,5 +1,4 @@
 'use client';
-
 import ConsentsForm from '@/components/onboarding/ConsentsForm';
 
 export default function ConsentsPage() {
@@ -9,4 +8,3 @@ export default function ConsentsPage() {
     </main>
   );
 }
-

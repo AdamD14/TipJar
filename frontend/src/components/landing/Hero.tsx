@@ -23,12 +23,12 @@ export default function Hero() {
         />
       </div>
 
-      <div className="mx-auto px-4 md:px-6">
+      <div className="mx-auto px-4 md:px-8">
         {/* kontener referencyjny */}
-        <div className="relative max-w-7xl min-h-screen flex flex-col justify-start pt-40 lg:pt-28">
+        <div className="relative max-w-7xl min-h-screen flex flex-col justify-start pt-16 lg:pt-20">
           <h1
             id="hero-heading"
-            className="font-ui font-bold tracking-tight leading-[1.15] text-5xl sm:text-6xl md:text-6xl lg:text-7xl"
+            className="font-ui font-bold tracking-tight leading-[1.15] text-5xl sm:text-5xl md:text-6xl lg:text-8xl"
           >
             <span className="block relative before:content-['\00a0\00a0\0009'] before:inline-block bg-gradient-to-r from-white via-yellow-200 to-white bg-clip-text text-transparent drop-shadow-lg">
               Support creativity
@@ -68,7 +68,7 @@ export default function Hero() {
                 <circle cx="12" cy="12" r="9" />
                 <path d="M3 12h18M12 3a15 15 0 010 18M12 3a15 15 0 000 18" />
               </svg>
-              <span>Global On-Chain USDC Payments</span>
+              <span>Global USDC Payments</span>
             </span>
           </div>
 

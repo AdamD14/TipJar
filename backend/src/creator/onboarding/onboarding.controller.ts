@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles } from '../../auth/guards/roles.decorator';
 import { RolesGuard } from '../../auth/guards/roles.guard';
@@ -14,7 +22,9 @@ type Steps = {
 };
 
 function stepsToCompletion(steps: Steps) {
-  const total = Object.keys(steps).length; const done = Object.values(steps).filter(Boolean).length; return Math.round((done/total)*100);
+  const total = Object.keys(steps).length;
+  const done = Object.values(steps).filter(Boolean).length;
+  return Math.round((done / total) * 100);
 }
 
 @Controller('creator/onboarding')
@@ -25,7 +35,10 @@ export class CreatorOnboardingController {
 
   @Get('status')
   async status(@Req() req: any) {
-    const u = await this.prisma.user.findUnique({ where: { id: req.user.id }, include: { profile: { select: { bio: true } } } });
+    const u = await this.prisma.user.findUnique({
+      where: { id: req.user.id },
+      include: { profile: { select: { bio: true } } },
+    });
     const consents: any = (u as any)?.consents || {};
     const steps: Steps = {
       identity: !!(u?.username && u?.avatarUrl),
@@ -71,7 +84,10 @@ export class CreatorOnboardingController {
   async tier(@Req() req: any, @Body() dto: { id?: string; name: string; priceCents: number; perks: string[]; active: boolean }) {
     // Placeholder: oznacz posiadanie aktywnego tieru w JSON consents
     const current = await this.prisma.user.findUnique({ where: { id: req.user.id }, select: { consents: true } });
-    const next = { ...(current?.consents as any || {}), hasTier: !!dto.active };
+    const next = {
+      ...((current?.consents as any) || {}),
+      hasTier: !!dto.active,
+    };
     await this.prisma.user.update({ where: { id: req.user.id }, data: { consents: next } });
     return { ok: true, id: dto.id || 'tier-placeholder' };
   }
