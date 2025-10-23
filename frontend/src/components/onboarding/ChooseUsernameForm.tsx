@@ -1,10 +1,10 @@
-// /src/components/onboarding/ChooseUsernameForm.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
+import { normalize } from '@/lib/api/errors';
 import { useOnboardingStore } from '@/lib/stores/onboardingStore';
 
 type MeResponse = {
@@ -19,28 +19,59 @@ const TEXT = { primary: '#DDE0DA', secondary: '#BCC1B6' };
 
 export default function ChooseUsernameForm() {
   const router = useRouter();
-  const { drafts, user, role, setDraft, setUser } = useOnboardingStore();
+  const { drafts, user, setDraft, setUser, setStep, setRole } = useOnboardingStore();
 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [available, setAvailable] = useState<boolean | null>(null);
   const [checking, setChecking] = useState(false);
-  const [acceptAll, setAcceptAll] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
 
-  // jeśli user ma już username — wyślij wg roli na dashboard
+  // Zgody
+  const [allRequired, setAllRequired] = useState(false);
+  const [marketing, setMarketing] = useState(false);
+
+  // Sprawdź stan użytkownika przy mount (po OAuth redirect)
   useEffect(() => {
-    if (user?.username) {
-      const r = (user.role ?? role) === 'FAN' ? '/fan/dashboard' : '/creator/dashboard';
-      router.replace(r);
-    }
-  }, [router, role, user?.role, user?.username]);
+    (async () => {
+      try {
+        const meRes = await api<MeResponse>(`/api/v1/auth/me`);
+        if (meRes) {
+          const normalizedRole = meRes.role === 'CREATOR' ? 'CREATOR' : 'FAN';
+          setRole(normalizedRole);
+          setUser(meRes);
 
-  // debounced live-check dostępności (?username=) + walidacja
+          // Jeśli już ma username i completed onboarding -> dashboard
+          if (meRes.username && meRes.hasCompletedOnboarding) {
+            router.replace(
+              normalizedRole === 'CREATOR' ? '/creator/dashboard' : '/fan/dashboard'
+            );
+            return;
+          }
+        }
+      } catch {
+        // User nie zalogowany lub błąd - pokaż formularz
+      } finally {
+        setInitialLoading(false);
+      }
+    })();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Jeśli onboarding już skończony → dashboard
+  useEffect(() => {
+    if (!initialLoading && user?.hasCompletedOnboarding && user?.username) {
+      const role = user.role === 'CREATOR' ? 'CREATOR' : 'FAN';
+      router.replace(role === 'CREATOR' ? '/creator/dashboard' : '/fan/dashboard');
+    }
+  }, [router, user?.hasCompletedOnboarding, user?.username, user?.role, initialLoading]);
+
+  // Debounced check dostępności username
   useEffect(() => {
     const name = (drafts.username || '').trim().toLowerCase();
 
     setError(null);
     setAvailable(null);
+
     if (!name) return;
 
     if (!/^[a-z0-9._-]{3,24}$/i.test(name)) {
@@ -51,7 +82,7 @@ export default function ChooseUsernameForm() {
     setChecking(true);
     let alive = true;
 
-    const handler = setTimeout(() => {
+    const handle = setTimeout(() => {
       (async () => {
         try {
           const res = await api<{ available: boolean }>(
@@ -71,7 +102,7 @@ export default function ChooseUsernameForm() {
 
     return () => {
       alive = false;
-      clearTimeout(handler);
+      clearTimeout(handle);
     };
   }, [drafts.username]);
 
@@ -87,19 +118,19 @@ export default function ChooseUsernameForm() {
       setError('Username is required.');
       return;
     }
-    if (!acceptAll) {
-      setBusy(false);
-      setError('Please accept the terms.');
-      return;
-    }
     if (available !== true) {
       setBusy(false);
-      setError('Username is not available.');
+      setError('Username must be available.');
+      return;
+    }
+    if (!allRequired) {
+      setBusy(false);
+      setError('You must accept Terms, Privacy Policy and confirm age.');
       return;
     }
 
     try {
-      // ZGODNIE Z WYMAGANIAMI BACKENDU: consents = { terms, privacy, age }
+      // Jeden request z username + consents
       await api<unknown>(`/api/v1/users/set-username`, {
         method: 'POST',
         body: JSON.stringify({
@@ -108,32 +139,44 @@ export default function ChooseUsernameForm() {
             terms: true,
             privacy: true,
             age: true,
+            marketing,
           },
         }),
       });
 
-      // odśwież profil
+      // Odśwież profil
       const meRes = await api<MeResponse>(`/api/v1/auth/me`);
       setUser(meRes || null);
+      setStep('COMPLETED');
 
-      // przekierowanie wg roli
-      const finalRole = (meRes?.role ?? role) === 'FAN' ? 'FAN' : 'CREATOR';
-      router.push(finalRole === 'FAN' ? '/fan/dashboard' : '/creator/dashboard');
+      // Redirect wg roli
+      const role = (meRes?.role === 'CREATOR' ? 'CREATOR' : 'FAN') as 'CREATOR' | 'FAN';
+      router.replace(role === 'CREATOR' ? '/creator/dashboard' : '/fan/dashboard');
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Unable to set username.';
-      setError(msg);
+      const { msg } = normalize(err);
+      setError(msg || 'Unable to save data.');
     } finally {
       setBusy(false);
     }
   };
 
+  // Loading state przy sprawdzaniu initial
+  if (initialLoading) {
+    return (
+      <section className="w-full max-w-md bg-teal-900/20 backdrop-blur-md border border-teal-400/20 rounded-2xl shadow-2xl p-8">
+        <div className="flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-teal-400 border-t-transparent rounded-full animate-spin" />
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="w-full max-w-md bg-teal-900/20 backdrop-blur-md border border-teal-400/20 rounded-2xl shadow-2xl p-2">
-      {/* header jak w AuthForm */}
       <div className="flex justify-center mb-6">
         <div className="bg-gradient-to-r from-teal-500 to-purple-500 text-white px-4 py-2 rounded-xl font-bold text-xl shadow-lg flex items-center gap-3">
           <Image
-            src="/logo.png" // public/logo.png
+            src="/logo.png"
             alt="TipJar+ icon"
             width={48}
             height={48}
@@ -166,7 +209,6 @@ export default function ChooseUsernameForm() {
             />
           </div>
 
-          {/* status dostępności */}
           <div className="mt-2 text-xs">
             {checking && <span style={{ color: TEXT.secondary }}>Checking…</span>}
             {!checking && available === true && <span className="text-emerald-300">Available ✓</span>}
@@ -174,27 +216,43 @@ export default function ChooseUsernameForm() {
           </div>
         </div>
 
-        {/* pojedynczy checkbox – wymagana akceptacja (consents) */}
-        <label className="mt-1 flex items-start gap-3 text-sm text-[#DDE0DA]">
-          <input
-            type="checkbox"
-            className="mt-1 h-4 w-4 rounded border-white/20 bg-white/5 outline-none focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.70)]"
-            checked={acceptAll}
-            onChange={(e) => setAcceptAll(e.target.checked)}
-            required
-          />
-          <span>I am at least 16 years old and accept the Terms & Privacy Policy.</span>
-        </label>
+        {/* Zgody */}
+        <div className="space-y-2 pt-2">
+          <label className="flex items-start gap-3 text-sm">
+            <input
+              type="checkbox"
+              className="mt-1 h-4 w-4 rounded border-white/20 bg-white/5 outline-none focus-visible:ring-2 focus-visible:ring-teal-400"
+              checked={allRequired}
+              onChange={(e) => setAllRequired(e.target.checked)}
+              required
+            />
+            <span className="text-[#DDE0DA]">
+              I am at least 16 years old and accept the <span className="underline">Terms of Service</span> and <span className="underline">Privacy Policy</span>
+            </span>
+          </label>
+
+          <label className="flex items-start gap-3 text-sm">
+            <input
+              type="checkbox"
+              className="mt-1 h-4 w-4 rounded border-white/20 bg-white/5 outline-none focus-visible:ring-2 focus-visible:ring-teal-400"
+              checked={marketing}
+              onChange={(e) => setMarketing(e.target.checked)}
+            />
+            <span className="text-[#DDE0DA]">
+              Send me product updates and creator highlights (optional)
+            </span>
+          </label>
+        </div>
 
         {error && (
-          <p role="alert" className="text-xs text-[#FFD700]">
+          <p role="alert" className="mt-1 text-xs text-[#FFD700]">
             {error}
           </p>
         )}
 
         <button
           type="submit"
-          disabled={busy || available !== true || !acceptAll}
+          disabled={busy || available !== true || !allRequired}
           className="w-full bg-gradient-to-r from-teal-500 to-purple-500 text-white font-bold py-3 rounded-lg hover:from-teal-600 hover:to-purple-600 hover:scale-[1.02] transform transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none shadow-lg"
         >
           {busy ? 'Processing…' : 'Continue'}

@@ -388,26 +388,21 @@ export class UsersService {
    * Public, read-only projection of a creator/fan by username.
    * Returns safe fields only and includes the linked profile.
    */
-  async getPublicProfileByUsername(
-    username: string,
-  ): Promise<
-    | null
-    | {
-        id: string;
-        username: string | null;
-        displayName: string;
-        avatarUrl: string | null;
-        role: UserRole;
-        profile: {
-          bio: string | null;
-          bannerUrl: string | null;
-          websiteUrl: string | null;
-          twitterUrl: string | null;
-          youtubeUrl: string | null;
-          acceptsTips: boolean;
-        } | null;
-      }
-  > {
+  async getPublicProfileByUsername(username: string): Promise<null | {
+    id: string;
+    username: string | null;
+    displayName: string;
+    avatarUrl: string | null;
+    role: UserRole;
+    profile: {
+      bio: string | null;
+      bannerUrl: string | null;
+      websiteUrl: string | null;
+      twitterUrl: string | null;
+      youtubeUrl: string | null;
+      acceptsTips: boolean;
+    } | null;
+  }> {
     const user = await this.prisma.user.findUnique({
       where: { username: username.toLowerCase() },
       select: {
@@ -451,7 +446,7 @@ export class UsersService {
       where: { id: userId },
       data: {
         username: data.username.toLowerCase(),
-        consents: (data.consents as unknown) as Prisma.InputJsonValue,
+        consents: data.consents as unknown as Prisma.InputJsonValue,
         hasCompletedOnboarding: true,
       },
     });

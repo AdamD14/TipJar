@@ -147,12 +147,25 @@ export class AuthController {
     );
     const tokens = await this.authService.login(user);
     this.setAuthCookies(response, tokens);
-    response.redirect(
-      `${this.configService.get<string>(
-        'FRONTEND_URL',
-        'http://localhost:3000',
-      )}/choose-username`,
+
+    const frontendUrl = this.configService.get<string>(
+      'FRONTEND_URL',
+      'http://localhost:3000',
     );
+
+    if (user.username && user.hasCompletedOnboarding) {
+      const dashboard =
+        user.role === 'CREATOR' ? '/creator/dashboard' : '/fan/dashboard';
+      this.logger.log(
+        `User ${user.id} has completed onboarding. Redirecting to ${dashboard}`,
+      );
+      response.redirect(`${frontendUrl}${dashboard}`);
+    } else {
+      this.logger.log(
+        `User ${user.id} needs to complete onboarding. Redirecting to /choose-username`,
+      );
+      response.redirect(`${frontendUrl}/choose-username`);
+    }
   }
 
   @Get('twitch')
@@ -187,12 +200,25 @@ export class AuthController {
     );
     const tokens = await this.authService.login(user);
     this.setAuthCookies(response, tokens);
-    response.redirect(
-      `${this.configService.get<string>(
-        'FRONTEND_URL',
-        'http://localhost:3000',
-      )}/choose-username`,
+
+    const frontendUrl = this.configService.get<string>(
+      'FRONTEND_URL',
+      'http://localhost:3000',
     );
+
+    if (user.username && user.hasCompletedOnboarding) {
+      const dashboard =
+        user.role === 'CREATOR' ? '/creator/dashboard' : '/fan/dashboard';
+      this.logger.log(
+        `User ${user.id} has completed onboarding. Redirecting to ${dashboard}`,
+      );
+      response.redirect(`${frontendUrl}${dashboard}`);
+    } else {
+      this.logger.log(
+        `User ${user.id} needs to complete onboarding. Redirecting to /choose-username`,
+      );
+      response.redirect(`${frontendUrl}/choose-username`);
+    }
   }
 
   @Get('me')
@@ -212,18 +238,30 @@ export class AuthController {
       `Email verification attempt with token: ${token.substring(0, 10)}...`,
     );
 
-    // POPRAWKA: Jawnie określamy typ `user`
     const user: ValidatedUser = await this.authService.verifyEmailToken(token);
 
     this.logger.log(`User ${user.email} verified. Logging in...`);
     const tokens = await this.authService.login(user);
     this.setAuthCookies(response, tokens);
-    response.redirect(
-      `${this.configService.get<string>(
-        'FRONTEND_URL',
-        'http://localhost:3000',
-      )}/choose-username`,
+
+    const frontendUrl = this.configService.get<string>(
+      'FRONTEND_URL',
+      'http://localhost:3000',
     );
+
+    if (user.username && user.hasCompletedOnboarding) {
+      const dashboard =
+        user.role === 'CREATOR' ? '/creator/dashboard' : '/fan/dashboard';
+      this.logger.log(
+        `User ${user.id} has completed onboarding. Redirecting to ${dashboard}`,
+      );
+      response.redirect(`${frontendUrl}${dashboard}`);
+    } else {
+      this.logger.log(
+        `User ${user.id} needs to complete onboarding. Redirecting to /choose-username`,
+      );
+      response.redirect(`${frontendUrl}/choose-username`);
+    }
   }
 
   @Post('refresh-token')
@@ -233,7 +271,6 @@ export class AuthController {
     @Body() body: RefreshTokenDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ accessToken: string }> {
-    // POPRAWKA: Dodajemy bezpieczne typowanie `req.cookies`
     const cookies = req.cookies as Record<string, string>;
     const incomingRefreshToken = (cookies?.['refresh_token'] ||
       body.refreshToken) as string;
