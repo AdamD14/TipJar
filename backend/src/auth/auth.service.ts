@@ -58,7 +58,7 @@ export class AuthService {
     @Inject(forwardRef(() => CircleService))
     private circleService: CircleService,
     private mailerService: MailerService,
-  ) {}
+  ) { }
 
   private toValidatedUser(user: UserModelPrisma): ValidatedUser {
     return {
@@ -86,19 +86,11 @@ export class AuthService {
     };
 
     const accessToken = this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
-      expiresIn: this.configService.get<string>(
-        'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
-        '15m',
-      ),
+      expiresIn: (this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRATION_TIME') ?? '15m') as any,
     });
 
     const refreshToken = this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
-      expiresIn: this.configService.get<string>(
-        'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
-        '7d',
-      ),
+      expiresIn: (this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRATION_TIME') ?? '7d') as any,
     });
 
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
@@ -181,8 +173,7 @@ export class AuthService {
         throw error;
       }
       this.logger.error(
-        `Critical error during registration for email ${registerDto.email}: ${
-          (error as Error).message
+        `Critical error during registration for email ${registerDto.email}: ${(error as Error).message
         }`,
         (error as Error).stack,
       );
@@ -194,8 +185,7 @@ export class AuthService {
 
   async login(user: ValidatedUser): Promise<AuthTokens> {
     this.logger.log(
-      `Login successful for user: ${
-        user.email || `ID ${user.id}`
+      `Login successful for user: ${user.email || `ID ${user.id}`
       }. Generating tokens.`,
     );
     return this.generateTokens(user);
@@ -241,15 +231,14 @@ export class AuthService {
     const socialConnection:
       | (SocialConnection & { user: UserModelPrisma })
       | null = await this.usersService.findSocialConnection(
-      provider,
-      providerId,
-    );
+        provider,
+        providerId,
+      );
     let userFromDb: UserModelPrisma;
 
     if (socialConnection) {
       this.logger.log(
-        `Found existing user (ID: ${
-          socialConnection.user.id
+        `Found existing user (ID: ${socialConnection.user.id
         }) via social connection [${provider}: ${providerId.substring(
           0,
           10,
@@ -376,8 +365,7 @@ export class AuthService {
       );
     } catch (error: unknown) {
       this.logger.error(
-        `Failed to send verification email to ${user.email} (User ID: ${
-          user.id
+        `Failed to send verification email to ${user.email} (User ID: ${user.id
         }): ${(error as Error).message}`,
         (error as Error).stack,
       );

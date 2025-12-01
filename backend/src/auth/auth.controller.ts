@@ -19,6 +19,8 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { GoogleOAuthGuard } from './guards/google-oauth.guard';
+import { TwitchOAuthGuard } from './guards/twitch-oauth.guard';
 
 interface JwtPayload {
   sub: string;
@@ -118,7 +120,7 @@ export class AuthController {
   }
 
   @Get('google')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleOAuthGuard)
   googleAuth() {
     this.logger.log(`Initiating Google OAuth flow.`);
   }
@@ -169,7 +171,7 @@ export class AuthController {
   }
 
   @Get('twitch')
-  @UseGuards(AuthGuard('twitch'))
+  @UseGuards(TwitchOAuthGuard)
   twitchAuth() {
     this.logger.log(`Initiating Twitch OAuth flow.`);
   }
@@ -194,8 +196,7 @@ export class AuthController {
       return;
     }
     this.logger.log(
-      `Twitch OAuth successful for user: ${
-        user.email || `ID ${user.id}`
+      `Twitch OAuth successful for user: ${user.email || `ID ${user.id}`
       }. Generating tokens.`,
     );
     const tokens = await this.authService.login(user);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,7 +14,11 @@ import { registerSchema, RegisterFormValues } from "@/lib/schemas/authSchema";
 // ten komponent zostaje jako docelowy UI rejestracji
 export default function AuthForm() {
   const router = useRouter();
-  const [tab, setTab] = useState<"CREATOR" | "FAN">("CREATOR");
+  const searchParams = useSearchParams();
+
+  // 1. Ustawienie roli na podstawie URL (np. /register?role=CREATOR)
+  const initialRole = searchParams.get("role") === "FAN" ? "FAN" : "CREATOR";
+  const [tab, setTab] = useState<"CREATOR" | "FAN">(initialRole);
   const [showPwd, setShowPwd] = useState(false);
   const [showPwd2, setShowPwd2] = useState(false);
   const [apiError, setApiError] = useState("");
@@ -97,10 +101,12 @@ export default function AuthForm() {
     const target =
       provider === "google" ? "/api/v1/auth/google" : "/api/v1/auth/twitch";
 
-    const state =
-      provider === "google"
-        ? btoa(JSON.stringify({ role: tab })) // Google: base64
-        : JSON.stringify({ role: tab }); // Twitch: plain JSON
+    // NOWY KOD (ujednolicony Base64 + Timestamp):
+    const statePayload = {
+      role: tab,
+      timestamp: Date.now() // Zabezpieczenie przed replay attack
+    };
+    const state = btoa(JSON.stringify(statePayload));
 
     window.location.href = `${ORIGIN}${target}?state=${encodeURIComponent(
       state
@@ -129,11 +135,10 @@ export default function AuthForm() {
 
       <div className="flex mb-6 overflow-hidden rounded-xl border border-teal-400/30 bg-teal-900/20">
         <button
-          className={`flex-1 py-2 font-semibold text-sm sm:text-base transition-all duration-200 ${
-            tab === "FAN"
+          className={`flex-1 py-2 font-semibold text-sm sm:text-base transition-all duration-200 ${tab === "FAN"
               ? "bg-gradient-to-r from-teal-500 to-purple-500 text-white shadow-lg"
               : "text-white hover:bg-teal-500/20"
-          }`}
+            }`}
           onClick={() => handleTabChange("FAN")}
           type="button"
           disabled={loading}
@@ -141,11 +146,10 @@ export default function AuthForm() {
           Register as a Fan
         </button>
         <button
-          className={`flex-1 py-2 font-semibold text-sm sm:text-base transition-all duration-200 ${
-            tab === "CREATOR"
+          className={`flex-1 py-2 font-semibold text-sm sm:text-base transition-all duration-200 ${tab === "CREATOR"
               ? "bg-gradient-to-r from-teal-500 to-purple-500 text-white shadow-lg"
               : "text-white hover:bg-teal-500/20"
-          }`}
+            }`}
           onClick={() => handleTabChange("CREATOR")}
           type="button"
           disabled={loading}

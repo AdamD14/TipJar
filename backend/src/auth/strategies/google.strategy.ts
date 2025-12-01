@@ -12,6 +12,7 @@ import { UserRole } from '@prisma/client';
 
 type StatePayload = {
   role?: 'CREATOR' | 'FAN';
+  timestamp?: number;
 };
 
 @Injectable()
@@ -22,26 +23,19 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     private authService: AuthService,
     private configService: ConfigService,
   ) {
-    const clientID = configService.get<string>('GOOGLE_CLIENT_ID');
-    const clientSecret = configService.get<string>('GOOGLE_CLIENT_SECRET');
-    const callbackURL = configService.get<string>('GOOGLE_CALLBACK_URL');
+    // getOrThrow rzuci błędem od razu przy starcie, jeśli brakuje zmiennych w .env
+    const clientID = configService.getOrThrow<string>('GOOGLE_CLIENT_ID');
+    const clientSecret = configService.getOrThrow<string>('GOOGLE_CLIENT_SECRET');
+    const callbackURL = configService.getOrThrow<string>('GOOGLE_CALLBACK_URL');
 
     super({
-      clientID: clientID || '',
-      clientSecret: clientSecret || '',
-      callbackURL: callbackURL || '',
+      clientID,
+      clientSecret,
+      callbackURL,
       scope: ['email', 'profile'],
       passReqToCallback: true,
+      state: false, // 🟢 WAŻNE: Wyłączamy sesję Passporta (naprawia błąd 500)
     });
-
-    if (!clientID || !clientSecret || !callbackURL) {
-      this.logger.error(
-        'Google OAuth configuration is incomplete. Please check your .env file.',
-      );
-      throw new Error(
-        'Google OAuth configuration is incomplete. Please check your .env file.',
-      );
-    }
   }
 
   async validate(
@@ -58,43 +52,38 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       : profile.displayName;
     const avatarUrl = photos?.[0]?.value;
 
-    this.logger.log(
-      `GoogleStrategy: Received profile for Google ID [${googleId}], Email [${
-        primaryEmail || 'N/A'
-      }]`,
-    );
+    // --- LOGIKA RĘCZNEGO ODCZYTU ROLI I WALIDACJI CZASU ---
+    let role: UserRole = UserRole.FAN; // Domyślnie FAN
 
-    if (!googleId) {
-      return done(
-        new HttpException(
-          'Nie udało się uzyskać identyfikatora użytkownika z Google.',
-          HttpStatus.UNAUTHORIZED,
-        ),
-        false,
-      );
-    }
-
-    let role: UserRole = UserRole.FAN;
     if (req.query.state) {
+      const rawState = req.query.state as string;
       try {
-        const state = JSON.parse(
-          Buffer.from(req.query.state as string, 'base64').toString('ascii'),
-        ) as StatePayload;
+        const decodedState = Buffer.from(rawState, 'base64').toString('ascii');
+        const state = JSON.parse(decodedState) as StatePayload;
 
+        // 1. Walidacja Czasu (max 5 min)
+        if (state.timestamp) {
+          const now = Date.now();
+          const diff = now - state.timestamp;
+          if (diff > 300000) { // 300000ms = 5 minut
+            throw new Error('OAuth state expired (CSRF protection)');
+          }
+        }
+
+        // 2. Przypisanie Roli
         if (state && (state.role === 'CREATOR' || state.role === 'FAN')) {
           role = state.role === 'CREATOR' ? UserRole.CREATOR : UserRole.FAN;
-          this.logger.log(
-            `GoogleStrategy: Role '${state.role}' extracted from state parameter.`,
-          );
+          this.logger.log(`GoogleStrategy: Role '${role}' recovered from state.`);
         }
       } catch (e) {
-        this.logger.warn(
-          `GoogleStrategy: Could not parse role from state parameter: ${JSON.stringify(
-            req.query.state,
-          )}. Error: ${(e as Error).message}`,
-        );
+        this.logger.warn(`GoogleStrategy: State validation failed. Error: ${(e as Error).message}`);
+        // Jeśli stan wygasł, blokujemy logowanie dla bezpieczeństwa
+        if ((e as Error).message.includes('expired')) {
+          throw new HttpException('Login session expired. Try again.', HttpStatus.FORBIDDEN);
+        }
       }
     }
+    // -----------------------------------------------------
 
     try {
       const user: ValidatedUser = await this.authService.validateOAuthUser(
@@ -103,23 +92,12 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         primaryEmail,
         displayName,
         avatarUrl,
-        role,
+        role, // Przekazujemy odzyskaną rolę
       );
       done(null, user);
     } catch (error: unknown) {
-      this.logger.error(
-        `GoogleStrategy: Error during user validation/creation for Google ID [${googleId}]: ${
-          (error as Error).message
-        }`,
-        (error as Error).stack,
-      );
-      done(
-        new HttpException(
-          'Wystąpił błąd serwera podczas przetwarzania danych logowania Google.',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        ),
-        false,
-      );
+      this.logger.error(`GoogleStrategy Error: ${(error as Error).message}`);
+      done(new HttpException('OAuth error', HttpStatus.INTERNAL_SERVER_ERROR), false);
     }
   }
 }

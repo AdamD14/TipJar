@@ -1,10 +1,15 @@
-import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, Profile as TwitchProfile } from 'passport-twitch-new';
 import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
-import { AuthService } from '../auth.service';
+import { PassportStrategy } from '@nestjs/passport';
+import { Strategy } from 'passport-twitch-new';
+import { AuthService, ValidatedUser } from '../auth.service';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 import { UserRole } from '@prisma/client';
+
+type StatePayload = {
+  role?: 'CREATOR' | 'FAN';
+  timestamp?: number;
+};
 
 @Injectable()
 export class TwitchStrategy extends PassportStrategy(Strategy, 'twitch') {
@@ -14,62 +19,60 @@ export class TwitchStrategy extends PassportStrategy(Strategy, 'twitch') {
     private authService: AuthService,
     private configService: ConfigService,
   ) {
+    const clientID = configService.getOrThrow<string>('TWITCH_CLIENT_ID');
+    const clientSecret = configService.getOrThrow<string>('TWITCH_CLIENT_SECRET');
+    const callbackURL = configService.getOrThrow<string>('TWITCH_CALLBACK_URL');
+
     super({
-      clientID: configService.get<string>('TWITCH_CLIENT_ID'),
-      clientSecret: configService.get<string>('TWITCH_CLIENT_SECRET'),
-      callbackURL: configService.get<string>('TWITCH_CALLBACK_URL'),
-      scope: 'user:read:email',
-      passReqToCallback: true, // <<< ZMIANA #1: Kluczowa zmiana, aby uzyskać dostęp do 'req'
+      clientID,
+      clientSecret,
+      callbackURL,
+      scope: ['user:read:email'],
+      passReqToCallback: true,
+      state: false, // 🟢 WAŻNE: Wyłączamy sesję Passporta
     });
   }
 
-  // vvv ZMIANA #2: Dodajemy 'req: Request' jako pierwszy argument vvv
   async validate(
     req: Request,
     accessToken: string,
     refreshToken: string,
-    profile: TwitchProfile,
+    profile: any,
     done: (error: any, user?: any, info?: any) => void,
   ): Promise<any> {
-    const twitchId = profile.id;
-    const displayName = profile.display_name || profile.login;
-    const email = profile.email || null;
-    const avatarUrl = profile.profile_image_url;
+    const { id: twitchId, display_name, email, profile_image_url } = profile;
 
-    this.logger.log(
-      `TwitchStrategy: Received profile for Twitch ID: ${twitchId}, Login: ${profile.login}`,
-    );
+    // --- LOGIKA RĘCZNEGO ODCZYTU ROLI I WALIDACJI CZASU ---
+    let role: UserRole = UserRole.FAN; // Domyślnie FAN
 
-    if (!twitchId) {
-      this.logger.error('TwitchStrategy: Twitch ID not found in profile.');
-      return done(
-        new HttpException(
-          'Nie udało się uzyskać ID użytkownika z Twitch',
-          HttpStatus.UNAUTHORIZED,
-        ),
-        false,
-      );
-    }
-
-    // vvv ZMIANA #3: Odczytujemy rolę z parametru 'state' vvv
-    let role = UserRole.FAN; // Domyślna rola
     if (req.query.state) {
+      const rawState = req.query.state as string;
       try {
-        // Frontend przekaże rolę jako JSON w parametrze 'state'
-        const state = JSON.parse(req.query.state as string);
-        if (state.role === 'CREATOR' || state.role === 'FAN') {
-          role = state.role;
-          this.logger.log(
-            `TwitchStrategy: Role '${role}' extracted from state parameter.`,
-          );
+        const decodedState = Buffer.from(rawState, 'base64').toString('ascii');
+        const state = JSON.parse(decodedState) as StatePayload;
+
+        // 1. Walidacja Czasu (max 5 min)
+        if (state.timestamp) {
+          const now = Date.now();
+          const diff = now - state.timestamp;
+          if (diff > 300000) { // 300000ms = 5 minut
+            throw new Error('OAuth state expired (CSRF protection)');
+          }
+        }
+
+        // 2. Przypisanie Roli
+        if (state && (state.role === 'CREATOR' || state.role === 'FAN')) {
+          role = state.role === 'CREATOR' ? UserRole.CREATOR : UserRole.FAN;
+          this.logger.log(`TwitchStrategy: Role '${role}' recovered from state.`);
         }
       } catch (e) {
-        this.logger.warn(
-          `TwitchStrategy: Could not parse role from state parameter: ${req.query.state}`,
-        );
+        this.logger.warn(`TwitchStrategy: State validation failed. Error: ${(e as Error).message}`);
+        if ((e as Error).message.includes('expired')) {
+          throw new HttpException('Login session expired. Try again.', HttpStatus.FORBIDDEN);
+        }
       }
     }
-    // ^^^ ZMIANA #3 ^^^
+    // -----------------------------------------------------
 
     try {
       // vvv ZMIANA #4: Przekazujemy odczytaną rolę do serwisu vvv
@@ -77,8 +80,8 @@ export class TwitchStrategy extends PassportStrategy(Strategy, 'twitch') {
         'twitch',
         twitchId,
         email,
-        displayName,
-        avatarUrl,
+        display_name,
+        profile_image_url,
         role, // <<< Przekazanie roli
       );
       this.logger.log(

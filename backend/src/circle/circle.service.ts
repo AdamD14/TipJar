@@ -76,7 +76,7 @@ export class CircleService implements OnModuleInit {
   constructor(
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
-  ) {}
+  ) { }
 
   onModuleInit(): void {
     const apiKey = this.configService.get<string>('CIRCLE_API_KEY');
@@ -142,9 +142,8 @@ export class CircleService implements OnModuleInit {
       errorMessage = error.message;
     }
 
-    const logMessage = `Circle API Error (${context}) for User ${
-      userId ?? 'N/A'
-    } (Code: ${String(errorCode)}): ${errorMessage}`;
+    const logMessage = `Circle API Error (${context}) for User ${userId ?? 'N/A'
+      } (Code: ${String(errorCode)}): ${errorMessage}`;
     this.logger.error(logMessage, (error as Error)?.stack);
 
     if (errorCode === 152021) {
@@ -297,20 +296,21 @@ export class CircleService implements OnModuleInit {
         throw new BadRequestException('Nieprawidłowa kwota wypłaty.');
       }
 
-      const tokenInfo: TokenInfo = tokenId.includes('-')
-        ? { tokenId }
-        : {
-            tokenAddress: tokenId,
-            blockchain: blockchain as unknown as TokenBlockchain,
-          };
-
       const transferRequestPayload = {
-        idempotencyKey: randomUUID(),
+        idempotencyKey: randomUUID() as `${string}-${string}-${string}-${string}-${string}`,
         walletId: sourceWalletId,
         destinationAddress: destinationAddressString,
         amount: [amountString],
-        ...tokenInfo,
-        fee: { type: 'level' as const, config: { feeLevel: FeeLevel.Medium } },
+        ...((tokenId.includes('-')
+          ? { tokenId }
+          : {
+            tokenAddress: tokenId,
+            blockchain: blockchain as TokenBlockchain,
+          }) as any),
+        fee: {
+          type: 'level' as const,
+          config: { feeLevel: FeeLevel.Medium },
+        },
       };
 
       const response = (await this.circleClient.createTransaction(
@@ -362,7 +362,7 @@ export class CircleService implements OnModuleInit {
           (tb) =>
             tb.token?.id === tokenIdToFilter ||
             tb.token?.tokenAddress?.toLowerCase() ===
-              tokenIdToFilter.toLowerCase(),
+            tokenIdToFilter.toLowerCase(),
         );
       } else {
         targetBalanceEntry =
@@ -413,20 +413,21 @@ export class CircleService implements OnModuleInit {
         );
       }
 
-      const tokenInfo: TokenInfo = tokenId.includes('-')
-        ? { tokenId }
-        : {
-            tokenAddress: tokenId,
-            blockchain: blockchain as unknown as TokenBlockchain,
-          };
-
       const transferRequestPayload = {
-        idempotencyKey: randomUUID(),
+        idempotencyKey: randomUUID() as `${string}-${string}-${string}-${string}-${string}`,
         walletId: sourceCircleWalletId,
         destinationAddress: destinationWalletRecord.mainWalletAddress,
         amount: [amountNetString],
-        ...tokenInfo,
-        fee: { type: 'level' as const, config: { feeLevel: FeeLevel.Medium } },
+        ...((tokenId.includes('-')
+          ? { tokenId }
+          : {
+            tokenAddress: tokenId,
+            blockchain: blockchain as TokenBlockchain,
+          }) as any),
+        fee: {
+          type: 'level' as const,
+          config: { feeLevel: FeeLevel.Medium },
+        },
       };
 
       const response = (await this.circleClient.createTransaction(

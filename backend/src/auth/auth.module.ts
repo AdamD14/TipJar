@@ -25,16 +25,16 @@ import { TwitchStrategy } from './strategies/twitch.strategy';
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
-        signOptions: {
-          expiresIn: configService.get<string>(
-            'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
-            '15m',
-          ),
-        },
-      }),
       inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const expiresIn = configService.get<string>('JWT_ACCESS_TOKEN_EXPIRATION_TIME', '15m');
+        return {
+          secret: configService.getOrThrow<string>('JWT_ACCESS_TOKEN_SECRET'),
+          signOptions: {
+            expiresIn: expiresIn as `${number}${'s' | 'm' | 'h' | 'd'}` | number, // <-- 100% zgodne z StringValue
+          },
+        };
+      },
     }),
 
     MailerModule.forRootAsync({
@@ -84,4 +84,4 @@ import { TwitchStrategy } from './strategies/twitch.strategy';
   ],
   exports: [AuthService, JwtModule],
 })
-export class AuthModule {}
+export class AuthModule { }
