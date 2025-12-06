@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
@@ -15,11 +15,22 @@ type MeResponse = {
   hasCompletedOnboarding?: boolean;
 };
 
-const TEXT = { primary: '#DDE0DA', secondary: '#BCC1B6' };
+// Stałe dla ścieżek - lepsze zarządzanie
+const PATHS = {
+  CREATOR: {
+    dashboard: '/creator/dashboard',
+    onboarding: '/onboarding/creator/step-1',
+  },
+  FAN: {
+    dashboard: '/fan/dashboard',
+    onboarding: '/onboarding/fan/step-1',
+  },
+} as const;
+
 
 export default function ChooseUsernameForm() {
   const router = useRouter();
-  const { drafts, user, setDraft, setUser, setStep, setRole } = useOnboardingStore();
+  const { drafts, setDraft, setUser, setRole } = useOnboardingStore();
 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,51 +44,60 @@ export default function ChooseUsernameForm() {
 
   // Sprawdź stan użytkownika przy mount (po OAuth redirect)
   useEffect(() => {
+    let isMounted = true;
+
     (async () => {
       try {
-        const meRes = await api<MeResponse>(`/api/v1/auth/me`);
-        if (meRes) {
-          const normalizedRole = meRes.role === 'CREATOR' ? 'CREATOR' : 'FAN';
-          setRole(normalizedRole);
-          setUser(meRes);
-
-          // Jeśli już ma username i completed onboarding -> dashboard
-          if (meRes.username && meRes.hasCompletedOnboarding) {
-            router.replace(
-              normalizedRole === 'CREATOR' ? '/creator/dashboard' : '/fan/dashboard'
-            );
-            return;
-          } else if (meRes.username) {
-             // Ma username ale nie ukonczyl onboarding
-             router.replace(
-               normalizedRole === 'CREATOR' ? '/onboarding/creator/step-1' : '/onboarding/fan/step-1'
-             );
-             return;
-          }
-
-// ... (in cleanup skip)
-
-    // Redirect wg roli
-    const role = (meRes?.role === 'CREATOR' ? 'CREATOR' : 'FAN') as 'CREATOR' | 'FAN';
-    router.replace(role === 'CREATOR' ? '/onboarding/creator/step-1' : '/onboarding/fan/step-1');
+        const meRes = await api<MeResponse>('/api/v1/auth/me');
+        
+        if (!isMounted) return;
+        
+        if (!meRes) {
+          // Brak danych użytkownika - pokaż formularz jako fallback
+          setInitialLoading(false);
+          return;
         }
-      } catch {
+
+        const normalizedRole = meRes.role === 'CREATOR' ? 'CREATOR' : 'FAN';
+        setRole(normalizedRole);
+        setUser(meRes);
+
+        // Jeśli już ma username i completed onboarding -> dashboard
+        if (meRes.username && meRes.hasCompletedOnboarding) {
+          const targetPath = normalizedRole === 'CREATOR' 
+            ? PATHS.CREATOR.dashboard 
+            : PATHS.FAN.dashboard;
+          router.replace(targetPath);
+          return;
+        }
+        
+        // Ma username ale nie ukończył onboarding -> następny krok
+        if (meRes.username) {
+          const targetPath = normalizedRole === 'CREATOR'
+            ? PATHS.CREATOR.onboarding
+            : PATHS.FAN.onboarding;
+          router.replace(targetPath);
+          return;
+        }
+        
+        // Nie ma username -> zostaje na tej stronie (nic nie robimy)
+        
+      } catch (err) {
         // User nie zalogowany lub błąd - pokaż formularz
+        console.error('Failed to fetch user:', err);
       } finally {
-        setInitialLoading(false);
+        if (isMounted) {
+          setInitialLoading(false);
+        }
       }
     })();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Jeśli onboarding już skończony → dashboard
-  useEffect(() => {
-    if (!initialLoading && user?.hasCompletedOnboarding && user?.username) {
-      const role = user.role === 'CREATOR' ? 'CREATOR' : 'FAN';
-      router.replace(role === 'CREATOR' ? '/creator/dashboard' : '/fan/dashboard');
-    }
-  }, [router, user?.hasCompletedOnboarding, user?.username, user?.role, initialLoading]);
+    return () => {
+      isMounted = false;
+    };
+  }, [router, setRole, setUser]);
 
-  // Debounced check dostępności username
+  // Debounced check dostępności username z AbortController
   useEffect(() => {
     const name = (drafts.username || '').trim().toLowerCase();
 
@@ -92,58 +112,80 @@ export default function ChooseUsernameForm() {
     }
 
     setChecking(true);
-    let alive = true;
+    const controller = new AbortController();
+    const { signal } = controller;
 
-    const handle = setTimeout(() => {
+    const timeout = setTimeout(() => {
       (async () => {
         try {
           const res = await api<{ available: boolean }>(
-            `/api/v1/users/username-check?username=${encodeURIComponent(name)}`
+            `/api/v1/users/username-check?username=${encodeURIComponent(name)}`,
+            { signal }
           );
-          if (!alive) return;
+          
+          if (signal.aborted) return;
+          
           setAvailable(!!res.available);
+          if (!res.available) {
+            setError('This username is already taken.');
+          }
         } catch {
-          if (!alive) return;
+          if (signal.aborted) return;
+          
           setAvailable(null);
           setError('Check failed, try again.');
         } finally {
-          if (alive) setChecking(false);
+          if (!signal.aborted) {
+            setChecking(false);
+          }
         }
       })();
     }, 500);
 
     return () => {
-      alive = false;
-      clearTimeout(handle);
+      controller.abort();
+      clearTimeout(timeout);
     };
   }, [drafts.username]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (busy) return;
+    
     setBusy(true);
     setError(null);
 
     const username = (drafts.username || '').trim().toLowerCase();
+    
+    // Walidacja
     if (!username) {
-      setBusy(false);
       setError('Username is required.');
+      setBusy(false);
       return;
     }
+    
+    if (!/^[a-z0-9._-]{3,24}$/i.test(username)) {
+      setError('Use 3–24 chars: a–z, 0–9, dot, underscore or hyphen.');
+      setBusy(false);
+      return;
+    }
+    
     if (available !== true) {
+      setError('Please wait for username availability check or choose another one.');
       setBusy(false);
-      setError('Username must be available.');
       return;
     }
+    
     if (!allRequired) {
-      setBusy(false);
       setError('You must accept Terms, Privacy Policy and confirm age.');
+      setBusy(false);
       return;
     }
 
     try {
-      // Jeden request z username + consents
-      await api<unknown>(`/api/v1/users/set-username`, {
+      // Zapisz username i zgody
+      await api<void>('/api/v1/users/set-username', {
         method: 'POST',
         body: JSON.stringify({
           username,
@@ -156,21 +198,35 @@ export default function ChooseUsernameForm() {
         }),
       });
 
-      // Odśwież profil
-      const meRes = await api<MeResponse>(`/api/v1/auth/me`);
-      setUser(meRes || null);
-      setStep('COMPLETED');
-
-      // Redirect wg roli
-      const role = (meRes?.role === 'CREATOR' ? 'CREATOR' : 'FAN') as 'CREATOR' | 'FAN';
-      router.replace(role === 'CREATOR' ? '/onboarding/creator/step-1' : '/onboarding/fan/step-1');
+      // Odśwież dane użytkownika
+      const meRes = await api<MeResponse>('/api/v1/auth/me');
+      
+      if (meRes) {
+        setUser(meRes);
+        
+        // Przekieruj do następnego kroku onboarding
+        const role = meRes.role === 'CREATOR' ? 'CREATOR' : 'FAN';
+        const targetPath = role === 'CREATOR'
+          ? PATHS.CREATOR.onboarding
+          : PATHS.FAN.onboarding;
+        
+        router.replace(targetPath);
+      } else {
+        throw new Error('Failed to fetch updated user data');
+      }
+      
     } catch (err: unknown) {
-      const { msg } = normalize(err);
-      setError(msg || 'Unable to save data.');
+      const normalized = normalize(err);
+      setError(normalized?.msg || 'Unable to save username. Please try again.');
     } finally {
       setBusy(false);
     }
   };
+
+  // Funkcja pomocnicza do aktualizacji username bez trimowania w trakcie pisania
+  const handleUsernameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setDraft({ username: e.target.value });
+  }, [setDraft]);
 
   // Loading state przy sprawdzaniu initial
   if (initialLoading) {
@@ -187,21 +243,26 @@ export default function ChooseUsernameForm() {
     <section className="w-full max-w-md bg-teal-900/20 backdrop-blur-md border border-teal-400/20 rounded-2xl shadow-2xl p-2">
       <div className="flex justify-center mb-6">
         <div className="bg-gradient-to-r from-teal-500 to-purple-500 text-white px-4 py-2 rounded-xl font-bold text-xl shadow-lg flex items-center gap-3">
-          <Image
-            src="/logo.png"
-            alt="TipJar+ icon"
-            width={48}
-            height={48}
-            className="h-12 w-auto"
+          <div 
+            className="inline-block select-none"
+            onDragStart={(e) => e.preventDefault()}
             draggable={false}
-          />
+          >
+            <Image
+              src="/logo.png"
+              alt="TipJar+ icon"
+              width={48}
+              height={48}
+              className="h-12 w-auto pointer-events-none"
+            />
+          </div>
           tipjar.plus
         </div>
       </div>
 
-      <form className="space-y-3" onSubmit={onSubmit}>
+      <form className="space-y-3" onSubmit={onSubmit} noValidate>
         <div>
-          <label htmlFor="username" className="block text-white text-sm mb-2 font-medium">
+          <label htmlFor="username" className="block text-white text-base mb-2 font-medium">
             Choose your username
           </label>
           <div className="flex items-center gap-2">
@@ -211,21 +272,39 @@ export default function ChooseUsernameForm() {
               type="text"
               autoComplete="username"
               value={drafts.username ?? ''}
-              onChange={(e) => setDraft({ username: e.target.value.trim() })}
-              required
+              onChange={handleUsernameChange}
               minLength={3}
               maxLength={24}
-              className="flex-1 bg-slate-900/60 border border-teal-400/40 rounded-lg px-3 py-2 text-white placeholder-gray-300 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all"
+              className="flex-1 bg-slate-900/60 border border-teal-400/40 rounded-lg px-4 py-3 text-white text-base placeholder-gray-300 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all disabled:opacity-50"
               placeholder="your-handle"
               disabled={busy}
+              aria-describedby="username-status username-hint"
+              aria-invalid={available === false}
+              aria-busy={checking}
             />
           </div>
 
-          <div className="mt-2 text-xs">
-            {checking && <span style={{ color: TEXT.secondary }}>Checking…</span>}
-            {!checking && available === true && <span className="text-emerald-300">Available ✓</span>}
-            {!checking && available === false && <span className="text-amber-300">Taken</span>}
+          <div className="mt-2 text-sm" id="username-status">
+            {checking && (
+              <span className="text-[#BCC1B6]" aria-live="polite">
+                Checking availability…
+              </span>
+            )}
+            {!checking && available === true && (
+              <span className="text-emerald-300" aria-live="polite">
+                Available ✓
+              </span>
+            )}
+            {!checking && available === false && (
+              <span className="text-amber-300" aria-live="assertive">
+                Username already taken
+              </span>
+            )}
           </div>
+          
+          <p id="username-hint" className="mt-2 text-sm text-[#8FA19A]">
+            3–24 characters: letters, numbers, dot, underscore or hyphen
+          </p>
         </div>
 
         {/* Zgody */}
@@ -233,20 +312,26 @@ export default function ChooseUsernameForm() {
           <label className="flex items-start gap-3 text-sm">
             <input
               type="checkbox"
-              className="mt-1 h-4 w-4 rounded border-white/20 bg-white/5 outline-none focus-visible:ring-2 focus-visible:ring-teal-400"
+              className="size-4 self-start rounded border-white/20 bg-white/5 outline-none focus-visible:ring-2 focus-visible:ring-teal-400"
               checked={allRequired}
               onChange={(e) => setAllRequired(e.target.checked)}
-              required
             />
             <span className="text-[#DDE0DA]">
-              I am at least 16 years old and accept the <span className="underline">Terms of Service</span> and <span className="underline">Privacy Policy</span>
+              I am at least 16 years old and accept the{' '}
+              <a href="/terms" className="underline hover:text-teal-300 transition-colors" target="_blank" rel="noopener noreferrer">
+                Terms of Service
+              </a>{' '}
+              and{' '}
+              <a href="/privacy" className="underline hover:text-teal-300 transition-colors" target="_blank" rel="noopener noreferrer">
+                Privacy Policy
+              </a>
             </span>
           </label>
 
           <label className="flex items-start gap-3 text-sm">
             <input
               type="checkbox"
-              className="mt-1 h-4 w-4 rounded border-white/20 bg-white/5 outline-none focus-visible:ring-2 focus-visible:ring-teal-400"
+              className="size-4 self-start rounded border-white/20 bg-white/5 outline-none focus-visible:ring-2 focus-visible:ring-teal-400"
               checked={marketing}
               onChange={(e) => setMarketing(e.target.checked)}
             />
@@ -257,17 +342,33 @@ export default function ChooseUsernameForm() {
         </div>
 
         {error && (
-          <p role="alert" className="mt-1 text-xs text-[#FFD700]">
+          <p 
+            role="alert" 
+            className="mt-2 text-sm text-[#FFD700] bg-amber-900/20 px-4 py-3 rounded-lg border border-amber-700/30"
+            aria-live="assertive"
+          >
             {error}
           </p>
         )}
 
         <button
           type="submit"
-          disabled={busy || available !== true || !allRequired}
-          className="w-full bg-gradient-to-r from-teal-500 to-purple-500 text-white font-bold py-3 rounded-lg hover:from-teal-600 hover:to-purple-600 hover:scale-[1.02] transform transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none shadow-lg"
+          disabled={busy || available === false || !allRequired}
+          className="w-full bg-gradient-to-r from-teal-500 to-purple-500 text-white font-bold py-3.5 text-lg rounded-lg hover:from-teal-600 hover:to-purple-600 hover:scale-[1.02] transform transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none disabled:transform-none shadow-lg relative"
+          aria-busy={busy}
         >
-          {busy ? 'Processing…' : 'Continue'}
+          {busy ? (
+            <>
+              <span className="opacity-0" aria-hidden="true">
+                Processing…
+              </span>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              </div>
+            </>
+          ) : (
+            'Continue'
+          )}
         </button>
       </form>
     </section>
