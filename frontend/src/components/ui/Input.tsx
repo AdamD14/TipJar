@@ -1,34 +1,27 @@
-"use client";
-import * as React from "react";
+import React, { forwardRef } from "react";
+import clsx from "clsx";
 
-type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
-  label?: string;
-  error?: string | null;
+type Props = React.InputHTMLAttributes<HTMLInputElement> & {
+  invalid?: boolean;
 };
 
-export function Input({ label, error, className, ...rest }: InputProps) {
-  const id = React.useId();
+const Input = forwardRef<HTMLInputElement, Props>(function Input(
+  { className, invalid, ...rest },
+  ref
+) {
   return (
-    <label className="block">
-      {label && (
-        <span className="mb-1 block text-sm text-[#DDE0DA]">{label}</span>
+    <input
+      ref={ref}
+      className={clsx(
+        "w-full h-12 rounded-xl bg-white/5 text-white placeholder-white/30",
+        "px-4 border border-white/10 focus:border-brand-gold/50 focus:ring-1 focus:ring-brand-gold/50 focus:bg-white/10",
+        "outline-none transition-all duration-200 font-ui",
+        invalid && "border-red-500/50 focus:border-red-500 focus:ring-red-500/20",
+        className
       )}
-      <input
-        id={id}
-        {...rest}
-        className={[
-          "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#FFD700]",
-          className || "",
-        ].join(" ")}
-        aria-invalid={!!error || undefined}
-        aria-describedby={error ? `${id}-err` : undefined}
-      />
-      {error && (
-        <span id={`${id}-err`} className="mt-1 block text-xs text-red-300">
-          {error}
-        </span>
-      )}
-    </label>
+      {...rest}
+    />
   );
-}
+});
 
+export default Input;

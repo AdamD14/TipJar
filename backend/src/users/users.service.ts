@@ -397,9 +397,8 @@ export class UsersService {
     profile: {
       bio: string | null;
       bannerUrl: string | null;
-      websiteUrl: string | null;
-      twitterUrl: string | null;
-      youtubeUrl: string | null;
+      socials: Prisma.JsonValue | null;
+      industry: string | null;
       acceptsTips: boolean;
     } | null;
   }> {
@@ -415,9 +414,8 @@ export class UsersService {
           select: {
             bio: true,
             bannerUrl: true,
-            websiteUrl: true,
-            twitterUrl: true,
-            youtubeUrl: true,
+            socials: true,
+            industry: true,
             acceptsTips: true,
           },
         },

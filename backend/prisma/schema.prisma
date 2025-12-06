@@ -9,9 +9,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/* ======================
-   Enumy
-   ====================== */
+/**
+ * ======================
+ * Enumy
+ * ======================
+ */
 
 enum UserRole {
   FAN
@@ -34,19 +36,21 @@ enum PayoutStatus {
   FAILED
 }
 
-/* ======================
-   Modele danych
-   ====================== */
+/**
+ * ======================
+ * Modele danych
+ * ======================
+ */
 
 model User {
-  id          String   @id @default(uuid())
-  email       String?  @unique
-  password    String?
-  displayName String
-  username    String?  @unique
-  avatarUrl   String?
-  role        UserRole @default(FAN)
-  autoApproveTierChanges Boolean @default(true)
+  id                     String   @id @default(uuid())
+  email                  String?  @unique
+  password               String?
+  displayName            String
+  username               String?  @unique
+  avatarUrl              String?
+  role                   UserRole @default(FAN)
+  autoApproveTierChanges Boolean  @default(true)
 
   // Status/weryfikacja
   isActive                        Boolean   @default(true)
@@ -59,17 +63,17 @@ model User {
   // Circle
   circleWalletId        String? @unique
   mainWalletAddress     String? @unique
-  isCircleSetupComplete Boolean  @default(false)
+  isCircleSetupComplete Boolean @default(false)
 
   // Onboarding/zgody
   hasCompletedOnboarding Boolean @default(false)
   consents               Json?
 
   // Onboarding / publikacja
-  published               Boolean   @default(false)
-  onboardingCompletedAt   DateTime?
-  lastOnboardingEmailAt   DateTime?
-  paymentConnected        Boolean   @default(false)
+  published             Boolean   @default(false)
+  onboardingCompletedAt DateTime?
+  lastOnboardingEmailAt DateTime?
+  paymentConnected      Boolean   @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -80,14 +84,14 @@ model User {
   tipsSent          Tip[]              @relation("TipsSentByFan")
   tipsReceived      Tip[]              @relation("TipsReceivedByCreator")
 
-  payouts         Payout[]
-  overlaySettings OverlaySettings?
-  circleWallet    CircleWallet?
-  notifications   Notification[]
-  withdrawals     Withdrawal[]
+  payouts          Payout[]
+  overlaySettings  OverlaySettings?
+  circleWallet     CircleWallet?
+  notifications    Notification[]
+  withdrawals      Withdrawal[]
   onboardingEvents OnboardingEvent[]
   // Multi-role mapping (in addition to primary role)
-  userRoles   UserRoleMap[]
+  userRoles        UserRoleMap[]
 }
 
 model SocialConnection {
@@ -117,12 +121,13 @@ model Profile {
 
   acceptsTips Boolean @default(true)
 
-  websiteUrl String?
-  twitterUrl String?
-  youtubeUrl String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  socials    Json?
+  industry   String?
+  goalLabel  String?
+  goalTarget Int? // w centach lub w USDC (np. 1000 = $10.00)
+  currency   String   @default("USDC")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Tip {
@@ -208,7 +213,7 @@ model Withdrawal {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   amount           Float
-  circleTransferId String   @unique
+  circleTransferId String @unique
   toAddress        String
   status           String
 
@@ -218,9 +223,11 @@ model Withdrawal {
   @@index([userId, status, createdAt])
 }
 
-/* ======================
-   Notification (NOWE)
-   ====================== */
+/**
+ * ======================
+ * Notification (NOWE)
+ * ======================
+ */
 model Notification {
   id String @id @default(uuid())
 
@@ -236,15 +243,17 @@ model Notification {
   @@index([userId, read, createdAt])
 }
 
-/* ======================
-   OnboardingEvent (NOWE)
-   ====================== */
+/**
+ * ======================
+ * OnboardingEvent (NOWE)
+ * ======================
+ */
 model OnboardingEvent {
   id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id])
-  step      String   // identity|bio|tiers|payments|publish
-  action    String   // view|save|error|complete
+  step      String // identity|bio|tiers|payments|publish
+  action    String // view|save|error|complete
   createdAt DateTime @default(now())
 
   @@index([userId, step, action, createdAt])
@@ -252,11 +261,11 @@ model OnboardingEvent {
 
 // Additional mapping table for multi-role support
 model UserRoleMap {
-  id     String    @id @default(cuid())
+  id     String   @id @default(cuid())
   userId String
   role   UserRole
 
-  user   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -267,15 +276,15 @@ model UserRoleMap {
 
 // Store incoming webhooks for auditing and retry
 model WebhookEvent {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   externalId  String?
   type        String
   signature   String?
   rawBody     String?
   rawJson     Json?
-  status      String   @default("received") // received|processed|error
+  status      String    @default("received") // received|processed|error
   error       String?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
   processedAt DateTime?
 
   @@index([type, status, createdAt])

@@ -47,7 +47,19 @@ export default function ChooseUsernameForm() {
               normalizedRole === 'CREATOR' ? '/creator/dashboard' : '/fan/dashboard'
             );
             return;
+          } else if (meRes.username) {
+             // Ma username ale nie ukonczyl onboarding
+             router.replace(
+               normalizedRole === 'CREATOR' ? '/onboarding/creator/step-1' : '/onboarding/fan/step-1'
+             );
+             return;
           }
+
+// ... (in cleanup skip)
+
+    // Redirect wg roli
+    const role = (meRes?.role === 'CREATOR' ? 'CREATOR' : 'FAN') as 'CREATOR' | 'FAN';
+    router.replace(role === 'CREATOR' ? '/onboarding/creator/step-1' : '/onboarding/fan/step-1');
         }
       } catch {
         // User nie zalogowany lub błąd - pokaż formularz
@@ -151,7 +163,7 @@ export default function ChooseUsernameForm() {
 
       // Redirect wg roli
       const role = (meRes?.role === 'CREATOR' ? 'CREATOR' : 'FAN') as 'CREATOR' | 'FAN';
-      router.replace(role === 'CREATOR' ? '/creator/dashboard' : '/fan/dashboard');
+      router.replace(role === 'CREATOR' ? '/onboarding/creator/step-1' : '/onboarding/fan/step-1');
     } catch (err: unknown) {
       const { msg } = normalize(err);
       setError(msg || 'Unable to save data.');
