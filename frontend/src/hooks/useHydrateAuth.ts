@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { api } from '@/lib/api';
 import { API } from '@/lib/api-routes';
-import { useOnboardingStore } from '@/lib/stores/onboardingStore';
+import { useOnboardingStore } from '@/lib/store/onboardingStore';
 
 export default function useHydrateAuth() {
   const hydrated = useRef(false);

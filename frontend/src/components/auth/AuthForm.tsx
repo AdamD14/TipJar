@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { normalize } from "@/lib/api/errors";
 import { register as registerUser } from "@/lib/auth";
-import { useOnboardingStore } from "@/lib/stores/onboardingStore";
+import { useOnboardingStore } from "@/lib/store/onboardingStore";
 import { registerSchema, RegisterFormValues } from "@/lib/schemas/authSchema";
 
 // ten komponent zostaje jako docelowy UI rejestracji
@@ -104,7 +104,7 @@ export default function AuthForm() {
     // NOWY KOD (ujednolicony Base64 + Timestamp):
     const statePayload = {
       role: tab,
-      timestamp: Date.now() // Zabezpieczenie przed replay attack
+      timestamp: Date.now(), // Zabezpieczenie przed replay attack
     };
     const state = btoa(JSON.stringify(statePayload));
 
@@ -135,10 +135,11 @@ export default function AuthForm() {
 
       <div className="flex mb-6 overflow-hidden rounded-xl border border-teal-400/30 bg-teal-900/20">
         <button
-          className={`flex-1 py-3 font-semibold text-base transition-all duration-200 ${tab === "FAN"
+          className={`flex-1 py-3 font-semibold text-base transition-all duration-200 ${
+            tab === "FAN"
               ? "bg-gradient-to-r from-teal-500 to-purple-500 text-white shadow-lg"
               : "text-white hover:bg-teal-500/20"
-            }`}
+          }`}
           onClick={() => handleTabChange("FAN")}
           type="button"
           disabled={loading}
@@ -146,10 +147,11 @@ export default function AuthForm() {
           Register as a Fan
         </button>
         <button
-          className={`flex-1 py-3 font-semibold text-base transition-all duration-200 ${tab === "CREATOR"
+          className={`flex-1 py-3 font-semibold text-base transition-all duration-200 ${
+            tab === "CREATOR"
               ? "bg-gradient-to-r from-teal-500 to-purple-500 text-white shadow-lg"
               : "text-white hover:bg-teal-500/20"
-            }`}
+          }`}
           onClick={() => handleTabChange("CREATOR")}
           type="button"
           disabled={loading}
@@ -159,9 +161,15 @@ export default function AuthForm() {
       </div>
 
       <FormProvider {...methods}>
-        <form className="space-y-2" onSubmit={methods.handleSubmit(onEmailSubmit)}>
+        <form
+          className="space-y-2"
+          onSubmit={methods.handleSubmit(onEmailSubmit)}
+        >
           <div>
-            <label htmlFor="email" className="block text-white text-base mb-2 font-medium">
+            <label
+              htmlFor="email"
+              className="block text-white text-base mb-2 font-medium"
+            >
               Email
             </label>
             <div className="relative">
@@ -184,7 +192,10 @@ export default function AuthForm() {
           </div>
 
           <div className="relative">
-            <label htmlFor="password" className="block text-white text-base mb-2 font-medium">
+            <label
+              htmlFor="password"
+              className="block text-white text-base mb-2 font-medium"
+            >
               Password
             </label>
             <div className="relative">
@@ -205,7 +216,11 @@ export default function AuthForm() {
                 aria-label={showPwd ? "Hide password" : "Show password"}
                 disabled={loading}
               >
-                {showPwd ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showPwd ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
               </button>
             </div>
             {methods.formState.errors.password && (
@@ -240,7 +255,11 @@ export default function AuthForm() {
                 aria-label={showPwd2 ? "Hide password" : "Show password"}
                 disabled={loading}
               >
-                {showPwd2 ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showPwd2 ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
               </button>
             </div>
             {methods.formState.errors.confirmPassword && (
@@ -293,7 +312,7 @@ export default function AuthForm() {
           className="flex items-center justify-center gap-3 bg-white/20 hover:bg-white/30 transition-all text-white font-semibold rounded-lg py-3.5 text-base border border-white/10 hover:border-white/20 disabled:opacity-60"
         >
           <Image
-            src="/assets/google-original-logo.svg"
+            src="/google-original-logo.svg"
             alt="Google logo"
             width={20}
             height={20}
@@ -308,7 +327,7 @@ export default function AuthForm() {
           className="flex items-center justify-center gap-3 bg-[#9146FF]/80 hover:bg-[#9146FF] transition-all text-white font-semibold rounded-lg py-3.5 text-base shadow-lg disabled:opacity-60"
         >
           <Image
-            src="/assets/twitch-logo.svg"
+            src="/twitch-logo.svg"
             alt="Twitch logo"
             width={20}
             height={20}

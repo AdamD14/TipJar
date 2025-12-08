@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { login, me } from "@/lib/auth";
-import { useOnboardingStore } from "@/lib/stores/onboardingStore";
+import { useOnboardingStore } from "@/lib/store/onboardingStore";
 import { useToast } from "@/components/ui/Toast";
 
 export default function Page() {
@@ -30,11 +30,11 @@ export default function Page() {
       provider === "google" ? "/api/v1/auth/google" : "/api/v1/auth/twitch";
 
     const state =
-      provider === "google"
-        ? btoa(JSON.stringify({}))
-        : JSON.stringify({});
+      provider === "google" ? btoa(JSON.stringify({})) : JSON.stringify({});
 
-    window.location.href = `${ORIGIN}${target}?state=${encodeURIComponent(state)}`;
+    window.location.href = `${ORIGIN}${target}?state=${encodeURIComponent(
+      state
+    )}`;
   };
 
   async function onSubmit(e: React.FormEvent) {
@@ -105,7 +105,10 @@ export default function Page() {
 
         <form onSubmit={onSubmit} className="space-y-2">
           <div>
-            <label htmlFor="email" className="block text-white text-sm mb-2 font-medium">
+            <label
+              htmlFor="email"
+              className="block text-white text-sm mb-2 font-medium"
+            >
               Email
             </label>
             <div className="relative">
@@ -124,7 +127,10 @@ export default function Page() {
           </div>
 
           <div className="relative">
-            <label htmlFor="password" className="block text-white text-sm mb-2 font-medium">
+            <label
+              htmlFor="password"
+              className="block text-white text-sm mb-2 font-medium"
+            >
               Password
             </label>
             <div className="relative">
@@ -146,7 +152,11 @@ export default function Page() {
                 aria-label={showPwd ? "Hide password" : "Show password"}
                 disabled={loading}
               >
-                {showPwd ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showPwd ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
               </button>
             </div>
           </div>
@@ -209,7 +219,10 @@ export default function Page() {
 
         <p className="mt-4 text-sm text-center text-white/70">
           Don't have an account?{" "}
-          <Link className="underline text-teal-300 hover:text-teal-200" href="/register">
+          <Link
+            className="underline text-teal-300 hover:text-teal-200"
+            href="/register"
+          >
             Register
           </Link>
         </p>

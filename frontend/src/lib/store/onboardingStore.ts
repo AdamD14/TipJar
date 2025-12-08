@@ -51,7 +51,7 @@ export const useOnboardingStore = create<State & Actions>()(
     (set) => ({
       ...initial,
       setStep: (s: Step) => set({ step: s }),
-      setRole: (r: Role) => set((state) => ({ role: r, user: { ...(state.user ?? {}), role: r } })),
+      setRole: (r: Role) => set((state) => ({ role: r, user: state.user ? { ...state.user, role: r } : null })),
       setTokens: (t: { accessToken: string | null }) => set({ tokens: t }),
       setUser: (u: UserLite | null) => set({ user: u ?? null }),
       setDraft: (p: Partial<State['drafts']>) => set((s) => ({ drafts: { ...s.drafts, ...p } })),
@@ -61,7 +61,7 @@ export const useOnboardingStore = create<State & Actions>()(
       name: 'tj+_onboarding_v1',
       storage: createJSONStorage(() => localStorage),
       version: 1,
-      migrate: (state) => state as any,
+      migrate: (state) => state as unknown as State,
       partialize: (s) => s,
     },
   ),

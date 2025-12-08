@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { useOnboardingStore } from '@/lib/stores/onboardingStore';
+import { useOnboardingStore } from '@/lib/store/onboardingStore';
 
 describe('onboardingStore', () => {
   it('persists role and step changes', () => {

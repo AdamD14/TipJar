@@ -41,7 +41,8 @@ type Variant =
   | "outline"
   | "ghost"
   | "danger"
-  | "link";
+  | "link"
+  | "glass";
 
 type Size = "sm" | "md" | "lg";
 
@@ -166,10 +167,10 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
     return (
       <button
         ref={ref as React.Ref<HTMLButtonElement>}
-        className={base}
-        disabled={rest.disabled || loading}
-        aria-busy={loading || undefined}
         {...(rest as React.ButtonHTMLAttributes<HTMLButtonElement>)}
+        className={base}
+        disabled={(rest as React.ButtonHTMLAttributes<HTMLButtonElement>).disabled || loading}
+        aria-busy={loading || undefined}
       >
         {content}
       </button>
