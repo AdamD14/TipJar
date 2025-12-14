@@ -1,3 +1,6 @@
 {
-  "prisma.pinToPrisma6": true
+  "prisma.pinToPrisma6": true,
+  "deno.enablePaths": ["frontend/supabase"],
+  "deno.unstable": true,
+  "deno.lint": true
 }

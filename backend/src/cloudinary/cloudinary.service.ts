@@ -36,4 +36,21 @@ export class CloudinaryService {
       upload.end(file.buffer);
     });
   }
+
+  async uploadFromS3(url: string, publicId?: string): Promise<UploadApiResponse> {
+    return cloudinary.uploader.upload(url, {
+      folder: 'tipjar/avatars',
+      public_id: publicId,
+      width: 1200,
+      height: 1200,
+      crop: 'limit',
+      quality: 'auto:good',
+      fetch_format: 'auto',
+      overwrite: true,
+    });
+  }
+
+  url(publicId: string, options: any): string {
+    return cloudinary.url(publicId, options);
+  }
 }

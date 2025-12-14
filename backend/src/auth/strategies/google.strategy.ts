@@ -25,7 +25,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   ) {
     // getOrThrow rzuci błędem od razu przy starcie, jeśli brakuje zmiennych w .env
     const clientID = configService.getOrThrow<string>('GOOGLE_CLIENT_ID');
-    const clientSecret = configService.getOrThrow<string>('GOOGLE_CLIENT_SECRET');
+    const clientSecret = configService.getOrThrow<string>(
+      'GOOGLE_CLIENT_SECRET',
+    );
     const callbackURL = configService.getOrThrow<string>('GOOGLE_CALLBACK_URL');
 
     super({
@@ -65,7 +67,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         if (state.timestamp) {
           const now = Date.now();
           const diff = now - state.timestamp;
-          if (diff > 300000) { // 300000ms = 5 minut
+          if (diff > 300000) {
+            // 300000ms = 5 minut
             throw new Error('OAuth state expired (CSRF protection)');
           }
         }
@@ -73,13 +76,20 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         // 2. Przypisanie Roli
         if (state && (state.role === 'CREATOR' || state.role === 'FAN')) {
           role = state.role === 'CREATOR' ? UserRole.CREATOR : UserRole.FAN;
-          this.logger.log(`GoogleStrategy: Role '${role}' recovered from state.`);
+          this.logger.log(
+            `GoogleStrategy: Role '${role}' recovered from state.`,
+          );
         }
       } catch (e) {
-        this.logger.warn(`GoogleStrategy: State validation failed. Error: ${(e as Error).message}`);
+        this.logger.warn(
+          `GoogleStrategy: State validation failed. Error: ${(e as Error).message}`,
+        );
         // Jeśli stan wygasł, blokujemy logowanie dla bezpieczeństwa
         if ((e as Error).message.includes('expired')) {
-          throw new HttpException('Login session expired. Try again.', HttpStatus.FORBIDDEN);
+          throw new HttpException(
+            'Login session expired. Try again.',
+            HttpStatus.FORBIDDEN,
+          );
         }
       }
     }
@@ -97,7 +107,10 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       done(null, user);
     } catch (error: unknown) {
       this.logger.error(`GoogleStrategy Error: ${(error as Error).message}`);
-      done(new HttpException('OAuth error', HttpStatus.INTERNAL_SERVER_ERROR), false);
+      done(
+        new HttpException('OAuth error', HttpStatus.INTERNAL_SERVER_ERROR),
+        false,
+      );
     }
   }
 }

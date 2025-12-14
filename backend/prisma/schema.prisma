@@ -92,6 +92,7 @@ model User {
   onboardingEvents OnboardingEvent[]
   // Multi-role mapping (in addition to primary role)
   userRoles        UserRoleMap[]
+  mediaRecords     MediaRecord[]
 }
 
 model SocialConnection {
@@ -288,4 +289,29 @@ model WebhookEvent {
   processedAt DateTime?
 
   @@index([type, status, createdAt])
+}
+
+model MediaRecord {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Metadane pliku
+  storjKey    String   // Klucz w Storj (np. avatars/user_1/...)
+  fileName    String
+  contentType String
+  size        Int
+  etag        String?
+  
+  // Kontekst
+  bucket      String   @default("storj-tipjar") // Nazwa twojego bucketa
+  provider    String   @default("storj")
+  
+  // Wynikowy URL (Cloudinary)
+  publicUrl   String
+
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([storjKey])
 }

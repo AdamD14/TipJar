@@ -7,4 +7,3 @@ import { UploadsController } from './uploads.controller';
   controllers: [UploadsController],
 })
 export class UploadsModule {}
-
