@@ -1,4 +1,12 @@
-import { IsString, IsNotEmpty, IsOptional, IsEnum, MaxLength, IsNumber, Min } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsEnum,
+  MaxLength,
+  IsNumber,
+  Min,
+} from 'class-validator';
 
 export class CreatorStep1Dto {
   @IsString()
@@ -9,7 +17,6 @@ export class CreatorStep1Dto {
   @IsOptional()
   avatarUrl?: string;
 }
-
 
 export class CreatorStep2Dto {
   @IsString()

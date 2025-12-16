@@ -1,115 +1,145 @@
 "use client";
-import React from "react";
+
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
+
 import OnboardingShell from "@/components/layout/OnboardingShell";
 import Field from "@/components/ui/Field";
-import Select from "@/components/ui/Select";
 import Button from "@/components/ui/Button";
 import AvatarUploader from "@/components/onboarding/AvatarUploader";
 import SocialConnect from "@/components/onboarding/SocialConnect";
+// IMPORTUJEMY NOWY GRID
+import IndustrySelector from "@/components/onboarding/IndustrySelector";
 import apiClient from "@/lib/apiClient";
 
-const INDUSTRIES = [
-  "Streamer / Gaming",
-  "Music / DJ",
-  "Education / Tutor",
-  "Fitness / Coach",
-  "Creator / Influencer",
-  "Art / Design",
-  "Cosplay / Modeling",
-  "Podcast / Radio",
-  "Other",
-];
-
 export default function Step1() {
-  const [saving, setSaving] = React.useState(false);
-  const [avatarUrl, setAvatarUrl] = React.useState<string | undefined>(undefined);
+  const [saving, setSaving] = useState(false);
+
+  // Stan formularza
+  const [industry, setIndustry] = useState<string>("");
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
+
+  // Stan sesji dla uploadera
+  const [sessionData, setSessionData] = useState<{
+    token: string;
+    userId: string;
+  } | null>(null);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const getSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session) {
+        setSessionData({
+          token: session.access_token,
+          userId: session.user.id,
+        });
+      }
+    };
+    getSession();
+  }, [supabase]);
+
+  const handleUploadComplete = (urls: string[]) => {
+    if (urls.length > 0) {
+      setAvatarUrl(urls[0]);
+    }
+  };
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    if (!industry) {
+      alert("Please choose your category.");
+      return;
+    }
+
     setSaving(true);
-    
-    const formData = new FormData(e.currentTarget);
-    const industry = formData.get("industry") as string;
-    
+
     try {
-      // User reported "exception" because fetch might return !res.ok which we handled with simple Error.
-      // Using apiClient likely fixes auth headers and better error handling.
-      // apiClient uses axios presumably.
       await apiClient.post("/api/onboarding/creator/step1", {
-          industry,
-          avatarUrl // Send uploaded avatar URL
+        industry,
+        avatarUrl,
       });
-      
-      // api call throws if failed usually (axios/fetch wrapper)
-      
-      // Navigate to step 2 (using window.location to strictly follow prompt "location.assign" or router)
-      // Prompt used location.assign, but router is better in Next.js. 
-      // Existing code used location.assign. I'll stick to router if possible or location.assign.
-      // Existing code: location.assign("/onboarding/step-2");
-      // New path: /onboarding/creator/step-2
+
       location.assign("/onboarding/creator/step-2");
     } catch (error) {
       console.error("Failed to save step 1", error);
       setSaving(false);
-      // Maybe show alert?
-      alert("Failed to save. Please try again.");
+      alert("Something went wrong. Try again.");
     }
   }
 
   return (
-    <OnboardingShell 
-      step={1} 
-      title="Let's define you" 
-      subtitle="Start by setting up your identity. This helps fans find you."
+    <OnboardingShell
+      step={1}
+      title="Select the category that best describes your content. This will help fans find you in Explore."
     >
-      <form className="space-y-8" onSubmit={onSubmit} noValidate>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <Field 
-            label="Your Industry" 
-            htmlFor="industry" 
-            hint="Helps with discovery and SEO."
-          >
-            <Select id="industry" name="industry" defaultValue={INDUSTRIES[0]}>
-              {INDUSTRIES.map((i) => (<option key={i} value={i}>{i}</option>))}
-            </Select>
-          </Field>
-
-          <Field 
-            label="Profile Picture" 
-            htmlFor="avatar" 
-            hint="Recommended: 400x400px PNG/JPG."
-          >
-            <AvatarUploader name="avatar" onUpload={setAvatarUrl} />
-          </Field>
+      <form className="space-y-10" onSubmit={onSubmit} noValidate>
+        {/* SEKCJA 1: KATEGORIE (Bento Grid) */}
+        <div className="space-y-4">
+          <IndustrySelector value={industry} onSelectAction={setIndustry} />
+          <input type="hidden" name="industry" value={industry} />
         </div>
 
-        <div className="pt-4 border-t border-white/5">
-          <Field 
-            label="Connect Socials" 
-            htmlFor="socials" 
-            hint="Link your accounts to build trust."
-          >
-            <SocialConnect onConnect={(p) => console.log("Connect", p)} />
-          </Field>
+        <div className="border-t border-white/5 pt-8 grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* SEKCJA 2: AVATAR (Prawa strona) */}
+          <div className="order-2 lg:order-2 w-full">
+            <div className="mb-4">
+              <label className="block text-lg font-medium text-white">
+                Profile Identity
+              </label>
+              <p className="text-sm text-gray-500">
+                Your visual badge on the platform.
+              </p>
+            </div>
+
+            {sessionData ? (
+              <AvatarUploader
+                authToken={sessionData.token}
+                userId={sessionData.userId}
+                onUploadCompleteAction={handleUploadComplete}
+                maxSlots={3}
+              />
+            ) : (
+              <div className="h-[250px] w-full flex items-center justify-center border border-dashed border-gray-700 rounded-xl bg-gray-900/30">
+                <span className="text-gray-500 animate-pulse">
+                  Initializing Studio...
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* SEKCJA 3: SOCIALE (Lewa strona) */}
+          <div className="order-1 lg:order-1 space-y-6">
+            <Field
+              label="Trust & Verification"
+              htmlFor="socials"
+              hint="Connect at least one account to get verified status."
+            >
+              <SocialConnect onConnect={(p) => console.log("Connect", p)} />
+            </Field>
+          </div>
         </div>
 
-        <div className="flex items-center justify-between pt-6">
-          <Link 
-            href="/dashboard" 
-            className="text-sm font-medium text-white/40 hover:text-white transition-colors"
+        <div className="flex items-center justify-between pt-8 border-t border-white/5">
+          <Link
+            href="/dashboard"
+            className="text-sm text-gray-500 hover:text-white transition-colors"
           >
-            I'll do this later
+            Skip for now
           </Link>
-          <Button 
-            type="submit" 
-            variant="gold" 
-            size="lg" 
+          <Button
+            type="submit"
+            variant="gold"
+            size="lg"
             loading={saving}
-            className="min-w-[140px]"
+            className="min-w-[180px] px-8"
+            disabled={!industry} // Blokada bez wybranej kategorii
           >
-            Next Step →
+            Next Step
           </Button>
         </div>
       </form>

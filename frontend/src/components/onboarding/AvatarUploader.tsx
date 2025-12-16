@@ -1,356 +1,140 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
-import type { Swiper as SwiperType } from "swiper";
+import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import "swiper/css/pagination";
+// import "swiper/css/pagination"; // Opcjonalnie: paginacja kropkowa może tu nie pasować wizualnie
+
 import AvatarPreviewSlide from "./AvatarPreviewSlide";
 import AvatarEditorModal from "./AvatarEditorModal";
-import {
-  validateImageFile,
-  uploadAvatarImage,
-} from "@/lib/upload/avatarUpload";
 import { useAvatarStore } from "@/lib/store/avatarUploadStore";
-import { getUploadController } from "@/lib/upload/uploadController";
+import { validateImageFile } from "@/lib/upload/avatarUpload";
 
 interface AvatarUploaderProps {
   onUploadCompleteAction: (urls: string[]) => void;
-  onUploadProgressAction?: (progress: number) => void;
   maxSlots?: number;
-  maxSizeMB?: number;
   authToken: string | null;
+  userId: string;
 }
-
-// Local file storage for each slot
-type SlotFileMap = Map<number, File>;
 
 export default function AvatarUploader({
   onUploadCompleteAction,
-  onUploadProgressAction,
   maxSlots = 3,
-  maxSizeMB = 5,
   authToken,
+  userId,
 }: AvatarUploaderProps) {
-  const swiperRef = useRef<SwiperType | null>(null);
-  const [isUploadingAll, setIsUploadingAll] = useState(false);
-  const [overallProgress, setOverallProgress] = useState(0);
-
-  // Store files locally, not in Zustand
-  const filesRef = useRef<SlotFileMap>(new Map());
-
-  // Zustand store
   const {
     slots,
     activeIndex,
     editingSlot,
     initializeSlotsIfEmpty,
-    updateSlot,
-    setActiveIndex,
+    setFileForSlot,
+    removeFileFromSlot,
     setEditingSlot,
-    resetSlot,
-    getSlotById,
-    getSlotsForUpload,
-    cancelUpload,
+    setActiveIndex,
+    performUploadAll,
+    retrySlot,
   } = useAvatarStore();
 
-  // Initialize slots on mount
   useEffect(() => {
-    const initializedSlots = initializeSlotsIfEmpty(maxSlots);
-    console.log("Initialized slots:", initializedSlots.length);
-  }, [initializeSlotsIfEmpty, maxSlots]);
+    initializeSlotsIfEmpty(maxSlots);
+  }, [maxSlots, initializeSlotsIfEmpty]);
 
-  // Calculate smooth overall progress
   useEffect(() => {
-    const filledSlots = slots.filter((slot) => slot.isFilled);
-    if (filledSlots.length === 0) {
-      setOverallProgress(0);
-      return;
+    const uploaded = slots
+      .filter((s) => s.cloudinaryUrl)
+      .map((s) => s.cloudinaryUrl!);
+    const filled = slots.filter((s) => s.isFilled);
+
+    if (filled.length > 0 && uploaded.length === filled.length) {
+      onUploadCompleteAction(uploaded);
     }
+  }, [slots, onUploadCompleteAction]);
 
-    // Calculate weighted average of progress
-    const totalProgress = filledSlots.reduce((sum, slot) => {
-      if (slot.cloudinaryUrl) {
-        return sum + 100; // Already uploaded
-      }
-      return sum + (slot.uploadProgress || 0);
-    }, 0);
-
-    const progress = Math.floor(totalProgress / filledSlots.length);
-    setOverallProgress(progress);
-
-    if (onUploadProgressAction) {
-      onUploadProgressAction(progress);
-    }
-
-    // Notify parent when all uploads are complete
-    const uploadedSlots = slots.filter((slot) => slot.cloudinaryUrl);
-    if (uploadedSlots.length === filledSlots.length && filledSlots.length > 0) {
-      const urls = uploadedSlots
-        .map((slot) => slot.cloudinaryUrl)
-        .filter(Boolean) as string[];
-      onUploadCompleteAction(urls);
-    }
-  }, [slots, onUploadProgressAction, onUploadCompleteAction]);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      // Cleanup blob URLs
-      const { cleanupTemporaryData } = useAvatarStore.getState();
-      cleanupTemporaryData();
-
-      // Cancel all uploads
-      const uploadController = getUploadController();
-      uploadController.cancelAll();
-    };
-  }, []);
-
-  // Handle file selection from user
-  const handleFileSelect = async (slotId: number, file: File) => {
-    const validationError = validateImageFile(file, maxSizeMB);
-    if (validationError) {
-      alert(validationError);
-      return;
-    }
-
-    // Store file locally
-    filesRef.current.set(slotId, file);
-
-    // Create preview URL
-    const previewUrl = URL.createObjectURL(file);
-
-    // Update slot with preview
-    updateSlot(slotId, {
-      name: file.name,
-      isFilled: true,
-      previewUrl,
-      error: null,
-    });
-
-    // Open editor modal
-    setTimeout(() => setEditingSlot(slotId), 10);
+  const handleFileSelect = (slotId: number, file: File) => {
+    const err = validateImageFile(file);
+    if (err) return alert(err);
+    const preview = URL.createObjectURL(file);
+    setFileForSlot(slotId, file, preview);
+    setTimeout(() => setEditingSlot(slotId), 100);
   };
 
-  // Handle edit confirmation (crop completed)
   const handleEditConfirm = async (
     slotId: number,
-    croppedBlob: Blob,
+    blob: Blob,
     fileName: string
   ) => {
-    const slot = getSlotById(slotId);
-    if (!slot) return;
-
-    // Create new file from cropped blob
-    const croppedFile = new File([croppedBlob], fileName, {
-      type: croppedBlob.type,
-    });
-
-    // Store cropped file locally
-    filesRef.current.set(slotId, croppedFile);
-
-    // Create new preview URL and revoke old one
-    const newPreviewUrl = URL.createObjectURL(croppedFile);
-
-    // Update slot with new preview URL
-    updateSlot(slotId, {
-      name: fileName,
-      previewUrl: newPreviewUrl,
-      isFilled: true,
-      // Reset upload state if previously failed
-      error: null,
-      cloudinaryUrl: null,
-      uploadProgress: 0,
-      isUploading: false,
-    });
-
-    // Close modal
-    setEditingSlot(null);
+    const file = new File([blob], fileName, { type: blob.type });
+    const preview = URL.createObjectURL(file);
+    setFileForSlot(slotId, file, preview);
   };
 
-  // Handle file removal
-  const handleRemove = (slotId: number) => {
-    // Cancel any ongoing upload
-    const uploadController = getUploadController();
-    uploadController.cancel(slotId);
-
-    // Remove local file
-    filesRef.current.delete(slotId);
-    resetSlot(slotId);
+  const handleUploadAll = () => {
+    if (!authToken || !userId) return alert("Log in required");
+    performUploadAll(authToken, userId);
   };
 
-  // Handle edit button click
-  const handleEdit = (slotId: number) => {
-    const slot = getSlotById(slotId);
-    if (slot?.isFilled && !slot.isUploading) {
-      setEditingSlot(slotId);
-    }
-  };
-
-  // Handle upload cancellation
-  const handleCancelUpload = (slotId: number) => {
-    const uploadController = getUploadController();
-    uploadController.cancel(slotId);
-    cancelUpload(slotId);
-  };
-
-  // Handle retry for failed upload
-  const handleRetry = async (slotId: number) => {
-    const slot = getSlotById(slotId);
-    const file = filesRef.current.get(slotId);
-
-    if (!slot || !file || !authToken) {
-      console.error("Cannot retry: missing slot, file, or auth token");
-      return;
-    }
-
-    // Check retry limit
-    if (slot.retryCount >= 3) {
-      alert(
-        "Maximum retry attempts reached. Please remove and re-add the image."
-      );
-      return;
-    }
-
-    try {
-      await uploadAvatarImage(slotId, file, slot.name, authToken);
-    } catch (error) {
-      console.error("Retry failed:", error);
-    }
-  };
-
-  // Upload single slot
-  const uploadSlot = async (slotId: number): Promise<boolean> => {
-    const slot = getSlotById(slotId);
-    const file = filesRef.current.get(slotId);
-
-    if (!slot || !file || !authToken || slot.cloudinaryUrl) {
-      return false;
-    }
-
-    try {
-      await uploadAvatarImage(slotId, file, slot.name, authToken);
-      return true;
-    } catch (error) {
-      console.error(`Upload failed for slot ${slotId}:`, error);
-      return false;
-    }
-  };
-
-  // Upload all filled slots with concurrency control
-  const handleUploadAll = async () => {
-    if (!authToken) {
-      alert("Authentication required. Please log in.");
-      return;
-    }
-
-    const slotsToUpload = getSlotsForUpload();
-    if (slotsToUpload.length === 0) {
-      alert("No avatars to upload. Please add some images first.");
-      return;
-    }
-
-    setIsUploadingAll(true);
-
-    try {
-      // Upload with concurrency control (max 3 at once)
-      const concurrencyLimit = 3;
-      const batches = [];
-
-      for (let i = 0; i < slotsToUpload.length; i += concurrencyLimit) {
-        batches.push(slotsToUpload.slice(i, i + concurrencyLimit));
-      }
-
-      for (const batch of batches) {
-        const uploadPromises = batch.map((slot) => uploadSlot(slot.id));
-        const results = await Promise.all(uploadPromises);
-
-        const successful = results.filter(Boolean).length;
-        console.log(`Batch uploaded: ${successful}/${batch.length} successful`);
-
-        // Small delay between batches
-        if (batch !== batches[batches.length - 1]) {
-          await new Promise((resolve) => setTimeout(resolve, 500));
-        }
-      }
-
-      alert(`Upload completed!`);
-    } catch (error) {
-      console.error("Upload failed:", error);
-      alert(
-        "Some uploads failed. Please check individual slots and retry if needed."
-      );
-    } finally {
-      setIsUploadingAll(false);
-    }
-  };
-
-  // Handle slide change
-  const handleSlideChange = (swiper: SwiperType) => {
-    setActiveIndex(swiper.activeIndex);
-  };
-
-  // Get current editing slot data
   const editingSlotData =
-    editingSlot !== null ? getSlotById(editingSlot) : null;
-
-  // Calculate upload summary
-  const totalFilled = slots.filter((s) => s.isFilled).length;
-  const totalUploaded = slots.filter((s) => s.cloudinaryUrl).length;
-  const totalInProgress = slots.filter((s) => s.isUploading).length;
-  const totalErrors = slots.filter((s) => s.error && !s.isUploading).length;
+    editingSlot !== null ? slots.find((s) => s.id === editingSlot) : null;
+  const isUploading = slots.some((s) => s.isUploading);
+  const readyToUpload = slots.filter(
+    (s) => s.isFilled && !s.cloudinaryUrl
+  ).length;
 
   return (
-    <div className="w-full space-y-6">
-      {/* Main carousel */}
-      <div className="relative">
+    <div className="w-full space-y-8 py-10">
+      {/* Kontener Swipera. 
+        Dodajemy padding x, żeby boczne elementy nie ucinały się na krawędzi ekranu.
+      */}
+      <div className="relative px-12">
         <Swiper
-          modules={[Navigation, Pagination]}
-          spaceBetween={20}
-          slidesPerView={1}
-          navigation
-          pagination={{ clickable: true }}
-          onSlideChange={handleSlideChange}
-          onSwiper={(swiper) => (swiperRef.current = swiper)}
-          className="w-full rounded-xl overflow-hidden"
+          modules={[Navigation]} // Usunąłem Pagination, bo psuje ten efekt
+          spaceBetween={-60} // KLUCZOWE: Ujemny odstęp tworzy nakładanie się (overlap ~20%)
+          slidesPerView={1.6} // Pokazujemy 1 cały i kawałki bocznych
+          centeredSlides={true} // Aktywny slajd zawsze na środku
+          navigation // Strzałki
+          onSlideChange={(s) => setActiveIndex(s.activeIndex)}
+          className="w-full !overflow-visible" // !overflow-visible pozwala elementom wystawać
+          style={
+            {
+              // Hack CSS, żeby boczne slajdy były "pod spodem" (niższy z-index)
+              "--swiper-wrapper-z-index": 10,
+            } as React.CSSProperties
+          }
         >
-          {slots.map((slot) => (
-            <SwiperSlide key={slot.id}>
-              <AvatarPreviewSlide
-                slot={slot}
-                onFileSelectAction={(file) => handleFileSelect(slot.id, file)}
-                onRemoveAction={() => handleRemove(slot.id)}
-                onEditAction={() => handleEdit(slot.id)}
-                onCancelUploadAction={() => handleCancelUpload(slot.id)}
-                onRetryAction={() => handleRetry(slot.id)}
-                isActive={activeIndex === slot.id}
-                maxSizeMB={maxSizeMB}
-              />
-            </SwiperSlide>
-          ))}
-        </Swiper>
+          {slots.map((slot, index) => {
+            // Sprawdzamy, czy dany slajd jest tym aktywnym na środku
+            const isActiveSlide = activeIndex === index;
 
-        {/* Active slot indicator */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10">
-          <div className="flex gap-1">
-            {slots.map((_, index) => (
-              <div
-                key={index}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  index === activeIndex ? "bg-gold" : "bg-gray-600"
+            return (
+              // Ustawiamy z-index: aktywny na wierzchu (20), boczne pod spodem (10)
+              <SwiperSlide
+                key={slot.id}
+                className={`transition-all duration-500 ${
+                  isActiveSlide ? "z-20" : "z-10"
                 }`}
-              />
-            ))}
-          </div>
-        </div>
+              >
+                <AvatarPreviewSlide
+                  slot={slot}
+                  isActive={isActiveSlide}
+                  onFileSelectAction={(f) => handleFileSelect(slot.id, f)}
+                  onRemoveAction={() => removeFileFromSlot(slot.id)}
+                  onEditAction={() => setEditingSlot(slot.id)}
+                  onRetryAction={() =>
+                    authToken && retrySlot(slot.id, authToken, userId)
+                  }
+                />
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
       </div>
 
-      {/* Editor modal */}
       {editingSlotData && (
         <AvatarEditorModal
-          isOpen={editingSlot !== null}
+          isOpen={!!editingSlotData}
           onCloseAction={() => setEditingSlot(null)}
           slotId={editingSlotData.id}
           slotName={editingSlotData.name}
@@ -359,113 +143,14 @@ export default function AvatarUploader({
         />
       )}
 
-      {/* Status and controls */}
-      <div className="space-y-4">
-        {/* Overall progress */}
-        {overallProgress > 0 && overallProgress < 100 && (
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-300">Overall Progress</span>
-              <span className="text-gold font-medium">{overallProgress}%</span>
-            </div>
-            <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-gold to-gold-dark transition-all duration-300"
-                style={{ width: `${overallProgress}%` }}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Upload summary */}
-        <div className="grid grid-cols-4 gap-4 text-sm">
-          <div className="text-center">
-            <div
-              className={`text-2xl font-bold ${
-                totalFilled > 0 ? "text-white" : "text-gray-500"
-              }`}
-            >
-              {totalFilled}
-            </div>
-            <div className="text-gray-400">Added</div>
-          </div>
-          <div className="text-center">
-            <div
-              className={`text-2xl font-bold ${
-                totalUploaded > 0 ? "text-green-400" : "text-gray-500"
-              }`}
-            >
-              {totalUploaded}
-            </div>
-            <div className="text-gray-400">Uploaded</div>
-          </div>
-          <div className="text-center">
-            <div
-              className={`text-2xl font-bold ${
-                totalInProgress > 0 ? "text-gold" : "text-gray-500"
-              }`}
-            >
-              {totalInProgress}
-            </div>
-            <div className="text-gray-400">In Progress</div>
-          </div>
-          <div className="text-center">
-            <div
-              className={`text-2xl font-bold ${
-                totalErrors > 0 ? "text-red-400" : "text-gray-500"
-              }`}
-            >
-              {totalErrors}
-            </div>
-            <div className="text-gray-400">Errors</div>
-          </div>
-        </div>
-
-        {/* Upload button */}
+      <div className="flex justify-center pt-4">
         <button
           onClick={handleUploadAll}
-          disabled={
-            isUploadingAll ||
-            !authToken ||
-            totalFilled === 0 ||
-            totalFilled === totalUploaded
-          }
-          className="w-full py-3 bg-gradient-to-r from-gold to-gold-dark text-gray-900 font-semibold rounded-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          disabled={isUploading || readyToUpload === 0}
+          className="px-12 py-4 bg-transparent border-2 border-gold text-gold hover:bg-gold hover:text-teal-900 font-bold text-lg transition-all uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isUploadingAll ? (
-            <>
-              <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  fill="none"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                />
-              </svg>
-              Uploading {totalInProgress}/{totalFilled}...
-            </>
-          ) : totalUploaded === totalFilled ? (
-            `All ${totalFilled} Avatar(s) Uploaded`
-          ) : (
-            `Upload ${totalFilled - totalUploaded} Avatar(s)`
-          )}
+          {isUploading ? "Processing..." : `Upload ${readyToUpload} Photos`}
         </button>
-
-        {/* Instructions */}
-        <div className="text-xs text-gray-500 text-center space-y-1">
-          <p>• Click on empty slots to add avatars ({maxSlots} maximum)</p>
-          <p>• Maximum file size: {maxSizeMB}MB per image</p>
-          <p>• Supported formats: JPG, PNG, WebP, GIF</p>
-          <p>• You can cancel uploads or retry failed ones</p>
-        </div>
       </div>
     </div>
   );

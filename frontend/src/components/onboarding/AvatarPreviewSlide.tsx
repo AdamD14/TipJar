@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import Image from 'next/image';
+import Image from "next/image";
 import type { UploadSlot } from "@/lib/store/types";
 
 interface AvatarPreviewSlideProps {
@@ -9,7 +9,6 @@ interface AvatarPreviewSlideProps {
   onFileSelectAction: (file: File) => void;
   onRemoveAction: () => void;
   onEditAction: () => void;
-  onCancelUploadAction: () => void;
   onRetryAction: () => void;
   isActive: boolean;
   maxSizeMB?: number;
@@ -20,7 +19,6 @@ export default function AvatarPreviewSlide({
   onFileSelectAction,
   onRemoveAction,
   onEditAction,
-  onCancelUploadAction,
   onRetryAction,
   isActive,
   maxSizeMB = 5,
@@ -35,175 +33,129 @@ export default function AvatarPreviewSlide({
     }
   };
 
-  const handleClick = () => {
-    if (!slot.isFilled && !slot.isUploading && fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  // Use regular img for blob URLs
   const displayUrl = slot.cloudinaryUrl || slot.previewUrl;
 
-  // Empty slot state
+  // --- Style bazowe dla prostokąta ---
+  // Używamy aspect-[4/3] żeby uzyskać prostokąt z Twojej grafiki.
+  // Możesz zmienić na aspect-video jeśli ma być szerszy.
+  const containerBaseClasses =
+    "relative w-full aspect-[4/3] transition-all duration-500 ease-in-out group";
+
+  // --- Style zależne od stanu (Aktywny / Nieaktywny) ---
+  const activeClasses = isActive
+    ? "border-2 border-gold bg-teal-800/30 scale-100 shadow-[0_0_30px_rgba(207,181,107,0.2)]" // Aktywny: Złoty, jasny, duży
+    : "border border-teal-800 bg-teal-900/80 opacity-40 scale-90 pointer-events-none"; // Nieaktywny: Ciemny, wyblakły, mały
+
+  // --- Stan PUSTY (Add Photo) ---
   if (!slot.isFilled) {
     return (
       <div
-        onClick={handleClick}
-        className={`relative w-full h-[400px] border-2 border-dashed rounded-2xl flex flex-col items-center justify-center transition-colors ${
-          isActive
-            ? "border-gold bg-gold/5"
-            : "border-gray-600 hover:border-gray-500"
-        } ${slot.isUploading ? "cursor-not-allowed" : "cursor-pointer"}`}
+        onClick={() =>
+          isActive && !slot.isUploading && fileInputRef.current?.click()
+        }
+        className={`${containerBaseClasses} ${activeClasses} flex flex-col items-center justify-center ${
+          isActive ? "cursor-pointer hover:bg-teal-800/50" : ""
+        }`}
       >
-        <div className="text-center p-8">
-          <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-800 flex items-center justify-center">
-            <svg
-              className="w-10 h-10 text-gray-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              />
-            </svg>
+        <div className="text-center p-6">
+          {/* Ikona Plusa */}
+          <div
+            className={`w-12 h-12 mx-auto mb-4 border border-gold rounded-full flex items-center justify-center transition-transform duration-500 ${
+              isActive ? "rotate-0" : "rotate-45 opacity-0"
+            }`}
+          >
+            <span className="text-gold text-2xl leading-none relative top-[-1px]">
+              +
+            </span>
           </div>
-          <h3 className="text-xl font-semibold text-white mb-2">
-            {slot.isUploading ? "Uploading..." : "Add Avatar"}
+
+          <h3
+            className={`text-xl text-white tracking-wider font-light transition-all duration-500 ${
+              isActive ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+          >
+            Add Photo
           </h3>
-          <p className="text-gray-400 text-sm max-w-xs">
-            {slot.isUploading
-              ? `Progress: ${slot.uploadProgress}%`
-              : `Click to select image (max ${maxSizeMB}MB)`}
-          </p>
-          {slot.error && (
-            <p className="text-red-400 text-xs mt-2 max-w-xs text-center">
-              {slot.error}
+
+          {isActive && (
+            <p className="text-gold/60 text-xs mt-2 tracking-widest uppercase">
+              Max size: {maxSizeMB}MB
             </p>
           )}
         </div>
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/jpeg,image/png,image/webp,image/gif"
+          accept="image/*"
           onChange={handleFileChange}
           className="hidden"
-          disabled={slot.isUploading}
         />
+        {/* Ozdobne narożniki (opcjonalne, jak na grafice) */}
+        {isActive && (
+          <>
+            <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-gold opacity-50"></div>
+            <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-gold opacity-50"></div>
+            <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-gold opacity-50"></div>
+            <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-gold opacity-50"></div>
+          </>
+        )}
       </div>
     );
   }
 
+  // --- Stan WYPEŁNIONY (Podgląd zdjęcia) ---
   return (
-    <div
-      className={`relative w-full h-[400px] rounded-2xl overflow-hidden border-2 ${
-        isActive ? "border-gold" : "border-transparent"
-      } ${slot.isUploading ? "opacity-90" : ""}`}
-    >
-      {/* Image display using Next.js Image for blob URLs */}
+    <div className={`${containerBaseClasses} ${activeClasses} overflow-hidden`}>
       {displayUrl && (
-        <div className="relative w-full h-full">
-          <Image
-            src={displayUrl}
-            alt={`Avatar slot ${slot.id + 1}`}
-            fill
-            sizes="100vw"
-            className="object-cover"
-            crossOrigin="anonymous"
-            unoptimized={true}
-          />
-        </div>
+        <Image
+          src={displayUrl}
+          alt={slot.name}
+          fill
+          className={`object-cover transition-opacity duration-500 ${
+            slot.isUploading ? "opacity-50" : "opacity-100"
+          }`}
+          unoptimized
+        />
       )}
 
-      {/* Overlay with action buttons */}
-      {!slot.isUploading && !slot.error && (
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300">
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-3">
-            <button
-              onClick={onEditAction}
-              className="px-4 py-2 bg-white/90 text-gray-900 font-medium rounded-lg hover:bg-white transition backdrop-blur-sm"
-            >
-              Edit
-            </button>
-            <button
-              onClick={onRemoveAction}
-              className="px-4 py-2 bg-red-500/90 text-white font-medium rounded-lg hover:bg-red-500 transition backdrop-blur-sm"
-            >
-              Remove
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Upload progress bar */}
+      {/* Loading Overlay */}
       {slot.isUploading && (
-        <div className="absolute bottom-0 left-0 right-0 h-8 bg-gray-900/90 backdrop-blur-sm">
-          <div className="flex items-center justify-between px-4 h-full">
-            <span className="text-sm text-gray-300">
-              Uploading... {slot.uploadProgress}%
-            </span>
-            <button
-              onClick={onCancelUploadAction}
-              className="text-sm text-red-400 hover:text-red-300"
-            >
-              Cancel
-            </button>
-          </div>
-          <div
-            className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-gold to-gold-dark transition-all duration-300"
-            style={{ width: `${slot.uploadProgress}%` }}
-          />
+        <div className="absolute inset-0 bg-teal-900/60 flex flex-col items-center justify-center z-10">
+          <div className="w-12 h-12 border-2 border-gold border-t-transparent rounded-full animate-spin mb-3"></div>
+          <span className="text-gold text-sm tracking-wider">
+            {slot.uploadProgress}%
+          </span>
         </div>
       )}
 
-      {/* Error state with retry option */}
+      {/* Error Overlay */}
       {slot.error && !slot.isUploading && (
-        <div className="absolute inset-0 bg-red-900/20 backdrop-blur-sm flex flex-col items-center justify-center p-4">
-          <div className="text-center">
-            <div className="text-red-400 mb-2">
-              <svg className="w-12 h-12 mx-auto" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <p className="text-red-300 text-sm mb-3">{slot.error}</p>
-            <div className="flex gap-2">
-              <button
-                onClick={onRetryAction}
-                disabled={slot.retryCount >= 3}
-                className="px-4 py-2 bg-gold text-gray-900 font-medium rounded-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {slot.retryCount >= 3 ? 'Max Retries' : 'Retry'}
-              </button>
-              <button
-                onClick={onRemoveAction}
-                className="px-4 py-2 bg-gray-700 text-white font-medium rounded-lg hover:bg-gray-600 transition"
-              >
-                Remove
-              </button>
-            </div>
-          </div>
+        <div className="absolute inset-0 bg-red-900/90 flex flex-col items-center justify-center z-10 p-4 text-center">
+          <p className="text-white mb-4">Upload Failed</p>
+          <button
+            onClick={onRetryAction}
+            className="px-6 py-2 border border-white text-white hover:bg-white hover:text-red-900 transition uppercase text-xs tracking-wider"
+          >
+            Retry
+          </button>
         </div>
       )}
 
-      {/* Active indicator */}
-      {isActive && (
-        <div className="absolute top-4 right-4">
-          <span className="px-3 py-1 bg-gold text-gray-900 text-sm font-semibold rounded-full backdrop-blur-sm">
-            Active
-          </span>
-        </div>
-      )}
-
-      {/* Success indicator */}
-      {slot.cloudinaryUrl && !slot.error && !slot.isUploading && (
-        <div className="absolute top-4 left-4">
-          <span className="px-3 py-1 bg-green-500 text-white text-sm font-semibold rounded-full backdrop-blur-sm">
-            Uploaded
-          </span>
+      {/* Hover Actions (tylko dla aktywnego slajdu) */}
+      {isActive && !slot.isUploading && !slot.error && (
+        <div className="absolute inset-0 bg-teal-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 backdrop-blur-sm">
+          <button
+            onClick={onEditAction}
+            className="w-12 h-12 border border-gold text-gold rounded-full flex items-center justify-center hover:bg-gold hover:text-teal-900 transition"
+          >
+            ✎
+          </button>
+          <button
+            onClick={onRemoveAction}
+            className="w-12 h-12 border border-red-500 text-red-500 rounded-full flex items-center justify-center hover:bg-red-500 hover:text-white transition"
+          >
+            ✕
+          </button>
         </div>
       )}
     </div>

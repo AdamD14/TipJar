@@ -1,9 +1,3 @@
-// src/lib/store/types.ts
-
-// Upload process status
-export type UploadStatus = 'pending' | 'uploading' | 'success' | 'error' | 'cancelled';
-
-// Definition of a single slot in the carousel
 export interface UploadSlot {
   id: number;
   name: string;
@@ -13,48 +7,40 @@ export interface UploadSlot {
   error: string | null;
   retryCount: number;
   
-  // Temporary preview (blob URL)
+  // Tymczasowy podgląd (blob URL)
   previewUrl: string | null;
   
-  // Permanent data (from backend)
+  // Finalny URL z backendu (Cloudinary)
   cloudinaryUrl: string | null;
 }
 
-// Store state definition
 export interface AvatarStoreState {
   slots: UploadSlot[];
   activeIndex: number;
   editingSlot: number | null;
+  // Przechowalnia plików (niezapisywana w localStorage)
+  fileRegistry: Record<number, File>;
 }
 
-// Store actions definition
 export interface AvatarStoreActions {
-  // Initialization
-  initializeSlotsIfEmpty: (max?: number) => UploadSlot[];
+  // Inicjalizacja
+  initializeSlotsIfEmpty: (count: number) => void;
   
-  // Slot operations
-  updateSlot: (id: number, data: Partial<UploadSlot>) => void;
-  setActiveIndex: (index: number) => void;
+  // Zarządzanie plikami
+  setFileForSlot: (slotId: number, file: File, previewUrl: string) => void;
+  removeFileFromSlot: (slotId: number) => void;
+  
+  // UI Actions
   setEditingSlot: (id: number | null) => void;
-  resetSlot: (id: number) => void;
-  setFinalUrl: (id: number, url: string) => void;
-  setError: (id: number, message: string) => void;
+  setActiveIndex: (index: number) => void;
   
-  // Upload management
-  startUpload: (id: number) => void;
-  cancelUpload: (id: number) => void;
-  updateProgress: (id: number, progress: number) => void;
-  incrementRetry: (id: number) => void;
+  // Logika Uploadu
+  performUploadAll: (token: string, userId: string) => Promise<void>;
+  retrySlot: (slotId: number, token: string, userId: string) => Promise<void>;
   
-  // Getters
-  getActiveSlot: () => UploadSlot | undefined;
-  getSlotById: (id: number) => UploadSlot | undefined;
-  getSlotsForUpload: () => UploadSlot[];
-  hasActiveUploads: () => boolean;
-  
-  // Cleanup
+  // Helpersy wewnętrzne (używane przez service)
+  setSlotStatus: (id: number, status: Partial<UploadSlot>) => void;
   cleanupTemporaryData: () => void;
 }
 
-// Combined type for Zustand hook
 export type AvatarStore = AvatarStoreState & AvatarStoreActions;
