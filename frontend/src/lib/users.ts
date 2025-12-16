@@ -16,7 +16,7 @@ export async function setUsernameAndConsents(
   username: string,
   consents: { terms: boolean; privacy: boolean; age: boolean; marketing?: boolean },
 ) {
-  const payload = { username, consents } as any;
+  const payload = { username, consents };
   const { data } = await api.post(API.USERS.SET_USERNAME, payload);
   return data;
 }

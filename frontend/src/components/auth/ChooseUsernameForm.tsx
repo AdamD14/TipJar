@@ -5,14 +5,14 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { normalize } from "@/lib/api/errors";
-import { useOnboardingStore } from "@/lib/store/onboardingStore";
+import { useRegistrationStore } from "@/lib/store/registrationStore";
 
 type MeResponse = {
   id: string;
   email?: string | null;
   role?: "FAN" | "CREATOR" | null;
   username?: string | null;
-  hasCompletedOnboarding?: boolean;
+  hasCompletedRegistration?: boolean;
 };
 
 // Stałe dla ścieżek - lepsze zarządzanie
@@ -29,7 +29,7 @@ const PATHS = {
 
 export default function ChooseUsernameForm() {
   const router = useRouter();
-  const { drafts, setDraft, setUser, setRole } = useOnboardingStore();
+  const { drafts, setDraft, setUser, setRole } = useRegistrationStore();
 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,12 +61,12 @@ export default function ChooseUsernameForm() {
         setRole(normalizedRole);
         setUser(meRes);
 
-        // Jeśli już ma username i completed onboarding -> dashboard
-        if (meRes.username && meRes.hasCompletedOnboarding) {
+        // Jeśli już ma username i completed registration -> onboarding
+        if (meRes.username && meRes.hasCompletedRegistration) {
           const targetPath =
             normalizedRole === "CREATOR"
-              ? PATHS.CREATOR.dashboard
-              : PATHS.FAN.dashboard;
+              ? PATHS.CREATOR.onboarding
+              : PATHS.FAN.onboarding;
           router.replace(targetPath);
           return;
         }

@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { normalize } from "@/lib/api/errors";
 import { register as registerUser } from "@/lib/auth";
-import { useOnboardingStore } from "@/lib/store/onboardingStore";
+import { useRegistrationStore } from "@/lib/store/registrationStore";
 import { registerSchema, RegisterFormValues } from "@/lib/schemas/authSchema";
 
 // ten komponent zostaje jako docelowy UI rejestracji
@@ -24,7 +24,7 @@ export default function AuthForm() {
   const [apiError, setApiError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const { setRole, setUser, setTokens } = useOnboardingStore();
+  const { setRole, setUser, setTokens } = useRegistrationStore();
 
   const methods = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -61,7 +61,7 @@ export default function AuthForm() {
         email: response.user.email ?? undefined,
         role: nextRole,
         username: response.user.username ?? undefined,
-        hasCompletedOnboarding: response.user.hasCompletedOnboarding,
+        hasCompletedRegistration: response.user.hasCompletedRegistration,
       });
       setTokens({ accessToken: response.accessToken });
 

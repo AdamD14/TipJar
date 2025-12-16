@@ -13,6 +13,7 @@ export type LoginDto = { email: string; password: string };
 // Typy lustrzane do backendu (ValidatedUser z AuthService)
 export type UserRole = "FAN" | "CREATOR" | "ADMIN";
 export interface ValidatedUser {
+  [x: string]: unknown;
   id: string;
   email: string | null;
   role: UserRole;
@@ -21,6 +22,7 @@ export interface ValidatedUser {
   isEmailVerified: boolean;
   isActive: boolean;
   username?: string | null;
+  hasCompletedRegistration?: boolean;
   hasCompletedOnboarding?: boolean;
   consents?: unknown;
 }

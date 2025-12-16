@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import ChooseUsernameForm from '@/components/onboarding/ChooseUsernameForm';
+import ChooseUsernameForm from "../../../components/auth/ChooseUsernameForm";
 
 export default function ChooseUsernamePage() {
   return (
@@ -9,4 +9,3 @@ export default function ChooseUsernamePage() {
     </main>
   );
 }
-
