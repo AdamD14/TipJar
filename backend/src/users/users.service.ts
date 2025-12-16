@@ -38,6 +38,21 @@ export class InternalUpdateUserDto {
   isCircleSetupComplete?: boolean;
 }
 
+export interface PublicUserProfile {
+  id: string;
+  username: string | null;
+  displayName: string;
+  avatarUrl: string | null;
+  role: UserRole;
+  profile: {
+    bio: string | null;
+    bannerUrl: string | null;
+    socials: Prisma.JsonValue;
+    industry: string | null;
+    acceptsTips: boolean;
+  } | null;
+}
+
 @Injectable()
 export class UsersService {
   private readonly logger = new Logger(UsersService.name);
@@ -139,12 +154,10 @@ export class UsersService {
         (error as Error).stack,
       );
       if (
-        error instanceof Error &&
-        'code' in error &&
-        typeof error.code === 'string' &&
+        error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2002'
       ) {
-        const target = (error as any).meta?.target?.join(', ');
+        const target = (error.meta?.target as string[])?.join(', ');
         this.logger.warn(`Prisma unique constraint violation on: ${target}`);
         throw new ConflictException(
           `Użytkownik z tymi danymi (${target || 'unikalne pole'}) już istnieje.`,
@@ -205,24 +218,24 @@ export class UsersService {
         (error as Error).stack,
       );
       if (
-        error instanceof Error &&
-        'code' in error &&
-        typeof error.code === 'string'
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
       ) {
-        if (error.code === 'P2025') {
-          this.logger.warn(`Update failed: User ID [${id}] not found.`);
-          throw new NotFoundException(
-            `Użytkownik o ID ${id} nie został znaleziony.`,
-          );
-        } else if (error.code === 'P2002') {
-          const target = (error as any).meta?.target?.join(', ');
-          this.logger.warn(
-            `Update failed for user ID [${id}]: Unique constraint violation on ${target}.`,
-          );
-          throw new ConflictException(
-            `Nie można zaktualizować użytkownika. Wartość dla ${target} jest już zajęta.`,
-          );
-        }
+        const target = (error.meta?.target as string[])?.join(', ');
+        this.logger.warn(
+          `Update failed for user ID [${id}]: Unique constraint violation on ${target}.`,
+        );
+        throw new ConflictException(
+          `Nie można zaktualizować użytkownika. Wartość dla ${target} jest już zajęta.`,
+        );
+      } else if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        this.logger.warn(`Update failed: User ID [${id}] not found.`);
+        throw new NotFoundException(
+          `Użytkownik o ID ${id} nie został znaleziony.`,
+        );
       }
       throw new InternalServerErrorException(
         'Wystąpił nieoczekiwany błąd podczas aktualizacji użytkownika.',
@@ -363,9 +376,7 @@ export class UsersService {
         (error as Error).stack,
       );
       if (
-        error instanceof Error &&
-        'code' in error &&
-        typeof error.code === 'string' &&
+        error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2002'
       ) {
         throw new ConflictException(
@@ -388,20 +399,9 @@ export class UsersService {
    * Public, read-only projection of a creator/fan by username.
    * Returns safe fields only and includes the linked profile.
    */
-  async getPublicProfileByUsername(username: string): Promise<null | {
-    id: string;
-    username: string | null;
-    displayName: string;
-    avatarUrl: string | null;
-    role: UserRole;
-    profile: {
-      bio: string | null;
-      bannerUrl: string | null;
-      socials: Prisma.JsonValue | null;
-      industry: string | null;
-      acceptsTips: boolean;
-    } | null;
-  }> {
+  async getPublicProfileByUsername(
+    username: string,
+  ): Promise<PublicUserProfile | null> {
     const user = await this.prisma.user.findUnique({
       where: { username: username.toLowerCase() },
       select: {
@@ -445,7 +445,8 @@ export class UsersService {
       data: {
         username: data.username.toLowerCase(),
         consents: data.consents as unknown as Prisma.InputJsonValue,
-        hasCompletedOnboarding: true,
+        // Creators must complete multi-step onboarding; Fans are done after username.
+        hasCompletedOnboarding: user.role === UserRole.FAN,
       },
     });
   }

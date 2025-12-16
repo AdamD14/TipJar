@@ -155,18 +155,29 @@ export class AuthController {
       'http://localhost:3000',
     );
 
-    if (user.username && user.hasCompletedOnboarding) {
+    if (!user.username) {
+      this.logger.log(
+        `User ${user.id} needs to set username. Redirecting to /choose-username`,
+      );
+      response.redirect(`${frontendUrl}/choose-username`);
+    } else if (!user.hasCompletedOnboarding) {
+      if (user.role === 'CREATOR') {
+        this.logger.log(
+          `Creator ${user.id} has username but needs to complete onboarding steps. Redirecting to /onboarding/creator/step-1`,
+        );
+        response.redirect(`${frontendUrl}/onboarding/creator/step-1`);
+      } else {
+        // Fans should be marked complete by setUsername, but if not, send them to dashboard or fallback
+        const dashboard = '/fan/dashboard';
+        response.redirect(`${frontendUrl}${dashboard}`);
+      }
+    } else {
       const dashboard =
         user.role === 'CREATOR' ? '/creator/dashboard' : '/fan/dashboard';
       this.logger.log(
         `User ${user.id} has completed onboarding. Redirecting to ${dashboard}`,
       );
       response.redirect(`${frontendUrl}${dashboard}`);
-    } else {
-      this.logger.log(
-        `User ${user.id} needs to complete onboarding. Redirecting to /choose-username`,
-      );
-      response.redirect(`${frontendUrl}/choose-username`);
     }
   }
 
@@ -196,29 +207,61 @@ export class AuthController {
       return;
     }
     this.logger.log(
-      `Twitch OAuth successful for user: ${user.email || `ID ${user.id}`
+      `Twitch OAuth successful for user: ${
+        user.email || `ID ${user.id}`
       }. Generating tokens.`,
     );
     const tokens = await this.authService.login(user);
     this.setAuthCookies(response, tokens);
+
+    if (req.query.state) {
+      try {
+        const rawState = req.query.state as string;
+        const decodedState = Buffer.from(rawState, 'base64').toString('ascii');
+        const state = JSON.parse(decodedState) as { returnTo?: string };
+        if (state.returnTo) {
+          const frontendUrl = this.configService.get<string>(
+            'FRONTEND_URL',
+            'http://localhost:3000',
+          );
+          // Ensure we don't start with / if frontendUrl has it, or handle cleanly.
+          // Assuming returnTo starts with /
+          this.logger.log(`Redirecting to custom returnTo: ${state.returnTo}`);
+          response.redirect(`${frontendUrl}${state.returnTo}`);
+          return;
+        }
+      } catch (e) {
+        this.logger.warn(`Failed to parse state for redirect: ${e}`);
+      }
+    }
 
     const frontendUrl = this.configService.get<string>(
       'FRONTEND_URL',
       'http://localhost:3000',
     );
 
-    if (user.username && user.hasCompletedOnboarding) {
+    if (!user.username) {
+      this.logger.log(
+        `User ${user.id} needs to set username. Redirecting to /choose-username`,
+      );
+      response.redirect(`${frontendUrl}/choose-username`);
+    } else if (!user.hasCompletedOnboarding) {
+      if (user.role === 'CREATOR') {
+        this.logger.log(
+          `Creator ${user.id} has username but needs to complete onboarding steps. Redirecting to /onboarding/creator/step-1`,
+        );
+        response.redirect(`${frontendUrl}/onboarding/creator/step-1`);
+      } else {
+        const dashboard = '/fan/dashboard';
+        response.redirect(`${frontendUrl}${dashboard}`);
+      }
+    } else {
       const dashboard =
         user.role === 'CREATOR' ? '/creator/dashboard' : '/fan/dashboard';
       this.logger.log(
         `User ${user.id} has completed onboarding. Redirecting to ${dashboard}`,
       );
       response.redirect(`${frontendUrl}${dashboard}`);
-    } else {
-      this.logger.log(
-        `User ${user.id} needs to complete onboarding. Redirecting to /choose-username`,
-      );
-      response.redirect(`${frontendUrl}/choose-username`);
     }
   }
 
@@ -250,18 +293,28 @@ export class AuthController {
       'http://localhost:3000',
     );
 
-    if (user.username && user.hasCompletedOnboarding) {
+    if (!user.username) {
+      this.logger.log(
+        `User ${user.id} needs to set username. Redirecting to /choose-username`,
+      );
+      response.redirect(`${frontendUrl}/choose-username`);
+    } else if (!user.hasCompletedOnboarding) {
+      if (user.role === 'CREATOR') {
+        this.logger.log(
+          `Creator ${user.id} has username but needs to complete onboarding steps. Redirecting to /onboarding/creator/step-1`,
+        );
+        response.redirect(`${frontendUrl}/onboarding/creator/step-1`);
+      } else {
+        const dashboard = '/fan/dashboard';
+        response.redirect(`${frontendUrl}${dashboard}`);
+      }
+    } else {
       const dashboard =
         user.role === 'CREATOR' ? '/creator/dashboard' : '/fan/dashboard';
       this.logger.log(
         `User ${user.id} has completed onboarding. Redirecting to ${dashboard}`,
       );
       response.redirect(`${frontendUrl}${dashboard}`);
-    } else {
-      this.logger.log(
-        `User ${user.id} needs to complete onboarding. Redirecting to /choose-username`,
-      );
-      response.redirect(`${frontendUrl}/choose-username`);
     }
   }
 

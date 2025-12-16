@@ -1,7 +1,7 @@
 import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-twitch-new';
-import { AuthService, ValidatedUser } from '../auth.service';
+import { AuthService } from '../auth.service';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 import { UserRole } from '@prisma/client';
@@ -9,10 +9,23 @@ import { UserRole } from '@prisma/client';
 type StatePayload = {
   role?: 'CREATOR' | 'FAN';
   timestamp?: number;
+  returnTo?: string;
 };
 
+interface TwitchProfile {
+  id: string;
+  login: string;
+  display_name: string;
+  email: string;
+  profile_image_url: string;
+  provider: 'twitch';
+}
+
 @Injectable()
-export class TwitchStrategy extends PassportStrategy(Strategy, 'twitch') {
+export class TwitchStrategy extends PassportStrategy(
+  Strategy as any,
+  'twitch',
+) {
   private readonly logger = new Logger(TwitchStrategy.name);
 
   constructor(
@@ -20,16 +33,23 @@ export class TwitchStrategy extends PassportStrategy(Strategy, 'twitch') {
     private configService: ConfigService,
   ) {
     const clientID = configService.getOrThrow<string>('TWITCH_CLIENT_ID');
-    const clientSecret = configService.getOrThrow<string>('TWITCH_CLIENT_SECRET');
+    const clientSecret = configService.getOrThrow<string>(
+      'TWITCH_CLIENT_SECRET',
+    );
     const callbackURL = configService.getOrThrow<string>('TWITCH_CALLBACK_URL');
 
     super({
       clientID,
       clientSecret,
       callbackURL,
+      authorizationURL: 'https://id.twitch.tv/oauth2/authorize',
+      tokenURL: 'https://id.twitch.tv/oauth2/token',
       scope: ['user:read:email'],
       passReqToCallback: true,
       state: false, // 🟢 WAŻNE: Wyłączamy sesję Passporta
+      customHeaders: {
+        'Client-ID': clientID,
+      },
     });
   }
 
@@ -37,9 +57,9 @@ export class TwitchStrategy extends PassportStrategy(Strategy, 'twitch') {
     req: Request,
     accessToken: string,
     refreshToken: string,
-    profile: any,
-    done: (error: any, user?: any, info?: any) => void,
-  ): Promise<any> {
+    profile: TwitchProfile,
+    done: (error: Error | null, user?: any, info?: any) => void,
+  ): Promise<void> {
     const { id: twitchId, display_name, email, profile_image_url } = profile;
 
     // --- LOGIKA RĘCZNEGO ODCZYTU ROLI I WALIDACJI CZASU ---
@@ -55,7 +75,8 @@ export class TwitchStrategy extends PassportStrategy(Strategy, 'twitch') {
         if (state.timestamp) {
           const now = Date.now();
           const diff = now - state.timestamp;
-          if (diff > 300000) { // 300000ms = 5 minut
+          if (diff > 300000) {
+            // 300000ms = 5 minut
             throw new Error('OAuth state expired (CSRF protection)');
           }
         }
@@ -63,12 +84,19 @@ export class TwitchStrategy extends PassportStrategy(Strategy, 'twitch') {
         // 2. Przypisanie Roli
         if (state && (state.role === 'CREATOR' || state.role === 'FAN')) {
           role = state.role === 'CREATOR' ? UserRole.CREATOR : UserRole.FAN;
-          this.logger.log(`TwitchStrategy: Role '${role}' recovered from state.`);
+          this.logger.log(
+            `TwitchStrategy: Role '${role}' recovered from state.`,
+          );
         }
       } catch (e) {
-        this.logger.warn(`TwitchStrategy: State validation failed. Error: ${(e as Error).message}`);
+        this.logger.warn(
+          `TwitchStrategy: State validation failed. Error: ${(e as Error).message}`,
+        );
         if ((e as Error).message.includes('expired')) {
-          throw new HttpException('Login session expired. Try again.', HttpStatus.FORBIDDEN);
+          throw new HttpException(
+            'Login session expired. Try again.',
+            HttpStatus.FORBIDDEN,
+          );
         }
       }
     }

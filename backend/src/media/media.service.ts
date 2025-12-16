@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
@@ -28,13 +32,7 @@ export class MediaService {
         size: data.fileSize,
         contentType: data.contentType,
         etag: data.etag,
-        publicUrl: '', 
-        // @ts-ignore: Status enum might not be generated yet or using string literal in prisma schema
-        // If status is not in schema, remove it. Schema had no status field in user provided snippet?
-        // Wait, user provided schema:
-        // model MediaRecord { ... bucket, provider, publicUrl ... }
-        // No 'status' field in the user provided snippet!
-        // So I should NOT try to set status.
+        publicUrl: '',
       },
     });
   }
@@ -43,7 +41,7 @@ export class MediaService {
     mediaId: string,
     data: {
       publicUrl?: string;
-    }
+    },
   ) {
     return this.prisma.mediaRecord.update({
       where: { id: mediaId },
@@ -61,25 +59,25 @@ export class MediaService {
     }
 
     if (!record.storjKey) {
-       throw new BadRequestException('Missing Storj key');
+      throw new BadRequestException('Missing Storj key');
     }
 
-    // URL to access Storj file (via gateway or presigned). 
+    // URL to access Storj file (via gateway or presigned).
     // Assuming public bucket or gateway for now based on previous discussions.
     const s3Url = `https://gateway.storjshare.io/${record.bucket}/${record.storjKey}`;
 
     try {
-        const result = await this.cloudinary.uploadFromS3(s3Url, record.id);
-        
-        return this.prisma.mediaRecord.update({
-            where: { id: mediaId },
-            data: {
-                publicUrl: result.secure_url,
-            }
-        });
+      const result = await this.cloudinary.uploadFromS3(s3Url, record.id);
+
+      return this.prisma.mediaRecord.update({
+        where: { id: mediaId },
+        data: {
+          publicUrl: result.secure_url,
+        },
+      });
     } catch (error) {
-        console.error("Cloudinary sync error:", error);
-         throw new BadRequestException("Failed to sync with Cloudinary");
+      console.error('Cloudinary sync error:', error);
+      throw new BadRequestException('Failed to sync with Cloudinary');
     }
   }
 

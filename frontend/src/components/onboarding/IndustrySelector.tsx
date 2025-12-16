@@ -3,15 +3,60 @@
 import React, { useState, useEffect } from "react";
 import {
   // Common
-  Gamepad2, Video, Mic, Camera, Dumbbell, Utensils, Laptop, Plane, Sparkles,
-  MoreHorizontal, Music2, Palette,
+  Gamepad2,
+  Video,
+  Mic,
+  Camera,
+  Dumbbell,
+  Utensils,
+  Laptop,
+  Plane,
+  Sparkles,
+  MoreHorizontal,
+  Music2,
+  Palette,
   // Specific
-  Smile, Heart, Users, Zap, MessageCircle, GraduationCap,
-  MessageSquare, Timer, Spade, Smartphone, TrendingUp, Trophy, Hammer, Shirt,
-  ShoppingBag, Gem, Activity, Briefcase, Newspaper, Fingerprint,
-  Apple, Target, PenTool, Monitor, Image, Aperture, Book, BookOpen, Code, Cpu, Rocket, Languages,
-  Scissors, Package, Wrench, TreeDeciduous, Crosshair, Globe, Brain,
-  ChevronDown, ChevronUp
+  Smile,
+  Heart,
+  Users,
+  Zap,
+  MessageCircle,
+  GraduationCap,
+  MessageSquare,
+  Timer,
+  Spade,
+  Smartphone,
+  TrendingUp,
+  Trophy,
+  Hammer,
+  Shirt,
+  ShoppingBag,
+  Gem,
+  Activity,
+  Briefcase,
+  Newspaper,
+  Fingerprint,
+  Apple,
+  Target,
+  PenTool,
+  Monitor,
+  Image,
+  Aperture,
+  Book,
+  BookOpen,
+  Code,
+  Cpu,
+  Rocket,
+  Languages,
+  Scissors,
+  Package,
+  Wrench,
+  TreeDeciduous,
+  Crosshair,
+  Globe,
+  Brain,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import clsx from "clsx";
 
@@ -35,7 +80,7 @@ const MAIN_GROUPS = [
       { id: "food", label: "Food / Mukbang", icon: Utensils },
       { id: "reactions", label: "Reactions", icon: MessageCircle },
       { id: "edu", label: "Education", icon: GraduationCap },
-    ]
+    ],
   },
   {
     id: "streaming",
@@ -50,7 +95,7 @@ const MAIN_GROUPS = [
       { id: "speedrun", label: "Speedrun", icon: Timer },
       { id: "models", label: "Digital Models", icon: Camera },
       { id: "gambling", label: "Poker / Slots", icon: Spade },
-    ]
+    ],
   },
   {
     id: "shortform",
@@ -67,7 +112,7 @@ const MAIN_GROUPS = [
       { id: "beauty_short", label: "Beauty / Make-up", icon: Heart },
       { id: "dance", label: "Dance", icon: Music2 },
       { id: "grwm", label: "GRWM", icon: Shirt },
-    ]
+    ],
   },
   {
     id: "podcast",
@@ -81,7 +126,7 @@ const MAIN_GROUPS = [
       { id: "dating_pod", label: "Dating / Relationships", icon: Heart },
       { id: "biz_pod", label: "Business", icon: Briefcase },
       { id: "politics", label: "Politics / News", icon: Newspaper },
-    ]
+    ],
   },
   {
     id: "coach",
@@ -96,7 +141,7 @@ const MAIN_GROUPS = [
       { id: "entrep", label: "Entrepreneurship", icon: Briefcase },
       { id: "health", label: "Health / Diet", icon: Apple },
       { id: "dating_coach", label: "Dating / PUA", icon: Heart },
-    ]
+    ],
   },
   {
     id: "influencer",
@@ -110,8 +155,8 @@ const MAIN_GROUPS = [
       { id: "luxury", label: "Luxury Lifestyle", icon: Gem },
       { id: "modeling", label: "Modeling", icon: Camera },
       { id: "bodypos", label: "Body Positive", icon: Activity },
-    ]
-  }
+    ],
+  },
 ];
 
 const NICHE_GROUPS = [
@@ -129,7 +174,7 @@ const NICHE_GROUPS = [
       { id: "dance_art", label: "Artistic Dance", icon: Music2 },
       { id: "writer", label: "Writing", icon: Book },
       { id: "sculpt", label: "Sculpture", icon: Hammer },
-    ]
+    ],
   },
   {
     id: "science",
@@ -143,7 +188,7 @@ const NICHE_GROUPS = [
       { id: "space", label: "Space / Physics", icon: Rocket },
       { id: "lang", label: "Languages", icon: Languages },
       { id: "history", label: "History", icon: BookOpen },
-    ]
+    ],
   },
   {
     id: "homemade",
@@ -156,7 +201,7 @@ const NICHE_GROUPS = [
       { id: "knives", label: "Blacksmithing", icon: Hammer },
       { id: "pottery", label: "Pottery", icon: Package },
       { id: "hats", label: "Accessories", icon: Sparkles },
-    ]
+    ],
   },
   {
     id: "build",
@@ -170,7 +215,7 @@ const NICHE_GROUPS = [
       { id: "survival", label: "Survival", icon: Crosshair },
       { id: "weapons", label: "Militaria", icon: Target },
       { id: "eco", label: "Eco / Farming", icon: Globe },
-    ]
+    ],
   },
   {
     id: "other",
@@ -178,78 +223,117 @@ const NICHE_GROUPS = [
     theme: "other",
     icon: MoreHorizontal,
     desc: "Define yourself", // DODANO
-    items: []
-  }
+    items: [],
+  },
 ];
 
 // --- STYLING CONFIGURATION ---
 
-const THEMES: Record<string, { glow: string, border: string, accent: string }> = {
-  yt: { 
-    glow: "shadow-[0_0_20px_-5px_rgba(255,0,0,0.4)]", 
-    border: "border-red-500/30", 
-    accent: "text-red-500"
-  },
-  twitch: { 
-    glow: "shadow-[0_0_20px_-5px_rgba(145,70,255,0.4)]", 
-    border: "border-[#9146FF]/30", 
-    accent: "text-[#9146FF]"
-  },
-  tiktok: { 
-    glow: "shadow-[0_0_20px_-5px_rgba(255,0,80,0.4)]", 
-    border: "border-pink-500/30", 
-    accent: "text-pink-400"
-  },
-  podcast: { 
-    glow: "shadow-[0_0_20px_-5px_rgba(59,130,246,0.4)]", 
-    border: "border-blue-500/30", 
-    accent: "text-blue-400"
-  },
-  coach: { 
-    glow: "shadow-[0_0_20px_-5px_rgba(16,185,129,0.4)]", 
-    border: "border-emerald-500/30", 
-    accent: "text-emerald-400"
-  },
-  influencer: { 
-    glow: "shadow-[0_0_20px_-5px_rgba(244,63,94,0.4)]", 
-    border: "border-rose-400/30", 
-    accent: "text-rose-400"
-  },
-  art: { glow: "shadow-[0_0_15px_-5px_rgba(99,102,241,0.3)]", border: "border-indigo-500/30", accent: "text-indigo-400" },
-  science: { glow: "shadow-[0_0_15px_-5px_rgba(6,182,212,0.3)]", border: "border-cyan-500/30", accent: "text-cyan-400" },
-  homemade: { glow: "shadow-[0_0_15px_-5px_rgba(245,158,11,0.3)]", border: "border-amber-500/30", accent: "text-amber-400" },
-  build: { glow: "shadow-[0_0_15px_-5px_rgba(168,162,158,0.3)]", border: "border-stone-500/30", accent: "text-stone-400" },
-  other: { glow: "shadow-[0_0_15px_-5px_rgba(255,255,255,0.15)]", border: "border-gray-500/30", accent: "text-gray-400" },
-};
+const THEMES: Record<string, { glow: string; border: string; accent: string }> =
+  {
+    yt: {
+      glow: "shadow-[0_0_20px_-5px_rgba(255,0,0,0.4)]",
+      border: "border-red-500/30",
+      accent: "text-red-500",
+    },
+    twitch: {
+      glow: "shadow-[0_0_20px_-5px_rgba(145,70,255,0.4)]",
+      border: "border-[#9146FF]/30",
+      accent: "text-[#9146FF]",
+    },
+    tiktok: {
+      glow: "shadow-[0_0_20px_-5px_rgba(255,0,80,0.4)]",
+      border: "border-pink-500/30",
+      accent: "text-pink-400",
+    },
+    podcast: {
+      glow: "shadow-[0_0_20px_-5px_rgba(59,130,246,0.4)]",
+      border: "border-blue-500/30",
+      accent: "text-blue-400",
+    },
+    coach: {
+      glow: "shadow-[0_0_20px_-5px_rgba(16,185,129,0.4)]",
+      border: "border-emerald-500/30",
+      accent: "text-emerald-400",
+    },
+    influencer: {
+      glow: "shadow-[0_0_20px_-5px_rgba(244,63,94,0.4)]",
+      border: "border-rose-400/30",
+      accent: "text-rose-400",
+    },
+    art: {
+      glow: "shadow-[0_0_15px_-5px_rgba(99,102,241,0.3)]",
+      border: "border-indigo-500/30",
+      accent: "text-indigo-400",
+    },
+    science: {
+      glow: "shadow-[0_0_15px_-5px_rgba(6,182,212,0.3)]",
+      border: "border-cyan-500/30",
+      accent: "text-cyan-400",
+    },
+    homemade: {
+      glow: "shadow-[0_0_15px_-5px_rgba(245,158,11,0.3)]",
+      border: "border-amber-500/30",
+      accent: "text-amber-400",
+    },
+    build: {
+      glow: "shadow-[0_0_15px_-5px_rgba(168,162,158,0.3)]",
+      border: "border-stone-500/30",
+      accent: "text-stone-400",
+    },
+    other: {
+      glow: "shadow-[0_0_15px_-5px_rgba(255,255,255,0.15)]",
+      border: "border-gray-500/30",
+      accent: "text-gray-400",
+    },
+  };
 
 interface IndustrySelectorProps {
-  value?: string;
-  onSelectAction: (value: string) => void;
+  value: string[];
+  onSelectAction: (value: string[]) => void;
   error?: boolean;
 }
 
-export default function IndustrySelector({ value, onSelectAction, error }: IndustrySelectorProps) {
+export default function IndustrySelector({
+  value,
+  onSelectAction,
+  error,
+}: IndustrySelectorProps) {
   const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
   const [showNiche, setShowNiche] = useState(false);
 
   useEffect(() => {
-    if (value) {
+    if (value.length > 0) {
       const allGroups = [...MAIN_GROUPS, ...NICHE_GROUPS];
-      const foundGroup = allGroups.find(g => 
-        g.label === value || g.items.some(item => item.label === value)
+      const foundGroup = allGroups.find(
+        (g) =>
+          value.includes(g.label) ||
+          g.items.some((item) => value.includes(item.label))
       );
       if (foundGroup) {
         setExpandedGroup(foundGroup.id);
-        if (NICHE_GROUPS.some(g => g.id === foundGroup.id)) {
-            setShowNiche(true);
+        if (NICHE_GROUPS.some((g) => g.id === foundGroup.id)) {
+          setShowNiche(true);
         }
       }
     }
-  }, [value]);
-  
-  const renderGroup = (group: typeof MAIN_GROUPS[0]) => {
+  }, []); // Run only on mount to prevent jumping around
+
+  const handleSelect = (label: string) => {
+    if (value.includes(label)) {
+      // Deselect
+      onSelectAction(value.filter((v) => v !== label));
+    } else {
+      // Select (limit to 3 is handled here or parent, keeping UI strict)
+      if (value.length < 3) {
+        onSelectAction([...value, label]);
+      }
+    }
+  };
+
+  const renderGroup = (group: (typeof MAIN_GROUPS)[0]) => {
     const theme = THEMES[group.theme] || THEMES.other;
-    const isMainSelected = value === group.label;
+    const isMainSelected = value.includes(group.label);
     const Icon = group.icon;
     const isExpanded = expandedGroup === group.id;
 
@@ -259,77 +343,98 @@ export default function IndustrySelector({ value, onSelectAction, error }: Indus
         <button
           type="button"
           onClick={() => {
-            onSelectAction(group.label);
-            setExpandedGroup(prev => prev === group.id ? null : group.id);
+            handleSelect(group.label);
+            setExpandedGroup((prev) => (prev === group.id ? null : group.id));
           }}
           className={clsx(
             "relative w-full p-2 md:p-3 rounded-2xl text-left transition-all duration-300 overflow-hidden group border bg-black/40 backdrop-blur-sm flex items-center gap-3",
             theme.border,
             theme.glow,
-            isMainSelected 
+            isMainSelected
               ? "ring-1 ring-white/50 bg-white/5"
               : "hover:bg-white/5 hover:border-white/30"
           )}
         >
-            {/* Ikona lewo */}
-            <div className={clsx(
+          {/* Ikona lewo */}
+          <div
+            className={clsx(
               "p-2 rounded-xl transition-colors bg-white/5 shrink-0",
-              isMainSelected ? theme.accent : "text-gray-400 group-hover:text-white"
-            )}>
-              <Icon size={24} strokeWidth={1.5} />
-            </div>
-            
-            {/* Tekst prawo */}
-            <div className="flex-1 flex flex-col justify-center min-w-0">
-              <h3 className={clsx(
-                "text-lg md:text-xl font-bold tracking-tight transition-colors truncate",
-                isMainSelected ? "text-white" : "text-gray-200 group-hover:text-white"
-              )}>
-                {group.label}
-              </h3>
-              {group.desc && (
-                <p className="text-gray-500 text-[10px] md:text-xs font-medium truncate group-hover:text-gray-400 transition-colors">
-                  {group.desc}
-                </p>
-              )}
-            </div>
-
-            {/* Znacznik wyboru */}
-            {isMainSelected && (
-                <div className={clsx("w-2 h-2 rounded-full shrink-0 mr-1", theme.accent, "shadow-[0_0_8px_currentColor] bg-current")} />
+              isMainSelected
+                ? theme.accent
+                : "text-gray-400 group-hover:text-white"
             )}
+          >
+            <Icon size={24} strokeWidth={1.5} />
+          </div>
+
+          {/* Tekst prawo */}
+          <div className="flex-1 flex flex-col justify-center min-w-0">
+            <h3
+              className={clsx(
+                "text-lg md:text-xl font-bold tracking-tight transition-colors truncate",
+                isMainSelected
+                  ? "text-white"
+                  : "text-gray-200 group-hover:text-white"
+              )}
+            >
+              {group.label}
+            </h3>
+            {group.desc && (
+              <p className="text-gray-500 text-[10px] md:text-xs font-medium truncate group-hover:text-gray-400 transition-colors">
+                {group.desc}
+              </p>
+            )}
+          </div>
+
+          {/* Znacznik wyboru */}
+          {isMainSelected && (
+            <div
+              className={clsx(
+                "w-2 h-2 rounded-full shrink-0 mr-1",
+                theme.accent,
+                "shadow-[0_0_8px_currentColor] bg-current"
+              )}
+            />
+          )}
         </button>
 
         {/* --- SUB-ITEMS --- */}
-        <div className={clsx(
-          "gap-2",
-          isExpanded ? "grid grid-cols-2" : "hidden md:grid md:grid-cols-2"
-        )}>
+        <div
+          className={clsx(
+            "gap-2",
+            isExpanded ? "grid grid-cols-2" : "hidden md:grid md:grid-cols-2"
+          )}
+        >
           {group.items.map((item) => {
-            const isSubSelected = value === item.label;
+            const isSubSelected = value.includes(item.label);
             const SubIcon = item.icon;
 
             return (
               <button
                 key={item.id}
                 type="button"
-                onClick={() => onSelectAction(item.label)}
+                onClick={() => handleSelect(item.label)}
                 className={clsx(
                   "flex flex-col items-center justify-center p-2 rounded-xl border transition-all duration-200 text-center gap-1 min-h-[70px]",
-                  isSubSelected 
-                    ? `bg-white/10 ${theme.border} ring-1 ring-inset ring-white/20` 
+                  isSubSelected
+                    ? `bg-white/10 ${theme.border} ring-1 ring-inset ring-white/20`
                     : "bg-black/20 border-white/5 hover:bg-white/5 hover:border-white/20"
                 )}
               >
-                <SubIcon size={16} className={isSubSelected ? theme.accent : "text-gray-500"} />
-                <span className={clsx(
-                  "text-xs font-medium leading-tight",
-                  isSubSelected ? "text-gray-100" : "text-gray-500"
-                )}>
+                <SubIcon
+                  size={16}
+                  className={isSubSelected ? theme.accent : "text-gray-500"}
+                />
+                <span
+                  className={clsx(
+                    "text-xs font-medium leading-tight",
+                    isSubSelected ? "text-gray-100" : "text-gray-500"
+                  )}
+                >
                   {item.label}
                 </span>
               </button>
-            )
+            );
           })}
         </div>
       </div>
@@ -338,7 +443,6 @@ export default function IndustrySelector({ value, onSelectAction, error }: Indus
 
   return (
     <div className="w-full space-y-8">
-      
       {/* --- MAIN GRID (6 cols) --- */}
       <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-3">
         {MAIN_GROUPS.map(renderGroup)}
@@ -346,47 +450,54 @@ export default function IndustrySelector({ value, onSelectAction, error }: Indus
 
       {/* --- MORE BUTTON --- */}
       <div className="relative py-4 flex items-center justify-center">
-         <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent w-full absolute" />
-         <button 
-            type="button"
-            onClick={() => setShowNiche(!showNiche)}
-            className="relative z-10 bg-[#0a0a0a] px-5 py-1.5 flex items-center gap-2 text-xs md:text-sm text-gray-400 hover:text-white hover:border-white/20 uppercase tracking-widest font-bold border border-white/5 rounded-full transition-all cursor-pointer"
-         >
-           More / Niche / Values
-           {showNiche ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-         </button>
+        <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent w-full absolute" />
+        <button
+          type="button"
+          onClick={() => setShowNiche(!showNiche)}
+          className="relative z-10 bg-[#0a0a0a] px-5 py-1.5 flex items-center gap-2 text-xs md:text-sm text-gray-400 hover:text-white hover:border-white/20 uppercase tracking-widest font-bold border border-white/5 rounded-full transition-all cursor-pointer"
+        >
+          More / Niche / Values
+          {showNiche ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+        </button>
       </div>
 
       {/* --- NICHE GRID --- */}
       {showNiche && (
         <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-3 animate-in fade-in slide-in-from-top-4 duration-500">
-            {NICHE_GROUPS.map((group) => {
+          {NICHE_GROUPS.map((group) => {
             if (group.id === "other") {
-                return (
+              return (
                 <button
-                    key={group.id}
-                    type="button"
-                    onClick={() => onSelectAction("Other")}
-                    className={clsx(
+                  key={group.id}
+                  type="button"
+                  onClick={() => handleSelect("Other")}
+                  className={clsx(
                     "col-span-1 h-full min-h-[80px] border border-dashed border-white/10 rounded-2xl flex flex-row items-center justify-start p-3 gap-3 hover:border-white/30 transition-colors group bg-black/20",
-                    value === "Other" && "border-amber-500/50 bg-amber-500/5"
-                    )}
+                    value.includes("Other") &&
+                      "border-amber-500/50 bg-amber-500/5"
+                  )}
                 >
-                    <div className="p-2 rounded-full bg-white/5 group-hover:bg-white/10 transition-colors shrink-0">
-                        <MoreHorizontal size={20} className="text-gray-500 group-hover:text-white" />
-                    </div>
-                    <div className="text-left">
-                        <span className="block text-base font-bold text-gray-300 mb-0 group-hover:text-white">Other</span>
-                        <span className="text-[10px] text-gray-600 uppercase tracking-wider">Define yourself</span>
-                    </div>
+                  <div className="p-2 rounded-full bg-white/5 group-hover:bg-white/10 transition-colors shrink-0">
+                    <MoreHorizontal
+                      size={20}
+                      className="text-gray-500 group-hover:text-white"
+                    />
+                  </div>
+                  <div className="text-left">
+                    <span className="block text-base font-bold text-gray-300 mb-0 group-hover:text-white">
+                      Other
+                    </span>
+                    <span className="text-[10px] text-gray-600 uppercase tracking-wider">
+                      Define yourself
+                    </span>
+                  </div>
                 </button>
-                )
+              );
             }
             return renderGroup(group);
-            })}
+          })}
         </div>
       )}
-
     </div>
   );
 }

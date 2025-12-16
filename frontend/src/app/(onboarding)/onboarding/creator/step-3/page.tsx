@@ -1,90 +1,146 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+
 import OnboardingShell from "@/components/layout/OnboardingShell";
 import Button from "@/components/ui/Button";
-import QRCode from "react-qr-code";
-
+import SocialConnect from "@/components/onboarding/SocialConnect";
 import apiClient from "@/lib/apiClient";
 
 export default function Step3() {
-  const [generating, setGenerating] = useState(false);
-  // TODO: Get real username from store or context
-  const profileUrl = "https://tipjar.plus/@yourname"; 
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [saving, setSaving] = useState(false);
+  const [bio, setBio] = useState("");
+  // Track connected socials
+  const [connectedSocials, setConnectedSocials] = useState<string[]>([]);
+  // Avoid re-triggering on same param
+  const processedRef = React.useRef<string | null>(null);
 
-  async function generatePoster() {
-    setGenerating(true);
-    try {
-      await apiClient.post("/api/onboarding/poster", {});
-      alert("Poster generated! (Check console for mock)");
-    } catch (e) {
-      console.error(e);
-      alert("Failed to generate poster");
-    } finally {
-      setGenerating(false);
+  useEffect(() => {
+    const connected = searchParams.get("connected");
+    if (connected && connected !== processedRef.current) {
+      if (!connectedSocials.includes(connected)) {
+        setConnectedSocials((prev) => [...prev, connected]);
+        // Optional: show toast or success message
+      }
+      processedRef.current = connected;
+      // Clean up the URL
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, "", newUrl);
     }
-  }
+  }, [searchParams, connectedSocials]);
+
+  const handleConnect = (platformId: string) => {
+    // If already connected, maybe disconnect? For now, just ignore or optional alert
+    if (connectedSocials.includes(platformId)) {
+      if (confirm(`Disconnect ${platformId}?`)) {
+        setConnectedSocials((prev) => prev.filter((p) => p !== platformId));
+      }
+      return;
+    }
+
+    const returnTo = window.location.pathname;
+
+    if (platformId === "twitch") {
+      // Connect to real backend
+      const state = {
+        role: "CREATOR",
+        timestamp: Date.now(),
+        returnTo: `/onboarding/creator/step-3?connected=twitch`
+      };
+      const stateEncoded = btoa(JSON.stringify(state));
+      // Assuming backend is at localhost:3001/api/v1 or via proxy
+      // Using explicit URL for now or relative if proxied.
+      // Better to use env var for API URL but hardcoding localhost for dev per request context is often safer if env is unknown
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api/v1";
+      window.location.href = `${apiUrl}/auth/twitch?state=${stateEncoded}`;
+      return;
+    }
+
+    // Redirect to mock auth for others
+    window.location.href = `/api/mock-social-auth?platform=${platformId}&returnTo=${returnTo}`;
+  };
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSaving(true);
+
+    try {
+      await apiClient.post("/api/onboarding/creator/step-3", {
+        bio,
+        // If the backend supported saving socials, we would send them here:
+        // socials: connectedSocials
+      });
+      router.push("/onboarding/creator/step-4");
+    } catch (error) {
+      console.error("Failed to save step 3", error);
+      alert("Failed to save. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
-    <OnboardingShell 
-      step={3} 
-      title="You are ready!" 
-      subtitle="Your profile is live. Share it now to start receiving support."
-    >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-        
-        {/* Karta QR */}
-        <div className="flex flex-col items-center p-8 rounded-2xl bg-white text-brand-dark shadow-2xl rotate-1 hover:rotate-0 transition-transform duration-300">
-          <div className="mb-4">
-             <QRCode value={profileUrl} size={200} fgColor="#003737" />
-          </div>
-          <p className="font-bold text-lg">@{profileUrl.split('@')[1] || 'username'}</p>
-          <p className="text-sm opacity-60 mt-1">Scan to tip in USDC</p>
-          
-          <div className="mt-6 w-full">
-            <Button variant="outline" size="sm" fullWidth className="!border-brand-dark/20 !text-brand-dark hover:!bg-brand-dark/5">
-              Download PNG
-            </Button>
-          </div>
-        </div>
-
-        {/* Akcje */}
-        <div className="space-y-6 py-4">
-          <div className="bg-brand-gold/10 border border-brand-gold/20 rounded-xl p-5">
-            <h3 className="text-brand-gold font-bold mb-2 flex items-center gap-2">
-              <span>✨</span> AI Magic
-            </h3>
-            <p className="text-sm text-white/70 mb-4 leading-relaxed">
-              Want a professional promo poster? Our AI will write a witty headline based on your bio.
-            </p>
-            <Button 
-              variant="glass" 
-              fullWidth 
-              onClick={generatePoster} 
-              loading={generating}
-              className="!bg-brand-gold/20 hover:!bg-brand-gold/30 !border-brand-gold/40"
-            >
-              Generate AI Poster
-            </Button>
-          </div>
-
-          <div className="h-px bg-white/10 w-full my-4" />
-
-          <div className="flex flex-col gap-3">
-            <Link href="/creatorstudio" className="w-full">
-               <Button variant="gold" size="lg" fullWidth>
-                 Enter Studio →
-               </Button>
-            </Link>
-            <Link href="/onboarding/creator/step-2" className="w-full">
-               <Button variant="ghost" size="sm" fullWidth>
-                 Back to edit
-               </Button>
-            </Link>
+    <OnboardingShell step={3} title="Tell us about yourself">
+      <form className="space-y-8 max-w-3xl mx-auto w-full" onSubmit={onSubmit}>
+        {/* BIO SECTION */}
+        <div className="space-y-4">
+          <label
+            htmlFor="bio"
+            className="block text-sm font-medium text-gray-300"
+          >
+            Bio{" "}
+            <span className="text-gray-500 text-xs ml-2">
+              (Max 200 characters)
+            </span>
+          </label>
+          <div className="relative">
+            <textarea
+              id="bio"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              className="w-full h-32 bg-white/5 border border-white/10 rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/50 resize-none"
+              placeholder="I create awesome content about..."
+              maxLength={200}
+            />
+            <div className="absolute bottom-3 right-3 text-xs text-gray-500 pointer-events-none">
+              {bio.length}/200
+            </div>
           </div>
         </div>
 
-      </div>
+        {/* SOCIAL CONNECT SECTION */}
+        <div className="space-y-4 pt-4 border-t border-white/5">
+          <h3 className="text-sm font-medium text-gray-300">
+            Connect your socials
+          </h3>
+          <SocialConnect
+            onConnectAction={handleConnect}
+            connected={connectedSocials}
+          />
+        </div>
+
+        {/* FOOTER */}
+        <div className="flex items-center justify-between pt-8 border-t border-white/5">
+          <Link
+            href="/dashboard"
+            className="text-sm text-gray-500 hover:text-white transition-colors"
+          >
+            Skip for now
+          </Link>
+          <Button
+            type="submit"
+            variant="gold"
+            size="lg"
+            loading={saving}
+            className="min-w-[180px] px-8"
+          >
+            Next Step
+          </Button>
+        </div>
+      </form>
     </OnboardingShell>
   );
 }
