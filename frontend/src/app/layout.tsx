@@ -3,12 +3,12 @@ import type { Metadata } from "next";
 import { ReactNode } from "react";
 import { Mukta, IBM_Plex_Sans } from "next/font/google";
 import { cn } from "@/lib/utils";
-import { Providers } from "./providers"; // wrapper dla wagmi
+import { Providers } from "./providers";
+import UserHeader from "@/components/layout/UserHeader";
 
-// Konfiguracja czcionek
 const bodyFont = Mukta({
   subsets: ["latin"],
-  weight: ["400", "500", "700"], // Regular, Medium, Bold
+  weight: ["400", "500", "700"],
   variable: "--font-body",
 });
 
@@ -18,7 +18,6 @@ const uiFont = IBM_Plex_Sans({
   variable: "--font-ui",
 });
 
-// SEO metadata
 export const metadata: Metadata = {
   title: {
     default: "tipjar+",
@@ -32,16 +31,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-screen bg-gradient-main text-white antialiased font-sans",
+          "min-h-screen bg-gradient-main text-white antialiased font-sans relative",
           bodyFont.variable,
           uiFont.variable,
         )}
       >
-        {/* 
-          Opakowujemy całą aplikację w Providers.
-          Dzięki temu hooki z wagmi (portfel) 
-          są dostępne w każdym komponencie. 
-        */}
+        <UserHeader />
         <Providers>{children}</Providers>
       </body>
     </html>

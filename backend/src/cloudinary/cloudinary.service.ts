@@ -37,7 +37,10 @@ export class CloudinaryService {
     });
   }
 
-  async uploadFromS3(url: string, publicId?: string): Promise<UploadApiResponse> {
+  async uploadFromS3(
+    url: string,
+    publicId?: string,
+  ): Promise<UploadApiResponse> {
     return cloudinary.uploader.upload(url, {
       folder: 'tipjar/avatars',
       public_id: publicId,

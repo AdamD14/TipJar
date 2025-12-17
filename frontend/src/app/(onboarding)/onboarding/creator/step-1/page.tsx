@@ -1,3 +1,4 @@
+// src/app/(onboarding)/onboarding/creator/step-1/page.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -15,7 +16,8 @@ export default function Step1() {
   useEffect(() => {
     const loadStatus = async () => {
       try {
-        const { data } = await apiClient.get("/api/onboarding/creator/status");
+        // ZMIANA: Poprawiony endpoint
+        const { data } = await apiClient.get("/api/v1/creator/onboarding/status");
         if (data?.profile?.industry) {
           const saved = data.profile.industry.split(",").filter(Boolean);
           setSelectedIndustries(saved);
@@ -32,7 +34,8 @@ export default function Step1() {
 
     setSaving(true);
     try {
-      await apiClient.post("/api/onboarding/creator/step-1", {
+      // ZMIANA: Poprawiony endpoint i metoda (PATCH zamiast POST)
+      await apiClient.patch("/api/v1/creator/onboarding/identity", {
         industry: industriesToSave.join(","),
       });
 

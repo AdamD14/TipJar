@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from "react";
 import clsx from "clsx";
 import Stepper from "@/components/onboarding/Stepper";
-// IMPORT ORYGINAŁU
-import LoginButton from "@/components/ui/LoginButton";
 
 // --- Animated Brand Component ---
 function AnimatedBrand() {
@@ -50,12 +48,7 @@ type Props = {
   username?: string | null;
 };
 
-export default function OnboardingShell({
-  step,
-  title,
-  children,
-  username,
-}: Props) {
+export default function OnboardingShell({ step, title, children }: Props) {
   // Logika scrolla (lokalna, żeby nie importować hooków, których mogę nie znać)
   const [scrolled, setScrolled] = useState(false);
 
@@ -66,8 +59,6 @@ export default function OnboardingShell({
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const displayHandle = username ? `@${username}` : "@creator";
 
   return (
     <section className="min-h-screen bg-gradient-main font-ui overflow-x-hidden flex flex-col relative">
@@ -84,20 +75,9 @@ export default function OnboardingShell({
       >
         <nav className="mx-auto w-full px-4 md:px-6" aria-label="Main">
           <div className="flex py-1 items-center justify-between">
-            {/* 1) Lewa: AnimatedBrand */}
             <div className="flex-1 flex items-center justify-start">
               <div className="flex items-center gap-2">
                 <AnimatedBrand />
-              </div>
-            </div>
-
-            {/* 2) Prawa: LoginButton jako Badge */}
-            <div className="flex-1 flex justify-end items-center">
-              {/* Usunięto 'hidden md:block' -> widoczne zawsze */}
-              <div>
-                <LoginButton data-testid="user-badge">
-                  {displayHandle}
-                </LoginButton>
               </div>
             </div>
           </div>

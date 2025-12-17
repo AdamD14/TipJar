@@ -58,7 +58,7 @@ type BaseProps = {
 };
 
 // Button (bez href)
-type ButtonProps = BaseProps &
+export type ButtonProps = BaseProps &
   React.ButtonHTMLAttributes<HTMLButtonElement> & {
     href?: never;
   };
@@ -123,8 +123,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
         "border border-white/20 text-white hover:bg-white/5 active:bg-white/10":
           variant === "outline",
 
-        "text-white hover:bg-white/10 active:bg-white/15":
-          variant === "ghost",
+        "text-white hover:bg-white/10 active:bg-white/15": variant === "ghost",
 
         "bg-red-600 text-white hover:bg-red-500 active:bg-red-700 shadow-lg shadow-red-600/20":
           variant === "danger",
@@ -132,8 +131,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
         "bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 active:bg-white/25":
           variant === "glass",
 
-        "text-[#FFD700] hover:underline underline-offset-4":
-          variant === "link",
+        "text-[#FFD700] hover:underline underline-offset-4": variant === "link",
       },
       className
     );
@@ -169,7 +167,10 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
         ref={ref as React.Ref<HTMLButtonElement>}
         {...(rest as React.ButtonHTMLAttributes<HTMLButtonElement>)}
         className={base}
-        disabled={(rest as React.ButtonHTMLAttributes<HTMLButtonElement>).disabled || loading}
+        disabled={
+          (rest as React.ButtonHTMLAttributes<HTMLButtonElement>).disabled ||
+          loading
+        }
         aria-busy={loading || undefined}
       >
         {content}
