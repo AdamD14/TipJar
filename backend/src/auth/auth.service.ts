@@ -13,6 +13,7 @@ import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { MailerService } from '@nestjs-modules/mailer';
+import { SignOptions } from 'jsonwebtoken';
 import {
   UsersService,
   InternalCreateUserDto,
@@ -22,7 +23,6 @@ import { CircleService } from '../circle/circle.service';
 import {
   User as UserModelPrisma,
   UserRole,
-  Prisma,
   SocialConnection,
 } from '@prisma/client';
 import { RegisterUserDto } from './dto/register-user.dto';
@@ -58,7 +58,7 @@ export class AuthService {
     @Inject(forwardRef(() => CircleService))
     private circleService: CircleService,
     private mailerService: MailerService,
-  ) { }
+  ) {}
 
   private toValidatedUser(user: UserModelPrisma): ValidatedUser {
     return {
@@ -85,12 +85,20 @@ export class AuthService {
       isActive: user.isActive,
     };
 
+    const accessExpiresIn = this.configService.get<string>(
+      'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
+      '15m',
+    );
     const accessToken = this.jwtService.sign(payload, {
-      expiresIn: (this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRATION_TIME') ?? '15m') as any,
+      expiresIn: accessExpiresIn as SignOptions['expiresIn'],
     });
 
+    const refreshExpiresIn = this.configService.get<string>(
+      'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
+      '7d',
+    );
     const refreshToken = this.jwtService.sign(payload, {
-      expiresIn: (this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRATION_TIME') ?? '7d') as any,
+      expiresIn: refreshExpiresIn as SignOptions['expiresIn'],
     });
 
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
@@ -159,12 +167,9 @@ export class AuthService {
 
       return this.toValidatedUser(newUserFromDb);
     } catch (error: unknown) {
-      if (
-        error instanceof Error &&
-        'code' in error &&
-        typeof (error as any).code === 'string' &&
-        (error as any).code === 'P2002'
-      ) {
+      // Safe check for Prisma P2002 error (unique constraint)
+      const err = error as { code?: string };
+      if (err.code === 'P2002') {
         throw new ConflictException(
           'Użytkownik o tym adresie email już istnieje.',
         );
@@ -173,7 +178,8 @@ export class AuthService {
         throw error;
       }
       this.logger.error(
-        `Critical error during registration for email ${registerDto.email}: ${(error as Error).message
+        `Critical error during registration for email ${registerDto.email}: ${
+          (error as Error).message
         }`,
         (error as Error).stack,
       );
@@ -185,8 +191,7 @@ export class AuthService {
 
   async login(user: ValidatedUser): Promise<AuthTokens> {
     this.logger.log(
-      `Login successful for user: ${user.email || `ID ${user.id}`
-      }. Generating tokens.`,
+      `Login successful for user: ${user.email || `ID ${user.id}`}. Generating tokens.`,
     );
     return this.generateTokens(user);
   }
@@ -231,14 +236,15 @@ export class AuthService {
     const socialConnection:
       | (SocialConnection & { user: UserModelPrisma })
       | null = await this.usersService.findSocialConnection(
-        provider,
-        providerId,
-      );
+      provider,
+      providerId,
+    );
     let userFromDb: UserModelPrisma;
 
     if (socialConnection) {
       this.logger.log(
-        `Found existing user (ID: ${socialConnection.user.id
+        `Found existing user (ID: ${
+          socialConnection.user.id
         }) via social connection [${provider}: ${providerId.substring(
           0,
           10,
@@ -365,7 +371,8 @@ export class AuthService {
       );
     } catch (error: unknown) {
       this.logger.error(
-        `Failed to send verification email to ${user.email} (User ID: ${user.id
+        `Failed to send verification email to ${user.email} (User ID: ${
+          user.id
         }): ${(error as Error).message}`,
         (error as Error).stack,
       );
@@ -415,5 +422,13 @@ export class AuthService {
       currentHashedRefreshToken: null,
     });
     this.logger.log(`Stored refresh token cleared for user ID: ${userId}.`);
+  }
+
+  async getUserProfile(userId: string): Promise<ValidatedUser> {
+    const user = await this.usersService.findOneById(userId);
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+    return this.toValidatedUser(user);
   }
 }

@@ -1,15 +1,18 @@
-import { api } from "./api/http";
+import { api } from "@/lib/api";
 import { API } from "./api-routes";
 
 export async function checkUsername(u: string) {
   const q = new URLSearchParams({ username: u }).toString();
-  const { data } = await api.get(`${API.USERS.USERNAME_CHECK}?${q}`);
-  return data;
+  // api<T> returns the data directly, not { data }
+  return api<{ available: boolean }>(`${API.USERS.USERNAME_CHECK}?${q}`);
 }
+
 export async function setUsername(username: string) {
   // Deprecated: use setUsernameAndConsents in onboarding flow.
-  const { data } = await api.post(API.USERS.SET_USERNAME, { username });
-  return data;
+  return api<void>(API.USERS.SET_USERNAME, {
+    method: "POST",
+    body: JSON.stringify({ username }),
+  });
 }
 
 export async function setUsernameAndConsents(
@@ -17,8 +20,10 @@ export async function setUsernameAndConsents(
   consents: { terms: boolean; privacy: boolean; age: boolean; marketing?: boolean },
 ) {
   const payload = { username, consents };
-  const { data } = await api.post(API.USERS.SET_USERNAME, payload);
-  return data;
+  return api<void>(API.USERS.SET_USERNAME, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 }
 
 export async function getPublicProfile(username: string) {
@@ -26,6 +31,5 @@ export async function getPublicProfile(username: string) {
     ":username",
     encodeURIComponent(username),
   );
-  const { data } = await api.get(path);
-  return data;
+  return api<any>(path);
 }

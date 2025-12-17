@@ -7,7 +7,7 @@ import Link from "next/link";
 import OnboardingShell from "@/components/layout/OnboardingShell";
 import Button from "@/components/ui/Button";
 import IndustrySelector from "@/components/onboarding/IndustrySelector";
-import apiClient from "@/lib/apiClient";
+import { api } from "@/lib/api";
 
 export default function Step1() {
   const [saving, setSaving] = useState(false);
@@ -16,8 +16,9 @@ export default function Step1() {
   useEffect(() => {
     const loadStatus = async () => {
       try {
-        // ZMIANA: Poprawiony endpoint
-        const { data } = await apiClient.get("/api/v1/creator/onboarding/status");
+        const data = await api<{ profile: { industry?: string } }>(
+          "/api/v1/creator/onboarding/status"
+        );
         if (data?.profile?.industry) {
           const saved = data.profile.industry.split(",").filter(Boolean);
           setSelectedIndustries(saved);
@@ -34,9 +35,11 @@ export default function Step1() {
 
     setSaving(true);
     try {
-      // ZMIANA: Poprawiony endpoint i metoda (PATCH zamiast POST)
-      await apiClient.patch("/api/v1/creator/onboarding/identity", {
-        industry: industriesToSave.join(","),
+      await api<void>("/api/v1/creator/onboarding/identity", {
+        method: "PATCH",
+        body: JSON.stringify({
+          industry: industriesToSave.join(","),
+        }),
       });
 
       location.assign("/onboarding/creator/step-2");

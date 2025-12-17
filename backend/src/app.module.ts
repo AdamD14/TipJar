@@ -20,8 +20,9 @@ import { TipsModule } from './tips/tips.module';
 import { PayoutsModule } from './payouts/payouts.module';
 import { NotificationModule } from './notification/notification.module';
 import { AnalyticsModule } from './analytics/analytics.module';
-import { CreatorOnboardingModule } from './creator/onboarding/onboarding.module';
-import { CreatorsModule } from './creators/creators.module';
+import { OnboardingModule } from './onboarding/creator/onboarding.module';
+import { FanOnboardingModule } from './onboarding/fan/fan-onboarding.module';
+// import { CreatorsModule } from './creators/creators.module';
 
 // Newly added FanModule
 import { FanModule } from './fan/fan.module';
@@ -68,8 +69,8 @@ import { RemindersModule } from './reminders/reminders.module';
     PayoutsModule,
     NotificationModule,
     AnalyticsModule,
-    CreatorOnboardingModule,
-    CreatorsModule,
+    OnboardingModule,
+    // CreatorsModule,
     UploadsModule,
     RemindersModule,
     // Import the fan module to enable fan endpoints

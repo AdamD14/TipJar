@@ -17,6 +17,10 @@ export class CreatorStep3Dto {
   @IsOptional()
   bio?: string;
 
+  @IsString()
+  @IsOptional()
+  websiteUrl?: string;
+
   // Socials will be handled via a separate endpoint or added here if simple
   // For now, let's keep it aligned with the plan (Bio input Step 3 page)
   // The SocialConnect component might save incrementally or we pass it here.

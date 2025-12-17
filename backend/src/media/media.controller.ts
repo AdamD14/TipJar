@@ -19,6 +19,7 @@ export class MediaController {
       fileName: string;
       fileSize: number;
       contentType: string;
+      bucket?: string;
       etag?: string;
     },
   ) {
@@ -28,6 +29,7 @@ export class MediaController {
       fileName: body.fileName,
       fileSize: body.fileSize,
       contentType: body.contentType,
+      bucket: body.bucket,
       etag: body.etag || '',
     });
 

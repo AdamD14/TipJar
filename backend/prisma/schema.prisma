@@ -57,6 +57,7 @@ model User {
   isEmailVerified                 Boolean   @default(false)
   emailVerificationToken          String?   @unique
   emailVerificationTokenExpiresAt DateTime?
+  interests                       String[]  @default([])
 
   currentHashedRefreshToken String? @db.Text
 
@@ -115,8 +116,9 @@ model Profile {
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  bio       String? @db.Text
-  bannerUrl String?
+  bio        String? @db.Text
+  bannerUrl  String?
+  websiteUrl String?
 
   customTipJarUrlSuffix String? @unique
 
@@ -292,25 +294,25 @@ model WebhookEvent {
 }
 
 model MediaRecord {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Metadane pliku
-  storjKey    String   // Klucz w Storj (np. avatars/user_1/...)
+  storjKey    String // Klucz w Storj (np. avatars/user_1/...)
   fileName    String
   contentType String
   size        Int
   etag        String?
-  
-  // Kontekst
-  bucket      String   @default("storj-tipjar") // Nazwa twojego bucketa
-  provider    String   @default("storj")
-  
-  // Wynikowy URL (Cloudinary)
-  publicUrl   String
 
-  createdAt   DateTime @default(now())
+  // Kontekst
+  bucket   String @default("storj-tipjar") // Nazwa twojego bucketa
+  provider String @default("storj")
+
+  // Wynikowy URL (Cloudinary)
+  publicUrl String
+
+  createdAt DateTime @default(now())
 
   @@index([userId])
   @@index([storjKey])

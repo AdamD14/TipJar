@@ -1,26 +1,37 @@
 import UserName from "./UserName";
 
+import { cookies } from "next/headers";
+
 async function getCurrentUser() {
-  console.log("Rozpoczynam fetch do backendu");
+  const origin =
+    process.env.NEXT_PUBLIC_BACKEND_ORIGIN || "http://localhost:3001";
 
   try {
-    const res = await fetch("http://localhost:3001/auth/ME", {
-      credentials: "include",
+    const cookieStore = await cookies();
+    const cookieString = cookieStore.toString();
+
+    console.log("[UserHeader] Fetching from:", `${origin}/api/v1/auth/me`);
+    console.log("[UserHeader] Cookies sent:", cookieString);
+
+    const res = await fetch(`${origin}/api/v1/auth/me`, {
+      headers: {
+        Cookie: cookieString,
+      },
       cache: "no-store",
     });
 
-    console.log("Status odpowiedzi:", res.status);
+    console.log("[UserHeader] Response status:", res.status);
 
     if (!res.ok) {
-      console.log("Błąd HTTP – nie zalogowany lub zły endpoint");
+      console.log("[UserHeader] Response not OK");
       return null;
     }
 
     const data = await res.json();
-    console.log("Otrzymane dane z backendu:", data);
+    console.log("[UserHeader] Data received:", data);
     return data;
   } catch (error) {
-    console.log("Błąd podczas fetch:", error);
+    console.error("[UserHeader] Fetch error:", error);
     return null;
   }
 }

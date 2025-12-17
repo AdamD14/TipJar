@@ -18,20 +18,33 @@ export class OnboardingService {
   async getCreatorStatus(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      include: { profile: true },
+      include: {
+        profile: true,
+        mediaRecords: {
+          orderBy: { createdAt: 'desc' },
+          take: 3,
+        },
+      },
     });
 
     if (!user) throw new BadRequestException('User not found');
 
     const steps: number[] = [];
     if (user.profile?.industry) steps.push(1);
-    if (user.profile?.goalTarget) steps.push(2);
-    if (user.hasCompletedOnboarding) steps.push(3);
+    // basic checks
+    if (user.profile?.goalTarget) steps.push(4);
+    if (user.hasCompletedOnboarding) steps.push(5);
+
+    // Map media records to public URLs
+    const avatarUrls = user.mediaRecords
+      .map((r) => r.publicUrl)
+      .filter(Boolean);
 
     return {
       completedSteps: steps,
       profile: user.profile,
-      avatarUrl: user.avatarUrl,
+      avatarUrl: avatarUrls[0] || user.avatarUrl, // fallback
+      avatarUrls: avatarUrls, // New field for carousel
     };
   }
 
@@ -64,8 +77,15 @@ export class OnboardingService {
   async saveCreatorStep3(userId: string, dto: CreatorStep3Dto) {
     return this.prisma.profile.upsert({
       where: { userId },
-      create: { userId, bio: dto.bio },
-      update: { bio: dto.bio },
+      create: {
+        userId,
+        bio: dto.bio,
+        websiteUrl: dto.websiteUrl,
+      },
+      update: {
+        bio: dto.bio,
+        websiteUrl: dto.websiteUrl,
+      },
     });
   }
 

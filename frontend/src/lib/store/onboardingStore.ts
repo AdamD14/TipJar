@@ -3,66 +3,52 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
-type Role = 'FAN' | 'CREATOR';
-type Step = 'REGISTER' | 'CHOOSE_USERNAME' | 'CONSENTS' | 'COMPLETED';
+type Step = 'STEP_1' | 'STEP_2' | 'STEP_3' | 'STEP_4' | 'STEP_5' | 'COMPLETED';
 
-export type UserLite = {
-  id: string;
-  email?: string | null;
-  role?: Role | null;
-  username?: string | null;
-  hasCompletedOnboarding?: boolean;
+export type UserOnboardingState = {
+  industry?: string;
+  avatar?: string;
+  displayName?: string;
+  urls?: string[]; // Avatars (temporary hold if needed, or just for preview)
+  bio?: string;
+  socials?: Record<string, string | null | undefined>;
+  goal?: { label: string; target: number };
 };
 
 type State = {
   step: Step;
-  role: Role;
-  tokens: { accessToken: string | null };
-  user: UserLite | null;
-  drafts: {
-    email?: string;
-    password?: string;
-    username?: string;
-    consents?: { termsAccepted: boolean; marketing: boolean };
-  };
+  data: UserOnboardingState;
+  // Tokens/User might be needed just for context, or we rely on session
+  userId?: string; 
 };
 
 type Actions = {
   setStep: (s: Step) => void;
-  setRole: (r: Role) => void;
-  setTokens: (t: { accessToken: string | null }) => void;
-  setUser: (u: UserLite | null) => void;
-  setDraft: (p: Partial<State['drafts']>) => void;
+  updateData: (d: Partial<UserOnboardingState>) => void;
+  setAvatar: (url: string) => void;
+  setDisplayName: (name: string) => void;
   reset: () => void;
 };
 
 const initial: State = {
-  step: 'REGISTER',
-  role: 'CREATOR',
-  tokens: { accessToken: null },
-  user: null,
-  drafts: {
-    consents: { termsAccepted: false, marketing: false },
-  },
+  step: 'STEP_1', // Explicitly start at Step 1
+  data: {},
 };
 
 export const useOnboardingStore = create<State & Actions>()(
   persist(
     (set) => ({
       ...initial,
-      setStep: (s: Step) => set({ step: s }),
-      setRole: (r: Role) => set((state) => ({ role: r, user: state.user ? { ...state.user, role: r } : null })),
-      setTokens: (t: { accessToken: string | null }) => set({ tokens: t }),
-      setUser: (u: UserLite | null) => set({ user: u ?? null }),
-      setDraft: (p: Partial<State['drafts']>) => set((s) => ({ drafts: { ...s.drafts, ...p } })),
+      setStep: (s) => set({ step: s }),
+      updateData: (d) => set((state) => ({ data: { ...state.data, ...d } })),
+      setAvatar: (url) => set((state) => ({ data: { ...state.data, avatar: url } })),
+      setDisplayName: (name) => set((state) => ({ data: { ...state.data, displayName: name } })),
       reset: () => set(initial),
     }),
     {
-      name: 'tj+_onboarding_v1',
+      name: 'tj+_onboarding_v2', // v2 to avoid conflicts
       storage: createJSONStorage(() => localStorage),
-      version: 1,
-      migrate: (state) => state as unknown as State,
-      partialize: (s) => s,
+      partialize: (s) => ({ step: s.step, data: s.data }), // Only persist data/step
     },
   ),
 );

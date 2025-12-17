@@ -70,6 +70,7 @@ export const uploadAvatarProcess = async (
       {
         slotId,
         storjKey: presigned.key,
+        bucket: presigned.bucket,
         fileName: file.name,
         contentType: file.type,
         fileSize: file.size,

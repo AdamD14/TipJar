@@ -5,6 +5,7 @@ import {
   Body,
   Request,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { OnboardingService } from './onboarding.service';
@@ -21,18 +22,19 @@ interface AuthenticatedRequest extends Request {
   };
 }
 
-@Controller('api/onboarding')
+@Controller('creator/onboarding')
 @UseGuards(AuthGuard('jwt'))
 export class OnboardingController {
   constructor(private readonly onboardingService: OnboardingService) {}
 
-  @Get('creator/status')
+  @Get('status')
   async getStatus(@Request() req: AuthenticatedRequest) {
     return this.onboardingService.getCreatorStatus(req.user.id);
   }
 
-  // STEP 1 – identity (upsert)
-  @Post('creator/step-1')
+  // STEP 1 – identity (UPSERT via PATCH as expected by frontend)
+  // Was: @Post('creator/step-1')
+  @Patch('identity')
   async step1(
     @Request() req: AuthenticatedRequest,
     @Body() dto: CreatorStep1Dto,
@@ -40,8 +42,8 @@ export class OnboardingController {
     return this.onboardingService.saveCreatorStep1(req.user.id, dto);
   }
 
-  // STEP 2 – avatar (upsert)
-  @Post('creator/step-2')
+  // STEP 2 – avatar
+  @Post('step-2')
   async step2(
     @Request() req: AuthenticatedRequest,
     @Body() dto: CreatorStep2Dto,
@@ -49,8 +51,8 @@ export class OnboardingController {
     return this.onboardingService.saveCreatorStep2(req.user.id, dto);
   }
 
-  // STEP 3 – bio + socials (upsert)
-  @Post('creator/step-3')
+  // STEP 3 – bio + socials
+  @Post('step-3')
   async step3(
     @Request() req: AuthenticatedRequest,
     @Body() dto: CreatorStep3Dto,
@@ -58,8 +60,8 @@ export class OnboardingController {
     return this.onboardingService.saveCreatorStep3(req.user.id, dto);
   }
 
-  // STEP 4 – goal (upsert)
-  @Post('creator/step-4')
+  // STEP 4 – goal
+  @Post('step-4')
   async step4(
     @Request() req: AuthenticatedRequest,
     @Body() dto: CreatorStep4Dto,
@@ -68,7 +70,7 @@ export class OnboardingController {
   }
 
   // STEP 5 – completion
-  @Post('creator/complete')
+  @Post('complete')
   async complete(@Request() req: AuthenticatedRequest) {
     return this.onboardingService.completeOnboarding(req.user.id);
   }

@@ -87,12 +87,15 @@ Deno.serve(async (req) => {
       },
     );
 
-  } catch (error) {
-    console.error('Edge Function Error:', error.message);
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error('Edge Function Error:', err.message);
     
-    const status = (error.code === 'ERR_JWS_INVALID' || error.message.includes('token')) ? 401 : 500;
+    // Check if it's a JWT error or token related
+    const isAuthError = (err as { code?: string }).code === 'ERR_JWS_INVALID' || err.message?.includes('token');
+    const status = isAuthError ? 401 : 500;
 
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: err.message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: status,
     });

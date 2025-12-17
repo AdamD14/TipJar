@@ -22,6 +22,7 @@ export class MediaService {
       fileSize: number;
       contentType: string;
       etag: string;
+      bucket?: string;
     },
   ) {
     return this.prisma.mediaRecord.create({
@@ -32,6 +33,7 @@ export class MediaService {
         size: data.fileSize,
         contentType: data.contentType,
         etag: data.etag,
+        bucket: data.bucket || undefined, // Prisma will use default if undefined
         publicUrl: '',
       },
     });

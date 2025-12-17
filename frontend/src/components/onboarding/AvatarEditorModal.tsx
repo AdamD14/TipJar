@@ -184,7 +184,7 @@ export default function AvatarEditorModal({
               <button
                 onClick={handleConfirm}
                 disabled={!previewUrl || isProcessing}
-                className="w-full py-3 bg-gradient-to-r from-gold to-gold-dark text-gray-900 font-semibold rounded-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                className="w-full py-3 bg-gradient-to-r from-[#FFD700] to-[#f9c513] text-[#003737] font-semibold rounded-lg hover:brightness-110 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               >
                 {isProcessing ? (
                   <>

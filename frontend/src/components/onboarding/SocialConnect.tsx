@@ -181,9 +181,61 @@ export const SocialIcon = ({
   }
 };
 
+// Categories definition
+const CATEGORIES = [
+  {
+    id: "video",
+    label: "Video & Content",
+    items: ["youtube", "vimeo", "rumble", "dailymotion"],
+  },
+  {
+    id: "social",
+    label: "Social",
+    items: ["facebook", "instagram", "tiktok", "snapchat", "x", "threads"],
+  },
+  { id: "stream", label: "Streaming", items: ["twitch", "kick"] },
+  {
+    id: "writing",
+    label: "Writing & Blogs",
+    items: ["medium", "substack", "wattpad"],
+  },
+  {
+    id: "music",
+    label: "Music & Audio",
+    items: ["spotify", "soundcloud", "apple_podcasts", "bandcamp"],
+  },
+  {
+    id: "art",
+    label: "Art & Design",
+    items: [
+      "behance",
+      "artstation",
+      "dribbble",
+      "deviantart",
+      "etsy",
+      "pinterest",
+    ],
+  },
+  {
+    id: "money",
+    label: "Monetization",
+    items: ["patreon", "ko-fi", "buymeacoffee", "onlyfans", "gumroad"],
+  },
+  {
+    id: "tech",
+    label: "Tech & Dev",
+    items: ["github", "stackoverflow", "producthunt"],
+  },
+  {
+    id: "community",
+    label: "Community",
+    items: ["discord", "reddit", "telegram", "steam"],
+  },
+  { id: "other", label: "Other", items: ["strava", "alltrails", "komoot"] },
+];
+
 interface SocialConnectProps {
   onConnectAction?: (platformId: string) => void;
-  // Potentially accept connected accounts to show status
   connected?: string[];
 }
 
@@ -191,41 +243,63 @@ export default function SocialConnect({
   onConnectAction,
   connected = [],
 }: SocialConnectProps) {
-  // Sort or group them as in prompt? For Grid we can just map simple list.
-  // Let's render them in a nice grid.
-
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-      {SOCIAL_PLATFORMS.map((p) => {
-        const isConnected = connected.includes(p.id);
+    <div className="space-y-8">
+      {CATEGORIES.map((cat) => {
+        // Filter platforms belonging to this category that actually exist in definitions
+        const platforms = cat.items
+          .map((id) =>
+            SOCIAL_PLATFORMS.find(
+              (p) => p.id === id || p.id === id.replace("_", "")
+            )
+          ) // handle slight mismatches if any
+          .filter((p): p is (typeof SOCIAL_PLATFORMS)[number] => !!p);
+
+        if (platforms.length === 0) return null;
 
         return (
-          <button
-            key={p.id}
-            type="button"
-            onClick={() => onConnectAction?.(p.id)}
-            className={clsx(
-              "flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 group text-left",
-              isConnected
-                ? "bg-white/10 border-green-500/50 hover:bg-white/15"
-                : "bg-black/20 border-white/5 hover:bg-white/5 hover:border-white/20"
-            )}
-          >
-            <div
-              className="p-2 rounded-lg shrink-0 transition-transform group-hover:scale-110"
-              style={{ backgroundColor: `${p.color}20`, color: p.color }}
-            >
-              <SocialIcon id={p.id} />
+          <div key={cat.id}>
+            <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 ml-1">
+              {cat.label}
+            </h4>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {platforms.map((p) => {
+                const isConnected = connected.includes(p.id);
+
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => onConnectAction?.(p.id)}
+                    className={clsx(
+                      "flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 group text-left",
+                      isConnected
+                        ? "bg-white/10 border-green-500/50 hover:bg-white/15"
+                        : "bg-black/20 border-white/5 hover:bg-white/5 hover:border-white/20"
+                    )}
+                  >
+                    <div
+                      className="p-2 rounded-lg shrink-0 transition-transform group-hover:scale-110"
+                      style={{
+                        backgroundColor: `${p.color}20`,
+                        color: p.color,
+                      }}
+                    >
+                      <SocialIcon id={p.id} />
+                    </div>
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-sm font-bold text-gray-200 truncate group-hover:text-white">
+                        {p.label}
+                      </span>
+                      <span className="text-[10px] text-gray-500 truncate">
+                        {isConnected ? "Connected" : "Connect"}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-sm font-bold text-gray-200 truncate group-hover:text-white">
-                {p.label}
-              </span>
-              <span className="text-[10px] text-gray-500 truncate">
-                {isConnected ? "Connected" : "Connect"}
-              </span>
-            </div>
-          </button>
+          </div>
         );
       })}
     </div>

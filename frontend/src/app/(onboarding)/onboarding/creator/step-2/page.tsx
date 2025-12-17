@@ -7,11 +7,9 @@ import OnboardingShell from "@/components/layout/OnboardingShell";
 import Button from "@/components/ui/Button";
 import AvatarUploader from "@/components/onboarding/AvatarUploader";
 
-import apiClient from "@/lib/apiClient";
-
 export default function Step2() {
   const [saving, setSaving] = useState(false);
-  const [avatarUrls, setAvatarUrls] = useState<string[]>([]);
+  const [isReadyToAdvance, setIsReadyToAdvance] = useState(false); // Enable next button when uploads done
   const [sessionData, setSessionData] = useState<{
     token: string;
     userId: string;
@@ -33,39 +31,36 @@ export default function Step2() {
     getSession();
   }, [supabase]);
 
-  const saveData = async (url: string) => {
-    setSaving(true);
-    try {
-      await apiClient.post("/api/onboarding/creator/step-2", {
-        avatarUrl: url,
-      });
-
-      location.assign("/onboarding/creator/step-3");
-    } catch (error) {
-      console.error("Failed to save step 2", error);
-      setSaving(false);
-      alert("Failed to save. Please try again.");
-    }
-  };
-
+  // Handle uploaded URLs (user info only, we trust backend created MediaRecords)
   const handleUploadComplete = (urls: string[]) => {
-    setAvatarUrls(urls);
-
-    if (urls.length === 3) {
-      saveData(urls[0]);
+    // If backend already saved records, we can just proceed or enable button
+    if (urls.length >= 1) {
+      // Min 1 photo? User requested 3 max.
+      setIsReadyToAdvance(true);
     }
   };
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onNext = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (avatarUrls.length > 0) {
-      saveData(avatarUrls[0]);
-    }
+    if (!isReadyToAdvance && !confirm("No photos uploaded? Skip?")) return;
+
+    setSaving(true);
+    // Notify completion? Or just navigate.
+    // User said: "next step sie uaktywani... po 30sek lub jak skonczy"
+    // We navigate to step 3.
+
+    // Optional: Call update status if needed, assuming uploads are async processed
+    // await apiClient.post("/api/creator/onboarding/step-2-complete")...
+    // For now, just navigate.
+
+    setTimeout(() => {
+      location.assign("/onboarding/creator/step-3");
+    }, 500);
   };
 
   return (
     <OnboardingShell step={2} title="Upload your Avatar (max 3)">
-      <form className="space-y-10" onSubmit={onSubmit} noValidate>
+      <form className="space-y-10" onSubmit={onNext} noValidate>
         <div className="max-w-3xl mx-auto w-full">
           <AvatarUploader
             authToken={sessionData?.token ?? null}
@@ -88,7 +83,7 @@ export default function Step2() {
             size="lg"
             loading={saving}
             className="min-w-[180px] px-8"
-            disabled={avatarUrls.length === 0}
+            disabled={!isReadyToAdvance}
           >
             Next Step
           </Button>

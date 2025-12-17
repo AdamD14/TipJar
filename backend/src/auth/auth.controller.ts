@@ -267,10 +267,10 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(AuthGuard('jwt'))
-  getProfile(@Req() req: Request): ValidatedUser {
+  async getProfile(@Req() req: Request): Promise<ValidatedUser> {
     const user = req.user as ValidatedUser;
     this.logger.log(`Fetching profile for authenticated user ID: ${user.id}`);
-    return user;
+    return this.authService.getUserProfile(user.id);
   }
 
   @Get('verify-email/:token')
