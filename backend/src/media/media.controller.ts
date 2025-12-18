@@ -1,10 +1,17 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  UnauthorizedException,
+  Req,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ValidatedUser } from '../auth/auth.service';
 import { MediaService } from './media.service';
 import { User } from '../auth/user.decorator';
 
-@Controller('api/media')
+@Controller('media')
 @UseGuards(JwtAuthGuard)
 export class MediaController {
   constructor(private readonly mediaService: MediaService) {}
@@ -49,5 +56,45 @@ export class MediaController {
       optimizedUrls,
       mediaRecord: cloudinaryResult,
     };
+  }
+}
+
+import { Request } from 'express';
+
+@Controller('media/internal')
+export class InternalMediaController {
+  constructor(private readonly mediaService: MediaService) {}
+
+  private validateApiKey(req: Request) {
+    const apiKey = req.headers['x-internal-api-key'];
+    if (!apiKey || apiKey !== process.env.NESTJS_SECRET_KEY) {
+      throw new UnauthorizedException('Invalid Internal API Key');
+    }
+  }
+
+  @Post('reserve-slot')
+  async reserveSlot(
+    @Req() req: Request,
+    @Body()
+    body: {
+      userId: string;
+      slotId: number;
+      s3Key: string;
+      fileName: string;
+      contentType: string;
+      fileSize: number;
+    },
+  ) {
+    this.validateApiKey(req);
+    return this.mediaService.reserveSlot(body.userId, body);
+  }
+
+  @Post('confirm-upload')
+  async confirmUpload(
+    @Req() req: Request,
+    @Body() body: { s3Key: string; etag?: string },
+  ) {
+    this.validateApiKey(req);
+    return this.mediaService.confirmUpload(body.s3Key, body.etag);
   }
 }

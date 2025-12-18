@@ -8,10 +8,14 @@ import Button from "@/components/ui/Button";
 import SocialConnect from "@/components/onboarding/SocialConnect";
 import apiClient from "@/lib/apiClient";
 
+import { useCreatorGuard } from "@/lib/hooks/useCreatorGuard";
+
 export default function Step3() {
+  const { loading: guardLoading } = useCreatorGuard(3);
   const router = useRouter();
   const searchParams = useSearchParams();
   const [saving, setSaving] = useState(false);
+  const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [website, setWebsite] = useState("");
   // Track connected socials
@@ -24,17 +28,24 @@ export default function Step3() {
     if (connected && connected !== processedRef.current) {
       if (!connectedSocials.includes(connected)) {
         setConnectedSocials((prev) => [...prev, connected]);
-        // Optional: show toast or success message
       }
       processedRef.current = connected;
-      // Clean up the URL
       const newUrl = window.location.pathname;
       window.history.replaceState({}, "", newUrl);
     }
   }, [searchParams, connectedSocials]);
 
+  // Restore state from storage if returning from auth
+  useEffect(() => {
+    const savedName = sessionStorage.getItem("step3_name");
+    const savedBio = sessionStorage.getItem("step3_bio");
+    const savedWebsite = sessionStorage.getItem("step3_website");
+    if (savedName) setDisplayName(savedName);
+    if (savedBio) setBio(savedBio);
+    if (savedWebsite) setWebsite(savedWebsite);
+  }, []);
+
   const handleConnect = (platformId: string) => {
-    // If already connected, maybe disconnect? For now, just ignore or optional alert
     if (connectedSocials.includes(platformId)) {
       if (confirm(`Disconnect ${platformId}?`)) {
         setConnectedSocials((prev) => prev.filter((p) => p !== platformId));
@@ -42,26 +53,26 @@ export default function Step3() {
       return;
     }
 
+    // SAVE STATE before redirecting
+    sessionStorage.setItem("step3_name", displayName);
+    sessionStorage.setItem("step3_bio", bio);
+    sessionStorage.setItem("step3_website", website);
+
     const returnTo = window.location.pathname;
 
     if (platformId === "twitch") {
-      // Connect to real backend
       const state = {
         role: "CREATOR",
         timestamp: Date.now(),
         returnTo: `/onboarding/creator/step-3?connected=twitch`,
       };
       const stateEncoded = btoa(JSON.stringify(state));
-      // Assuming backend is at localhost:3001/api/v1 or via proxy
-      // Using explicit URL for now or relative if proxied.
-      // Better to use env var for API URL but hardcoding localhost for dev per request context is often safer if env is unknown
       const apiUrl =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api/v1";
       window.location.href = `${apiUrl}/auth/twitch?state=${stateEncoded}`;
       return;
     }
 
-    // Redirect to mock auth for others
     window.location.href = `/api/mock-social-auth?platform=${platformId}&returnTo=${returnTo}`;
   };
 
@@ -71,11 +82,14 @@ export default function Step3() {
 
     try {
       await apiClient.post("/api/v1/creator/onboarding/step-3", {
+        displayName,
         bio,
         websiteUrl: website,
-        // If the backend supported saving socials, we would send them here:
-        // socials: connectedSocials
       });
+      // Clear storage on success
+      sessionStorage.removeItem("step3_name");
+      sessionStorage.removeItem("step3_bio");
+      sessionStorage.removeItem("step3_website");
       router.push("/onboarding/creator/step-4");
     } catch (error) {
       console.error("Failed to save step 3", error);
@@ -84,6 +98,16 @@ export default function Step3() {
       setSaving(false);
     }
   };
+
+  if (guardLoading) {
+    return (
+      <OnboardingShell step={3} title="Checking status...">
+         <div className="flex justify-center py-20">
+          <div className="animate-spin h-10 w-10 border-4 border-yellow-500 border-t-transparent rounded-full" />
+        </div>
+      </OnboardingShell>
+    );
+  }
 
   return (
     <OnboardingShell step={3} title="Tell us about yourself">
@@ -105,9 +129,28 @@ export default function Step3() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN - BIO & WEBSITE */}
+          {/* RIGHT COLUMN - INFO */}
           <div className="order-1 lg:order-2 space-y-8">
             <div className="lg:sticky lg:top-24 space-y-8">
+              
+              {/* NAME SECTION */}
+              <div className="space-y-4">
+                 <label
+                  htmlFor="displayName"
+                  className="block text-sm font-medium text-gray-300"
+                >
+                  Display Name
+                </label>
+                <input
+                  id="displayName"
+                  type="text"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/50 text-base"
+                  placeholder="Your Name or Brand"
+                />
+              </div>
+
               {/* BIO SECTION */}
               <div className="space-y-4">
                 <label

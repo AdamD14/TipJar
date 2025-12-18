@@ -25,6 +25,7 @@ export interface AvatarStoreState {
 export interface AvatarStoreActions {
   // Inicjalizacja
   initializeSlotsIfEmpty: (count: number) => void;
+  setInitialSlots: (urls: string[]) => void;
   
   // Zarządzanie plikami
   setFileForSlot: (slotId: number, file: File, previewUrl: string) => void;
@@ -35,8 +36,8 @@ export interface AvatarStoreActions {
   setActiveIndex: (index: number) => void;
   
   // Logika Uploadu
-  performUploadAll: (token: string, userId: string) => Promise<void>;
-  retrySlot: (slotId: number, token: string, userId: string) => Promise<void>;
+  performUploadAll: (token: string) => Promise<void>;
+  retrySlot: (slotId: number, token: string) => Promise<void>;
   
   // Helpersy wewnętrzne (używane przez service)
   setSlotStatus: (id: number, status: Partial<UploadSlot>) => void;

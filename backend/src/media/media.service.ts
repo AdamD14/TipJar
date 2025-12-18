@@ -51,6 +51,88 @@ export class MediaService {
     });
   }
 
+  async reserveSlot(
+    userId: string,
+    data: {
+      slotId: number;
+      s3Key: string;
+      fileName: string;
+      contentType: string;
+      fileSize: number;
+    },
+  ) {
+    // 8-Step Manifesto: Step 2 - Reserve Slot (Pending)
+    return this.prisma.mediaRecord.upsert({
+      where: {
+        userId_slotId: {
+          userId,
+          slotId: data.slotId,
+        },
+      },
+      update: {
+        storjKey: data.s3Key,
+        fileName: data.fileName,
+        size: data.fileSize,
+        contentType: data.contentType,
+        status: 'PENDING',
+        publicUrl: null,
+      },
+      create: {
+        userId,
+        slotId: data.slotId,
+        storjKey: data.s3Key,
+        fileName: data.fileName,
+        size: data.fileSize,
+        contentType: data.contentType,
+        status: 'PENDING',
+        publicUrl: null,
+      },
+    });
+  }
+
+  async confirmUpload(s3Key: string, etag?: string) {
+    // 8-Step Manifesto: Step 5, 6, 7
+    const record = await this.prisma.mediaRecord.findFirst({
+      where: { storjKey: s3Key },
+    });
+
+    if (!record) {
+      throw new NotFoundException('Media record not found for confirmation');
+    }
+
+    await this.prisma.mediaRecord.update({
+      where: { id: record.id },
+      data: {
+        status: 'COMPLETED',
+        etag: etag,
+      },
+    });
+
+    // Cloudinary Sync (Step 6)
+    const s3Url = `https://gateway.storjshare.io/${record.bucket}/${record.storjKey}`;
+
+    try {
+      const result = await this.cloudinary.uploadFromS3(s3Url, record.id);
+
+      // Step 7: Processed
+      return this.prisma.mediaRecord.update({
+        where: { id: record.id },
+        data: {
+          status: 'PROCESSED',
+          publicUrl: result.secure_url,
+        },
+      });
+    } catch (error) {
+      console.error('Cloudinary sync error:', error);
+      await this.prisma.mediaRecord.update({
+        where: { id: record.id },
+        data: { status: 'FAILED' },
+      });
+      throw new BadRequestException('Failed to sync with Cloudinary');
+    }
+  }
+
+  // Legacy method kept for MediaController compatibility if needed
   async registerWithCloudinary(mediaId: string) {
     const record = await this.prisma.mediaRecord.findUnique({
       where: { id: mediaId },
@@ -64,8 +146,6 @@ export class MediaService {
       throw new BadRequestException('Missing Storj key');
     }
 
-    // URL to access Storj file (via gateway or presigned).
-    // Assuming public bucket or gateway for now based on previous discussions.
     const s3Url = `https://gateway.storjshare.io/${record.bucket}/${record.storjKey}`;
 
     try {

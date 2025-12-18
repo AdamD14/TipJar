@@ -23,7 +23,10 @@ interface SummaryData {
   };
 }
 
+import { useCreatorGuard } from "@/lib/hooks/useCreatorGuard";
+
 export default function Step5() {
+  const { loading: guardLoading } = useCreatorGuard(5);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [finishing, setFinishing] = useState(false);
@@ -32,7 +35,7 @@ export default function Step5() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await apiClient.get("/api/onboarding/creator/status");
+        const res = await apiClient.get("/api/v1/creator/onboarding/status");
         setData(res.data);
       } catch (error) {
         console.error("Failed to fetch status", error);
@@ -46,7 +49,7 @@ export default function Step5() {
   const onFinish = async () => {
     setFinishing(true);
     try {
-      await apiClient.post("/api/onboarding/creator/complete");
+      await apiClient.post("/api/v1/creator/onboarding/complete");
       router.push("/dashboard");
     } catch (error) {
       console.error("Failed to complete onboarding", error);
@@ -55,7 +58,7 @@ export default function Step5() {
     }
   };
 
-  if (loading) {
+  if (loading || guardLoading) {
     return (
       <OnboardingShell step={5} title="Review & Finish">
         <div className="flex items-center justify-center h-64">

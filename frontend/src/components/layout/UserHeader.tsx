@@ -8,6 +8,11 @@ async function getCurrentUser() {
 
   try {
     const cookieStore = await cookies();
+
+    if (!cookieStore.has("access_token")) {
+      return null;
+    }
+
     const cookieString = cookieStore.toString();
 
     console.log("[UserHeader] Fetching from:", `${origin}/api/v1/auth/me`);

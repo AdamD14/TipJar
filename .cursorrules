@@ -1,3 +1,4 @@
 never eslint-disable
 no installs without explanation
 Używaj języa polskiego w rozmowie ze mną i jak mi coś pokazujesz lub o coś pytasz, jedynie kod w języku angielskim
+Avoiding 'any' type is critical for security. Using it is almost completely forbidden and requires a very strong exception justification.

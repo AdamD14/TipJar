@@ -17,6 +17,7 @@ interface AvatarUploaderProps {
   maxSlots?: number;
   authToken: string | null;
   userId: string;
+  initialUrls?: string[];
 }
 
 export default function AvatarUploader({
@@ -24,6 +25,7 @@ export default function AvatarUploader({
   maxSlots = 3,
   authToken,
   userId,
+  initialUrls = [],
 }: AvatarUploaderProps) {
   const {
     slots,
@@ -36,11 +38,22 @@ export default function AvatarUploader({
     setActiveIndex,
     performUploadAll,
     retrySlot,
+    setInitialSlots,
   } = useAvatarStore();
 
   useEffect(() => {
-    initializeSlotsIfEmpty(maxSlots);
-  }, [maxSlots, initializeSlotsIfEmpty]);
+    if (initialUrls.length > 0 && slots.length === 0) {
+      setInitialSlots(initialUrls);
+    } else {
+      initializeSlotsIfEmpty(maxSlots);
+    }
+  }, [
+    maxSlots,
+    initializeSlotsIfEmpty,
+    initialUrls,
+    setInitialSlots,
+    slots.length,
+  ]);
 
   useEffect(() => {
     const uploaded = slots
@@ -73,7 +86,7 @@ export default function AvatarUploader({
 
   const handleUploadAll = () => {
     if (!authToken || !userId) return alert("Log in required");
-    performUploadAll(authToken, userId);
+    performUploadAll(authToken);
   };
 
   const editingSlotData =
@@ -123,7 +136,7 @@ export default function AvatarUploader({
                   onRemoveAction={() => removeFileFromSlot(slot.id)}
                   onEditAction={() => setEditingSlot(slot.id)}
                   onRetryAction={() =>
-                    authToken && retrySlot(slot.id, authToken, userId)
+                    authToken && retrySlot(slot.id, authToken)
                   }
                 />
               </SwiperSlide>

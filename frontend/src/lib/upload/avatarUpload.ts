@@ -20,8 +20,14 @@ export const uploadAvatarProcess = async (
   slotId: number,
   file: File,
   token: string,
-
-): Promise<void> => {
+): Promise<{
+  success: boolean;
+  storjKey: string;
+  cloudinaryUrl: string;
+  cloudinaryPublicId?: string;
+  optimizedUrls?: Record<string, string>;
+  mediaRecord?: unknown;
+}> => {
   const store = useAvatarStore.getState();
   const uploadController = getUploadController();
   
@@ -34,6 +40,7 @@ export const uploadAvatarProcess = async (
   try {
     store.setSlotStatus(slotId, { isUploading: true, error: null, uploadProgress: 5 });
 
+    // 1. Get Presigned URL (Edge -> Backend Reserve)
     const { data: presigned } = await axios.post(
       `${SUPABASE_FUNCTIONS_URL}/storj-presigned`,
       {
@@ -42,7 +49,7 @@ export const uploadAvatarProcess = async (
         contentType: file.type,
       },
       {
-        headers: { 
+        headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
@@ -51,9 +58,13 @@ export const uploadAvatarProcess = async (
     );
 
     store.setSlotStatus(slotId, { uploadProgress: 20 });
+    const storjKey = presigned.key;
 
+    // 2. Upload to Storj (Direct)
     await axios.put(presigned.uploadUrl, file, {
-      headers: { 'Content-Type': file.type },
+      headers: {
+        'Content-Type': file.type,
+      },
       signal: controller.signal,
       onUploadProgress: (ev) => {
         if (ev.total) {
@@ -61,22 +72,23 @@ export const uploadAvatarProcess = async (
           store.setSlotStatus(slotId, { uploadProgress: percent });
         }
       },
+      transformRequest: [(data) => data], // Essential for ensuring raw file is sent
     });
 
     store.setSlotStatus(slotId, { uploadProgress: 95 });
 
-    const { data: registration } = await axios.post(
-      `${API_URL}/media/register-upload`,
+    // 3. Confirm Upload (Edge -> Backend Confirm)
+    const { data: confirmData } = await axios.post(
+      `${SUPABASE_FUNCTIONS_URL}/storj-upload-confirm`,
       {
-        slotId,
-        storjKey: presigned.key,
-        bucket: presigned.bucket,
-        fileName: file.name,
-        contentType: file.type,
-        fileSize: file.size,
+        s3Key: storjKey,
+        etag: '', // Optional, not strictly needed if backend trusts flow
       },
       {
-        headers: { 'Authorization': `Bearer ${token}` },
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
         signal: controller.signal
       }
     );
@@ -84,11 +96,20 @@ export const uploadAvatarProcess = async (
     store.setSlotStatus(slotId, { 
       isUploading: false, 
       uploadProgress: 100, 
-      cloudinaryUrl: registration.url,
+      cloudinaryUrl: confirmData.publicUrl || '',
       retryCount: 0 
     });
     
     uploadController.complete(slotId);
+
+    return {
+      success: true,
+      storjKey,
+      cloudinaryUrl: confirmData.publicUrl || '',
+      cloudinaryPublicId: confirmData.id,
+      optimizedUrls: {}, // Backend might return optimizedUrls if implemented in response
+      mediaRecord: confirmData,
+    };
 
   } catch (error) {
     if (axios.isCancel(error)) {

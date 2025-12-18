@@ -31,6 +31,27 @@ export const useAvatarStore = create<AvatarStore>()(
         set({ slots: newSlots });
       },
 
+      setInitialSlots: (urls: string[]) => {
+        const { slots } = get();
+        if (slots.length > 0) return;
+
+        const newSlots: UploadSlot[] = Array.from({ length: MAX_SLOTS }, (_, i) => {
+           const url = urls[i] || null;
+           return {
+            id: i,
+            name: `Avatar ${i + 1}`,
+            isFilled: !!url,
+            isUploading: false,
+            uploadProgress: url ? 100 : 0,
+            error: null,
+            previewUrl: null,
+            cloudinaryUrl: url,
+            retryCount: 0,
+          };
+        });
+        set({ slots: newSlots });
+      },
+
       setFileForSlot: (slotId, file, previewUrl) => {
         set((state) => ({
           fileRegistry: { ...state.fileRegistry, [slotId]: file },
@@ -76,7 +97,7 @@ export const useAvatarStore = create<AvatarStore>()(
 
       // --- LOGIKA BIZNESOWA ---
 
-      performUploadAll: async (token, userId) => {
+      performUploadAll: async (token) => {
         const { slots, fileRegistry } = get();
         
         // Wybieramy sloty, które mają plik, ale nie mają jeszcze URL
@@ -88,16 +109,16 @@ export const useAvatarStore = create<AvatarStore>()(
         await Promise.all(
           slotsToUpload.map((slot) => {
             const file = fileRegistry[slot.id];
-            return uploadAvatarProcess(slot.id, file, token, userId).catch(() => {});
+            return uploadAvatarProcess(slot.id, file, token).catch(() => {});
           })
         );
       },
 
-      retrySlot: async (slotId, token, userId) => {
+      retrySlot: async (slotId, token) => {
         const { fileRegistry } = get();
         const file = fileRegistry[slotId];
         if (file) {
-          await uploadAvatarProcess(slotId, file, token, userId).catch(() => {});
+          await uploadAvatarProcess(slotId, file, token).catch(() => {});
         }
       },
     }),

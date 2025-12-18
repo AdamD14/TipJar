@@ -293,12 +293,21 @@ model WebhookEvent {
   @@index([type, status, createdAt])
 }
 
+enum MediaStatus {
+  PENDING
+  UPLOADING
+  COMPLETED
+  PROCESSED
+  FAILED
+}
+
 model MediaRecord {
   id     String @id @default(uuid())
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Metadane pliku
+  slotId      Int     @default(0) // 0, 1, 2
   storjKey    String // Klucz w Storj (np. avatars/user_1/...)
   fileName    String
   contentType String
@@ -306,14 +315,17 @@ model MediaRecord {
   etag        String?
 
   // Kontekst
-  bucket   String @default("storj-tipjar") // Nazwa twojego bucketa
-  provider String @default("storj")
+  bucket   String      @default("storj-tipjar") // Nazwa twojego bucketa
+  provider String      @default("storj")
+  status   MediaStatus @default(PENDING)
 
   // Wynikowy URL (Cloudinary)
-  publicUrl String
+  publicUrl String? // Może być null na początku
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
+  @@unique([userId, slotId])
   @@index([userId])
   @@index([storjKey])
 }

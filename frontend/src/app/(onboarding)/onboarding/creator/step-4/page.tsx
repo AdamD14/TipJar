@@ -8,7 +8,10 @@ import Button from "@/components/ui/Button";
 import GoalBar from "@/components/profile/GoalBar";
 import apiClient from "@/lib/apiClient";
 
+import { useCreatorGuard } from "@/lib/hooks/useCreatorGuard";
+
 export default function Step4() {
+  const { loading: guardLoading } = useCreatorGuard(4);
   const router = useRouter();
   const [saving, setSaving] = useState(false);
 
@@ -22,7 +25,7 @@ export default function Step4() {
     setSaving(true);
 
     try {
-      await apiClient.post("/api/onboarding/creator/step-4", {
+      await apiClient.post("/api/v1/creator/onboarding/step-4", {
         goalLabel,
         goalTarget: Number(goalTarget),
       });
@@ -34,6 +37,16 @@ export default function Step4() {
       setSaving(false);
     }
   };
+
+  if (guardLoading) {
+    return (
+      <OnboardingShell step={4} title="Checking status...">
+        <div className="flex justify-center py-20">
+          <div className="animate-spin h-10 w-10 border-4 border-yellow-500 border-t-transparent rounded-full" />
+        </div>
+      </OnboardingShell>
+    );
+  }
 
   return (
     <OnboardingShell step={4} title="Set your first specific Goal">

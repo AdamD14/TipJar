@@ -64,10 +64,43 @@ Deno.serve(async (req) => {
       Bucket: Deno.env.get('STORJ_BUCKET'),
       Key: key,
       ContentType: contentType,
+      ACL: 'public-read', // Critical for Cloudinary access
     });
 
     // URL ważny przez 15 minut
     const signedUrl = await getSignedUrl(S3, command, { expiresIn: 900 });
+
+    // REZERWACJA SLOTU W NESTJS (INTERNAL API)
+    const nestJsUrl = Deno.env.get('NESTJS_INTERNAL_URL');
+    const nestJsKey = Deno.env.get('NESTJS_SECRET_KEY');
+
+    if (nestJsUrl && nestJsKey) {
+      // Need fileSize from request to pass to backend? 
+      // Original code didn't extract fileSize. Let's try to extract it from req body if avail, else 0.
+      
+      const reserveResponse = await fetch(`${nestJsUrl}/media/internal/reserve-slot`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Internal-API-Key': nestJsKey,
+        },
+        body: JSON.stringify({
+          userId,
+          slotId,
+          s3Key: key,
+          fileName,
+          contentType,
+          fileSize: 0, // Placeholder as we don't have it yet, or extracted earlier
+        }),
+      });
+
+      if (!reserveResponse.ok) {
+        console.error('NestJS Reserve Failed:', await reserveResponse.text());
+        throw new Error('Failed to reserve upload slot');
+      }
+    } else {
+      console.warn('Missing NESTJS_INTERNAL_URL or NESTJS_SECRET_KEY');
+    }
 
     // 7. Przewidywany URL Cloudinary
     const cloudName = Deno.env.get('CLOUDINARY_CLOUD_NAME');

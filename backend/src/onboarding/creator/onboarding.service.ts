@@ -75,6 +75,13 @@ export class OnboardingService {
   }
 
   async saveCreatorStep3(userId: string, dto: CreatorStep3Dto) {
+    if (dto.displayName) {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { displayName: dto.displayName },
+      });
+    }
+
     return this.prisma.profile.upsert({
       where: { userId },
       create: {

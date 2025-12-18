@@ -19,6 +19,10 @@ export class CreatorStep3Dto {
 
   @IsString()
   @IsOptional()
+  displayName?: string;
+
+  @IsString()
+  @IsOptional()
   websiteUrl?: string;
 
   // Socials will be handled via a separate endpoint or added here if simple
