@@ -15,12 +15,13 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // 2. Walidacja Nagłówka
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      throw new Error('Missing or invalid Authorization header');
+    // 2. Pobranie Tokena z Ciasteczek
+    const cookies = req.headers.get('cookie');
+    const token = cookies?.split('; ').find(row => row.startsWith('access_token='))?.split('=')[1];
+
+    if (!token) {
+      throw new Error('Missing access_token in cookies');
     }
-    const token = authHeader.split(' ')[1];
 
     // 3. Lokalna Weryfikacja JWT (Shared Secret)
     const jwtSecret = Deno.env.get('JWT_SECRET');

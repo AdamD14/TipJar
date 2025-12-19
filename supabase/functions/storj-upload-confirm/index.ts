@@ -1,5 +1,5 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4';
+import { jwtVerify } from "https://deno.land/x/jose@v4.14.4/index.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,26 +12,30 @@ serve(async (req) => {
   }
 
   try {
-    // 1. Validate Auth (Supabase Token)
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      throw new Error('Missing Authorization header');
+    // 1. Pobranie Tokena z Ciasteczek
+    const cookies = req.headers.get('cookie');
+    const token = cookies?.split('; ').find(row => row.startsWith('access_token='))?.split('=')[1];
+
+    if (!token) {
+      throw new Error('Missing access_token in cookies');
     }
 
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: authHeader } } }
+    // 2. Walidacja JWT (Shared Secret)
+    const jwtSecret = Deno.env.get('JWT_SECRET');
+    if (!jwtSecret) {
+      throw new Error('Server configuration error: JWT_SECRET missing');
+    }
+
+    // Weryfikacja
+    await jwtVerify(
+      token,
+      new TextEncoder().encode(jwtSecret)
     );
+    // Jeśli weryfikacja przejdzie, user jest autoryzowany. 
+    // Confirm upload zazwyczaj wymaga tylko s3Key/etag i faktu bycia zalogowanym (lub bycia właścicielem).
+    // Backend (confirm-upload) może dodatkowo sprawdzić czy ten user jest właścicielem slotu, jeśli przekażemy userId.
+    // Ale aktualny payload to tylko { s3Key, etag }. Backend NestJS ufa, że jeśli Edge Function puści requests z kluczem internal, to jest OK.
 
-    const {
-      data: { user },
-      error: authError,
-    } = await supabaseClient.auth.getUser();
-
-    if (authError || !user) {
-      throw new Error('Unauthorized');
-    }
 
     // 2. Parse Payload
     const { s3Key, etag } = await req.json();
@@ -71,7 +75,8 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 400,
     });

@@ -96,8 +96,8 @@ export const useAvatarStore = create<AvatarStore>()(
       },
 
       // --- LOGIKA BIZNESOWA ---
-
-      performUploadAll: async (token) => {
+      
+      performUploadAll: async () => {
         const { slots, fileRegistry } = get();
         
         // Wybieramy sloty, które mają plik, ale nie mają jeszcze URL
@@ -109,16 +109,16 @@ export const useAvatarStore = create<AvatarStore>()(
         await Promise.all(
           slotsToUpload.map((slot) => {
             const file = fileRegistry[slot.id];
-            return uploadAvatarProcess(slot.id, file, token).catch(() => {});
+            return uploadAvatarProcess(slot.id, file).catch(() => {});
           })
         );
       },
 
-      retrySlot: async (slotId, token) => {
+      retrySlot: async (slotId) => {
         const { fileRegistry } = get();
         const file = fileRegistry[slotId];
         if (file) {
-          await uploadAvatarProcess(slotId, file, token).catch(() => {});
+          await uploadAvatarProcess(slotId, file).catch(() => {});
         }
       },
     }),

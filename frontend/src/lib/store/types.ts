@@ -36,8 +36,8 @@ export interface AvatarStoreActions {
   setActiveIndex: (index: number) => void;
   
   // Logika Uploadu
-  performUploadAll: (token: string) => Promise<void>;
-  retrySlot: (slotId: number, token: string) => Promise<void>;
+  performUploadAll: () => Promise<void>;
+  retrySlot: (slotId: number) => Promise<void>;
   
   // Helpersy wewnętrzne (używane przez service)
   setSlotStatus: (id: number, status: Partial<UploadSlot>) => void;

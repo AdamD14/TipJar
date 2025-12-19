@@ -19,7 +19,6 @@ export function validateImageFile(file: File, maxSizeMB: number = 5): string | n
 export const uploadAvatarProcess = async (
   slotId: number,
   file: File,
-  token: string,
 ): Promise<{
   success: boolean;
   storjKey: string;
@@ -49,8 +48,8 @@ export const uploadAvatarProcess = async (
         contentType: file.type,
       },
       {
+        withCredentials: true,
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         signal: controller.signal
@@ -85,8 +84,8 @@ export const uploadAvatarProcess = async (
         etag: '', // Optional, not strictly needed if backend trusts flow
       },
       {
+        withCredentials: true,
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         signal: controller.signal
