@@ -102,6 +102,7 @@ export default function AvatarEditorModal({
             </h2>
           </div>
           <button
+            type="button"
             onClick={handleClose}
             disabled={isProcessing}
             className="text-gray-400 hover:text-white text-xl disabled:opacity-50 disabled:cursor-not-allowed"
@@ -181,6 +182,7 @@ export default function AvatarEditorModal({
 
             <div className="flex flex-col gap-3 pt-4">
               <button
+                type="button"
                 onClick={handleConfirm}
                 disabled={!previewUrl || isProcessing}
                 className="w-full py-3 bg-gradient-to-r from-[#FFD700] to-[#f9c513] text-[#003737] font-semibold rounded-lg hover:brightness-110 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
@@ -188,6 +190,7 @@ export default function AvatarEditorModal({
                 {isProcessing ? "Processing..." : "Save & Continue"}
               </button>
               <button
+                type="button"
                 onClick={handleClose}
                 disabled={isProcessing}
                 className="w-full py-3 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-700 transition disabled:opacity-50 disabled:cursor-not-allowed"

@@ -167,6 +167,7 @@ export default function AvatarUploader({
 
         <div className="flex items-center justify-center w-full max-w-5xl py-4 relative h-[500px]">
           <button
+            type="button"
             onClick={handlePrev}
             className="hidden md:flex absolute left-4 lg:left-20 z-40 p-3 rounded-full bg-slate-900/50 border border-white/5 text-slate-400 hover:text-white hover:bg-teal-500 transition-all backdrop-blur-sm shadow-lg hover:shadow-teal-500/20 active:scale-95"
           >
@@ -195,6 +196,7 @@ export default function AvatarUploader({
           </div>
 
           <button
+            type="button"
             onClick={handleNext}
             className="hidden md:flex absolute right-4 lg:right-20 z-40 p-3 rounded-full bg-slate-900/50 border border-white/5 text-slate-400 hover:text-white hover:bg-teal-500 transition-all backdrop-blur-sm shadow-lg hover:shadow-teal-500/20 active:scale-95"
           >

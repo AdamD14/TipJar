@@ -164,6 +164,7 @@ const AvatarPreviewSlide: React.FC<AvatarPreviewSlideProps> = ({
       {isActive && slot.isFilled && !slot.isUploading && !slot.error && (
         <div className="absolute top-4 right-4 flex flex-col gap-2 z-20 animate-in fade-in zoom-in duration-300">
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               onEditAction();
@@ -174,6 +175,7 @@ const AvatarPreviewSlide: React.FC<AvatarPreviewSlideProps> = ({
             <Camera size={16} />
           </button>
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               onRemoveAction();
