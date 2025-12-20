@@ -5,39 +5,14 @@ import { jwtVerify } from "https://deno.land/x/jose@v5.2.0/index.ts";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "http://localhost:3000",
   "Access-Control-Allow-Credentials": "true",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, cookie",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, cookie",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Vary": "Origin",
 };
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
-  }
-
-  /* 2. API Key Validation */
-  const apikey =
-    req.headers.get("apikey") || new URL(req.url).searchParams.get("apikey");
-
-  if (!apikey) {
-    return new Response(
-      JSON.stringify({
-        message: "No API key found in request",
-        hint: "No `apikey` request header or url param was found.",
-      }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 401,
-      }
-    );
-  }
-
-  const expectedAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
-  if (expectedAnonKey && apikey !== expectedAnonKey) {
-    return new Response(JSON.stringify({ message: "Invalid API key" }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 401,
-    });
+ if (req.method === "OPTIONS") {
+  return new Response(null, { headers: corsHeaders, status: 204 });
   }
 
   try {

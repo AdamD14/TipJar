@@ -46,10 +46,9 @@ export const uploadAvatarProcess = async (
       uploadProgress: 5,
     });
 
-    const apiKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     // 1. Get Presigned URL (Edge -> Backend Reserve)
     const { data: presigned } = await axiosInstance.post(
-      `${SUPABASE_FUNCTIONS_URL}/storj-presigned?apikey=${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+      `${SUPABASE_FUNCTIONS_URL}/storj-presigned`,
       {
         slotId,
         fileName: file.name,
@@ -59,7 +58,6 @@ export const uploadAvatarProcess = async (
         headers: {
           "Content-Type": "application/json",
           apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${apiKey}`,
         },
         signal: controller.signal,
       }
@@ -88,16 +86,15 @@ export const uploadAvatarProcess = async (
 
     // 3. Confirm Upload (Edge -> Backend Confirm)
     const { data: confirmData } = await axiosInstance.post(
-      `${SUPABASE_FUNCTIONS_URL}/storj-upload-confirm?apikey=${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+      `${SUPABASE_FUNCTIONS_URL}/storj-upload-confirm`,
       {
         s3Key: storjKey,
-        etag: "", // Optional, not strictly needed if backend trusts flow
+        etag: "",
       },
       {
         headers: {
           "Content-Type": "application/json",
           apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${apiKey}`,
         },
         signal: controller.signal,
       }
