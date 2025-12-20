@@ -1,15 +1,43 @@
-import { serve } from "std/http/server.ts";
-import { jwtVerify } from "https://deno.land/x/jose@v4.14.4/index.ts";
+// deno-lint-ignore-file
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { jwtVerify } from "https://deno.land/x/jose@v5.2.0/index.ts";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "http://localhost:3000",
+  "Access-Control-Allow-Credentials": "true",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+    "authorization, x-client-info, apikey, content-type, cookie",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
+  }
+
+  /* 2. API Key Validation */
+  const apikey =
+    req.headers.get("apikey") || new URL(req.url).searchParams.get("apikey");
+
+  if (!apikey) {
+    return new Response(
+      JSON.stringify({
+        message: "No API key found in request",
+        hint: "No `apikey` request header or url param was found.",
+      }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401,
+      }
+    );
+  }
+
+  const expectedAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
+  if (expectedAnonKey && apikey !== expectedAnonKey) {
+    return new Response(JSON.stringify({ message: "Invalid API key" }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 401,
+    });
   }
 
   try {

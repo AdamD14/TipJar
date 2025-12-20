@@ -52,6 +52,8 @@ export default function AvatarUploader({
       setInitialSlots(initialUrls);
     } else {
       initializeSlotsIfEmpty(maxSlots);
+      // Validate persistence (clear ghosts)
+      useAvatarStore.getState().validateSlots();
     }
   }, [
     maxSlots,
@@ -68,17 +70,21 @@ export default function AvatarUploader({
     };
   }, [tempPreviewUrl]);
 
-  // Completion check - Ensure only valid URLs trigger it
+  // Completion check - trigger only when all filled slots have valid cloudinaryUrl
   useEffect(() => {
-    const uploaded = slots
-      .filter((s) => s.cloudinaryUrl && s.cloudinaryUrl.length > 0)
-      .map((s) => s.cloudinaryUrl!);
-    const filled = slots.filter((s) => s.isFilled);
+    const filledSlots = slots.filter((s) => s.isFilled);
 
-    if (filled.length > 0 && uploaded.length === filled.length) {
-      // Debounce or ensure state stability?
-      // User complained about "triggers on empty". Checked filter above.
-      onUploadCompleteAction(uploaded);
+    if (filledSlots.length === 0) {
+      // Nic nie wypełnione – nie wyzwalaj
+      return;
+    }
+
+    const uploadedUrls = filledSlots
+      .map((s) => s.cloudinaryUrl)
+      .filter((url): url is string => !!url && url.length > 0);
+
+    if (uploadedUrls.length === filledSlots.length) {
+      onUploadCompleteAction(uploadedUrls);
     }
   }, [slots, onUploadCompleteAction]);
 
@@ -135,6 +141,10 @@ export default function AvatarUploader({
   };
 
   const handleFinalUpload = async () => {
+    console.log(
+      "handleFinalUpload – stan store przed uploadem:",
+      useAvatarStore.getState()
+    );
     try {
       await performUploadAll();
     } catch (e) {
@@ -174,7 +184,7 @@ export default function AvatarUploader({
             <ChevronLeft size={24} />
           </button>
 
-          <div className="relative w-full max-w-2xl h-full mx-auto">
+          <div className="relative w-full max-w-2xl h-full mx-auto pointer-events-none">
             {slots.map((slot, index) => {
               const offset = getCircularOffset(
                 index,
@@ -182,15 +192,18 @@ export default function AvatarUploader({
                 slots.length
               );
               return (
-                <AvatarPreviewSlide
-                  key={slot.id}
-                  slot={slot}
-                  offset={offset}
-                  onClickAction={() => setFocusedIndex(index)}
-                  onFileSelectAction={(file) => handleFileSelect(slot.id, file)}
-                  onRemoveAction={() => removeFileFromSlot(slot.id)}
-                  onEditAction={() => handleEditSlot(slot.id)}
-                />
+                <div key={slot.id} className="pointer-events-auto">
+                  <AvatarPreviewSlide
+                    slot={slot}
+                    offset={offset}
+                    onClickAction={() => setFocusedIndex(index)}
+                    onFileSelectAction={(file) =>
+                      handleFileSelect(slot.id, file)
+                    }
+                    onRemoveAction={() => removeFileFromSlot(slot.id)}
+                    onEditAction={() => handleEditSlot(slot.id)}
+                  />
+                </div>
               );
             })}
           </div>

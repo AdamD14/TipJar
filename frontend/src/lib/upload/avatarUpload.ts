@@ -1,14 +1,17 @@
-import axios from 'axios';
-import { useAvatarStore } from '@/lib/store/avatarUploadStore';
-import { getUploadController } from './uploadController';
+import axios from "axios";
+import axiosInstance from "@/lib/axios";
+import { useAvatarStore } from "@/lib/store/avatarUploadStore";
+import { getUploadController } from "./uploadController";
 
 const SUPABASE_FUNCTIONS_URL = process.env.NEXT_PUBLIC_SUPABASE_FUNCTIONS_URL;
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export function validateImageFile(file: File, maxSizeMB: number = 5): string | null {
-  const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-  if (!validTypes.some(type => file.type.includes(type))) {
-    return 'Unsupported file format. Use JPG, PNG, WebP or GIF.';
+export function validateImageFile(
+  file: File,
+  maxSizeMB: number = 5
+): string | null {
+  const validTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+  if (!validTypes.some((type) => file.type.includes(type))) {
+    return "Unsupported file format. Use JPG, PNG, WebP or GIF.";
   }
   if (file.size > maxSizeMB * 1024 * 1024) {
     return `File is too large. Maximum size is ${maxSizeMB}MB.`;
@@ -18,7 +21,7 @@ export function validateImageFile(file: File, maxSizeMB: number = 5): string | n
 
 export const uploadAvatarProcess = async (
   slotId: number,
-  file: File,
+  file: File
 ): Promise<{
   success: boolean;
   storjKey: string;
@@ -29,30 +32,36 @@ export const uploadAvatarProcess = async (
 }> => {
   const store = useAvatarStore.getState();
   const uploadController = getUploadController();
-  
-  if (!SUPABASE_FUNCTIONS_URL || !API_URL) {
-    throw new Error('Missing environment variables');
+
+  if (!SUPABASE_FUNCTIONS_URL) {
+    throw new Error("Missing SUPABASE_FUNCTIONS_URL");
   }
 
   const controller = uploadController.create(slotId);
 
   try {
-    store.setSlotStatus(slotId, { isUploading: true, error: null, uploadProgress: 5 });
+    store.setSlotStatus(slotId, {
+      isUploading: true,
+      error: null,
+      uploadProgress: 5,
+    });
 
+    const apiKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     // 1. Get Presigned URL (Edge -> Backend Reserve)
-    const { data: presigned } = await axios.post(
-      `${SUPABASE_FUNCTIONS_URL}/storj-presigned`,
+    const { data: presigned } = await axiosInstance.post(
+      `${SUPABASE_FUNCTIONS_URL}/storj-presigned?apikey=${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
       {
         slotId,
         fileName: file.name,
         contentType: file.type,
       },
       {
-        withCredentials: true,
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
+          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${apiKey}`,
         },
-        signal: controller.signal
+        signal: controller.signal,
       }
     );
 
@@ -60,9 +69,10 @@ export const uploadAvatarProcess = async (
     const storjKey = presigned.key;
 
     // 2. Upload to Storj (Direct)
-    await axios.put(presigned.uploadUrl, file, {
+    await axiosInstance.put(presigned.uploadUrl, file, {
       headers: {
-        'Content-Type': file.type,
+        "Content-Type": file.type,
+        "x-amz-acl": "public-read", // Dodane – wymagane przez presigned URL z ACL
       },
       signal: controller.signal,
       onUploadProgress: (ev) => {
@@ -77,52 +87,56 @@ export const uploadAvatarProcess = async (
     store.setSlotStatus(slotId, { uploadProgress: 95 });
 
     // 3. Confirm Upload (Edge -> Backend Confirm)
-    const { data: confirmData } = await axios.post(
-      `${SUPABASE_FUNCTIONS_URL}/storj-upload-confirm`,
+    const { data: confirmData } = await axiosInstance.post(
+      `${SUPABASE_FUNCTIONS_URL}/storj-upload-confirm?apikey=${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
       {
         s3Key: storjKey,
-        etag: '', // Optional, not strictly needed if backend trusts flow
+        etag: "", // Optional, not strictly needed if backend trusts flow
       },
       {
-        withCredentials: true,
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
+          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${apiKey}`,
         },
-        signal: controller.signal
+        signal: controller.signal,
       }
     );
 
-    store.setSlotStatus(slotId, { 
-      isUploading: false, 
-      uploadProgress: 100, 
-      cloudinaryUrl: confirmData.publicUrl || '',
-      retryCount: 0 
+    store.setSlotStatus(slotId, {
+      isUploading: false,
+      uploadProgress: 100,
+      cloudinaryUrl: confirmData.publicUrl || "",
+      retryCount: 0,
     });
-    
+
     uploadController.complete(slotId);
 
     return {
       success: true,
       storjKey,
-      cloudinaryUrl: confirmData.publicUrl || '',
+      cloudinaryUrl: confirmData.publicUrl || "",
       cloudinaryPublicId: confirmData.id,
       optimizedUrls: {}, // Backend might return optimizedUrls if implemented in response
       mediaRecord: confirmData,
     };
-
   } catch (error) {
     if (axios.isCancel(error)) {
-      store.setSlotStatus(slotId, { isUploading: false, error: 'Cancelled' });
+      store.setSlotStatus(slotId, { isUploading: false, error: "Cancelled" });
     } else {
       console.error(error);
-      const msg = axios.isAxiosError(error) 
-        ? error.response?.data?.message || error.message 
-        : 'Upload failed';
-      
-      store.setSlotStatus(slotId, { 
-        isUploading: false, 
+
+      const msg = axios.isAxiosError(error)
+        ? error.response?.data?.message ||
+          JSON.stringify(error.response?.data) ||
+          error.message
+        : "Upload failed";
+
+      store.setSlotStatus(slotId, {
+        isUploading: false,
         error: msg,
-        retryCount: (store.slots.find(s => s.id === slotId)?.retryCount || 0) + 1
+        retryCount:
+          (store.slots.find((s) => s.id === slotId)?.retryCount || 0) + 1,
       });
     }
     uploadController.complete(slotId);

@@ -1,7 +1,7 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { AvatarStore, UploadSlot } from './types';
-import { uploadAvatarProcess } from '@/lib/upload/avatarUpload';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { AvatarStore, UploadSlot } from "./types";
+import { uploadAvatarProcess } from "@/lib/upload/avatarUpload";
 
 const MAX_SLOTS = 3;
 
@@ -17,17 +17,20 @@ export const useAvatarStore = create<AvatarStore>()(
         const { slots } = get();
         if (slots.length > 0) return;
 
-        const newSlots: UploadSlot[] = Array.from({ length: count }, (_, i) => ({
-          id: i,
-          name: `Avatar ${i + 1}`,
-          isFilled: false,
-          isUploading: false,
-          uploadProgress: 0,
-          error: null,
-          previewUrl: null,
-          cloudinaryUrl: null,
-          retryCount: 0,
-        }));
+        const newSlots: UploadSlot[] = Array.from(
+          { length: count },
+          (_, i) => ({
+            id: i,
+            name: `Avatar ${i + 1}`,
+            isFilled: false,
+            isUploading: false,
+            uploadProgress: 0,
+            error: null,
+            previewUrl: null,
+            cloudinaryUrl: null,
+            retryCount: 0,
+          })
+        );
         set({ slots: newSlots });
       },
 
@@ -35,29 +38,44 @@ export const useAvatarStore = create<AvatarStore>()(
         const { slots } = get();
         if (slots.length > 0) return;
 
-        const newSlots: UploadSlot[] = Array.from({ length: MAX_SLOTS }, (_, i) => {
-           const url = urls[i] || null;
-           return {
-            id: i,
-            name: `Avatar ${i + 1}`,
-            isFilled: !!url,
-            isUploading: false,
-            uploadProgress: url ? 100 : 0,
-            error: null,
-            previewUrl: null,
-            cloudinaryUrl: url,
-            retryCount: 0,
-          };
-        });
+        const newSlots: UploadSlot[] = Array.from(
+          { length: MAX_SLOTS },
+          (_, i) => {
+            const url = urls[i] || null;
+            return {
+              id: i,
+              name: `Avatar ${i + 1}`,
+              isFilled: !!url,
+              isUploading: false,
+              uploadProgress: url ? 100 : 0,
+              error: null,
+              previewUrl: null,
+              cloudinaryUrl: url,
+              retryCount: 0,
+            };
+          }
+        );
         set({ slots: newSlots });
       },
 
       setFileForSlot: (slotId, file, previewUrl) => {
+        console.log("setFileForSlot – dodano plik do slotu", slotId);
         set((state) => ({
-          fileRegistry: { ...state.fileRegistry, [slotId]: file },
+          fileRegistry: {
+            ...state.fileRegistry,
+            [slotId]: file, // Zawsze nadpisujemy – nowy File po cropie/edycji
+          },
           slots: state.slots.map((s) =>
             s.id === slotId
-              ? { ...s, isFilled: true, previewUrl, name: file.name, error: null, uploadProgress: 0 }
+              ? {
+                  ...s,
+                  isFilled: true,
+                  previewUrl,
+                  name: file.name || s.name,
+                  error: null,
+                  uploadProgress: 0,
+                  retryCount: 0,
+                }
               : s
           ),
         }));
@@ -71,7 +89,13 @@ export const useAvatarStore = create<AvatarStore>()(
             fileRegistry: newRegistry,
             slots: state.slots.map((s) =>
               s.id === slotId
-                ? { ...s, isFilled: false, previewUrl: null, cloudinaryUrl: null, error: null }
+                ? {
+                    ...s,
+                    isFilled: false,
+                    previewUrl: null,
+                    cloudinaryUrl: null,
+                    error: null,
+                  }
                 : s
             ),
           };
@@ -80,7 +104,9 @@ export const useAvatarStore = create<AvatarStore>()(
 
       setSlotStatus: (id, status) => {
         set((state) => ({
-          slots: state.slots.map((s) => (s.id === id ? { ...s, ...status } : s)),
+          slots: state.slots.map((s) =>
+            s.id === id ? { ...s, ...status } : s
+          ),
         }));
       },
 
@@ -90,20 +116,61 @@ export const useAvatarStore = create<AvatarStore>()(
       cleanupTemporaryData: () => {
         const { slots } = get();
         slots.forEach((s) => {
-          if (s.previewUrl?.startsWith('blob:')) URL.revokeObjectURL(s.previewUrl);
+          if (s.previewUrl?.startsWith("blob:"))
+            URL.revokeObjectURL(s.previewUrl);
         });
         set({ fileRegistry: {} });
       },
 
+      validateSlots: () => {
+        const { slots, fileRegistry } = get();
+        const hasGhostSlots = slots.some(
+          (s) => s.isFilled && !s.cloudinaryUrl && !fileRegistry[s.id]
+        );
+
+        if (hasGhostSlots) {
+          console.log(
+            "Znaleziono Ghost Slots (brak pliku w pamięci) – resetowanie..."
+          );
+          set((state) => ({
+            slots: state.slots.map((s) => {
+              if (s.isFilled && !s.cloudinaryUrl && !state.fileRegistry[s.id]) {
+                return {
+                  ...s,
+                  isFilled: false,
+                  previewUrl: null,
+                  error: null, // Resetujemy też błąd, by user mógł dodać od nowa
+                  uploadProgress: 0,
+                };
+              }
+              return s;
+            }),
+          }));
+        }
+      },
+
       // --- LOGIKA BIZNESOWA ---
-      
+
       performUploadAll: async () => {
         const { slots, fileRegistry } = get();
-        
+        console.log("performUploadAll wywołane");
+        console.log("slots:", slots);
+        console.log("fileRegistry keys:", Object.keys(fileRegistry));
+
         // Wybieramy sloty, które mają plik, ale nie mają jeszcze URL
         const slotsToUpload = slots.filter(
-          (s) => s.isFilled && !s.cloudinaryUrl && !s.isUploading && fileRegistry[s.id]
+          (s) =>
+            s.isFilled &&
+            !s.cloudinaryUrl &&
+            !s.isUploading &&
+            fileRegistry[s.id]
         );
+        console.log("slotsToUpload length:", slotsToUpload.length);
+
+        if (slotsToUpload.length === 0) {
+          console.log("NIC DO UPLOADU – slotsToUpload puste");
+          return;
+        }
 
         // Uruchamiamy uploady równolegle
         await Promise.all(
@@ -123,13 +190,13 @@ export const useAvatarStore = create<AvatarStore>()(
       },
     }),
     {
-      name: 'avatar-store',
+      name: "avatar-store",
       // Ważne: Nie zapisujemy fileRegistry (blobów/plików) do localStorage
       partialize: (state) => ({
-        slots: state.slots.map(s => ({
-            ...s, 
-            previewUrl: null, // Bloby wygasają po odświeżeniu, więc ich nie zapisujemy
-            isUploading: false 
+        slots: state.slots.map((s) => ({
+          ...s,
+          previewUrl: null, // Bloby wygasają po odświeżeniu, więc ich nie zapisujemy
+          isUploading: false,
         })),
         activeIndex: state.activeIndex,
       }),

@@ -30,9 +30,9 @@ const AvatarPreviewSlide: React.FC<AvatarPreviewSlideProps> = ({
       onClickAction();
       return;
     }
-    // If active and empty/not uploading, open file dialog
+    // If active and empty/not uploading, OR if it has error (retry), open file dialog
     // Prevent opening if clicking on buttons (handled by stopPropagation)
-    if (!slot.isFilled && !slot.isUploading) {
+    if ((!slot.isFilled || slot.error) && !slot.isUploading) {
       fileInputRef.current?.click();
     }
   };
@@ -117,30 +117,32 @@ const AvatarPreviewSlide: React.FC<AvatarPreviewSlideProps> = ({
                 <br />
                 PNG/JPG
               </p>
-              <div className="py-2.5 px-6 rounded-xl bg-teal-500 hover:bg-teal-400 text-black text-xs font-bold uppercase tracking-wider transition-all shadow-lg hover:shadow-teal-500/20 transform hover:-translate-y-0.5">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  fileInputRef.current?.click();
+                }}
+                className="py-2.5 px-6 rounded-xl bg-teal-500 hover:bg-teal-400 text-black text-xs font-bold uppercase tracking-wider transition-all shadow-lg hover:shadow-teal-500/20 transform hover:-translate-y-0.5 active:scale-95"
+              >
                 Upload
-              </div>
+              </button>
             </div>
           )}
         </div>
       )}
 
       {/* --- STAN: WYPEŁNIONY (PREVIEW) --- */}
-      {slot.isFilled && slot.previewUrl && (
+      {slot.isFilled && (slot.previewUrl || slot.cloudinaryUrl) && (
         <>
           <Image
-            src={slot.previewUrl}
+            src={slot.previewUrl || slot.cloudinaryUrl || ""}
             alt="Preview"
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-105"
             unoptimized // Need for blob URLs or external
           />
           <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent pointer-events-none" />
-          <div className="absolute bottom-5 left-0 right-0 text-center z-10">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-slate-950/60 backdrop-blur-md border border-white/10 text-[10px] font-bold text-slate-300 uppercase tracking-widest shadow-lg">
-              {slot.name}
-            </span>
-          </div>
         </>
       )}
 
@@ -160,20 +162,32 @@ const AvatarPreviewSlide: React.FC<AvatarPreviewSlideProps> = ({
         </div>
       )}
 
+      {/* --- ERROR MESSAGE --- */}
+      {slot.error && (
+        <div className="absolute inset-0 flex items-center justify-center bg-red-950/80 backdrop-blur-sm z-20 p-4">
+          <div className="text-center">
+            <p className="text-red-400 font-bold mb-2">Upload Failed</p>
+            <p className="text-red-200 text-xs">{slot.error}</p>
+          </div>
+        </div>
+      )}
+
       {/* --- AKCJE (Edytuj/Usuń) --- */}
-      {isActive && slot.isFilled && !slot.isUploading && !slot.error && (
-        <div className="absolute top-4 right-4 flex flex-col gap-2 z-20 animate-in fade-in zoom-in duration-300">
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onEditAction();
-            }}
-            className="p-2.5 bg-slate-950/50 backdrop-blur-md hover:bg-teal-500 hover:text-white text-teal-400 rounded-xl border border-teal-500/20 transition-all shadow-lg hover:shadow-teal-500/20"
-            title="Edit"
-          >
-            <Camera size={16} />
-          </button>
+      {isActive && slot.isFilled && !slot.isUploading && (
+        <div className="absolute top-4 right-4 flex flex-col gap-2 z-30 animate-in fade-in zoom-in duration-300 pointer-events-auto">
+          {!slot.error && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEditAction();
+              }}
+              className="p-2.5 bg-slate-950/50 backdrop-blur-md hover:bg-teal-500 hover:text-white text-teal-400 rounded-xl border border-teal-500/20 transition-all shadow-lg hover:shadow-teal-500/20"
+              title="Edit"
+            >
+              <Camera size={16} />
+            </button>
+          )}
           <button
             type="button"
             onClick={(e) => {
@@ -196,6 +210,13 @@ const AvatarPreviewSlide: React.FC<AvatarPreviewSlideProps> = ({
           </div>
         </div>
       )}
+
+      {/* --- SLOT LABEL (ALWAYS VISIBLE) --- */}
+      <div className="absolute bottom-5 left-0 right-0 text-center z-10">
+        <span className="inline-block px-4 py-1.5 rounded-full bg-slate-950/60 backdrop-blur-md border border-white/10 text-[10px] font-bold text-slate-300 uppercase tracking-widest shadow-lg">
+          {slot.name}
+        </span>
+      </div>
     </div>
   );
 };
