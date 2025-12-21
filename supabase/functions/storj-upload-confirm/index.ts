@@ -1,5 +1,4 @@
 // deno-lint-ignore-file
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { jwtVerify } from "https://deno.land/x/jose@v5.2.0/index.ts";
 
 const corsHeaders = {
@@ -11,18 +10,31 @@ const corsHeaders = {
   Vary: "Origin",
 };
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders, status: 204 });
   }
 
   try {
-    // 1. Ostateczna autentykacja – Bearer token
+    // Pobranie tokena z nagłówka Authorization lub z ciasteczka (fallback)
     const authHeader = req.headers.get("authorization");
-    if (!authHeader || !authHeader.toLowerCase().startsWith("bearer ")) {
+    let token: string | undefined;
+
+    if (authHeader?.startsWith("Bearer ")) {
+      token = authHeader.slice(7);
+    } else {
+      // Fallback: cookie (dla same-origin requests)
+      const cookies = req.headers.get("cookie");
+      token = cookies
+        ?.split("; ")
+        .find((row) => row.startsWith("access_token="))
+        ?.split("=")[1];
+    }
+
+    if (!token) {
       return new Response(
         JSON.stringify({
-          error: "Unauthorized – missing or invalid Authorization header",
+          error: "Missing access token (Authorization header or cookie)",
         }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -31,28 +43,33 @@ serve(async (req) => {
       );
     }
 
-    const token = authHeader.substring(7).trim();
-
-    const jwtSecret = Deno.env.get("JWT_ACCESS_TOKEN_SECRET");
+    // Weryfikacja JWT
+    const jwtSecret = Deno.env.get("JWT_SECRET");
     if (!jwtSecret) {
-      throw new Error("Server configuration error: JWT_ACCESS_TOKEN_SECRET missing");
+      return new Response(
+        JSON.stringify({
+          error: "Server configuration error: JWT_SECRET missing",
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 500,
+        }
+      );
     }
 
-    // Weryfikacja
     await jwtVerify(token, new TextEncoder().encode(jwtSecret));
-    // Jeśli weryfikacja przejdzie, user jest autoryzowany.
-    // Confirm upload zazwyczaj wymaga tylko s3Key/etag i faktu bycia zalogowanym (lub bycia właścicielem).
-    // Backend (confirm-upload) może dodatkowo sprawdzić czy ten user jest właścicielem slotu, jeśli przekażemy userId.
-    // Ale aktualny payload to tylko { s3Key, etag }. Backend NestJS ufa, że jeśli Edge Function puści requests z kluczem internal, to jest OK.
 
-    // 2. Parse Payload
+    // Parse body
     const { s3Key, etag } = await req.json();
 
     if (!s3Key) {
-      throw new Error("Missing s3Key");
+      return new Response(JSON.stringify({ error: "Missing s3Key" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
     }
 
-    // 3. Call NestJS Internal API (Confirm Upload)
+    // Call NestJS internal confirm
     const nestJsUrl = Deno.env.get("NESTJS_INTERNAL_URL");
     const nestJsKey = Deno.env.get("NESTJS_SECRET_KEY");
 
@@ -60,7 +77,13 @@ serve(async (req) => {
       console.error(
         "Missing Env Vars: NESTJS_INTERNAL_URL or NESTJS_SECRET_KEY"
       );
-      throw new Error("Server configuration error");
+      return new Response(
+        JSON.stringify({ error: "Server configuration error" }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 500,
+        }
+      );
     }
 
     const confirmResponse = await fetch(
@@ -78,7 +101,13 @@ serve(async (req) => {
     if (!confirmResponse.ok) {
       const errorText = await confirmResponse.text();
       console.error("NestJS Confirm Failed:", errorText);
-      throw new Error(`Backend confirmation failed: ${errorText}`);
+      return new Response(
+        JSON.stringify({ error: `Backend confirmation failed: ${errorText}` }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 500,
+        }
+      );
     }
 
     const result = await confirmResponse.json();

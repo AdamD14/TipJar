@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { login, me } from "@/lib/auth";
 import { useOnboardingStore } from "@/lib/store/onboardingStore";
+import { useAuthStore } from "@/lib/store/authStore";
 import { useToast } from "@/components/ui/Toast";
 
 export default function Page() {
@@ -42,7 +43,11 @@ export default function Page() {
     if (loading) return;
     setLoading(true);
     try {
-      await login({ email, password });
+      const loginResponse = await login({ email, password });
+      // Zapisz token do authStore - kluczowe dla cross-origin requests do Edge Functions
+      if (loginResponse?.accessToken) {
+        useAuthStore.getState().setAccessToken(loginResponse.accessToken);
+      }
       const user = await me().catch(() => null);
       if (user) {
         const normalizedRole = user.role === "CREATOR" ? "CREATOR" : "FAN";
@@ -60,6 +65,7 @@ export default function Page() {
 
       const hasUsername = Boolean(user?.username);
       const onboardingDone = Boolean(user?.hasCompletedOnboarding);
+      const normalizedRole = user?.role === "CREATOR" ? "CREATOR" : "FAN";
       const normalizedRole = user?.role === "CREATOR" ? "CREATOR" : "FAN";
       const fallbackTarget =
         hasUsername && onboardingDone

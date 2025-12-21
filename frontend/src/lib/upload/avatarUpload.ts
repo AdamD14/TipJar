@@ -1,8 +1,8 @@
 import axios from "axios";
 import axiosInstance from "@/lib/axios";
 import { useAvatarStore } from "@/lib/store/avatarUploadStore";
+import { useAuthStore } from "@/lib/store/authStore";
 import { getUploadController } from "./uploadController";
-
 
 const SUPABASE_FUNCTIONS_URL = process.env.NEXT_PUBLIC_SUPABASE_FUNCTIONS_URL;
 
@@ -47,7 +47,34 @@ export const uploadAvatarProcess = async (
       uploadProgress: 5,
     });
 
+    // Get token from authStore (set during login)
+    let token = useAuthStore.getState().accessToken;
+
+    // Fallback: If no token in store (e.g., OAuth login), try to refresh
+    if (!token) {
+      try {
+        const refreshRes = await fetch(
+          `${
+            process.env.NEXT_PUBLIC_BACKEND_ORIGIN || "http://localhost:3001"
+          }/api/v1/auth/refresh-token`,
+          { method: "POST", credentials: "include" }
+        );
+        if (refreshRes.ok) {
+          const data = await refreshRes.json();
+          token = data.accessToken;
+          useAuthStore.getState().setAccessToken(token);
+        }
+      } catch (e) {
+        console.warn("Token refresh failed:", e);
+      }
+    }
+
+    if (!token) {
+      throw new Error("User not authenticated - please log in again");
+    }
+
     // 1. Get Presigned URL (Edge -> Backend Reserve)
+    console.log("[Upload] Step 1: Getting presigned URL...");
     const { data: presigned } = await axiosInstance.post(
       `${SUPABASE_FUNCTIONS_URL}/storj-presigned`,
       {
@@ -55,16 +82,27 @@ export const uploadAvatarProcess = async (
         fileName: file.name,
         contentType: file.type,
       },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+        signal: controller.signal,
+      }
     );
+    console.log("[Upload] Step 1 SUCCESS. Key:", presigned.key);
 
     store.setSlotStatus(slotId, { uploadProgress: 20 });
     const storjKey = presigned.key;
 
     // 2. Upload to Storj (Direct)
+    console.log("[Upload] Step 2: Uploading to Storj...");
     await axiosInstance.put(presigned.uploadUrl, file, {
       headers: {
         "Content-Type": file.type,
-        "x-amz-acl": "public-read", // Dodane – wymagane przez presigned URL z ACL
+        "x-amz-acl": "public-read",
       },
       signal: controller.signal,
       onUploadProgress: (ev) => {
@@ -73,12 +111,14 @@ export const uploadAvatarProcess = async (
           store.setSlotStatus(slotId, { uploadProgress: percent });
         }
       },
-      transformRequest: [(data) => data], // Essential for ensuring raw file is sent
+      transformRequest: [(data) => data], // Raw file
     });
+    console.log("[Upload] Step 2 SUCCESS. File uploaded to Storj.");
 
     store.setSlotStatus(slotId, { uploadProgress: 95 });
 
     // 3. Confirm Upload (Edge -> Backend Confirm)
+    console.log("[Upload] Step 3: Confirming upload...");
     const { data: confirmData } = await axiosInstance.post(
       `${SUPABASE_FUNCTIONS_URL}/storj-upload-confirm`,
       {
@@ -89,12 +129,13 @@ export const uploadAvatarProcess = async (
         headers: {
           "Content-Type": "application/json",
           apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${getJwtToken()}`,
+          Authorization: `Bearer ${token}`,
         },
         withCredentials: true,
         signal: controller.signal,
       }
     );
+    console.log("[Upload] Step 3 SUCCESS. Confirm data:", confirmData);
 
     store.setSlotStatus(slotId, {
       isUploading: false,
@@ -110,7 +151,7 @@ export const uploadAvatarProcess = async (
       storjKey,
       cloudinaryUrl: confirmData.publicUrl || "",
       cloudinaryPublicId: confirmData.id,
-      optimizedUrls: {}, // Backend might return optimizedUrls if implemented in response
+      optimizedUrls: {},
       mediaRecord: confirmData,
     };
   } catch (error) {
@@ -120,7 +161,8 @@ export const uploadAvatarProcess = async (
       console.error(error);
 
       const msg = axios.isAxiosError(error)
-        ? error.response?.data?.message ||
+        ? error.response?.data?.error ||
+          error.response?.data?.message ||
           JSON.stringify(error.response?.data) ||
           error.message
         : "Upload failed";
@@ -136,7 +178,3 @@ export const uploadAvatarProcess = async (
     throw error;
   }
 };
-function getJwtToken() {
-  throw new Error("Function not implemented.");
-}
-

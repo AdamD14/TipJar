@@ -265,6 +265,29 @@ export class AuthController {
     }
   }
 
+  /**
+   * Returns the current access_token for JS clients.
+   * This is needed because access_token cookie is HttpOnly.
+   */
+  @Post('token')
+  @HttpCode(HttpStatus.OK)
+  async getToken(@Req() req: Request): Promise<{ accessToken: string | null }> {
+    const cookies = req.cookies as Record<string, string>;
+    const accessToken = cookies?.['access_token'] || null;
+
+    if (!accessToken) {
+      return { accessToken: null };
+    }
+
+    // Validate the token is still valid
+    try {
+      this.jwtService.verify(accessToken);
+      return { accessToken };
+    } catch {
+      return { accessToken: null };
+    }
+  }
+
   @Get('me')
   @UseGuards(AuthGuard('jwt'))
   async getProfile(@Req() req: Request): Promise<ValidatedUser> {
