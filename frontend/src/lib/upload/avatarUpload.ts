@@ -3,6 +3,7 @@ import axiosInstance from "@/lib/axios";
 import { useAvatarStore } from "@/lib/store/avatarUploadStore";
 import { getUploadController } from "./uploadController";
 
+
 const SUPABASE_FUNCTIONS_URL = process.env.NEXT_PUBLIC_SUPABASE_FUNCTIONS_URL;
 
 export function validateImageFile(
@@ -54,13 +55,6 @@ export const uploadAvatarProcess = async (
         fileName: file.name,
         contentType: file.type,
       },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-        },
-        signal: controller.signal,
-      }
     );
 
     store.setSlotStatus(slotId, { uploadProgress: 20 });
@@ -95,7 +89,9 @@ export const uploadAvatarProcess = async (
         headers: {
           "Content-Type": "application/json",
           apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${getJwtToken()}`,
         },
+        withCredentials: true,
         signal: controller.signal,
       }
     );
@@ -140,3 +136,7 @@ export const uploadAvatarProcess = async (
     throw error;
   }
 };
+function getJwtToken() {
+  throw new Error("Function not implemented.");
+}
+

@@ -5,32 +5,37 @@ import { jwtVerify } from "https://deno.land/x/jose@v5.2.0/index.ts";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "http://localhost:3000",
   "Access-Control-Allow-Credentials": "true",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, cookie",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, cookie",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Vary": "Origin",
+  Vary: "Origin",
 };
 
 serve(async (req) => {
- if (req.method === "OPTIONS") {
-  return new Response(null, { headers: corsHeaders, status: 204 });
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders, status: 204 });
   }
 
   try {
-    // 1. Pobranie Tokena z Ciasteczek
-    const cookies = req.headers.get("cookie");
-    const token = cookies
-      ?.split("; ")
-      .find((row) => row.startsWith("access_token="))
-      ?.split("=")[1];
-
-    if (!token) {
-      throw new Error("Missing access_token in cookies");
+    // 1. Ostateczna autentykacja – Bearer token
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader || !authHeader.toLowerCase().startsWith("bearer ")) {
+      return new Response(
+        JSON.stringify({
+          error: "Unauthorized – missing or invalid Authorization header",
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 401,
+        }
+      );
     }
 
-    // 2. Walidacja JWT (Shared Secret)
-    const jwtSecret = Deno.env.get("JWT_SECRET");
+    const token = authHeader.substring(7).trim();
+
+    const jwtSecret = Deno.env.get("JWT_ACCESS_TOKEN_SECRET");
     if (!jwtSecret) {
-      throw new Error("Server configuration error: JWT_SECRET missing");
+      throw new Error("Server configuration error: JWT_ACCESS_TOKEN_SECRET missing");
     }
 
     // Weryfikacja

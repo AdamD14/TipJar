@@ -9,45 +9,75 @@ import { jwtVerify } from "https://deno.land/x/jose@v5.2.0/index.ts";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "http://localhost:3000",
   "Access-Control-Allow-Credentials": "true",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, cookie",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, cookie",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Vary": "Origin",
+  Vary: "Origin",
 };
 
 // Zmiana: Używamy natywnego Deno.serve zamiast importu z std
 Deno.serve(async (req) => {
   // 1. Obsługa CORS (Preflight)
- if (req.method === "OPTIONS") {
-  return new Response(null, { headers: corsHeaders, status: 204 });
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders, status: 204 });
   }
 
   try {
-    // 2. Pobranie Tokena z Ciasteczek
-    const cookies = req.headers.get("cookie");
-    const token = cookies
-      ?.split("; ")
-      .find((row) => row.startsWith("access_token="))
-      ?.split("=")[1];
-
-    if (!token) {
-      throw new Error("Missing access_token in cookies");
+    // 2. Ostateczna autentykacja – Bearer token
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader || !authHeader.toLowerCase().startsWith("bearer ")) {
+      return new Response(
+        JSON.stringify({
+          error: "Unauthorized – missing or invalid Authorization header",
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 401,
+        }
+      );
     }
 
-    // 3. Lokalna Weryfikacja JWT (Shared Secret)
-    const jwtSecret = Deno.env.get("JWT_SECRET");
+    const token = authHeader.substring(7).trim();
+
+    const jwtSecret = Deno.env.get("JWT_ACCESS_TOKEN_SECRET");
     if (!jwtSecret) {
-      console.error("Missing JWT_SECRET in Edge Function secrets");
-      throw new Error("Server configuration error");
+      console.error("Missing JWT_ACCESS_TOKEN_SECRET");
+      return new Response(
+        JSON.stringify({ error: "Server configuration error" }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 500,
+        }
+      );
     }
 
-    // Weryfikacja podpisu tokena
-    const { payload } = await jwtVerify(
-      token,
-      new TextEncoder().encode(jwtSecret)
-    );
+    let payload;
+    try {
+      payload = (await jwtVerify(token, new TextEncoder().encode(jwtSecret)))
+        .payload;
+    } catch (err) {
+      return new Response(
+        JSON.stringify({ error: "Invalid or expired token" }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 401,
+        }
+      );
+    }
 
     const userId = payload.sub || payload.id;
-    if (!userId) throw new Error("Invalid token payload: missing userId");
+    if (!userId) {
+      return new Response(
+        JSON.stringify({ error: "Invalid token payload: missing userId" }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 401,
+        }
+      );
+    }
+
+    // Dodatkowy debug (możesz usunąć na prod)
+    console.log(`Authenticated user: ${userId}`);
 
     // 4. Pobranie danych z body
     const { fileName, contentType, slotId } = await req.json();

@@ -42,7 +42,7 @@ async function getCurrentUser() {
 }
 
 export default async function UserHeader() {
-  console.log("UserHeader – komponent renderowany");
+
 
   const user = await getCurrentUser();
 
