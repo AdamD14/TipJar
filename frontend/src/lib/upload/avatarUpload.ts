@@ -50,22 +50,24 @@ export const uploadAvatarProcess = async (
     // Get token from authStore (set during login)
     let token = useAuthStore.getState().accessToken;
 
-    // Fallback: If no token in store (e.g., OAuth login), try to refresh
+    // Fallback: If no token in store (e.g., OAuth login), get it from backend
     if (!token) {
       try {
-        const refreshRes = await fetch(
+        const tokenRes = await fetch(
           `${
             process.env.NEXT_PUBLIC_BACKEND_ORIGIN || "http://localhost:3001"
-          }/api/v1/auth/refresh-token`,
+          }/api/v1/auth/token`,
           { method: "POST", credentials: "include" }
         );
-        if (refreshRes.ok) {
-          const data = await refreshRes.json();
+        if (tokenRes.ok) {
+          const data = await tokenRes.json();
           token = data.accessToken;
-          useAuthStore.getState().setAccessToken(token);
+          if (token) {
+            useAuthStore.getState().setAccessToken(token);
+          }
         }
       } catch (e) {
-        console.warn("Token refresh failed:", e);
+        console.warn("Token fetch failed:", e);
       }
     }
 
@@ -97,9 +99,9 @@ export const uploadAvatarProcess = async (
     store.setSlotStatus(slotId, { uploadProgress: 20 });
     const storjKey = presigned.key;
 
-    // 2. Upload to Storj (Direct)
+    // 2. Upload to Storj (Direct) - use plain axios, not axiosInstance
     console.log("[Upload] Step 2: Uploading to Storj...");
-    await axiosInstance.put(presigned.uploadUrl, file, {
+    await axios.put(presigned.uploadUrl, file, {
       headers: {
         "Content-Type": file.type,
         "x-amz-acl": "public-read",
@@ -111,7 +113,7 @@ export const uploadAvatarProcess = async (
           store.setSlotStatus(slotId, { uploadProgress: percent });
         }
       },
-      transformRequest: [(data) => data], // Raw file
+      transformRequest: [(data) => data], // Raw file - no JSON transform
     });
     console.log("[Upload] Step 2 SUCCESS. File uploaded to Storj.");
 

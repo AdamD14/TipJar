@@ -6,16 +6,31 @@ import {
 import { getSignedUrl } from "https://esm.sh/@aws-sdk/s3-request-presigner@3.485.0";
 import { jwtVerify } from "https://deno.land/x/jose@v5.2.0/index.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "http://localhost:3000",
-  "Access-Control-Allow-Credentials": "true",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, cookie",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  Vary: "Origin",
-};
+const ALLOWED_ORIGINS = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://localhost:3002",
+  "http://localhost:3005",
+  "https://tipjar.plus",
+];
+
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get("origin") || "";
+  const allowedOrigin = ALLOWED_ORIGINS.includes(origin)
+    ? origin
+    : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Credentials": "true",
+    "Access-Control-Allow-Headers":
+      "authorization, x-client-info, apikey, content-type, cookie",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    Vary: "Origin",
+  };
+}
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders, status: 204 });
   }
@@ -117,39 +132,39 @@ Deno.serve(async (req) => {
 
     const signedUrl = await getSignedUrl(S3, command, { expiresIn: 900 });
 
-    // Rezerwacja slotu w NestJS
+    // Rezerwacja slotu w NestJS (opcjonalne - kontynuuj nawet jak nie działa)
     const nestJsUrl = Deno.env.get("NESTJS_INTERNAL_URL");
     const nestJsKey = Deno.env.get("NESTJS_SECRET_KEY");
 
     if (nestJsUrl && nestJsKey) {
-      const reserveResponse = await fetch(
-        `${nestJsUrl}/media/internal/reserve-slot`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Internal-API-Key": nestJsKey,
-          },
-          body: JSON.stringify({
-            userId,
-            slotId,
-            s3Key: key,
-            fileName,
-            contentType,
-            fileSize: 0,
-          }),
-        }
-      );
-
-      if (!reserveResponse.ok) {
-        console.error("NestJS Reserve Failed:", await reserveResponse.text());
-        return new Response(
-          JSON.stringify({ error: "Failed to reserve upload slot" }),
+      try {
+        const reserveResponse = await fetch(
+          `${nestJsUrl}/media/internal/reserve-slot`,
           {
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-            status: 500,
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Internal-API-Key": nestJsKey,
+            },
+            body: JSON.stringify({
+              userId,
+              slotId,
+              s3Key: key,
+              fileName,
+              contentType,
+              fileSize: 0,
+            }),
           }
         );
+
+        if (!reserveResponse.ok) {
+          console.warn(
+            "NestJS Reserve Failed (non-blocking):",
+            await reserveResponse.text()
+          );
+        }
+      } catch (e) {
+        console.warn("NestJS Reserve unreachable (dev mode ok):", e);
       }
     }
 
