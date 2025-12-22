@@ -22,6 +22,7 @@ import { NotificationModule } from './notification/notification.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { OnboardingModule } from './onboarding/creator/onboarding.module';
 import { FanOnboardingModule } from './onboarding/fan/fan-onboarding.module';
+import { MediaModule } from './media/media.module';
 // import { CreatorsModule } from './creators/creators.module';
 
 // Newly added FanModule
@@ -75,6 +76,7 @@ import { RemindersModule } from './reminders/reminders.module';
     RemindersModule,
     // Import the fan module to enable fan endpoints
     FanModule,
+    MediaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

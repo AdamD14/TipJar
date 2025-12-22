@@ -5,13 +5,27 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 @Injectable()
 export class MediaService {
+  private readonly s3Client: S3Client;
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly cloudinary: CloudinaryService,
-  ) {}
+  ) {
+    this.s3Client = new S3Client({
+      region: 'auto',
+      endpoint: process.env.STORJ_ENDPOINT || 'https://gateway.storjshare.io',
+      credentials: {
+        accessKeyId: process.env.STORJ_ACCESS_KEY || '',
+        secretAccessKey: process.env.STORJ_SECRET_KEY || '',
+      },
+      forcePathStyle: true,
+    });
+  }
 
   async createMediaRecord(
     userId: string,
@@ -62,6 +76,7 @@ export class MediaService {
     },
   ) {
     // 8-Step Manifesto: Step 2 - Reserve Slot (Pending)
+    const bucket = process.env.STORJ_BUCKET || 'tipjar-avatar';
     return this.prisma.mediaRecord.upsert({
       where: {
         userId_slotId: {
@@ -76,6 +91,7 @@ export class MediaService {
         contentType: data.contentType,
         status: 'PENDING',
         publicUrl: null,
+        bucket,
       },
       create: {
         userId,
@@ -86,6 +102,7 @@ export class MediaService {
         contentType: data.contentType,
         status: 'PENDING',
         publicUrl: null,
+        bucket,
       },
     });
   }
@@ -108,11 +125,20 @@ export class MediaService {
       },
     });
 
-    // Cloudinary Sync (Step 6)
-    const s3Url = `https://gateway.storjshare.io/${record.bucket}/${record.storjKey}`;
+    // Cloudinary Sync (Step 6) - Generate presigned GET URL for Cloudinary fetch
+    const command = new GetObjectCommand({
+      Bucket: record.bucket || process.env.STORJ_BUCKET || 'tipjar-avatar',
+      Key: record.storjKey,
+    });
+    const presignedUrl = await getSignedUrl(this.s3Client, command, {
+      expiresIn: 300,
+    });
 
     try {
-      const result = await this.cloudinary.uploadFromS3(s3Url, record.id);
+      const result = await this.cloudinary.uploadFromS3(
+        presignedUrl,
+        record.id,
+      );
 
       // Step 7: Processed
       return this.prisma.mediaRecord.update({

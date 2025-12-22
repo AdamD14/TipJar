@@ -31,7 +31,12 @@ export class OnboardingService {
 
     const steps: number[] = [];
     if (user.profile?.industry) steps.push(1);
-    // basic checks
+    // Step 2: At least one avatar fully processed (has publicUrl from Cloudinary)
+    const hasProcessedAvatar = user.mediaRecords.some((r) => r.publicUrl);
+    if (user.avatarUrl || hasProcessedAvatar) steps.push(2);
+    // Step 3: Bio filled
+    if (user.profile?.bio) steps.push(3);
+    // Step 4: Goal set
     if (user.profile?.goalTarget) steps.push(4);
     if (user.hasCompletedOnboarding) steps.push(5);
 

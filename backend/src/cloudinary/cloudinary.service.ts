@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
+import {
+  v2 as cloudinary,
+  UploadApiResponse,
+  TransformationOptions,
+} from 'cloudinary';
 
 export interface MulterFile {
   buffer: Buffer;
@@ -15,6 +19,15 @@ export interface MulterFile {
 
 @Injectable()
 export class CloudinaryService {
+  constructor() {
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+      secure: true,
+    });
+  }
+
   async upload(file: MulterFile): Promise<UploadApiResponse> {
     return new Promise((resolve, reject) => {
       const upload = cloudinary.uploader.upload_stream(
@@ -53,7 +66,7 @@ export class CloudinaryService {
     });
   }
 
-  url(publicId: string, options: any): string {
+  url(publicId: string, options?: TransformationOptions): string {
     return cloudinary.url(publicId, options);
   }
 }

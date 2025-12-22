@@ -1,7 +1,6 @@
 import axios from "axios";
 import axiosInstance from "@/lib/axios";
 import { useAvatarStore } from "@/lib/store/avatarUploadStore";
-import { useAuthStore } from "@/lib/store/authStore";
 import { getUploadController } from "./uploadController";
 
 const SUPABASE_FUNCTIONS_URL = process.env.NEXT_PUBLIC_SUPABASE_FUNCTIONS_URL;
@@ -47,28 +46,21 @@ export const uploadAvatarProcess = async (
       uploadProgress: 5,
     });
 
-    // Get token from authStore (set during login)
-    let token = useAuthStore.getState().accessToken;
-
-    // Fallback: If no token in store (e.g., OAuth login), get it from backend
-    if (!token) {
-      try {
-        const tokenRes = await fetch(
-          `${
-            process.env.NEXT_PUBLIC_BACKEND_ORIGIN || "http://localhost:3001"
-          }/api/v1/auth/token`,
-          { method: "POST", credentials: "include" }
-        );
-        if (tokenRes.ok) {
-          const data = await tokenRes.json();
-          token = data.accessToken;
-          if (token) {
-            useAuthStore.getState().setAccessToken(token);
-          }
-        }
-      } catch (e) {
-        console.warn("Token fetch failed:", e);
+    // Always fetch fresh token from backend (cookie-based session)
+    let token: string | null = null;
+    try {
+      const tokenRes = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_BACKEND_ORIGIN || "http://localhost:3001"
+        }/api/v1/auth/token`,
+        { method: "POST", credentials: "include" }
+      );
+      if (tokenRes.ok) {
+        const data = await tokenRes.json();
+        token = data.accessToken;
       }
+    } catch (e) {
+      console.warn("Token fetch failed:", e);
     }
 
     if (!token) {
