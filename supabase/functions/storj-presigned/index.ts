@@ -1,9 +1,6 @@
-import {
-  PutObjectCommand,
-  S3Client,
-} from "https://esm.sh/@aws-sdk/client-s3@3.485.0";
-import { getSignedUrl } from "https://esm.sh/@aws-sdk/s3-request-presigner@3.485.0";
-import { jwtVerify } from "https://deno.land/x/jose@v5.2.0/index.ts";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { jwtVerify } from "jose";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -62,7 +59,7 @@ Deno.serve(async (req) => {
       },
     );
 
-    // @ts-ignore
+    // @ts-ignore: EdgeRuntime is a global available in Supabase Edge Functions
     EdgeRuntime.waitUntil(reservePromise);
 
     const command = new PutObjectCommand({
@@ -78,8 +75,9 @@ Deno.serve(async (req) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: errorMessage }),
       { headers: { ...corsHeaders }, status: 400 },
     );
   }

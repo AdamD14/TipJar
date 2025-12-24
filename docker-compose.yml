@@ -1,5 +1,5 @@
 # TipJar/backend/docker-compose.yml
-version: "3.8" # Wersja składni Docker Compose
+
 
 services:
   postgres_db: # Nazwa serwisu PostgreSQL
