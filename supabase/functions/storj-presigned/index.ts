@@ -1,201 +1,86 @@
-// deno-lint-ignore-file
 import {
-  S3Client,
   PutObjectCommand,
+  S3Client,
 } from "https://esm.sh/@aws-sdk/client-s3@3.485.0";
 import { getSignedUrl } from "https://esm.sh/@aws-sdk/s3-request-presigner@3.485.0";
 import { jwtVerify } from "https://deno.land/x/jose@v5.2.0/index.ts";
 
-const ALLOWED_ORIGINS = [
-  "http://localhost:3000",
-  "http://localhost:3001",
-  "http://localhost:3002",
-  "http://localhost:3005",
-  "https://tipjar.plus",
-];
-
-function getCorsHeaders(req: Request) {
-  const origin = req.headers.get("origin") || "";
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin)
-    ? origin
-    : ALLOWED_ORIGINS[0];
-  return {
-    "Access-Control-Allow-Origin": allowedOrigin,
-    "Access-Control-Allow-Credentials": "true",
-    "Access-Control-Allow-Headers":
-      "authorization, x-client-info, apikey, content-type, cookie",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    Vary: "Origin",
-  };
-}
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
 
 Deno.serve(async (req) => {
-  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders, status: 204 });
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    // Pobranie tokena z nagłówka Authorization lub z ciasteczka (fallback)
-    const authHeader = req.headers.get("authorization");
-    let token: string | undefined;
+    const { slotId, fileName, contentType } = await req.json();
 
-    if (authHeader?.startsWith("Bearer ")) {
-      token = authHeader.slice(7);
-    } else {
-      // Fallback: cookie (dla same-origin requests)
-      const cookies = req.headers.get("cookie");
-      token = cookies
-        ?.split("; ")
-        .find((row) => row.startsWith("access_token="))
-        ?.split("=")[1];
+    // 1. Walidacja Slotów
+    if (slotId < 0 || slotId > 2) {
+      throw new Error("Invalid slotId. Must be between 0 and 2.");
     }
+
+    // 2. Bezpieczeństwo Tokena
+    const authHeader = req.headers.get("Authorization");
+    const token = authHeader?.replace("Bearer ", "");
 
     if (!token) {
-      return new Response(
-        JSON.stringify({
-          error: "Missing access token (Authorization header or cookie)",
-        }),
-        {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 401,
-        }
-      );
+      throw new Error("Missing token");
     }
 
-    // Weryfikacja JWT
-    const jwtSecret = Deno.env.get("JWT_SECRET");
-    if (!jwtSecret) {
-      console.error("Missing JWT_SECRET in Edge Function secrets");
-      return new Response(
-        JSON.stringify({ error: "Server configuration error" }),
-        {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 500,
-        }
-      );
-    }
+    const secret = new TextEncoder().encode(Deno.env.get("JWT_SECRET"));
+    const { payload } = await jwtVerify(token, secret);
+    const userId = payload.sub;
 
-    const { payload } = await jwtVerify(
-      token,
-      new TextEncoder().encode(jwtSecret)
-    );
-
-    const userId = payload.sub || payload.id;
-    if (!userId) {
-      return new Response(
-        JSON.stringify({ error: "Invalid token payload: missing userId" }),
-        {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 401,
-        }
-      );
-    }
-
-    // Pobranie danych z body
-    const { fileName, contentType, slotId } = await req.json();
-
-    if (!fileName || !contentType || slotId === undefined) {
-      return new Response(
-        JSON.stringify({
-          error: "Missing file details (fileName, contentType, slotId)",
-        }),
-        {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 400,
-        }
-      );
-    }
-
-    // Konfiguracja S3 (Storj)
     const S3 = new S3Client({
-      region: "auto",
-      endpoint:
-        Deno.env.get("STORJ_ENDPOINT") || "https://gateway.storjshare.io",
+      endpoint: Deno.env.get("STORJ_ENDPOINT"),
+      region: "global",
+      forcePathStyle: true,
       credentials: {
-        accessKeyId: Deno.env.get("STORJ_ACCESS_KEY") ?? "",
-        secretAccessKey: Deno.env.get("STORJ_SECRET_KEY") ?? "",
+        accessKeyId: Deno.env.get("STORJ_ACCESS_KEY")!,
+        secretAccessKey: Deno.env.get("STORJ_SECRET_KEY")!,
       },
     });
 
-    // Generowanie klucza i presigned URL
-    const timestamp = Date.now();
-    const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, "_");
-    const key = `avatars/${userId}/${slotId}/${timestamp}_${sanitizedFileName}`;
+    const s3Key = `avatars/${userId}/${slotId}/${Date.now()}-${fileName}`;
+    const publicUrl = `${Deno.env.get("STORJ_PUBLIC_URL_PREFIX")}/${s3Key}`;
+
+    const reservePromise = fetch(
+      `${Deno.env.get("NESTJS_INTERNAL_URL")}/api/v1/media/reserve-slot`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Internal-API-Key": Deno.env.get("NESTJS_SECRET_KEY")!,
+        },
+        body: JSON.stringify({ userId, slotId, s3Key, publicUrl }),
+      },
+    );
+
+    // @ts-ignore
+    EdgeRuntime.waitUntil(reservePromise);
 
     const command = new PutObjectCommand({
       Bucket: Deno.env.get("STORJ_BUCKET"),
-      Key: key,
+      Key: s3Key,
       ContentType: contentType,
-      ACL: "public-read",
     });
 
     const signedUrl = await getSignedUrl(S3, command, { expiresIn: 900 });
 
-    // Rezerwacja slotu w NestJS (opcjonalne - kontynuuj nawet jak nie działa)
-    const nestJsUrl = Deno.env.get("NESTJS_INTERNAL_URL");
-    const nestJsKey = Deno.env.get("NESTJS_SECRET_KEY");
-
-    if (nestJsUrl && nestJsKey) {
-      try {
-        const reserveResponse = await fetch(
-          `${nestJsUrl}/media/internal/reserve-slot`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-Internal-API-Key": nestJsKey,
-            },
-            body: JSON.stringify({
-              userId,
-              slotId,
-              s3Key: key,
-              fileName,
-              contentType,
-              fileSize: 0,
-            }),
-          }
-        );
-
-        if (!reserveResponse.ok) {
-          console.warn(
-            "NestJS Reserve Failed (non-blocking):",
-            await reserveResponse.text()
-          );
-        }
-      } catch (e) {
-        console.warn("NestJS Reserve unreachable (dev mode ok):", e);
-      }
-    }
-
-    // Przewidywany Cloudinary URL
-    const cloudName = Deno.env.get("CLOUDINARY_CLOUD_NAME");
-    const mappingPrefix = "tipjar-avatar";
-    const cloudinaryUrl = `https://res.cloudinary.com/${cloudName}/image/upload/${mappingPrefix}/${key}`;
-
     return new Response(
-      JSON.stringify({
-        uploadUrl: signedUrl,
-        key: key,
-        publicUrl: cloudinaryUrl,
-        expiresAt: timestamp + 900 * 1000,
-      }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      }
+      JSON.stringify({ uploadUrl: signedUrl, key: s3Key, publicUrl }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
-  } catch (error: unknown) {
-    const err = error as Error;
-    console.error("Edge Function Error:", err.message);
-
-    const isAuthError =
-      err.message.includes("token") || err.message.includes("access_token");
-    const status = isAuthError ? 401 : 500;
-
-    return new Response(JSON.stringify({ error: err.message }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: status,
-    });
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { headers: { ...corsHeaders }, status: 400 },
+    );
   }
 });

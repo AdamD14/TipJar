@@ -50,6 +50,31 @@ export class CloudinaryService {
     });
   }
 
+  /**
+   * Fetch image from public Storj URL using Cloudinary's fetch type.
+   * This tells Cloudinary to pull the image from the URL, process it,
+   * and serve it through their CDN.
+   */
+  async fetchFromStorj(
+    publicStorjUrl: string,
+    publicId?: string,
+  ): Promise<UploadApiResponse> {
+    return cloudinary.uploader.upload(publicStorjUrl, {
+      type: 'fetch',
+      folder: 'tipjar/avatars',
+      public_id: publicId,
+      width: 1200,
+      height: 1200,
+      crop: 'limit',
+      quality: 'auto:good',
+      fetch_format: 'auto',
+      overwrite: true,
+    });
+  }
+
+  /**
+   * @deprecated Use fetchFromStorj instead
+   */
   async uploadFromS3(
     url: string,
     publicId?: string,

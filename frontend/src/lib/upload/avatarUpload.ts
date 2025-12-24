@@ -3,11 +3,11 @@ import axiosInstance from "@/lib/axios";
 import { useAvatarStore } from "@/lib/store/avatarUploadStore";
 import { getUploadController } from "./uploadController";
 
-const SUPABASE_FUNCTIONS_URL = process.env.NEXT_PUBLIC_SUPABASE_FUNCTIONS_URL;
+const EDGE_FUNCTIONS_URL = process.env.NEXT_PUBLIC_EDGE_FUNCTIONS_URL;
 
 export function validateImageFile(
   file: File,
-  maxSizeMB: number = 5
+  maxSizeMB: number = 5,
 ): string | null {
   const validTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
   if (!validTypes.some((type) => file.type.includes(type))) {
@@ -21,7 +21,7 @@ export function validateImageFile(
 
 export const uploadAvatarProcess = async (
   slotId: number,
-  file: File
+  file: File,
 ): Promise<{
   success: boolean;
   storjKey: string;
@@ -33,8 +33,8 @@ export const uploadAvatarProcess = async (
   const store = useAvatarStore.getState();
   const uploadController = getUploadController();
 
-  if (!SUPABASE_FUNCTIONS_URL) {
-    throw new Error("Missing SUPABASE_FUNCTIONS_URL");
+  if (!EDGE_FUNCTIONS_URL) {
+    throw new Error("Missing NEXT_PUBLIC_EDGE_FUNCTIONS_URL");
   }
 
   const controller = uploadController.create(slotId);
@@ -46,22 +46,8 @@ export const uploadAvatarProcess = async (
       uploadProgress: 5,
     });
 
-    // Always fetch fresh token from backend (cookie-based session)
-    let token: string | null = null;
-    try {
-      const tokenRes = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_BACKEND_ORIGIN || "http://localhost:3001"
-        }/api/v1/auth/token`,
-        { method: "POST", credentials: "include" }
-      );
-      if (tokenRes.ok) {
-        const data = await tokenRes.json();
-        token = data.accessToken;
-      }
-    } catch (e) {
-      console.warn("Token fetch failed:", e);
-    }
+    // Use auth data from store (set by AvatarUploader component)
+    const { authToken: token, userId } = store;
 
     if (!token) {
       throw new Error("User not authenticated - please log in again");
@@ -70,7 +56,7 @@ export const uploadAvatarProcess = async (
     // 1. Get Presigned URL (Edge -> Backend Reserve)
     console.log("[Upload] Step 1: Getting presigned URL...");
     const { data: presigned } = await axiosInstance.post(
-      `${SUPABASE_FUNCTIONS_URL}/storj-presigned`,
+      `${EDGE_FUNCTIONS_URL}/storj-presigned`,
       {
         slotId,
         fileName: file.name,
@@ -79,12 +65,11 @@ export const uploadAvatarProcess = async (
       {
         headers: {
           "Content-Type": "application/json",
-          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
           Authorization: `Bearer ${token}`,
         },
         withCredentials: true,
         signal: controller.signal,
-      }
+      },
     );
     console.log("[Upload] Step 1 SUCCESS. Key:", presigned.key);
 
@@ -114,7 +99,7 @@ export const uploadAvatarProcess = async (
     // 3. Confirm Upload (Edge -> Backend Confirm)
     console.log("[Upload] Step 3: Confirming upload...");
     const { data: confirmData } = await axiosInstance.post(
-      `${SUPABASE_FUNCTIONS_URL}/storj-upload-confirm`,
+      `${EDGE_FUNCTIONS_URL}/storj-confirm-upload`,
       {
         s3Key: storjKey,
         etag: "",
@@ -122,12 +107,11 @@ export const uploadAvatarProcess = async (
       {
         headers: {
           "Content-Type": "application/json",
-          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
           Authorization: `Bearer ${token}`,
         },
         withCredentials: true,
         signal: controller.signal,
-      }
+      },
     );
     console.log("[Upload] Step 3 SUCCESS. Confirm data:", confirmData);
 
@@ -135,6 +119,7 @@ export const uploadAvatarProcess = async (
       isUploading: false,
       uploadProgress: 100,
       cloudinaryUrl: confirmData.publicUrl || "",
+      storjKey: storjKey,
       retryCount: 0,
     });
 
@@ -164,8 +149,9 @@ export const uploadAvatarProcess = async (
       store.setSlotStatus(slotId, {
         isUploading: false,
         error: msg,
-        retryCount:
-          (store.slots.find((s) => s.id === slotId)?.retryCount || 0) + 1,
+        retryCount: (store.slots.find((s) =>
+          s.id === slotId
+        )?.retryCount || 0) + 1,
       });
     }
     uploadController.complete(slotId);

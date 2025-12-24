@@ -12,6 +12,8 @@ interface AvatarUploaderProps {
   onUploadCompleteAction: (urls: string[]) => void;
   maxSlots?: number;
   initialUrls?: string[];
+  authToken?: string | null;
+  userId?: string;
 }
 
 // Helper to calculate circular offset
@@ -30,6 +32,8 @@ export default function AvatarUploader({
   onUploadCompleteAction,
   maxSlots = 3,
   initialUrls = [],
+  authToken = null,
+  userId = undefined,
 }: AvatarUploaderProps) {
   const {
     slots,
@@ -39,6 +43,8 @@ export default function AvatarUploader({
     setFileForSlot,
     removeFileFromSlot,
     performUploadAll,
+    setAuthToken,
+    setUserId,
   } = useAvatarStore();
 
   const [focusedIndex, setFocusedIndex] = useState(0);
@@ -62,6 +68,15 @@ export default function AvatarUploader({
     setInitialSlots,
     slots.length,
   ]);
+
+  // Sync auth data
+  useEffect(() => {
+    setAuthToken(authToken);
+  }, [authToken, setAuthToken]);
+
+  useEffect(() => {
+    if (userId) setUserId(userId);
+  }, [userId, setUserId]);
 
   // Cleanup temp preview URL on unmount or change
   useEffect(() => {

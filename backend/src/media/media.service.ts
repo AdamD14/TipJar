@@ -1,219 +1,80 @@
 import {
   Injectable,
-  BadRequestException,
+  InternalServerErrorException,
   NotFoundException,
-} from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { CloudinaryService } from '../cloudinary/cloudinary.service';
-import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+} from "@nestjs/common";
+import { PrismaService } from "../prisma/prisma.service";
+import { CloudinaryService } from "../cloudinary/cloudinary.service";
+import { ConfirmUploadDto, ReserveSlotDto } from "./dto/media.dto";
 
 @Injectable()
 export class MediaService {
-  private readonly s3Client: S3Client;
-
   constructor(
-    private readonly prisma: PrismaService,
-    private readonly cloudinary: CloudinaryService,
-  ) {
-    this.s3Client = new S3Client({
-      region: 'auto',
-      endpoint: process.env.STORJ_ENDPOINT || 'https://gateway.storjshare.io',
-      credentials: {
-        accessKeyId: process.env.STORJ_ACCESS_KEY || '',
-        secretAccessKey: process.env.STORJ_SECRET_KEY || '',
-      },
-      forcePathStyle: true,
-    });
-  }
+    private prisma: PrismaService,
+    private cloudinary: CloudinaryService,
+  ) {}
 
-  async createMediaRecord(
-    userId: string,
-    data: {
-      slotId: number;
-      storjKey: string;
-      fileName: string;
-      fileSize: number;
-      contentType: string;
-      etag: string;
-      bucket?: string;
-    },
-  ) {
-    return this.prisma.mediaRecord.create({
-      data: {
-        userId,
-        storjKey: data.storjKey,
-        fileName: data.fileName,
-        size: data.fileSize,
-        contentType: data.contentType,
-        etag: data.etag,
-        bucket: data.bucket || undefined, // Prisma will use default if undefined
-        publicUrl: '',
-      },
-    });
-  }
-
-  async updateMediaRecord(
-    mediaId: string,
-    data: {
-      publicUrl?: string;
-    },
-  ) {
-    return this.prisma.mediaRecord.update({
-      where: { id: mediaId },
-      data,
-    });
-  }
-
-  async reserveSlot(
-    userId: string,
-    data: {
-      slotId: number;
-      s3Key: string;
-      fileName: string;
-      contentType: string;
-      fileSize: number;
-    },
-  ) {
-    // 8-Step Manifesto: Step 2 - Reserve Slot (Pending)
-    const bucket = process.env.STORJ_BUCKET || 'tipjar-avatar';
-    return this.prisma.mediaRecord.upsert({
-      where: {
-        userId_slotId: {
-          userId,
-          slotId: data.slotId,
-        },
-      },
+  // KROK 1: Rezerwacja slotu w bazie (wywoływane przez Edge Function storj-presigned)
+  // Status: PENDING
+  async reserveAvatarSlot(dto: ReserveSlotDto) {
+    return await this.prisma.mediaRecord.upsert({
+      where: { userId_slotId: { userId: dto.userId, slotId: dto.slotId } },
       update: {
-        storjKey: data.s3Key,
-        fileName: data.fileName,
-        size: data.fileSize,
-        contentType: data.contentType,
-        status: 'PENDING',
-        publicUrl: null,
-        bucket,
+        storjKey: dto.s3Key,
+        publicUrl: dto.publicUrl,
+        status: "PENDING",
       },
       create: {
-        userId,
-        slotId: data.slotId,
-        storjKey: data.s3Key,
-        fileName: data.fileName,
-        size: data.fileSize,
-        contentType: data.contentType,
-        status: 'PENDING',
-        publicUrl: null,
-        bucket,
+        userId: dto.userId,
+        slotId: dto.slotId,
+        storjKey: dto.s3Key,
+        fileName: dto.fileName || "avatar.jpg",
+        contentType: dto.contentType || "image/jpeg",
+        size: dto.size || 0,
+        publicUrl: dto.publicUrl,
+        status: "PENDING",
       },
     });
   }
 
-  async confirmUpload(s3Key: string, etag?: string) {
-    // 8-Step Manifesto: Step 5, 6, 7
-    const record = await this.prisma.mediaRecord.findFirst({
-      where: { storjKey: s3Key },
+  // KROK 2: Potwierdzenie uploadu i transfer do Cloudinary
+  // Status flow: PENDING -> COMPLETED -> PROCESSED
+  async confirmUpload(dto: ConfirmUploadDto) {
+    const avatar = await this.prisma.mediaRecord.findUnique({
+      where: { userId_slotId: { userId: dto.userId, slotId: dto.slotId } },
     });
 
-    if (!record) {
-      throw new NotFoundException('Media record not found for confirmation');
-    }
+    if (!avatar) throw new NotFoundException("Reservation not found");
 
+    // Krok 2a: Oznacz jako COMPLETED (plik jest w Storj)
     await this.prisma.mediaRecord.update({
-      where: { id: record.id },
-      data: {
-        status: 'COMPLETED',
-        etag: etag,
-      },
-    });
-
-    // Cloudinary Sync (Step 6) - Generate presigned GET URL for Cloudinary fetch
-    const command = new GetObjectCommand({
-      Bucket: record.bucket || process.env.STORJ_BUCKET || 'tipjar-avatar',
-      Key: record.storjKey,
-    });
-    const presignedUrl = await getSignedUrl(this.s3Client, command, {
-      expiresIn: 300,
+      where: { id: avatar.id },
+      data: { status: "COMPLETED" },
     });
 
     try {
-      const result = await this.cloudinary.uploadFromS3(
-        presignedUrl,
-        record.id,
+      // Krok 2b: Transfer do Cloudinary przez publiczny URL Storj
+      // Cloudinary sam pobierze plik z URL i przetworzy
+      const cloudinaryResult = await this.cloudinary.fetchFromStorj(
+        avatar.publicUrl!,
+        `user-${dto.userId}-slot-${dto.slotId}`,
       );
 
-      // Step 7: Processed
-      return this.prisma.mediaRecord.update({
-        where: { id: record.id },
+      // Krok 2c: Oznacz jako PROCESSED z nowym URL
+      return await this.prisma.mediaRecord.update({
+        where: { id: avatar.id },
         data: {
-          status: 'PROCESSED',
-          publicUrl: result.secure_url,
+          publicUrl: cloudinaryResult.secure_url,
+          status: "PROCESSED",
         },
       });
     } catch (error) {
-      console.error('Cloudinary sync error:', error);
+      console.error("Cloudinary processing error:", error);
       await this.prisma.mediaRecord.update({
-        where: { id: record.id },
-        data: { status: 'FAILED' },
+        where: { id: avatar.id },
+        data: { status: "FAILED" },
       });
-      throw new BadRequestException('Failed to sync with Cloudinary');
+      throw new InternalServerErrorException("Cloudinary processing failed");
     }
-  }
-
-  // Legacy method kept for MediaController compatibility if needed
-  async registerWithCloudinary(mediaId: string) {
-    const record = await this.prisma.mediaRecord.findUnique({
-      where: { id: mediaId },
-    });
-
-    if (!record) {
-      throw new NotFoundException('Media record not found');
-    }
-
-    if (!record.storjKey) {
-      throw new BadRequestException('Missing Storj key');
-    }
-
-    const s3Url = `https://gateway.storjshare.io/${record.bucket}/${record.storjKey}`;
-
-    try {
-      const result = await this.cloudinary.uploadFromS3(s3Url, record.id);
-
-      return this.prisma.mediaRecord.update({
-        where: { id: mediaId },
-        data: {
-          publicUrl: result.secure_url,
-        },
-      });
-    } catch (error) {
-      console.error('Cloudinary sync error:', error);
-      throw new BadRequestException('Failed to sync with Cloudinary');
-    }
-  }
-
-  generateOptimizedUrls(publicId: string) {
-    const baseTransforms = {
-      thumbnail: { width: 100, height: 100, crop: 'fill', gravity: 'face' },
-      avatar: { width: 300, height: 300, crop: 'fill', gravity: 'face' },
-      medium: { width: 800, height: 800, crop: 'limit', quality: 'auto:good' },
-      large: { width: 1200, height: 1200, crop: 'limit', quality: 'auto:best' },
-    };
-
-    const urls: Record<string, string> = {};
-    for (const [size, transform] of Object.entries(baseTransforms)) {
-      urls[size] = this.cloudinary.url(publicId, {
-        ...transform,
-        secure: true,
-      });
-    }
-
-    // Add next-gen formats
-    urls['webp'] = this.cloudinary.url(publicId, {
-      width: 800,
-      height: 800,
-      crop: 'limit',
-      quality: 'auto:good',
-      fetch_format: 'webp',
-    });
-
-    return urls;
   }
 }

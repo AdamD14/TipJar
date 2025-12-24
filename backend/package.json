@@ -21,7 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.940.0",
+    "@aws-sdk/client-s3": "^3.956.0",
     "@aws-sdk/s3-request-presigner": "^3.940.0",
     "@circle-fin/developer-controlled-wallets": "^9.5.0",
     "@nestjs-modules/mailer": "^2.0.2",
@@ -59,6 +59,7 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "siwe": "^3.0.0",
+    "streamifier": "^0.1.1",
     "swagger-ui-express": "^5.0.1",
     "viem": "^2.40.3"
   },
@@ -82,6 +83,7 @@
     "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.38",
     "@types/redis": "^4.0.11",
+    "@types/streamifier": "^0.1.2",
     "@types/supertest": "^6.0.3",
     "dotenv-cli": "^11.0.0",
     "eslint": "^9.39.1",
