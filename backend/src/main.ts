@@ -1,7 +1,7 @@
 // src/main.ts
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe, Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 
@@ -59,4 +59,4 @@ async function bootstrap() {
   logger.log(`✅ Dostępny pod adresem: http://localhost:${port}/api/v1`);
 }
 
-bootstrap();
+void bootstrap();

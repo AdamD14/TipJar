@@ -14,8 +14,7 @@ export class MediaService {
     private cloudinary: CloudinaryService,
   ) {}
 
-  // KROK 1: Rezerwacja slotu w bazie (wywoływane przez Edge Function storj-presigned)
-  // Status: PENDING
+  // KROK 1: Rezerwacja slotu
   async reserveAvatarSlot(dto: ReserveSlotDto) {
     return await this.prisma.mediaRecord.upsert({
       where: { userId_slotId: { userId: dto.userId, slotId: dto.slotId } },
@@ -23,6 +22,8 @@ export class MediaService {
         storjKey: dto.s3Key,
         publicUrl: dto.publicUrl,
         status: "PENDING",
+        bucket: "storj-tipjar",
+        provider: "storj",
       },
       create: {
         userId: dto.userId,
@@ -33,48 +34,46 @@ export class MediaService {
         size: dto.size || 0,
         publicUrl: dto.publicUrl,
         status: "PENDING",
+        bucket: "storj-tipjar",
+        provider: "storj",
       },
     });
   }
 
-  // KROK 2: Potwierdzenie uploadu i transfer do Cloudinary
-  // Status flow: PENDING -> COMPLETED -> PROCESSED
+  // KROK 2: Potwierdzenie (Called provided by Edge Function)
   async confirmUpload(dto: ConfirmUploadDto) {
-    const avatar = await this.prisma.mediaRecord.findUnique({
-      where: { userId_slotId: { userId: dto.userId, slotId: dto.slotId } },
-    });
+    // 1. Znajdź po s3Key (jeśli podany) lub userId+slotId
+    let avatar;
+    if (dto.s3Key) {
+      avatar = await this.prisma.mediaRecord.findFirst({
+        where: { storjKey: dto.s3Key },
+      });
+    } else if (dto.userId && dto.slotId !== undefined) {
+      avatar = await this.prisma.mediaRecord.findUnique({
+        where: { userId_slotId: { userId: dto.userId, slotId: dto.slotId } },
+      });
+    }
 
     if (!avatar) throw new NotFoundException("Reservation not found");
 
-    // Krok 2a: Oznacz jako COMPLETED (plik jest w Storj)
-    await this.prisma.mediaRecord.update({
+    // 2. Generuj Sync URL Cloudinary
+    // Storj Public URL is available in avatar.publicUrl (set during reserve)
+    // or we can reconstruct it. Reserve sets it correctly.
+    const storjUrl = avatar.publicUrl;
+    if (!storjUrl) throw new InternalServerErrorException("Missing Storj URL");
+
+    const cloudinaryUrl = this.cloudinary.generateAvatarUrl(storjUrl);
+
+    // 3. Aktualizuj rekord
+    // Ustawiamy od razu PROCESSED, bo URL typu 'fetch' działa natychmiastowo
+    // (przetwarzanie przy pierwszym żądaniu)
+    return await this.prisma.mediaRecord.update({
       where: { id: avatar.id },
-      data: { status: "COMPLETED" },
+      data: {
+        publicUrl: cloudinaryUrl,
+        status: "PROCESSED",
+        etag: dto.etag,
+      },
     });
-
-    try {
-      // Krok 2b: Transfer do Cloudinary przez publiczny URL Storj
-      // Cloudinary sam pobierze plik z URL i przetworzy
-      const cloudinaryResult = await this.cloudinary.fetchFromStorj(
-        avatar.publicUrl!,
-        `user-${dto.userId}-slot-${dto.slotId}`,
-      );
-
-      // Krok 2c: Oznacz jako PROCESSED z nowym URL
-      return await this.prisma.mediaRecord.update({
-        where: { id: avatar.id },
-        data: {
-          publicUrl: cloudinaryResult.secure_url,
-          status: "PROCESSED",
-        },
-      });
-    } catch (error) {
-      console.error("Cloudinary processing error:", error);
-      await this.prisma.mediaRecord.update({
-        where: { id: avatar.id },
-        data: { status: "FAILED" },
-      });
-      throw new InternalServerErrorException("Cloudinary processing failed");
-    }
   }
 }

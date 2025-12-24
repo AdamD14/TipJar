@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
+import { IsNumber, IsOptional, IsString, Max, Min } from "class-validator";
 
 export class ReserveSlotDto {
   @IsString()
@@ -29,11 +29,21 @@ export class ReserveSlotDto {
 }
 
 export class ConfirmUploadDto {
+  @IsOptional()
   @IsString()
-  userId: string;
+  userId?: string;
 
+  @IsOptional()
   @IsNumber()
   @Min(0)
   @Max(2)
-  slotId: number;
+  slotId?: number;
+
+  @IsOptional()
+  @IsString()
+  s3Key?: string;
+
+  @IsOptional()
+  @IsString()
+  etag?: string;
 }

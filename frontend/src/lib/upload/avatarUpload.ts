@@ -1,6 +1,7 @@
 import axios from "axios";
 import axiosInstance from "@/lib/axios";
 import { useAvatarStore } from "@/lib/store/avatarUploadStore";
+import { useAuthStore } from "@/lib/store/authStore";
 import { getUploadController } from "./uploadController";
 
 const EDGE_FUNCTIONS_URL = process.env.NEXT_PUBLIC_EDGE_FUNCTIONS_URL;
@@ -37,6 +38,10 @@ export const uploadAvatarProcess = async (
     throw new Error("Missing NEXT_PUBLIC_EDGE_FUNCTIONS_URL");
   }
 
+  console.log(
+    "[DEBUG] AvatarUpload Script Loaded - v2 (Cookie Fallback Active)",
+  );
+
   const controller = uploadController.create(slotId);
 
   try {
@@ -46,15 +51,22 @@ export const uploadAvatarProcess = async (
       uploadProgress: 5,
     });
 
-    // Use auth data from store (set by AvatarUploader component)
-    const { authToken: token, userId } = store;
-
+    // Use auth data from main auth store for freshness
+    const token = useAuthStore.getState().accessToken;
     if (!token) {
-      throw new Error("User not authenticated - please log in again");
+      console.warn("No access token in store, relying on Cookies...");
     }
 
     // 1. Get Presigned URL (Edge -> Backend Reserve)
     console.log("[Upload] Step 1: Getting presigned URL...");
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const { data: presigned } = await axiosInstance.post(
       `${EDGE_FUNCTIONS_URL}/storj-presigned`,
       {
@@ -63,10 +75,7 @@ export const uploadAvatarProcess = async (
         contentType: file.type,
       },
       {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers,
         withCredentials: true,
         signal: controller.signal,
       },
@@ -76,7 +85,7 @@ export const uploadAvatarProcess = async (
     store.setSlotStatus(slotId, { uploadProgress: 20 });
     const storjKey = presigned.key;
 
-    // 2. Upload to Storj (Direct) - use plain axios, not axiosInstance
+    // 2. Upload to Storj (Direct PUT)
     console.log("[Upload] Step 2: Uploading to Storj...");
     await axios.put(presigned.uploadUrl, file, {
       headers: {
@@ -90,25 +99,22 @@ export const uploadAvatarProcess = async (
           store.setSlotStatus(slotId, { uploadProgress: percent });
         }
       },
-      transformRequest: [(data) => data], // Raw file - no JSON transform
+      transformRequest: [(data) => data], // Kluczowe dla binarnego uploadu
     });
-    console.log("[Upload] Step 2 SUCCESS. File uploaded to Storj.");
+    console.log("[Upload] Step 2 SUCCESS.");
 
     store.setSlotStatus(slotId, { uploadProgress: 95 });
 
     // 3. Confirm Upload (Edge -> Backend Confirm)
     console.log("[Upload] Step 3: Confirming upload...");
     const { data: confirmData } = await axiosInstance.post(
-      `${EDGE_FUNCTIONS_URL}/storj-confirm-upload`,
+      `${EDGE_FUNCTIONS_URL}/storj-upload-confirm`,
       {
         s3Key: storjKey,
-        etag: "",
+        etag: "", // Opcjonalnie można pobrać z nagłówka odpowiedzi PUT (ETag)
       },
       {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers, // Use same headers object (already has Auth if token exists)
         withCredentials: true,
         signal: controller.signal,
       },
@@ -118,7 +124,7 @@ export const uploadAvatarProcess = async (
     store.setSlotStatus(slotId, {
       isUploading: false,
       uploadProgress: 100,
-      cloudinaryUrl: confirmData.publicUrl || "",
+      cloudinaryUrl: confirmData.publicUrl || "", // Powinien być to URL Cloudinary "fetch"
       storjKey: storjKey,
       retryCount: 0,
     });
@@ -138,17 +144,14 @@ export const uploadAvatarProcess = async (
       store.setSlotStatus(slotId, { isUploading: false, error: "Cancelled" });
     } else {
       console.error(error);
-
       const msg = axios.isAxiosError(error)
-        ? error.response?.data?.error ||
-          error.response?.data?.message ||
-          JSON.stringify(error.response?.data) ||
+        ? error.response?.data?.error || error.response?.data?.message ||
           error.message
         : "Upload failed";
 
       store.setSlotStatus(slotId, {
         isUploading: false,
-        error: msg,
+        error: typeof msg === "string" ? msg : JSON.stringify(msg),
         retryCount: (store.slots.find((s) =>
           s.id === slotId
         )?.retryCount || 0) + 1,
