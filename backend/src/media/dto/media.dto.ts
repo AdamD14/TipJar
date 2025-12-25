@@ -13,7 +13,7 @@ export class ReserveSlotDto {
   s3Key: string;
 
   @IsString()
-  publicUrl: string;
+  originalUrl: string;
 
   @IsOptional()
   @IsString()

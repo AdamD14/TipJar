@@ -1,0 +1,19 @@
+# Edge Functions Proxy - omija Kong dla poprawnego CORS z credentials
+# Uruchamia się automatycznie po supabase start
+# UWAGA: supabase_network_TipJar musi istnieć (po `npx supabase start`)
+
+services:
+  edge-proxy:
+    image: alpine/socat:latest
+    container_name: edge_functions_proxy
+    command: TCP-LISTEN:80,fork,reuseaddr TCP:supabase_edge_runtime_TipJar:8081
+    ports:
+      - "54399:80"
+    networks:
+      - supabase_network_TipJar
+    restart: unless-stopped
+    depends_on: []  # supabase zarządza swoimi kontenerami oddzielnie
+
+networks:
+  supabase_network_TipJar:
+    external: true

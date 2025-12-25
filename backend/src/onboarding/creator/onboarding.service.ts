@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 import {
@@ -31,8 +31,8 @@ export class OnboardingService {
 
     const steps: number[] = [];
     if (user.profile?.industry) steps.push(1);
-    // Step 2: At least one avatar fully processed (has publicUrl from Cloudinary)
-    const hasProcessedAvatar = user.mediaRecords.some((r) => r.publicUrl);
+    // Step 2: At least one avatar fully processed (has avatarUrl from Cloudinary)
+    const hasProcessedAvatar = user.mediaRecords.some((r) => r.avatarUrl);
     if (user.avatarUrl || hasProcessedAvatar) steps.push(2);
     // Step 3: Bio filled
     if (user.profile?.bio) steps.push(3);
@@ -40,9 +40,9 @@ export class OnboardingService {
     if (user.profile?.goalTarget) steps.push(4);
     if (user.hasCompletedOnboarding) steps.push(5);
 
-    // Map media records to public URLs
+    // Map media records to avatar URLs (Cloudinary optimized)
     const avatarUrls = user.mediaRecords
-      .map((r) => r.publicUrl)
+      .map((r) => r.avatarUrl)
       .filter(Boolean);
 
     return {

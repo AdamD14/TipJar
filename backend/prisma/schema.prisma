@@ -315,12 +315,13 @@ model MediaRecord {
   etag        String?
 
   // Kontekst
-  bucket   String      @default("storj-tipjar") // Nazwa twojego bucketa
+  bucket   String      @default("tipjar-avatar") // Nazwa bucketa Storj
   provider String      @default("storj")
   status   MediaStatus @default(PENDING)
 
-  // Wynikowy URL (Cloudinary)
-  publicUrl String? // Może być null na początku
+  // Dwa oddzielne adresy URL
+  originalUrl String? // Surowy link ze Storj
+  avatarUrl   String? // Zoptymalizowany link z Cloudinary
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

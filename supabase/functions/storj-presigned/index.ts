@@ -2,11 +2,13 @@ import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { jwtVerify } from "jose";
 
-// 1. Definicja nagłówków CORS (Inline dla pewności)
-const ALLOWED_ORIGINS = [
-  "http://localhost:3000",
-  "http://10.255.255.254:3000",
-];
+// 1. Definicja statycznych nagłówków CORS
+const corsHeadersBase = {
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, cookie",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Credentials": "true",
+};
 
 interface MyJWTPayload {
   sub: string;
@@ -16,15 +18,11 @@ interface MyJWTPayload {
 }
 
 Deno.serve(async (req) => {
-  const origin = req.headers.get("origin");
+  // DYNAMICZNE LUSTRO DLA ORIGIN - przeglądarka wymaga dokładnego dopasowania
+  const origin = req.headers.get("Origin") || req.headers.get("origin");
   const corsHeaders = {
-    "Access-Control-Allow-Origin": origin && ALLOWED_ORIGINS.includes(origin)
-      ? origin
-      : "http://localhost:3000",
-    "Access-Control-Allow-Headers":
-      "authorization, x-client-info, apikey, content-type, cookie",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Credentials": "true",
+    ...corsHeadersBase,
+    "Access-Control-Allow-Origin": origin || "http://localhost:3000",
   };
   // 2. Obsługa Preflight musi być PIERWSZA
   if (req.method === "OPTIONS") {
@@ -121,7 +119,7 @@ Deno.serve(async (req) => {
           userId,
           slotId,
           s3Key,
-          publicUrl,
+          originalUrl: publicUrl, // renamed field for NestJS
         }),
       },
     );

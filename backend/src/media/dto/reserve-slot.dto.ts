@@ -2,7 +2,7 @@ export class ReserveSlotDto {
   userId: string;
   slotId: number;
   s3Key: string;
-  publicUrl: string;
+  originalUrl: string;
 }
 
 export class ConfirmUploadDto {

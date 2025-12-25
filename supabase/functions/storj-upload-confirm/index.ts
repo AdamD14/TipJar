@@ -1,23 +1,22 @@
 import { jwtVerify } from "https://deno.land/x/jose@v5.2.0/index.ts";
 
-const ALLOWED_ORIGINS = [
-  "http://localhost:3000",
-  "http://10.255.255.254:3000",
-];
+// Definicja statycznych nagłówków CORS
+const corsHeadersBase = {
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, cookie",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Credentials": "true",
+};
 
 Deno.serve(async (req) => {
-  const origin = req.headers.get("origin");
+  // DYNAMICZNE LUSTRO DLA ORIGIN - przeglądarka wymaga dokładnego dopasowania
+  const origin = req.headers.get("Origin") || req.headers.get("origin");
   const corsHeaders = {
-    "Access-Control-Allow-Origin": origin && ALLOWED_ORIGINS.includes(origin)
-      ? origin
-      : "http://localhost:3000",
-    "Access-Control-Allow-Headers":
-      "authorization, x-client-info, apikey, content-type, cookie",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Credentials": "true",
+    ...corsHeadersBase,
+    "Access-Control-Allow-Origin": origin || "http://localhost:3000",
   };
 
-  // 2. Obsługa Preflight musi być PIERWSZA
+  // 1. Obsługa Preflight musi być PIERWSZA
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }

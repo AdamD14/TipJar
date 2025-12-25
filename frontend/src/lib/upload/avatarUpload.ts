@@ -114,7 +114,7 @@ export const uploadAvatarProcess = async (
         etag: "", // Opcjonalnie można pobrać z nagłówka odpowiedzi PUT (ETag)
       },
       {
-        headers, // Use same headers object (already has Auth if token exists)
+        headers,
         withCredentials: true,
         signal: controller.signal,
       },
