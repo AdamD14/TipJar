@@ -1,0 +1,35 @@
+Errors:
+    argument error: unknown flag: "--buckets"
+
+Usage:
+    uplink access restrict [flags]
+
+    Restrict an access
+
+Flags:
+        --access string       Access name or value to restrict
+        --import-as string    Import the access as this name
+        --export-to string    Export the access to this file path
+
+    -f, --force     Force overwrite an existing saved access
+        --use       Switch the default access to the newly created one
+
+        --prefix SharePrefix    Key prefix access will be restricted to (repeated)
+        --readonly              Implies --disallow-writes and --disallow-deletes (default true)
+        --writeonly             Implies --disallow-reads and --disallow-lists
+
+        --disallow-deletes     Disallow deletes with the access
+        --disallow-lists       Disallow lists with the access
+        --disallow-reads       Disallow reads with the access
+        --disallow-writes      Disallow writes with the access
+
+        --not-before relative_date    Disallow access before this time (e.g. '+2h', 'now', '2020-01-02T15:04:05Z0700', 'none')
+        --not-after relative_date     Disallow access after this time (e.g. '+2h', 'now', '2020-01-02T15:04:05Z0700', 'none')
+
+        --max-object-ttl period    The object is automatically deleted after this period. (e.g. '1h30m', '24h', '720h')
+
+Global flags:
+        --config-dir string    Directory that stores the configuration (default "/home/ad/.config/storj/uplink")
+    -h, --help                 prints help for the command
+        --summary              prints a summary of what commands are available
+        --advanced             when used with -h, prints advanced flags help

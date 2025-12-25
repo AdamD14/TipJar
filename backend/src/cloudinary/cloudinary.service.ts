@@ -1,9 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable } from '@nestjs/common';
 import {
   TransformationOptions,
   UploadApiResponse,
   v2 as cloudinary,
-} from "cloudinary";
+} from 'cloudinary';
 
 export interface MulterFile {
   buffer: Buffer;
@@ -32,16 +32,16 @@ export class CloudinaryService {
     return new Promise((resolve, reject) => {
       const upload = cloudinary.uploader.upload_stream(
         {
-          folder: "tipjar/avatars",
+          folder: 'tipjar/avatars',
           width: 1200,
           height: 1200,
-          crop: "limit",
-          quality: "auto",
-          fetch_format: "auto",
+          crop: 'limit',
+          quality: 'auto',
+          fetch_format: 'auto',
         },
         (error, result) => {
           if (error) return reject(new Error(error.message));
-          if (!result) return reject(new Error("Upload failed"));
+          if (!result) return reject(new Error('Upload failed'));
           resolve(result);
         },
       );
@@ -51,24 +51,19 @@ export class CloudinaryService {
   }
 
   /**
-   * Fetch image from public Storj URL using Cloudinary's fetch type.
-   * This tells Cloudinary to pull the image from the URL, process it,
-   * and serve it through their CDN.
+   * Fetch image from public Storj URL and upload to Cloudinary.
    */
   async fetchFromStorj(
     publicStorjUrl: string,
     publicId?: string,
   ): Promise<UploadApiResponse> {
     return cloudinary.uploader.upload(publicStorjUrl, {
-      type: "fetch",
-      folder: "tipjar/avatars",
+      folder: 'tipjar-avatar',
       public_id: publicId,
-      width: 1200,
-      height: 1200,
-      crop: "limit",
-      quality: "auto:good",
-      fetch_format: "auto",
+      resource_type: 'image',
       overwrite: true,
+      unique_filename: true,
+      async: false, // Force synchronous upload to get immediate secure_url
     });
   }
 
@@ -80,13 +75,13 @@ export class CloudinaryService {
     publicId?: string,
   ): Promise<UploadApiResponse> {
     return cloudinary.uploader.upload(url, {
-      folder: "tipjar/avatars",
+      folder: 'tipjar/avatars',
       public_id: publicId,
       width: 1200,
       height: 1200,
-      crop: "limit",
-      quality: "auto:good",
-      fetch_format: "auto",
+      crop: 'limit',
+      quality: 'auto:good',
+      fetch_format: 'auto',
       overwrite: true,
     });
   }
@@ -97,12 +92,12 @@ export class CloudinaryService {
 
   generateAvatarUrl(storjUrl: string): string {
     return cloudinary.url(storjUrl, {
-      type: "fetch",
+      type: 'fetch',
       width: 1200,
       height: 1200,
-      crop: "limit",
-      quality: "auto:good",
-      fetch_format: "auto",
+      crop: 'limit',
+      quality: 'auto:good',
+      fetch_format: 'auto',
       secure: true,
     });
   }

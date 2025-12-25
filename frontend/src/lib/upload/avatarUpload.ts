@@ -120,21 +120,26 @@ export const uploadAvatarProcess = async (
       },
     );
     console.log("[Upload] Step 3 SUCCESS. Confirm data:", confirmData);
+    console.log("[Upload] avatarUrl from response:", confirmData.avatarUrl);
 
     store.setSlotStatus(slotId, {
       isUploading: false,
       uploadProgress: 100,
-      cloudinaryUrl: confirmData.publicUrl || "", // Powinien być to URL Cloudinary "fetch"
+      cloudinaryUrl: confirmData.avatarUrl || "", // Cloudinary optimized URL
       storjKey: storjKey,
       retryCount: 0,
     });
+    console.log(
+      "[Upload] Store updated with cloudinaryUrl:",
+      confirmData.avatarUrl,
+    );
 
     uploadController.complete(slotId);
 
     return {
       success: true,
       storjKey,
-      cloudinaryUrl: confirmData.publicUrl || "",
+      cloudinaryUrl: confirmData.avatarUrl || "",
       cloudinaryPublicId: confirmData.id,
       optimizedUrls: {},
       mediaRecord: confirmData,

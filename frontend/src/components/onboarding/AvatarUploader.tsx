@@ -98,6 +98,9 @@ export default function AvatarUploader({
       .map((s) => s.cloudinaryUrl)
       .filter((url): url is string => !!url && url.length > 0);
 
+    console.log("[DEBUG] Filled slots:", filledSlots.length, "Uploaded URLs:", uploadedUrls.length);
+    console.log("[DEBUG] cloudinaryUrls:", filledSlots.map(s => s.cloudinaryUrl?.substring(0, 50)));
+
     if (uploadedUrls.length === filledSlots.length) {
       onUploadCompleteAction(uploadedUrls);
     }

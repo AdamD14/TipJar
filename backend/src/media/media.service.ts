@@ -42,7 +42,7 @@ export class MediaService {
     });
   }
 
-  // KROK 2: Potwierdzenie - generuje Cloudinary URL i zapisuje do avatarUrl
+  // KROK 2: Potwierdzenie - uploaduje do Cloudinary i zapisuje URL
   async confirmUpload(dto: ConfirmUploadDto) {
     // 1. Znajdź po s3Key (jeśli podany) lub userId+slotId
     let avatar;
@@ -58,17 +58,34 @@ export class MediaService {
 
     if (!avatar) throw new NotFoundException('Reservation not found');
 
-    // 2. Generuj Cloudinary URL z originalUrl (Storj)
+    // 2. Pobierz ze Storj i uploaduj do Cloudinary
     const storjUrl = avatar.originalUrl;
     if (!storjUrl) throw new InternalServerErrorException('Missing Storj URL');
 
-    const cloudinaryUrl = this.cloudinary.generateAvatarUrl(storjUrl);
+    let avatarUrl: string | null = null;
+    try {
+      console.log('[MediaService] Uploading to Cloudinary from:', storjUrl);
+      const cloudinaryResult = await this.cloudinary.fetchFromStorj(
+        storjUrl,
+        `avatar_${avatar.userId}_${avatar.slotId}`,
+      );
+      console.log(
+        '[MediaService] Full Cloudinary response:',
+        JSON.stringify(cloudinaryResult, null, 2),
+      );
+      avatarUrl = cloudinaryResult.secure_url || cloudinaryResult.url;
+      console.log('[MediaService] Cloudinary success:', avatarUrl);
+    } catch (error) {
+      console.error('[MediaService] Cloudinary upload error:', error);
+      // Fallback: use Storj URL directly
+      avatarUrl = storjUrl;
+    }
 
-    // 3. Aktualizuj rekord - avatarUrl = Cloudinary, status = PROCESSED
+    // 3. Aktualizuj rekord
     return await this.prisma.mediaRecord.update({
       where: { id: avatar.id },
       data: {
-        avatarUrl: cloudinaryUrl, // Cloudinary optimized
+        avatarUrl: avatarUrl,
         status: 'PROCESSED',
         etag: dto.etag,
       },

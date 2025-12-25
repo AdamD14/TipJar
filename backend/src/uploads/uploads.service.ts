@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class UploadsService {
   constructor() {
     const region = process.env.AWS_REGION;
     const bucket = process.env.AWS_S3_BUCKET;
-    const publicUrl = process.env.PUBLIC_S3_URL;
+    const publicUrl = process.env.STORJ_PUBLIC_URL_PREFIX;
     const endpoint = process.env.AWS_S3_ENDPOINT;
 
     if (!region || !bucket || !publicUrl) {
@@ -29,7 +29,7 @@ export class UploadsService {
   async signPutUrl(opts: { key: string; contentType: string }) {
     if (!this.bucket || !this.publicBase) {
       throw new Error(
-        'Uploads not configured: set AWS_REGION, AWS_S3_BUCKET, PUBLIC_S3_URL',
+        'Uploads not configured: set AWS_REGION, AWS_S3_BUCKET, STORJ_PUBLIC_URL_PREFIX',
       );
     }
     const cmd = new PutObjectCommand({
