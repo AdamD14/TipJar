@@ -6,6 +6,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ConfirmUploadDto, ReserveSlotDto } from './dto/media.dto';
+import { MediaRecord } from '@prisma/client';
 
 @Injectable()
 export class MediaService {
@@ -42,10 +43,10 @@ export class MediaService {
     });
   }
 
-  // KROK 2: Potwierdzenie - uploaduje do Cloudinary i zapisuje URL
+  // KROK 2: Potwierdzenie - generuje Cloudinary Fetch URL
   async confirmUpload(dto: ConfirmUploadDto) {
     // 1. Znajdź po s3Key (jeśli podany) lub userId+slotId
-    let avatar;
+    let avatar: MediaRecord | null = null;
     if (dto.s3Key) {
       avatar = await this.prisma.mediaRecord.findFirst({
         where: { storjKey: dto.s3Key },
@@ -58,28 +59,16 @@ export class MediaService {
 
     if (!avatar) throw new NotFoundException('Reservation not found');
 
-    // 2. Pobierz ze Storj i uploaduj do Cloudinary
+    // 2. Generuj Cloudinary Fetch URL (bez uploadu!)
     const storjUrl = avatar.originalUrl;
     if (!storjUrl) throw new InternalServerErrorException('Missing Storj URL');
 
-    let avatarUrl: string | null = null;
-    try {
-      console.log('[MediaService] Uploading to Cloudinary from:', storjUrl);
-      const cloudinaryResult = await this.cloudinary.fetchFromStorj(
-        storjUrl,
-        `avatar_${avatar.userId}_${avatar.slotId}`,
-      );
-      console.log(
-        '[MediaService] Full Cloudinary response:',
-        JSON.stringify(cloudinaryResult, null, 2),
-      );
-      avatarUrl = cloudinaryResult.secure_url || cloudinaryResult.url;
-      console.log('[MediaService] Cloudinary success:', avatarUrl);
-    } catch (error) {
-      console.error('[MediaService] Cloudinary upload error:', error);
-      // Fallback: use Storj URL directly
-      avatarUrl = storjUrl;
-    }
+    console.log(
+      '[MediaService] Generating Cloudinary fetch URL for:',
+      storjUrl,
+    );
+    const avatarUrl = this.cloudinary.generateOptimizedUrl(storjUrl);
+    console.log('[MediaService] Generated Cloudinary URL:', avatarUrl);
 
     // 3. Aktualizuj rekord
     return await this.prisma.mediaRecord.update({

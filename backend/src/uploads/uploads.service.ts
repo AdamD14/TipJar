@@ -9,36 +9,48 @@ export class UploadsService {
   private publicBase: string;
 
   constructor() {
-    const region = process.env.AWS_REGION;
-    const bucket = process.env.AWS_S3_BUCKET;
+    const accessKey = process.env.STORJ_ACCESS_KEY;
+    const secretKey = process.env.STORJ_SECRET_KEY;
+    const bucket = process.env.STORJ_BUCKET;
     const publicUrl = process.env.STORJ_PUBLIC_URL_PREFIX;
-    const endpoint = process.env.AWS_S3_ENDPOINT;
+    const endpoint = process.env.STORJ_ENDPOINT;
 
-    if (!region || !bucket || !publicUrl) {
-      // Lazy init with defaults; methods will throw if misconfigured
+    // POPRAWKA 1: Fail Fast - aplikacja krzyczy przy starcie
+    if (!accessKey || !secretKey || !bucket || !publicUrl || !endpoint) {
+      throw new Error('MISSING STORJ CONFIG IN .ENV');
     }
+
     this.s3 = new S3Client({
-      region: region || 'us-east-1',
+      credentials: {
+        accessKeyId: accessKey,
+        secretAccessKey: secretKey,
+      },
+      region: 'us-east-1',
       endpoint: endpoint,
-      forcePathStyle: !!endpoint, // Storj/MinIO often require path style
+      forcePathStyle: true,
     });
-    this.bucket = bucket || '';
-    this.publicBase = publicUrl || '';
+    this.bucket = bucket;
+    this.publicBase = publicUrl;
   }
 
   async signPutUrl(opts: { key: string; contentType: string }) {
-    if (!this.bucket || !this.publicBase) {
-      throw new Error(
-        'Uploads not configured: set AWS_REGION, AWS_S3_BUCKET, STORJ_PUBLIC_URL_PREFIX',
-      );
-    }
     const cmd = new PutObjectCommand({
       Bucket: this.bucket,
       Key: opts.key,
       ContentType: opts.contentType,
-      ACL: 'public-read',
     });
-    const url = await getSignedUrl(this.s3, cmd, { expiresIn: 60 });
-    return { url, key: opts.key, publicUrl: `${this.publicBase}/${opts.key}` };
+
+    // POPRAWKA 3: Wydłużenie czasu do 15 minut
+    const url = await getSignedUrl(this.s3, cmd, { expiresIn: 900 });
+
+    // POPRAWKA 2: Bezpieczne łączenie URL
+    const cleanBase = this.publicBase.replace(/\/$/, '');
+    const cleanKey = opts.key.replace(/^\//, '');
+
+    return {
+      url,
+      key: opts.key,
+      publicUrl: `${cleanBase}/${cleanKey}`,
+    };
   }
 }

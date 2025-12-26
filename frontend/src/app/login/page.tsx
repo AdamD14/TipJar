@@ -65,8 +65,7 @@ export default function Page() {
 
       const hasUsername = Boolean(user?.username);
       const onboardingDone = Boolean(user?.hasCompletedOnboarding);
-      const normalizedRole = user?.role === "CREATOR" ? "CREATOR" : "FAN";
-      const normalizedRole = user?.role === "CREATOR" ? "CREATOR" : "FAN";
+      const normalizedRole = user?.role === 'CREATOR' ? 'CREATOR' : 'FAN';
       const fallbackTarget =
         hasUsername && onboardingDone
           ? normalizedRole === "CREATOR"

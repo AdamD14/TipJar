@@ -97,7 +97,8 @@ Deno.serve(async (req) => {
     });
 
     const s3Key = `avatars/${userId}/${slotId}/${Date.now()}-${fileName}`;
-    const publicUrl = `${storjPublicUrlPrefix}/${s3Key}`;
+    const cleanBase = storjPublicUrlPrefix.replace(/\/$/, "");
+    const publicUrl = `${cleanBase}/${s3Key}`;
 
     // 5. Rezerwacja Slotu w NestJS
     const nestJsUrl = Deno.env.get("NESTJS_INTERNAL_URL");
@@ -134,7 +135,6 @@ Deno.serve(async (req) => {
       Bucket: storjBucket,
       Key: s3Key,
       ContentType: contentType,
-      ACL: "public-read",
     });
 
     const signedUrl = await getSignedUrl(S3, command, {

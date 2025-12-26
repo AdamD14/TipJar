@@ -90,7 +90,6 @@ export const uploadAvatarProcess = async (
     await axios.put(presigned.uploadUrl, file, {
       headers: {
         "Content-Type": file.type,
-        "x-amz-acl": "public-read",
       },
       signal: controller.signal,
       onUploadProgress: (ev) => {
