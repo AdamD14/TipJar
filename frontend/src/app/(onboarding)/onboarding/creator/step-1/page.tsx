@@ -6,12 +6,12 @@ import Link from "next/link";
 
 import OnboardingShell from "@/components/layout/OnboardingShell";
 import Button from "@/components/ui/Button";
-import IndustrySelector from "@/components/onboarding/IndustrySelector";
+import ArchetypeSelector from "@/components/onboarding/ArchetypeSelector";
 import { api } from "@/lib/api";
 
 export default function Step1() {
   const [saving, setSaving] = useState(false);
-  const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
+  const [selectedArchetype, setSelectedArchetype] = useState<string>("");
 
   useEffect(() => {
     const loadStatus = async () => {
@@ -20,8 +20,7 @@ export default function Step1() {
           "/api/v1/creator/onboarding/status"
         );
         if (data?.profile?.industry) {
-          const saved = data.profile.industry.split(",").filter(Boolean);
-          setSelectedIndustries(saved);
+          setSelectedArchetype(data.profile.industry);
         }
       } catch (err) {
         console.error("Failed to load status", err);
@@ -30,15 +29,15 @@ export default function Step1() {
     loadStatus();
   }, []);
 
-  const saveData = async (industriesToSave: string[]) => {
-    if (industriesToSave.length === 0) return;
+  const saveData = async (archetype: string) => {
+    if (!archetype) return;
 
     setSaving(true);
     try {
       await api<void>("/api/v1/creator/onboarding/identity", {
         method: "PATCH",
         body: JSON.stringify({
-          industry: industriesToSave.join(","),
+          industry: archetype,
         }),
       });
 
@@ -50,28 +49,32 @@ export default function Step1() {
     }
   };
 
-  const handleSelect = (newSelection: string[]) => {
-    setSelectedIndustries(newSelection);
-
-    if (newSelection.length === 3) {
-      saveData(newSelection);
-    }
+  const handleSelect = (archetype: string) => {
+    setSelectedArchetype(archetype);
   };
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    saveData(selectedIndustries);
+    saveData(selectedArchetype);
   };
 
   return (
     <OnboardingShell
       step={1}
-      title="Select categories that best describe your content (max 3)"
+      title="Choose your creator archetype"
     >
       <form className="space-y-10" onSubmit={onSubmit} noValidate>
-        <div className="space-y-4">
-          <IndustrySelector
-            value={selectedIndustries}
+        <div 
+          className="space-y-4"
+          onClick={(e) => {
+            // Deselect when clicking on empty space (not on a button)
+            if ((e.target as HTMLElement).closest('button') === null) {
+              setSelectedArchetype("");
+            }
+          }}
+        >
+          <ArchetypeSelector
+            value={selectedArchetype}
             onSelectAction={handleSelect}
           />
         </div>
@@ -89,7 +92,7 @@ export default function Step1() {
             size="lg"
             loading={saving}
             className="min-w-[180px] px-8"
-            disabled={selectedIndustries.length === 0}
+            disabled={!selectedArchetype}
           >
             Next Step
           </Button>

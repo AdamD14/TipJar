@@ -6,9 +6,9 @@ import clsx from "clsx";
 export const SOCIAL_PLATFORMS = [
   // Video & Stream
   { id: "youtube", label: "YouTube", color: "#FF0000" },
-  { id: "vimeo", label: "Vimeo", color: "#1AB7EA" },
-  { id: "wattpad", label: "Wattpad", color: "#FF500A" },
-  { id: "medium", label: "Medium", color: "#000000" },
+  { id: "vimeo", label: "Vimeo", color: "#4AB7EA" },
+  { id: "wattpad", label: "Wattpad", color: "#FF501A" },
+  { id: "medium", label: "Medium", color: "#000001" },
   { id: "rumble", label: "Rumble", color: "#85C742" },
   { id: "substack", label: "Substack", color: "#FF6719" },
 
