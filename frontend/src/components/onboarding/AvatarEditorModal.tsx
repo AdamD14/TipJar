@@ -93,14 +93,14 @@ export default function AvatarEditorModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-      <div className="bg-gray-900 rounded-2xl p-6 w-full max-w-2xl">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-2xl font-bold text-white">
-              Customize {slotName}
-            </h2>
-          </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        className="rounded-2xl p-6 w-full max-w-2xl border-[0.5px] border-[#7aaaab]"
+        style={{
+          background: "linear-gradient(135deg, #001919 0%, #093439 100%)",
+        }}
+      >
+        <div className="flex justify-end mb-4">
           <button
             type="button"
             onClick={handleClose}
@@ -113,15 +113,16 @@ export default function AvatarEditorModal({
 
         <div className="flex flex-col md:flex-row gap-6">
           <div className="flex-1">
-            <div className="bg-gray-800 rounded-lg p-4 flex justify-center min-h-[400px]">
+            <div className="bg-black/30 rounded-lg p-4 flex justify-center min-h-[400px]">
               {previewUrl ? (
                 <AvatarEditor
                   ref={editorRef}
                   image={previewUrl}
-                  width={400}
+                  width={300}
                   height={400}
                   border={20}
-                  borderRadius={200}
+                  borderRadius={0}
+                  color={[0, 0, 0, 0.6]}
                   scale={scale}
                   rotate={rotation}
                   className="rounded-lg"
@@ -142,11 +143,11 @@ export default function AvatarEditorModal({
                 <input
                   type="range"
                   min="1"
-                  max="3"
-                  step="0.01"
+                  max="2"
+                  step="any"
                   value={scale}
                   onChange={(e) => setScale(parseFloat(e.target.value))}
-                  className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                  className="w-full h-2 bg-black/30 rounded-lg appearance-none cursor-pointer accent-teal-400"
                   disabled={!previewUrl || isProcessing}
                 />
               </div>
@@ -162,7 +163,7 @@ export default function AvatarEditorModal({
                   step="1"
                   value={rotation}
                   onChange={(e) => setRotation(parseInt(e.target.value))}
-                  className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                  className="w-full h-2 bg-black/30 rounded-lg appearance-none cursor-pointer accent-teal-400"
                   disabled={!previewUrl || isProcessing}
                 />
               </div>
@@ -170,13 +171,13 @@ export default function AvatarEditorModal({
           </div>
 
           <div className="md:w-64 space-y-4">
-            <div className="bg-gray-800 p-4 rounded-lg">
+            <div className="bg-black/20 p-4 rounded-lg border border-[#7aaaab]/30">
               <h3 className="font-medium text-white mb-2">Tips</h3>
               <ul className="text-sm text-gray-300 space-y-1">
                 <li>• Drag image to adjust crop</li>
                 <li>• Use sliders for fine-tuning</li>
-                <li>• Avatar will be cropped to a circle</li>
-                <li>• Final format: 400x400px optimized</li>
+                <li>• Avatar: 3:4 ratio (vertical)</li>
+                <li>• Width: horizontal | Height: vertical</li>
               </ul>
             </div>
 

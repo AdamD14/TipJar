@@ -98,8 +98,16 @@ export default function AvatarUploader({
       .map((s) => s.cloudinaryUrl)
       .filter((url): url is string => !!url && url.length > 0);
 
-    console.log("[DEBUG] Filled slots:", filledSlots.length, "Uploaded URLs:", uploadedUrls.length);
-    console.log("[DEBUG] cloudinaryUrls:", filledSlots.map(s => s.cloudinaryUrl?.substring(0, 50)));
+    console.log(
+      "[DEBUG] Filled slots:",
+      filledSlots.length,
+      "Uploaded URLs:",
+      uploadedUrls.length
+    );
+    console.log(
+      "[DEBUG] cloudinaryUrls:",
+      filledSlots.map((s) => s.cloudinaryUrl?.substring(0, 50))
+    );
 
     if (uploadedUrls.length === filledSlots.length) {
       onUploadCompleteAction(uploadedUrls);
@@ -184,16 +192,9 @@ export default function AvatarUploader({
     editingSlotId !== null ? `Avatar ${editingSlotId + 1}` : "";
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex flex-col font-sans selection:bg-teal-500/30 overflow-hidden relative">
-      <div className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-teal-900/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-violet-900/10 rounded-full blur-[100px] pointer-events-none" />
-
+    <div className="text-white flex flex-col font-sans selection:bg-teal-500/30 overflow-hidden relative">
       <main className="flex-1 flex flex-col items-center justify-center w-full relative z-10 px-4">
-        <h2 className="text-2xl font-bold text-white/90 mb-10 tracking-wide text-center">
-          Upload Your Avatars
-        </h2>
-
-        <div className="flex items-center justify-center w-full max-w-5xl py-4 relative h-[500px]">
+        <div className="flex items-center justify-center w-full max-w-5xl relative h-[500px]">
           <button
             type="button"
             onClick={handlePrev}
@@ -235,7 +236,7 @@ export default function AvatarUploader({
           </button>
         </div>
 
-        <div className="flex gap-2 mb-8 md:hidden mt-[-40px] z-50 relative">
+        <div className="flex gap-2 mb-4 md:hidden mt-[-20px] z-50 relative">
           {slots.map((s, i) => (
             <div
               key={s.id}
@@ -247,7 +248,7 @@ export default function AvatarUploader({
           ))}
         </div>
 
-        <div className="w-full max-w-xs space-y-4 pb-12 z-50 relative">
+        <div className="w-full max-w-xs space-y-4 pb-4 z-50 relative md:mt-2">
           <button
             type="button"
             onClick={(e) => {

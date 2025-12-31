@@ -86,24 +86,24 @@ export default function OnboardingShell({ step, title, children }: Props) {
 
       {/* --- CONTENT AREA --- */}
       {/* ZMIANA: pt-24 -> pt-20 (zmniejszony odstęp od góry), px-4 -> px-2 (więcej miejsca na boki) */}
-      <div className="flex-1 mx-auto w-full px-2 pt-16 pb-16 md:pb-16">
+      <div className="flex-1 mx-auto w-full px-4 pt-16 pb-16 md:pb-16">
         {/* Stepper */}
         {/* ZMIANA: px-2 -> px-1, md:px-4 -> md:px-2 (zmniejszone marginesy boczne o połowę) */}
-        <div className="mb-10 px-1 md:px-2 w-full">
+        <div className="mb-10 px-4 md:px-8 w-full">
           <Stepper active={step} />
         </div>
 
         {/* Główna karta treści */}
         {/* ZMIANA: p-6 -> p-3, md:p-12 -> md:p-6 (zmniejszone paddingi wewnętrzne o połowę) */}
-        <div className="mx-auto w-full rounded-3xl bg-brand-primary/40 backdrop-blur-xl border border-white/5 p-2 md:p-4 shadow-2xl relative overflow-hidden">
+        <div className="mx-auto w-full rounded-3xl bg-brand-primary/40 backdrop-blur-xl border border-white/5 p-4 md:p-6 shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-gold/30 to-transparent opacity-50" />
 
           <div className="relative z-10">
-            <h1 className="w-fit mx-auto text-l md:text-xl text-center bg-gradient-to-r from-blue-200 via-white to-cyan-200 bg-clip-text text-transparent mb-3 font-ui tracking-tight">
+            <h1 className="w-fit mx-auto text-l md:text-xl text-center bg-gradient-to-r from-blue-200 via-white to-cyan-200 bg-clip-text text-transparent mb-2 mt-4 font-ui tracking-tight">
               {title}
             </h1>
 
-            <div className="mt-8 space-y-8">{children}</div>
+            <div className="mt-3 <space-y-8">{children}</div>
           </div>
         </div>
       </div>

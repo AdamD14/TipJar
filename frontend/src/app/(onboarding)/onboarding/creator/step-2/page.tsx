@@ -66,9 +66,12 @@ export default function Step2() {
   }
 
   return (
-    <OnboardingShell step={2} title="Upload your Avatar (max 3)">
-      <form className="space-y-10" onSubmit={onNext} noValidate>
-        <div className="max-w-3xl mx-auto w-full">
+    <OnboardingShell
+      step={2}
+      title="Upload 3 (optional) photos to unlock your profile's full potential."
+    >
+      <form className="space-y-6" onSubmit={onNext} noValidate>
+        <div className="max-w-5xl mx-auto w-full">
           <AvatarUploader
             onUploadCompleteAction={handleUploadComplete}
             maxSlots={3}
@@ -76,7 +79,7 @@ export default function Step2() {
           />
         </div>
 
-        <div className="flex items-center justify-between pt-8 border-t border-white/5">
+        <div className="flex items-center justify-between pt-4 border-t border-white/5">
           <Link
             href="/dashboard"
             className="text-sm text-gray-500 hover:text-white transition-colors"
@@ -88,7 +91,7 @@ export default function Step2() {
             variant="gold"
             size="lg"
             loading={saving}
-            className="min-w-[180px] px-8"
+            className="min-w-[180px] px-4"
             disabled={!isReadyToAdvance}
           >
             Next Step
