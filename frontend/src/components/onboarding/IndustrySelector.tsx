@@ -287,20 +287,183 @@ const THEMES: Record<string, { glow: string; border: string; accent: string }> =
       accent: "text-gray-400",
     },
   };
+// Mapping from archetype (Step 1) to relevant item IDs (not group IDs)
+const ARCHETYPE_TO_ITEMS: Record<string, string[]> = {
+  "live-streamer": [
+    // Streaming
+    "esport",
+    "justchatting",
+    "music_live",
+    "speedrun",
+    "models",
+    "gambling",
+    // Youtubers (live versions)
+    "gaming_yt",
+    "reactions",
+    "comedy",
+  ],
+  "lifestyle-storyteller": [
+    // Youtubers
+    "vlog",
+    "beauty",
+    "family",
+    "food",
+    // Podcast
+    "interviews",
+    "dating_pod",
+    // Influencer
+    "fashion",
+    "travel",
+    "luxury",
+    "bodypos",
+    // Short Form
+    "grwm",
+    "beauty_short",
+    // Streaming
+    "justchatting",
+  ],
+  "visual-creator": [
+    // Youtubers
+    "beauty",
+    "food",
+    "tech",
+    // Streaming
+    "models",
+    "music_live",
+    // Arts
+    "painting",
+    "digital",
+    "graphic",
+    "photo",
+    "dance_art",
+    "sculpt",
+    // Influencer
+    "fashion",
+    "travel",
+    "modeling",
+    // Short Form
+    "beauty_short",
+    "dance",
+    "grwm",
+    "diy",
+    // Handmade
+    "sewing",
+    "knives",
+    "pottery",
+    "hats",
+    // Survival/Build
+    "construction",
+    "bushcraft",
+    "survival",
+    "weapons",
+    "eco",
+  ],
+  "knowledge-architect": [
+    // Youtubers
+    "edu",
+    "tech",
+    // Podcast
+    "crime",
+    "biz_pod",
+    "politics",
+    // Coach
+    "finance",
+    "entrep",
+    // Science
+    "coding",
+    "ai",
+    "space",
+    "lang",
+    "history",
+    // Arts
+    "graphic",
+    "writer",
+    // Handmade
+    "sewing",
+    "knives",
+    "pottery",
+    // Survival/Build
+    "construction",
+    "bushcraft",
+    "survival",
+    "weapons",
+    "eco",
+    // Short Form
+    "tips",
+    "diy",
+  ],
+  "micro-entertainer": [
+    // Short Form
+    "trends",
+    "challenges",
+    "dance",
+    "diy",
+    "tips",
+    "fitness_short",
+    // Youtubers
+    "comedy",
+    "gaming_yt",
+    "reactions",
+  ],
+  "health-coach": [
+    // Youtubers
+    "motivation_yt",
+    // Coach
+    "fit_coach",
+    "finance",
+    "life_coach",
+    "entrep",
+    "health",
+    "dating_coach",
+    // Podcast
+    "dating_pod",
+    // Influencer
+    "bodypos",
+    // Short Form
+    "fitness_short",
+  ],
+};
 
 interface IndustrySelectorProps {
   value: string[];
   onSelectAction: (value: string[]) => void;
   error?: boolean;
+  filterByArchetype?: string; // Filter groups by archetype from Step 1
 }
 
 export default function IndustrySelector({
   value,
   onSelectAction,
   error,
+  filterByArchetype,
 }: IndustrySelectorProps) {
   const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
   const [showNiche, setShowNiche] = useState(false);
+
+  // Get allowed item IDs based on archetype
+  const allowedItems = filterByArchetype
+    ? ARCHETYPE_TO_ITEMS[filterByArchetype]
+    : null;
+
+  // Helper to filter items within a group
+  const filterGroupItems = (group: (typeof MAIN_GROUPS)[0]) => {
+    if (!allowedItems) return group;
+    const filteredItems = group.items.filter((item) =>
+      allowedItems.includes(item.id)
+    );
+    return { ...group, items: filteredItems };
+  };
+
+  // Filter groups - only show groups that have at least one allowed item
+  const filteredMainGroups = allowedItems
+    ? MAIN_GROUPS.map(filterGroupItems).filter((g) => g.items.length > 0)
+    : MAIN_GROUPS;
+
+  const filteredNicheGroups = allowedItems
+    ? NICHE_GROUPS.map(filterGroupItems).filter(
+        (g) => g.items.length > 0 || g.id === "other"
+      )
+    : NICHE_GROUPS;
 
   useEffect(() => {
     if (value.length > 0) {
@@ -445,7 +608,7 @@ export default function IndustrySelector({
     <div className="w-full space-y-8">
       {/* --- MAIN GRID (6 cols) --- */}
       <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-3">
-        {MAIN_GROUPS.map(renderGroup)}
+        {filteredMainGroups.map(renderGroup)}
       </div>
 
       {/* --- MORE BUTTON --- */}
@@ -464,7 +627,7 @@ export default function IndustrySelector({
       {/* --- NICHE GRID --- */}
       {showNiche && (
         <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-3 animate-in fade-in slide-in-from-top-4 duration-500">
-          {NICHE_GROUPS.map((group) => {
+          {filteredNicheGroups.map((group) => {
             if (group.id === "other") {
               return (
                 <button

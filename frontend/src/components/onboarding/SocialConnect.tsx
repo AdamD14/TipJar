@@ -234,26 +234,121 @@ const CATEGORIES = [
   { id: "other", label: "Other", items: ["strava", "alltrails", "komoot"] },
 ];
 
+// Mapping from archetype to relevant social platform IDs
+const ARCHETYPE_TO_PLATFORMS: Record<string, string[]> = {
+  "live-streamer": [
+    "twitch",
+    "kick",
+    "youtube",
+    "discord",
+    "x",
+    "instagram",
+    "tiktok",
+    "patreon",
+    "kofi",
+    "buymeacoffee",
+  ],
+  "lifestyle-storyteller": [
+    "youtube",
+    "instagram",
+    "tiktok",
+    "facebook",
+    "x",
+    "threads",
+    "pinterest",
+    "snapchat",
+    "patreon",
+    "kofi",
+    "buymeacoffee",
+    "linkedin",
+  ],
+  "visual-creator": [
+    "instagram",
+    "tiktok",
+    "pinterest",
+    "behance",
+    "dribbble",
+    "artstation",
+    "deviantart",
+    "etsy",
+    "youtube",
+    "patreon",
+    "kofi",
+  ],
+  "knowledge-architect": [
+    "youtube",
+    "linkedin",
+    "x",
+    "medium",
+    "substack",
+    "github",
+    "stackoverflow",
+    "udemy",
+    "skillshare",
+    "spotify",
+    "apple_podcasts",
+    "patreon",
+  ],
+  "micro-entertainer": [
+    "tiktok",
+    "instagram",
+    "youtube",
+    "snapchat",
+    "x",
+    "threads",
+    "twitch",
+    "kick",
+    "patreon",
+    "kofi",
+    "buymeacoffee",
+  ],
+  "health-coach": [
+    "instagram",
+    "youtube",
+    "tiktok",
+    "facebook",
+    "linkedin",
+    "spotify",
+    "apple_podcasts",
+    "strava",
+    "patreon",
+    "kofi",
+    "gumroad",
+  ],
+};
+
 interface SocialConnectProps {
   onConnectAction?: (platformId: string) => void;
   connected?: string[];
+  filterByArchetype?: string; // Filter platforms by archetype
 }
 
 export default function SocialConnect({
   onConnectAction,
   connected = [],
+  filterByArchetype,
 }: SocialConnectProps) {
+  // Get allowed platform IDs based on archetype
+  const allowedPlatforms = filterByArchetype
+    ? ARCHETYPE_TO_PLATFORMS[filterByArchetype]
+    : null;
+
   return (
     <div className="space-y-8">
       {CATEGORIES.map((cat) => {
         // Filter platforms belonging to this category that actually exist in definitions
-        const platforms = cat.items
+        let platforms = cat.items
           .map((id) =>
             SOCIAL_PLATFORMS.find(
               (p) => p.id === id || p.id === id.replace("_", "")
             )
           ) // handle slight mismatches if any
           .filter((p): p is (typeof SOCIAL_PLATFORMS)[number] => !!p);
+
+        // If archetype filter is active, only show allowed platforms
+        if (allowedPlatforms) {
+          platforms = platforms.filter((p) => allowedPlatforms.includes(p.id));
+        }
 
         if (platforms.length === 0) return null;
 

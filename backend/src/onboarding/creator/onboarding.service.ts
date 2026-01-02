@@ -54,15 +54,15 @@ export class OnboardingService {
   }
 
   async saveCreatorStep1(userId: string, dto: CreatorStep1Dto) {
-    // Save avatarUrl to User model as requested ("Avatar przechowuj w User.avatarUrl") - REMOVED per request
-
     return this.prisma.profile.upsert({
       where: { userId },
       create: {
         userId,
+        archetype: dto.archetype,
         industry: dto.industry,
       },
       update: {
+        archetype: dto.archetype,
         industry: dto.industry,
       },
     });
@@ -87,16 +87,28 @@ export class OnboardingService {
       });
     }
 
+    // Convert industries array to comma-separated string for industry field
+    const industryString = dto.industries?.join(', ') || undefined;
+
+    // Convert connectedSocials to JSON for socials field
+    const socialsJson = dto.connectedSocials
+      ? Object.fromEntries(dto.connectedSocials.map((s) => [s, true]))
+      : undefined;
+
     return this.prisma.profile.upsert({
       where: { userId },
       create: {
         userId,
         bio: dto.bio,
         websiteUrl: dto.websiteUrl,
+        industry: industryString,
+        socials: socialsJson,
       },
       update: {
         bio: dto.bio,
         websiteUrl: dto.websiteUrl,
+        industry: industryString,
+        socials: socialsJson,
       },
     });
   }

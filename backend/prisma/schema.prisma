@@ -125,6 +125,7 @@ model Profile {
   acceptsTips Boolean @default(true)
 
   socials    Json?
+  archetype  String?  // Selected archetype from Step 1 (e.g., "live-streamer", "visual-creator")
   industry   String?
   goalLabel  String?
   goalTarget Int? // w centach lub w USDC (np. 1000 = $10.00)
