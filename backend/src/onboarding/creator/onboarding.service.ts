@@ -30,13 +30,14 @@ export class OnboardingService {
     if (!user) throw new BadRequestException('User not found');
 
     const steps: number[] = [];
-    if (user.profile?.industry) steps.push(1);
-    // Step 2: At least one avatar fully processed (has avatarUrl from Cloudinary)
-    const hasProcessedAvatar = user.mediaRecords.some((r) => r.avatarUrl);
-    if (user.avatarUrl || hasProcessedAvatar) steps.push(2);
-    // Step 3: Bio filled
-    if (user.profile?.bio) steps.push(3);
-    // Step 4: Goal set
+    // Step 1: Archetype selected
+    if (user.profile?.archetype) steps.push(1);
+    // Step 2: Always allow (avatar uploads in background, will be ready by step 5)
+    // User can proceed immediately, upload continues asynchronously
+    steps.push(2);
+    // Step 3: DisplayName set (checks user.displayName)
+    if (user.displayName) steps.push(3);
+    // Step 4: Goal set (goalLabel + goalTarget)
     if (user.profile?.goalTarget) steps.push(4);
     if (user.hasCompletedOnboarding) steps.push(5);
 
@@ -110,16 +111,20 @@ export class OnboardingService {
   }
 
   async saveCreatorStep4(userId: string, dto: CreatorStep4Dto) {
+    const deadlineDate = dto.goalDeadline ? new Date(dto.goalDeadline) : null;
+
     return this.prisma.profile.upsert({
       where: { userId },
       create: {
         userId,
         goalLabel: dto.goalLabel,
         goalTarget: dto.goalTarget,
+        goalDeadline: deadlineDate,
       },
       update: {
         goalLabel: dto.goalLabel,
         goalTarget: dto.goalTarget,
+        goalDeadline: deadlineDate,
       },
     });
   }

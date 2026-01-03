@@ -10,6 +10,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "link.storjshare.io",
       },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
     ],
   },
   async headers() {

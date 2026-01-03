@@ -85,7 +85,7 @@ export default function Step4() {
             }`}
             disabled={!publishedGoal}
           >
-            View Profile
+            Next Step
           </Button>
         </div>
       </form>

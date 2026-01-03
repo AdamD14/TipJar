@@ -142,7 +142,7 @@ export default function TargetBar({ onPublish, initialGoal }: TargetBarProps) {
   const [goal, setGoal] = useState<Goal>({
     title: initialGoal?.title || "microphone",
     target: initialGoal?.target || 500,
-    current: initialGoal?.current || 20,
+    current: initialGoal?.current || 0,
     deadline: initialGoal?.deadline || "",
   });
 
@@ -158,7 +158,6 @@ export default function TargetBar({ onPublish, initialGoal }: TargetBarProps) {
     if (onPublish) {
       onPublish(goal);
     }
-    setTimeout(() => setIsSaved(false), 3000);
   };
 
   return (

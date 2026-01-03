@@ -92,7 +92,6 @@ export default function Step2() {
             size="lg"
             loading={saving}
             className="min-w-[180px] px-4"
-            disabled={!isReadyToAdvance}
           >
             Next Step
           </Button>

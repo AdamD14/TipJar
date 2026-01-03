@@ -45,4 +45,8 @@ export class CreatorStep4Dto {
 
   @IsNumber()
   goalTarget: number;
+
+  @IsString()
+  @IsOptional()
+  goalDeadline?: string; // Optional deadline date string (YYYY-MM-DD)
 }
