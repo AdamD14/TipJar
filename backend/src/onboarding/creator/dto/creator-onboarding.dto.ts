@@ -25,25 +25,17 @@ export class CreatorStep2Dto {
 export class CreatorStep3Dto {
   @IsString()
   @IsOptional()
-  bio?: string;
-
-  @IsString()
-  @IsOptional()
   displayName?: string;
 
-  @IsString()
+  @IsArray()
+  @IsString({ each: true })
   @IsOptional()
-  websiteUrl?: string;
+  specializations?: string[]; // Selected specializations from Step 3
 
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
-  industries?: string[]; // Selected industries/niches from Step 3
-
-  @IsArray()
-  @IsString({ each: true })
-  @IsOptional()
-  connectedSocials?: string[]; // Connected social platform IDs
+  connectedSocials?: string[]; // Connected social platform IDs (twitch, etc.)
 }
 
 export class CreatorStep4Dto {

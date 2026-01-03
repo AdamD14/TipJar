@@ -87,11 +87,11 @@ export class OnboardingService {
       });
     }
 
-    // Convert industries array to comma-separated string for industry field
-    const industryString = dto.industries?.join(', ') || undefined;
+    // Convert specializations array to comma-separated string for industry field
+    const specializationsString = dto.specializations?.join(', ') || undefined;
 
     // Convert connectedSocials to JSON for socials field
-    const socialsJson = dto.connectedSocials
+    const socialsJson = dto.connectedSocials?.length
       ? Object.fromEntries(dto.connectedSocials.map((s) => [s, true]))
       : undefined;
 
@@ -99,15 +99,11 @@ export class OnboardingService {
       where: { userId },
       create: {
         userId,
-        bio: dto.bio,
-        websiteUrl: dto.websiteUrl,
-        industry: industryString,
+        industry: specializationsString,
         socials: socialsJson,
       },
       update: {
-        bio: dto.bio,
-        websiteUrl: dto.websiteUrl,
-        industry: industryString,
+        industry: specializationsString,
         socials: socialsJson,
       },
     });
