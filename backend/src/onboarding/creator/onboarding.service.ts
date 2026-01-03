@@ -100,10 +100,12 @@ export class OnboardingService {
       where: { userId },
       create: {
         userId,
+        bio: dto.bio || undefined,
         industry: specializationsString,
         socials: socialsJson,
       },
       update: {
+        bio: dto.bio || undefined,
         industry: specializationsString,
         socials: socialsJson,
       },

@@ -1,16 +1,9 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 
 export default function TwitchConnect() {
   const [connected, setConnected] = useState<boolean>(false);
-
-  useEffect(() => {
-    fetch("/api/v1/auth/twitch/status")
-      .then((r) => r.json())
-      .then((s) => setConnected(!!s.connected))
-      .catch(() => {});
-  }, []);
 
   const handleConnect = () => {
     window.location.href = "/api/v1/auth/twitch";

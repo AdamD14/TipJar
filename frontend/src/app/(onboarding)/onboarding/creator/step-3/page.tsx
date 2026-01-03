@@ -18,6 +18,7 @@ export default function Step3() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [displayName, setDisplayName] = useState("");
+  const [bio, setBio] = useState("");
   const [selectedSpecializations, setSelectedSpecializations] = useState<
     string[]
   >([]);
@@ -44,6 +45,7 @@ export default function Step3() {
     try {
       await apiClient.post("/api/v1/creator/onboarding/step-3", {
         displayName: finalDisplayName,
+        bio: bio.trim() || undefined,
         specializations: selectedSpecializations,
       });
       sessionStorage.removeItem("step3_name");
@@ -91,6 +93,32 @@ export default function Step3() {
             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/50 text-base"
             placeholder={username || "Your Name or Brand"}
           />
+        </div>
+
+        {/* 1.5 BIO */}
+        <div className="space-y-3">
+          <label htmlFor="bio" className="block text-lg font-medium text-white">
+            Bio
+            <span className="text-gray-500 text-sm ml-2 font-normal">
+              (optional, max 200 words)
+            </span>
+          </label>
+          <textarea
+            id="bio"
+            value={bio}
+            onChange={(e) => {
+              const words = e.target.value.split(/\s+/).filter(Boolean);
+              if (words.length <= 200) {
+                setBio(e.target.value);
+              }
+            }}
+            rows={4}
+            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/50 text-base resize-none"
+            placeholder="Tell your audience a bit about yourself..."
+          />
+          <p className="text-xs text-gray-500">
+            {bio.split(/\s+/).filter(Boolean).length}/200 words
+          </p>
         </div>
 
         {/* 2. CHOOSE YOUR SPECIALIZATION */}

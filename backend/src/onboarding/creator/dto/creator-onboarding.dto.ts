@@ -27,6 +27,10 @@ export class CreatorStep3Dto {
   @IsOptional()
   displayName?: string;
 
+  @IsString()
+  @IsOptional()
+  bio?: string; // Optional bio, max 200 words
+
   @IsArray()
   @IsString({ each: true })
   @IsOptional()

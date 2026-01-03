@@ -17,6 +17,7 @@ type User = {
   email?: string;
   role: "FAN" | "CREATOR" | null;
   username?: string;
+  displayName?: string;
   avatarUrl?: string;
   country?: string;
   isEmailVerified?: boolean;
@@ -103,6 +104,6 @@ export const useAuthStore = create<AuthState>()(
     {
       name: "auth-storage", // Nazwa klucza w localStorage
       storage: createJSONStorage(() => sessionStorage), // Używamy sessionStorage
-    },
-  ),
+    }
+  )
 );
