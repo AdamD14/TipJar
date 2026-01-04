@@ -42,7 +42,7 @@ export default function Step5() {
     fetchData();
   }, []);
 
-  const username = user?.username || "creator";
+  const username = data?.username || user?.username || "creator";
 
   const profileUrl = `tipjar.plus/@${username}`;
 

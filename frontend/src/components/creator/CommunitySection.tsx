@@ -1,9 +1,8 @@
 // frontend/src/components/profile/CommunitySection.tsx
-'use client';
+"use client";
 
-const TEXT_PRIMARY = '#DDE0DA';
-const TEXT_SECONDARY = '#BCC1B6';
-const GOLD = '#FFD700';
+const TEXT_PRIMARY = "#DDE0DA";
+const TEXT_SECONDARY = "#BCC1B6";
 
 type Props = {
   links?: { label: string; href: string }[];
@@ -12,7 +11,9 @@ type Props = {
 export default function CommunitySection({ links = [] }: Props) {
   return (
     <section className="rounded-2xl border border-[rgba(255,215,0,0.12)] bg-[rgba(0,55,55,0.85)] p-5">
-      <h2 className="text-lg font-semibold" style={{ color: TEXT_PRIMARY }}>Community</h2>
+      <h2 className="text-lg font-semibold" style={{ color: TEXT_PRIMARY }}>
+        Community
+      </h2>
       <p className="mt-1 text-sm" style={{ color: TEXT_SECONDARY }}>
         Join the discussion and connect with other fans.
       </p>
@@ -30,7 +31,9 @@ export default function CommunitySection({ links = [] }: Props) {
             </a>
           ))
         ) : (
-          <span className="text-sm" style={{ color: TEXT_SECONDARY }}>No links yet.</span>
+          <span className="text-sm" style={{ color: TEXT_SECONDARY }}>
+            No links yet.
+          </span>
         )}
       </div>
     </section>

@@ -210,6 +210,7 @@ export default function TargetBar({ onPublish, initialGoal }: TargetBarProps) {
                 <input
                   type="date"
                   value={goal.deadline}
+                  min={new Date().toISOString().split("T")[0]}
                   onChange={(e) => handleUpdate("deadline", e.target.value)}
                   placeholder="Optional"
                   className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-teal-500 font-medium"

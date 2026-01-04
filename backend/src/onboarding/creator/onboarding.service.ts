@@ -49,6 +49,8 @@ export class OnboardingService {
     return {
       completedSteps: steps,
       profile: user.profile,
+      displayName: user.displayName,
+      username: user.username,
       avatarUrl: avatarUrls[0] || user.avatarUrl, // fallback
       avatarUrls: avatarUrls, // New field for carousel
     };

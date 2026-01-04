@@ -43,6 +43,7 @@ export interface PublicUserProfile {
   username: string | null;
   displayName: string;
   avatarUrl: string | null;
+  avatarUrls: string[];
   role: UserRole;
   profile: {
     bio: string | null;
@@ -50,6 +51,9 @@ export interface PublicUserProfile {
     socials: Prisma.JsonValue;
     industry: string | null;
     acceptsTips: boolean;
+    archetype: string | null;
+    goalLabel: string | null;
+    goalTarget: number | null;
   } | null;
 }
 
@@ -402,8 +406,12 @@ export class UsersService {
   async getPublicProfileByUsername(
     username: string,
   ): Promise<PublicUserProfile | null> {
+    // Strip @ from beginning if present (URL is /@username)
+    const cleanUsername = username.startsWith('@')
+      ? username.slice(1)
+      : username;
     const user = await this.prisma.user.findUnique({
-      where: { username: username.toLowerCase() },
+      where: { username: cleanUsername.toLowerCase() },
       select: {
         id: true,
         username: true,
@@ -417,11 +425,29 @@ export class UsersService {
             socials: true,
             industry: true,
             acceptsTips: true,
+            archetype: true,
+            goalLabel: true,
+            goalTarget: true,
           },
+        },
+        mediaRecords: {
+          orderBy: { createdAt: 'desc' },
+          take: 3,
+          select: { avatarUrl: true },
         },
       },
     });
-    return user;
+    if (!user) return null;
+
+    // Map mediaRecords to avatarUrls array
+    const avatarUrls = user.mediaRecords
+      .map((r) => r.avatarUrl)
+      .filter(Boolean) as string[];
+
+    return {
+      ...user,
+      avatarUrls,
+    };
   }
 
   async setUsernameAndConsents(
