@@ -19,6 +19,8 @@ import AvatarCarousel from "@/components/ui/AvatarCarousel";
 import Button from "@/components/ui/Button";
 import CommunitySection from "@/components/creator/CommunitySection";
 import SupportTierCard from "@/components/creator/SupportTierCard";
+import HeaderBar from "@/components/ui/HeaderBar";
+import { GoalBar } from "@/components/GoalBar";
 
 // Types
 type UserProfile = {
@@ -118,24 +120,25 @@ export default function CreatorProfile() {
 
   return (
     <div className="min-h-screen bg-gradient-main text-white">
-      {/* Back to Dashboard */}
-      <div className="max-w-6xl mx-auto px-4 py-4">
-        <Link
-          href={`/@${safeHandle}/dashboard`}
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
-        >
-          <ArrowLeft size={18} />
-          <span>Back to Dashboard</span>
-        </Link>
-      </div>
+      {/* Header */}
+      <HeaderBar
+        action={
+          <Link
+            href={`/@${safeHandle}/dashboard`}
+            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-xs font-bold uppercase tracking-widest"
+          >
+            <ArrowLeft size={14} />
+            <span>Back to Dashboard</span>
+          </Link>
+        }
+      />
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* --- Top Profile Section --- */}
-        <div className="flex flex-col md:flex-row gap-8 md:gap-12 mb-12">
-          {/* LEFT COLUMN: Avatar, Handle, Stats */}
-          <div className="w-full md:w-[320px] flex-shrink-0 flex flex-col items-center md:items-start">
-            <div className="w-full mb-6 relative">
-              {/* Avatars */}
+      <main className="pt-32 max-w-7xl mx-auto px-4 pb-20">
+        <div className="flex flex-col md:flex-row gap-12 items-start">
+          {/* LEFT COLUMN: Avatar, Link, Buttons, Stats */}
+          <div className="w-full md:w-[300px] flex-shrink-0 flex flex-col items-center">
+            {/* Avatar */}
+            <div className="w-full relative mb-3">
               <AvatarCarousel
                 avatarUrls={
                   profile.avatarUrls?.length
@@ -145,155 +148,104 @@ export default function CreatorProfile() {
               />
             </div>
 
-            <div className="w-full text-center md:text-left space-y-6">
-              {/* Handle & Copy */}
-              <div className="space-y-2">
-                <p className="text-teal-400 font-bold text-xl tracking-wide">
-                  @{safeHandle}
-                </p>
-                <button
-                  onClick={copyProfileLink}
-                  className="group flex items-center justify-center md:justify-start gap-2 text-gray-400 hover:text-white transition-all text-base w-full md:w-auto font-medium"
-                >
-                  <span>tipjar.plus/@{safeHandle}</span>
-                  {copied ? (
-                    <Check size={16} className="text-green-400" />
-                  ) : (
-                    <Copy
-                      size={16}
-                      className="opacity-50 group-hover:opacity-100"
-                    />
-                  )}
-                </button>
-                {/* Archetype Badge */}
+            {/* Profile Link (raised right under carousel) */}
+            <button
+              onClick={copyProfileLink}
+              className="text-lg font-bold text-white hover:text-teal-400 transition-colors mb-6 tracking-tight flex items-center gap-2"
+            >
+              <span>tipjar.plus/@{safeHandle}</span>
+              {copied && <Check size={18} className="text-green-400" />}
+            </button>
+
+            {/* Buttons */}
+            <div className="w-full grid grid-cols-2 gap-3 mb-6">
+              <Button
+                variant="gold"
+                className="w-full justify-center shadow-xl shadow-yellow-500/10 uppercase tracking-widest text-xs py-4"
+              >
+                TIP IT
+              </Button>
+              <Button
+                variant="secondary"
+                className="w-full justify-center uppercase tracking-widest text-xs py-4"
+              >
+                Follow
+              </Button>
+            </div>
+
+            {/* Stats */}
+            <div className="flex w-full justify-between px-2 pt-2 border-t border-white/5">
+              {[
+                { label: "Followers", value: "0" },
+                { label: "Supporters", value: "0" },
+              ].map((item) => (
+                <div key={item.label} className="text-center">
+                  <p className="text-xl font-black text-white leading-none mb-1">
+                    {item.value}
+                  </p>
+                  <p className="text-[9px] uppercase tracking-[0.2em] text-gray-500 font-bold">
+                    {item.label}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN: Info & Goal */}
+          <div className="flex-1 flex flex-col xl:flex-row gap-8 w-full pt-8">
+            {/* Identity Info */}
+            <div className="flex-1 space-y-4 text-center md:text-left">
+              {/* Display Name */}
+              <h1 className="text-5xl md:text-6xl font-black text-white tracking-tight leading-none">
+                {safeDisplayName}
+              </h1>
+
+              {/* Archetype & Industry */}
+              <div className="space-y-1">
                 {profile.profile?.archetype && (
-                  <div className="pt-1 flex justify-center md:justify-start">
-                    <span className="inline-flex items-center gap-1.5 rounded-md bg-white/5 border border-yellow-500/30 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-yellow-400">
-                      <ShieldCheck size={10} />{" "}
-                      {profile.profile.archetype.replace(/-/g, " ")}
-                    </span>
+                  <div className="text-yellow-400 font-bold uppercase tracking-widest text-xs">
+                    {profile.profile.archetype.replace(/-/g, " ")}
+                  </div>
+                )}
+                {profile.profile?.industry && (
+                  <div className="text-teal-400 font-bold uppercase tracking-widest text-xs">
+                    {profile.profile.industry}
                   </div>
                 )}
               </div>
 
-              {/* Stats */}
-              <div className="flex flex-row md:flex-col lg:flex-row justify-center md:justify-start gap-8 pt-2">
-                {[
-                  { label: "Followers", value: "0" },
-                  { label: "Views", value: "0" },
-                ].map((item) => (
-                  <div key={item.label} className="text-center md:text-left">
-                    <p className="text-2xl font-black text-white leading-none mb-1">
-                      {item.value}
-                    </p>
-                    <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold opacity-60">
-                      {item.label}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT COLUMN: Bio, Buttons, Goal */}
-          <div className="flex-1 flex flex-col pt-4">
-            <h1 className="text-4xl md:text-5xl font-black text-white mb-4 text-center md:text-left tracking-tight">
-              {safeDisplayName}
-            </h1>
-            <p className="text-gray-400 text-lg leading-relaxed mb-8 text-center md:text-left max-w-2xl font-light">
-              {profile.profile?.bio ||
-                "Welcome to my page! I create content and build communities."}
-            </p>
-
-            <div className="flex items-center justify-center md:justify-start gap-4 mb-8">
-              <Button
-                variant="secondary"
-                className="px-8"
-                leftIcon={<UserPlus size={18} />}
-              >
-                Follow
-              </Button>
-              <Button
-                variant="gold"
-                className="px-8 shadow-xl shadow-yellow-500/10"
-                leftIcon={<Coins size={18} />}
-              >
-                TIP IT
-              </Button>
+              {/* Bio */}
+              <p className="text-gray-400 text-base leading-relaxed max-w-xl font-light mx-auto md:mx-0 pt-4 border-t border-white/5 mt-4">
+                {profile.profile?.bio ||
+                  "Welcome to my page! I create content and build communities."}
+              </p>
             </div>
 
-            {/* Goal Card */}
+            {/* Goal Bar */}
             {profile.profile?.goalTarget && (
-              <div className="max-w-xl bg-gradient-to-br from-[#1a2e2e]/80 to-[#0A0A0B]/95 border border-teal-500/20 rounded-3xl p-6 shadow-2xl">
-                <div className="flex justify-between items-center mb-4 gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[10px] font-bold text-teal-500/40 uppercase tracking-widest mb-1">
-                      Goal
-                    </div>
-                    <h3 className="text-xl font-black text-white tracking-tight leading-tight">
-                      {goal.title}
-                    </h3>
-                  </div>
-                  <div className="flex items-center gap-4 shrink-0">
-                    <div className="flex flex-col items-center">
-                      <span className="text-[10px] font-bold text-teal-500/40 uppercase tracking-widest mb-1">
-                        Progress
-                      </span>
-                      <div className="relative w-14 h-14 bg-teal-500/5 rounded-full flex items-center justify-center border border-teal-500/10">
-                        <span className="text-lg font-black text-white">
-                          0%
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex flex-col border-l border-teal-500/20 pl-4">
-                      <span className="text-[10px] font-bold text-teal-500/40 uppercase tracking-widest">
-                        Target Amount
-                      </span>
-                      <span className="text-xl font-black text-teal-400 tracking-tight">
-                        ${goal.target.toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="h-2 bg-white/5 rounded-full overflow-hidden border border-white/5 mb-2">
-                  <div
-                    className="h-full bg-gradient-to-r from-teal-600 to-teal-400"
-                    style={{ width: "0%" }}
-                  />
-                </div>
-                <div className="flex justify-between text-[10px] font-bold text-teal-500/40 uppercase tracking-widest">
-                  <span>Funds raised</span>
-                  <span className="text-lg text-white font-bold">$0</span>
-                </div>
-                <div className="flex justify-center pt-4">
-                  <button className="w-full bg-teal-500 text-black py-3 rounded-2xl text-lg font-black uppercase tracking-[0.2em] shadow-lg shadow-teal-500/20 hover:bg-teal-400 transition-all flex items-center justify-center gap-2">
-                    <span className="text-xl">$</span> TIP IT
-                  </button>
-                </div>
+              <div className="w-full xl:w-[400px] shrink-0">
+                <GoalBar goal={goal} />
               </div>
             )}
           </div>
         </div>
 
         {/* --- MOCK PREVIEW SECTION --- */}
-        <div className="space-y-12 relative mt-16">
-          <div className="flex items-center gap-4 text-yellow-500/50 mb-4 px-4">
-            <div className="h-px bg-yellow-500/30 flex-1"></div>
-            <span className="text-xs font-bold uppercase tracking-[0.2em]">
-              Live Page Preview
+        <div className="space-y-12 relative mt-32 opacity-80 hover:opacity-100 transition-opacity">
+          <div className="flex items-center gap-4 text-yellow-500/30 mb-8 px-4">
+            <div className="h-px bg-yellow-500/20 flex-1"></div>
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em]">
+              Mock Data Preview
             </span>
-            <div className="h-px bg-yellow-500/30 flex-1"></div>
+            <div className="h-px bg-yellow-500/20 flex-1"></div>
           </div>
 
           {/* Top Supporters (Fan Wall) */}
-          <div className="relative group rounded-xl border border-white/5 bg-white/5 p-6 overflow-hidden">
-            <div className="absolute top-0 right-0 bg-yellow-500/20 border-b border-l border-yellow-500/40 text-yellow-200 text-[10px] font-bold px-2 py-1 rounded-bl-lg">
-              MOCK PREVIEW
-            </div>
+          <div className="relative group rounded-xl border border-white/5 bg-white/[0.02] p-6 overflow-hidden">
             <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
               🏆 Top Supporters
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 opacity-70 group-hover:opacity-100 transition-opacity">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {["CryptoKing", "DesignLvr", "Web3Fan"].map((s, i) => (
                 <div
                   key={i}
@@ -312,42 +264,34 @@ export default function CreatorProfile() {
           </div>
 
           {/* Content Hub */}
-          <section className="space-y-6 relative group">
-            <div className="absolute -top-4 -right-4 bg-yellow-500/20 border border-yellow-500/40 text-yellow-200 text-[10px] font-bold px-3 py-1 rounded-full z-10">
-              MOCK PREVIEW
-            </div>
+          <section className="space-y-6 relative">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-white">
-                Content Hub / Start
-              </h2>
-              <span className="text-xs font-bold uppercase tracking-widest text-teal-400">
-                Top 3 Materiały
-              </span>
+              <h2 className="text-2xl font-bold text-white">Content Hub</h2>
             </div>
             <div className="grid gap-6 md:grid-cols-3">
               {[
                 {
                   icon: <PlayCircle size={22} className="text-teal-400" />,
-                  title: "Inżynieria Wirali: Framework 7-minutowy",
-                  desc: "Analiza struktury treści, które generują 1M+ wyświetleń bez budżetu reklamowego.",
-                  cta: "Obejrzyj",
+                  title: "Viral Engineering 101",
+                  desc: "Learn the structure behind 1M+ view content.",
+                  cta: "Watch",
                 },
                 {
                   icon: <FileText size={22} className="text-teal-400" />,
-                  title: "Case study: $42k z jednego launchu",
-                  desc: "Dokładny zapis sekwencji wiadomości i strategii segmentacji użytej w kampanii.",
-                  cta: "Czytaj",
+                  title: "Case Study: $42k Launch",
+                  desc: "Step-by-step breakdown of the campaign strategy.",
+                  cta: "Read",
                 },
                 {
                   icon: <Mail size={22} className="text-teal-400" />,
-                  title: "Szablon: Sekwencja konwertująca",
-                  desc: "5 gotowych wzorców treści skracających czas od kontaktu do sprzedaży.",
-                  cta: "Pobierz",
+                  title: "Conversion Templates",
+                  desc: "5 ready-to-use email sequences for sales.",
+                  cta: "Download",
                 },
               ].map((card) => (
                 <div
                   key={card.title}
-                  className="flex h-full flex-col rounded-2xl border border-white/10 bg-white/5 p-6 shadow-sm transition-all hover:bg-white/10 hover:border-teal-500/30"
+                  className="flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6"
                 >
                   <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-teal-400">
                     {card.icon}
@@ -369,11 +313,8 @@ export default function CreatorProfile() {
 
           {/* Offers / Tiers */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative">
-            <div className="absolute -top-4 -right-4 bg-yellow-500/20 border border-yellow-500/40 text-yellow-200 text-[10px] font-bold px-3 py-1 rounded-full z-10">
-              MOCK PREVIEW
-            </div>
             {/* Community Mock */}
-            <div className="relative group rounded-xl border border-white/5 bg-white/5 p-6 overflow-hidden">
+            <div className="relative group rounded-xl border border-white/5 bg-white/[0.02] p-6 overflow-hidden">
               <CommunitySection
                 links={[
                   { label: "Discord", href: "#" },
@@ -383,12 +324,12 @@ export default function CreatorProfile() {
             </div>
 
             {/* Tiers Mock */}
-            <div className="relative group rounded-xl border border-white/5 bg-white/5 p-6 overflow-hidden">
+            <div className="relative group rounded-xl border border-white/5 bg-white/[0.02] p-6 overflow-hidden">
               <SupportTierCard tier={MOCK_TIERS[0]} />
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

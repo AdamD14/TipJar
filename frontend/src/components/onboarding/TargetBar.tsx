@@ -31,9 +31,9 @@ function UnifiedLivePreview({ goal }: { goal: Goal }) {
   };
 
   return (
-    <div className="bg-gradient-to-br from-[#1a2e2e]/80 to-[#0A0A0B]/95 border border-teal-500/20 rounded-3xl p-6 shadow-2xl relative overflow-hidden group backdrop-blur-md">
+    <div className="linear-gradient(135deg, #001919 0%, #093439 100%) border border-teal-500/20 rounded-xl p-2 shadow-2xl relative overflow-hidden group backdrop-blur-md">
       {/* Main Info Row */}
-      <div className="flex justify-between items-center mb-6 gap-4">
+      <div className="flex justify-between items-center mb-2 gap-2">
         {/* Left: Goal */}
         <div className="flex-1 min-w-0">
           <div className="text-[10px] font-bold text-teal-500/40 uppercase tracking-widest mb-1">
@@ -45,7 +45,7 @@ function UnifiedLivePreview({ goal }: { goal: Goal }) {
         </div>
 
         {/* Right: Progress Circle + Target */}
-        <div className="flex items-center gap-4 shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
           <div className="flex flex-col items-center">
             <span className="text-[10px] font-bold text-teal-500/40 uppercase tracking-widest mb-1">
               Progress
@@ -83,7 +83,7 @@ function UnifiedLivePreview({ goal }: { goal: Goal }) {
             </div>
           </div>
 
-          <div className="flex flex-col border-l border-teal-500/20 pl-4">
+          <div className="flex flex-col border-l border-teal-500/20 pl-2">
             <span className="text-[10px] font-bold text-teal-500/40 uppercase tracking-widest">
               Target Amount
             </span>
@@ -104,7 +104,7 @@ function UnifiedLivePreview({ goal }: { goal: Goal }) {
       )}
 
       {/* Progress Bar */}
-      <div className="relative mb-4">
+      <div className="relative mb-1">
         <div className="h-2 bg-white/5 rounded-full overflow-hidden border border-white/5">
           <div
             className="h-full bg-gradient-to-r from-teal-600 to-teal-400 transition-all duration-700 ease-in-out relative"
@@ -125,7 +125,7 @@ function UnifiedLivePreview({ goal }: { goal: Goal }) {
       <div className="flex justify-center pt-2">
         <button
           type="button"
-          className="w-full bg-teal-500 text-black py-3 rounded-2xl text-lg font-black uppercase tracking-[0.2em] shadow-lg shadow-teal-500/20 hover:bg-teal-400 transition-all flex items-center justify-center gap-2"
+          className="w-full bg-teal-500 text-black py-3 rounded-l text-lg font-black uppercase tracking-[0.2em] shadow-lg shadow-teal-500/20 hover:bg-teal-400 transition-all flex items-center justify-center gap-2"
         >
           <Image src="/logo.png" alt="" width={40} height={40} />
           TIP IT
@@ -140,8 +140,8 @@ function UnifiedLivePreview({ goal }: { goal: Goal }) {
  */
 export default function TargetBar({ onPublish, initialGoal }: TargetBarProps) {
   const [goal, setGoal] = useState<Goal>({
-    title: initialGoal?.title || "microphone",
-    target: initialGoal?.target || 500,
+    title: initialGoal?.title || "",
+    target: initialGoal?.target || 100,
     current: initialGoal?.current || 0,
     deadline: initialGoal?.deadline || "",
   });
@@ -170,7 +170,7 @@ export default function TargetBar({ onPublish, initialGoal }: TargetBarProps) {
             <h2 className="text-sm font-medium text-teal-400">Configuration</h2>
           </div>
 
-          <div className="bg-[#0A0A0B]/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 space-y-5 shadow-2xl relative">
+          <div className="linear-gradient(135deg, #001919 0%, #093439 100%) backdrop-blur-xl border border-white/10 rounded-xl p-3 space-y-2 shadow-2xl relative">
             {/* Goal */}
             <div className="space-y-2">
               <label className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/30 ml-1">
@@ -181,7 +181,7 @@ export default function TargetBar({ onPublish, initialGoal }: TargetBarProps) {
                 value={goal.title}
                 maxLength={40}
                 onChange={(e) => handleUpdate("title", e.target.value)}
-                className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-teal-500 transition-all text-base font-medium"
+                className="w-full bg-white/[0.02] border border-white/10 rounded-l px-4 py-3 text-white outline-none focus:border-teal-500 transition-all text-base font-medium"
               />
             </div>
 
@@ -200,7 +200,7 @@ export default function TargetBar({ onPublish, initialGoal }: TargetBarProps) {
                     const val = e.target.value.replace(/\D/g, "");
                     handleUpdate("target", val ? Number(val) : 0);
                   }}
-                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-teal-500 font-medium"
+                  className="w-full bg-white/[0.02] border border-white/10 rounded-l px-4 py-3 text-white outline-none focus:border-teal-500 font-medium"
                 />
               </div>
               <div className="space-y-2">
@@ -213,7 +213,7 @@ export default function TargetBar({ onPublish, initialGoal }: TargetBarProps) {
                   min={new Date().toISOString().split("T")[0]}
                   onChange={(e) => handleUpdate("deadline", e.target.value)}
                   placeholder="Optional"
-                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-teal-500 font-medium"
+                  className="w-full bg-white/[0.02] border border-white/10 rounded-l px-4 py-3 text-white outline-none focus:border-teal-500 font-medium"
                 />
               </div>
             </div>
@@ -223,7 +223,7 @@ export default function TargetBar({ onPublish, initialGoal }: TargetBarProps) {
               <button
                 type="button"
                 onClick={publishGoal}
-                className="group relative w-full overflow-hidden rounded-xl bg-teal-500 px-6 py-4 text-black font-bold uppercase tracking-widest shadow-xl transition-all hover:bg-teal-400"
+                className="group relative w-full overflow-hidden rounded-l bg-teal-500 px-6 py-4 text-black font-bold uppercase tracking-widest shadow-xl transition-all hover:bg-teal-400"
               >
                 <div className="relative flex items-center justify-center gap-2">
                   {isSaved ? (

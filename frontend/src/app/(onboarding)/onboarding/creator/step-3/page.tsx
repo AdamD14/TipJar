@@ -116,7 +116,7 @@ export default function Step3() {
             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/50 text-base resize-none"
             placeholder="Tell your audience a bit about yourself..."
           />
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-498">
             {bio.split(/\s+/).filter(Boolean).length}/200 words
           </p>
         </div>
