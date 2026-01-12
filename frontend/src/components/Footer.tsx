@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const Footer = () => (
   <footer className="bg-tipjar-dark text-white py-8 text-center text-sm">
     <div className="mb-4">
@@ -13,9 +15,9 @@ const Footer = () => (
       <a href="#examples" className="mx-2 hover:underline">
         Examples
       </a>
-      <a href="/explore" className="mx-2 hover:underline">
+      <Link href="/explore" className="mx-2 hover:underline">
         Explore
-      </a>
+      </Link>
     </div>
     <div className="mb-2">
       <a href="#" className="mx-2 hover:underline">

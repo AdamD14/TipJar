@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { login, me } from "@/lib/auth";
-import { useOnboardingStore } from "@/lib/store/onboardingStore";
 import { useAuthStore } from "@/lib/store/authStore";
 import { useToast } from "@/components/ui/Toast";
 
@@ -17,7 +16,7 @@ export default function Page() {
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
-  const { setRole, setUser: setOnboardingUser } = useOnboardingStore();
+  const setUser = useAuthStore((state) => state.setUser);
 
   const handleSocialLogin = (provider: "google" | "twitch") => {
     if (loading) return;
@@ -51,8 +50,7 @@ export default function Page() {
       const user = await me().catch(() => null);
       if (user) {
         const normalizedRole = user.role === "CREATOR" ? "CREATOR" : "FAN";
-        setRole(normalizedRole);
-        setOnboardingUser({
+        setUser({
           id: user.id,
           email: user.email ?? undefined,
           role: normalizedRole,
@@ -60,7 +58,7 @@ export default function Page() {
           hasCompletedOnboarding: user.hasCompletedOnboarding,
         });
       } else {
-        setOnboardingUser(null);
+        setUser(null);
       }
 
       const hasUsername = Boolean(user?.username);
@@ -69,8 +67,8 @@ export default function Page() {
       const fallbackTarget =
         hasUsername && onboardingDone
           ? normalizedRole === "CREATOR"
-            ? "/creator/dashboard"
-            : "/fan/dashboard"
+            ? `/@${user?.username}/creator/dashboard`
+            : `/@${user?.username}/fan/dashboard`
           : "/choose-username";
       const returnTo = params?.get("returnTo");
       if (

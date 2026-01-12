@@ -6,7 +6,9 @@ type Clicks = Record<string, number>;
 function safeGet<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
   try {
-    return JSON.parse(localStorage.getItem(key) || "") as T;
+    const stored = localStorage.getItem(key);
+    if (!stored) return fallback;
+    return JSON.parse(stored) as T;
   } catch {
     return fallback;
   }
@@ -35,7 +37,9 @@ function getRecentRaw(): string[] {
   return safeGet<string[]>(RECENT_KEY, []);
 }
 
-export function getTopClicked(limit = 12): Array<{ handle: string; count: number }> {
+export function getTopClicked(
+  limit = 12
+): Array<{ handle: string; count: number }> {
   const clicks = safeGet<Clicks>(CLICKS_KEY, {});
   return Object.entries(clicks)
     .map(([handle, count]) => ({ handle, count }))

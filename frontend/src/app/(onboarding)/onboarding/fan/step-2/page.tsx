@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
+import { useAuthStore } from "@/lib/store/authStore";
 import apiClient from "@/lib/apiClient";
 import Button from "@/components/ui/Button";
 import { Check, Loader2 } from "lucide-react";
@@ -38,7 +39,13 @@ export default function FanOnboardingStep2() {
     },
     onSuccess: () => {
       // Redirect to dashboard on success
-      router.push("/fan/dashboard");
+      const user = useAuthStore.getState().user;
+      if (user?.username) {
+        router.push(`/@${user.username}/fan/dashboard`);
+      } else {
+        // Fallback usually shouldn't happen if flow is correct
+        router.push("/");
+      }
     },
     onError: (error) => {
       console.error("Failed to save interests:", error);

@@ -3,7 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 
 export default function TwitchConnect() {
-  const [connected, setConnected] = useState<boolean>(false);
+  const [connected] = useState<boolean>(false);
 
   const handleConnect = () => {
     window.location.href = "/api/v1/auth/twitch";

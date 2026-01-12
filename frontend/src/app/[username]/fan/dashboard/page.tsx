@@ -1,7 +1,16 @@
-// app/fan/dashboard/page.tsx
+// app/[username]/fan/dashboard/page.tsx
 import Link from "next/link";
 
-export default function FanDashboardPage() {
+export default function FanDashboardPage({
+  params,
+}: {
+  params: { username: string };
+}) {
+  const { username } = params;
+  const decodedUsername = decodeURIComponent(username);
+  const cleanUsername = decodedUsername.startsWith("@")
+    ? decodedUsername.slice(1)
+    : decodedUsername;
   return (
     <main
       className="min-h-screen bg-white"
@@ -10,19 +19,34 @@ export default function FanDashboardPage() {
       <header className="bg-[#003737] text-white p-4 flex justify-between items-center">
         <h1 className="text-2xl">Fan Dashboard</h1>
         <nav>
-          <Link href="/fan/dashboard" className="px-3 text-[#FFD700]">
+          <Link
+            href={`/@${cleanUsername}/fan/dashboard`}
+            className="px-3 text-[#FFD700]"
+          >
             Dashboard
           </Link>
-          <Link href="/fan/history" className="px-3 hover:text-[#FFD700]">
+          <Link
+            href={`/@${cleanUsername}/fan/history`}
+            className="px-3 hover:text-[#FFD700]"
+          >
             History
           </Link>
-          <Link href="/fan/following" className="px-3 hover:text-[#FFD700]">
+          <Link
+            href={`/@${cleanUsername}/fan/following`}
+            className="px-3 hover:text-[#FFD700]"
+          >
             Following
           </Link>
-          <Link href="/fan/notifications" className="px-3 hover:text-[#FFD700]">
+          <Link
+            href={`/@${cleanUsername}/fan/notifications`}
+            className="px-3 hover:text-[#FFD700]"
+          >
             Notifications
           </Link>
-          <Link href="/fan/wallet" className="px-3 hover:text-[#FFD700]">
+          <Link
+            href={`/@${cleanUsername}/fan/wallet`}
+            className="px-3 hover:text-[#FFD700]"
+          >
             Wallet
           </Link>
           <Link href="/" className="px-3 hover:text-[#FFD700]">

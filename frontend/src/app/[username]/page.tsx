@@ -1,26 +1,23 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
-  Copy,
   Check,
-  UserPlus,
-  Coins,
   PlayCircle,
   FileText,
   Mail,
   ArrowRight,
   ArrowLeft,
-  ShieldCheck,
 } from "lucide-react";
 import { getPublicProfile } from "@/lib/users";
 import AvatarCarousel from "@/components/ui/AvatarCarousel";
 import Button from "@/components/ui/Button";
 import CommunitySection from "@/components/creator/CommunitySection";
 import SupportTierCard from "@/components/creator/SupportTierCard";
-import HeaderBar from "@/components/ui/HeaderBar";
 import { GoalBar } from "@/components/GoalBar";
+import { useAuthStore } from "@/lib/store/authStore";
 
 // Types
 type UserProfile = {
@@ -36,6 +33,8 @@ type UserProfile = {
     industry: string | null;
     goalLabel: string | null;
     goalTarget: number | null;
+    goalDeadline: string | null;
+    socials: Record<string, boolean> | null;
   } | null;
 };
 
@@ -58,6 +57,8 @@ const MOCK_TIERS = [
 
 export default function CreatorProfile() {
   const { username } = useParams<{ username: string }>();
+  const searchParams = useSearchParams();
+  const isPreview = searchParams.get("preview") === "true";
   const [copied, setCopied] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -66,6 +67,9 @@ export default function CreatorProfile() {
   const decoded = decodeURIComponent(username || "");
   const cleanUsername = decoded.startsWith("@") ? decoded.slice(1) : decoded;
   const safeHandle = cleanUsername || "creator";
+
+  const user = useAuthStore((state) => state.user);
+  const isOwner = user?.username === cleanUsername;
 
   useEffect(() => {
     if (!cleanUsername) return;
@@ -115,25 +119,60 @@ export default function CreatorProfile() {
     title: profile.profile?.goalLabel || "Goal",
     target: profile.profile?.goalTarget || 500,
     current: 0,
-    deadline: "",
+    deadline: profile.profile?.goalDeadline || "",
   };
 
   return (
     <div className="min-h-screen bg-gradient-main text-white">
-      {/* Header */}
-      <HeaderBar
-        action={
-          <Link
-            href={`/@${safeHandle}/dashboard`}
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-xs font-bold uppercase tracking-widest"
-          >
-            <ArrowLeft size={14} />
-            <span>Back to Dashboard</span>
-          </Link>
-        }
-      />
+      {/* Preview Banner */}
+      {isPreview && (
+        <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-teal-600 via-teal-500 to-teal-600 shadow-lg">
+          <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+              <span className="text-sm font-bold text-white uppercase tracking-widest">
+                🎉 Profile Preview — This is how others see your page!
+              </span>
+            </div>
+            <Link
+              href={`/@${safeHandle}/dashboard`}
+              className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-white font-bold text-sm uppercase tracking-wider transition-all"
+            >
+              <ArrowLeft size={16} />
+              Back to Dashboard
+            </Link>
+          </div>
+        </div>
+      )}
 
-      <main className="pt-32 max-w-7xl mx-auto px-4 pb-20">
+      {/* Header - only show when not in preview mode */}
+      {!isPreview && (
+        <header className="fixed inset-x-0 top-0 z-40 bg-gradient-main/80 backdrop-blur-md border-b border-white/5">
+          <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <Link
+              href="/"
+              className="text-sm font-semibold tracking-widest uppercase text-gray-400 hover:text-white transition-colors"
+            >
+              TIPJAR.PLUS
+            </Link>
+            {isOwner && (
+              <Link
+                href={`/@${safeHandle}/creator/dashboard`}
+                className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-xs font-bold uppercase tracking-widest"
+              >
+                <ArrowLeft size={14} />
+                <span>Back to Dashboard</span>
+              </Link>
+            )}
+          </div>
+        </header>
+      )}
+
+      <main
+        className={`${
+          isPreview ? "pt-20" : "pt-32"
+        } max-w-7xl mx-auto px-4 pb-20`}
+      >
         <div className="flex flex-col md:flex-row gap-12 items-start">
           {/* LEFT COLUMN: Avatar, Link, Buttons, Stats */}
           <div className="w-full md:w-[300px] flex-shrink-0 flex flex-col items-center">
@@ -219,6 +258,32 @@ export default function CreatorProfile() {
                 {profile.profile?.bio ||
                   "Welcome to my page! I create content and build communities."}
               </p>
+
+              {/* Socials */}
+              {profile.profile?.socials &&
+                Object.keys(profile.profile.socials).length > 0 && (
+                  <div className="flex items-center gap-3 pt-4">
+                    {profile.profile.socials.twitch && (
+                      <a
+                        href="https://twitch.tv"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-3 py-2 bg-[#9146FF]/10 border border-[#9146FF]/30 rounded-lg hover:bg-[#9146FF]/20 transition-colors"
+                      >
+                        <Image
+                          src="/twitch-glitch.svg"
+                          alt="Twitch"
+                          width={20}
+                          height={20}
+                          className="w-5 h-5"
+                        />
+                        <span className="text-sm font-bold text-[#9146FF]">
+                          Twitch
+                        </span>
+                      </a>
+                    )}
+                  </div>
+                )}
             </div>
 
             {/* Goal Bar */}

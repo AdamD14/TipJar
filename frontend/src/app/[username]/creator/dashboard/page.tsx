@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuthStore } from "@/lib/store/authStore";
 import apiClient from "@/lib/apiClient";
+import { me } from "@/lib/auth";
 
 interface DashboardData {
   username?: string;
@@ -22,14 +23,42 @@ export default function CreatorDashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const user = useAuthStore((state) => state.user);
+  const hasHydrated = useAuthStore((state) => state._hasHydrated);
 
   // Check if this is the current user's dashboard
-  const cleanUsername = username?.startsWith("@")
-    ? username.slice(1)
-    : username;
+  const decodedUsername = decodeURIComponent(username || "");
+  const cleanUsername = decodedUsername.startsWith("@")
+    ? decodedUsername.slice(1)
+    : decodedUsername;
+
   const isOwner = user?.username === cleanUsername;
 
   useEffect(() => {
+    // Wait for store to load from session storage
+    if (!hasHydrated) return;
+
+    if (!user) {
+      // User is not in store. Try to fetch from API (e.g. if redirected from Social Login)
+      me()
+        .then((fetchedUser) => {
+          if (fetchedUser) {
+            useAuthStore.getState().setUser({
+              ...fetchedUser,
+              email: fetchedUser.email ?? undefined,
+              username: fetchedUser.username ?? undefined,
+              avatarUrl: fetchedUser.avatarUrl ?? undefined,
+              role: fetchedUser.role === "CREATOR" ? "CREATOR" : "FAN",
+            });
+          } else {
+            router.replace("/login");
+          }
+        })
+        .catch(() => {
+          router.replace("/login");
+        });
+      return;
+    }
+
     if (!isOwner) {
       // Not the owner, redirect to public profile
       router.replace(`/@${cleanUsername}`);
@@ -47,7 +76,7 @@ export default function CreatorDashboard() {
       }
     };
     fetchData();
-  }, [isOwner, cleanUsername, router]);
+  }, [hasHydrated, user, isOwner, cleanUsername, router]);
 
   if (!isOwner) {
     return null; // Will redirect
@@ -124,7 +153,7 @@ export default function CreatorDashboard() {
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Link
-            href="/dashboard/profile"
+            href={`/@${cleanUsername}/creator/profile`}
             className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-colors"
           >
             <h3 className="text-lg font-semibold">Edit Profile</h3>
@@ -133,7 +162,7 @@ export default function CreatorDashboard() {
             </p>
           </Link>
           <Link
-            href="/dashboard/withdrawals"
+            href={`/@${cleanUsername}/creator/withdrawals`}
             className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-colors"
           >
             <h3 className="text-lg font-semibold">Withdrawals</h3>

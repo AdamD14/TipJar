@@ -1,7 +1,12 @@
-// app/fan/history/page.tsx
+// app/[username]/fan/history/page.tsx
 import Link from "next/link";
 
-export default function FanHistoryPage() {
+export default function FanHistoryPage({
+  params,
+}: {
+  params: { username: string };
+}) {
+  const { username } = params;
   return (
     <main
       className="min-h-screen bg-white"
@@ -10,19 +15,34 @@ export default function FanHistoryPage() {
       <header className="bg-[#003737] text-white p-4 flex justify-between items-center">
         <h1 className="text-2xl">Tip History</h1>
         <nav>
-          <Link href="/fan/dashboard" className="px-3 hover:text-[#FFD700]">
+          <Link
+            href={`/@${username}/fan/dashboard`}
+            className="px-3 hover:text-[#FFD700]"
+          >
             Dashboard
           </Link>
-          <Link href="/fan/history" className="px-3 text-[#FFD700]">
+          <Link
+            href={`/@${username}/fan/history`}
+            className="px-3 text-[#FFD700]"
+          >
             History
           </Link>
-          <Link href="/fan/following" className="px-3 hover:text-[#FFD700]">
+          <Link
+            href={`/@${username}/fan/following`}
+            className="px-3 hover:text-[#FFD700]"
+          >
             Following
           </Link>
-          <Link href="/fan/notifications" className="px-3 hover:text-[#FFD700]">
+          <Link
+            href={`/@${username}/fan/notifications`}
+            className="px-3 hover:text-[#FFD700]"
+          >
             Notifications
           </Link>
-          <Link href="/fan/wallet" className="px-3 hover:text-[#FFD700]">
+          <Link
+            href={`/@${username}/fan/wallet`}
+            className="px-3 hover:text-[#FFD700]"
+          >
             Wallet
           </Link>
           <Link href="/" className="px-3 hover:text-[#FFD700]">

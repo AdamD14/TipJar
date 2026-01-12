@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
 /**
  * FanSetup
@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
  */
 export default function FanSetup() {
   const router = useRouter();
+  const { username } = useParams<{ username: string }>();
   const [displayName, setDisplayName] = useState("");
   const [avatar, setAvatar] = useState<File | null>(null);
   const handleSubmit = async (e: FormEvent) => {
@@ -22,7 +23,7 @@ export default function FanSetup() {
     if (avatar) body.append("avatar", avatar);
     try {
       await fetch("/api/fans/setup", { method: "POST", body });
-      router.push("/fan/dashboard");
+      router.push(`/@${username}/fan/dashboard`);
     } catch (err) {
       console.error(err);
     }

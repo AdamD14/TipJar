@@ -68,7 +68,7 @@ export default function Step4() {
         {/* FOOTER */}
         <div className="flex items-center justify-between pt-8 border-t border-white/5">
           <Link
-            href="/dashboard"
+            href="/"
             className="text-sm text-gray-500 hover:text-white transition-colors"
           >
             Skip for now

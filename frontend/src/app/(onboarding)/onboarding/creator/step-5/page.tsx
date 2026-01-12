@@ -60,7 +60,7 @@ export default function Step5() {
     setFinishing(true);
     try {
       await apiClient.post("/api/v1/creator/onboarding/complete");
-      router.push(`/@${username}`);
+      router.push(`/@${username}?preview=true`);
     } catch (error) {
       console.error("Failed to complete onboarding", error);
       alert("Something went wrong. Please try again.");

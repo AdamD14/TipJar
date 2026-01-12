@@ -21,7 +21,7 @@ export default function CommunitySection({ links = [] }: Props) {
         {links.length ? (
           links.map((l) => (
             <a
-              key={l.href}
+              key={l.label}
               href={l.href}
               target="_blank"
               rel="noopener noreferrer"

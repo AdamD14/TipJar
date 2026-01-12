@@ -18,11 +18,9 @@ type MeResponse = {
 // Stałe dla ścieżek - lepsze zarządzanie
 const PATHS = {
   CREATOR: {
-    dashboard: "/creator/dashboard",
     onboarding: "/onboarding/creator/step-1",
   },
   FAN: {
-    dashboard: "/fan/dashboard",
     onboarding: "/onboarding/fan/step-1",
   },
 } as const;

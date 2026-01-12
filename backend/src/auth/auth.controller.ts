@@ -168,12 +168,14 @@ export class AuthController {
         response.redirect(`${frontendUrl}/onboarding/creator/step-1`);
       } else {
         // Fans should be marked complete by setUsername, but if not, send them to dashboard or fallback
-        const dashboard = '/fan/dashboard';
+        const dashboard = `/@${user.username}/fan/dashboard`;
         response.redirect(`${frontendUrl}${dashboard}`);
       }
     } else {
       const dashboard =
-        user.role === 'CREATOR' ? '/creator/dashboard' : '/fan/dashboard';
+        user.role === 'CREATOR'
+          ? `/@${user.username}/creator/dashboard`
+          : `/@${user.username}/fan/dashboard`;
       this.logger.log(
         `User ${user.id} has completed onboarding. Redirecting to ${dashboard}`,
       );
@@ -252,12 +254,14 @@ export class AuthController {
         );
         response.redirect(`${frontendUrl}/onboarding/creator/step-1`);
       } else {
-        const dashboard = '/fan/dashboard';
+        const dashboard = `/@${user.username}/fan/dashboard`;
         response.redirect(`${frontendUrl}${dashboard}`);
       }
     } else {
       const dashboard =
-        user.role === 'CREATOR' ? '/creator/dashboard' : '/fan/dashboard';
+        user.role === 'CREATOR'
+          ? `/@${user.username}/creator/dashboard`
+          : `/@${user.username}/fan/dashboard`;
       this.logger.log(
         `User ${user.id} has completed onboarding. Redirecting to ${dashboard}`,
       );
@@ -271,7 +275,7 @@ export class AuthController {
    */
   @Post('token')
   @HttpCode(HttpStatus.OK)
-  async getToken(@Req() req: Request): Promise<{ accessToken: string | null }> {
+  getToken(@Req() req: Request): { accessToken: string | null } {
     const cookies = req.cookies as Record<string, string>;
     const accessToken = cookies?.['access_token'] || null;
 
@@ -328,12 +332,15 @@ export class AuthController {
         );
         response.redirect(`${frontendUrl}/onboarding/creator/step-1`);
       } else {
-        const dashboard = '/fan/dashboard';
+        // Fans should be marked complete by setUsername, but if not, send them to dashboard or fallback
+        const dashboard = `/@${user.username}/fan/dashboard`;
         response.redirect(`${frontendUrl}${dashboard}`);
       }
     } else {
       const dashboard =
-        user.role === 'CREATOR' ? '/creator/dashboard' : '/fan/dashboard';
+        user.role === 'CREATOR'
+          ? `/@${user.username}/creator/dashboard`
+          : `/@${user.username}/fan/dashboard`;
       this.logger.log(
         `User ${user.id} has completed onboarding. Redirecting to ${dashboard}`,
       );

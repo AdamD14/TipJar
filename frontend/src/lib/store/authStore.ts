@@ -36,11 +36,12 @@ interface Consents {
 // <<< POPRAWKA: Upraszczamy interfejs AuthState
 interface AuthState {
   step: OnboardingStep;
-  user: User | null; // Zamiast `role` i `userData`, mamy jeden obiekt `user`
+  user: User | null;
   accessToken: string | null;
   consents: Consents;
+  _hasHydrated: boolean;
   setStep: (step: OnboardingStep) => void;
-  setUser: (user: Partial<User> | null) => void; // Zamiast `setRole` i `setUserData` mamy `setUser`
+  setUser: (user: Partial<User> | null) => void;
   setAccessToken: (token: string | null) => void;
   setConsents: (data: Partial<Consents>) => void;
   reset: () => void;
@@ -65,6 +66,7 @@ const initialState = {
     termsAccepted: false,
     privacyAccepted: false,
   },
+  _hasHydrated: false, // Add this
 };
 
 export const useAuthStore = create<AuthState>()(
@@ -74,7 +76,6 @@ export const useAuthStore = create<AuthState>()(
 
       setStep: (step) => set({ step }),
 
-      // <<< POPRAWKA: Implementujemy `setUser`
       setUser: (data) =>
         set((state) => ({
           user: data ? ({ ...(state.user || {}), ...data } as User) : null,
@@ -94,7 +95,6 @@ export const useAuthStore = create<AuthState>()(
         let nextStep: OnboardingStep | undefined =
           stepsOrder[currentStepIndex + 1];
 
-        // <<< POPRAWKA: Odwołujemy się do `get().user.role`
         if (nextStep === "KYC" && get().user?.role === "FAN") {
           nextStep = stepsOrder[currentStepIndex + 2];
         }
@@ -102,8 +102,13 @@ export const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: "auth-storage", // Nazwa klucza w localStorage
-      storage: createJSONStorage(() => sessionStorage), // Używamy sessionStorage
+      name: "auth-storage",
+      storage: createJSONStorage(() => sessionStorage),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state._hasHydrated = true;
+        }
+      },
     }
   )
 );

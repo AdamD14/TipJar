@@ -54,6 +54,7 @@ export interface PublicUserProfile {
     archetype: string | null;
     goalLabel: string | null;
     goalTarget: number | null;
+    goalDeadline: Date | null;
   } | null;
 }
 
@@ -428,6 +429,7 @@ export class UsersService {
             archetype: true,
             goalLabel: true,
             goalTarget: true,
+            goalDeadline: true,
           },
         },
         mediaRecords: {
