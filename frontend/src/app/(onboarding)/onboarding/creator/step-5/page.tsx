@@ -3,9 +3,11 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Copy, Check } from "lucide-react";
 
+import confetti from "canvas-confetti";
 import OnboardingShell from "@/components/layout/OnboardingShell";
 import Button from "@/components/ui/Button";
 import AvatarCarousel from "@/components/ui/AvatarCarousel";
+import { GoalBar } from "@/components/GoalBar";
 import apiClient from "@/lib/apiClient";
 import { useAuthStore } from "@/lib/store/authStore";
 
@@ -16,6 +18,11 @@ interface SummaryData {
   avatarUrls?: string[];
   displayName?: string;
   username?: string;
+  profile?: {
+    goalLabel?: string;
+    goalTarget?: number;
+    goalDeadline?: string;
+  };
 }
 
 export default function Step5() {
@@ -58,9 +65,20 @@ export default function Step5() {
 
   const onFinish = async () => {
     setFinishing(true);
+    // Fire confetti!
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.7 },
+      zIndex: 9999,
+    });
+
     try {
       await apiClient.post("/api/v1/creator/onboarding/complete");
-      router.push(`/@${username}?preview=true`);
+      // Wait for confetti to look cool before redirecting
+      setTimeout(() => {
+        router.push(`/@${username}?preview=true`);
+      }, 1500);
     } catch (error) {
       console.error("Failed to complete onboarding", error);
       alert("Something went wrong. Please try again.");
@@ -124,8 +142,25 @@ export default function Step5() {
           )}
         </button>
 
+        {/* GOAL PREVIEW */}
+        {data?.profile?.goalTarget && (
+          <div className="w-full max-w-md mt-12 mb-4">
+            <div className="text-center mb-4 text-xs font-bold uppercase tracking-widest text-teal-400">
+              Active Goal Preview
+            </div>
+            <GoalBar
+              goal={{
+                title: data.profile.goalLabel || "Goal",
+                target: data.profile.goalTarget,
+                current: 0,
+                deadline: data.profile.goalDeadline || "",
+              }}
+            />
+          </div>
+        )}
+
         {/* LAUNCH BUTTON */}
-        <div className="flex flex-col items-center gap-4 mt-10">
+        <div className="flex flex-col items-center gap-4 mt-8">
           <Button
             variant="gold"
             size="lg"

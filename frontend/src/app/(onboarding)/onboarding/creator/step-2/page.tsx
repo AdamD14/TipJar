@@ -1,6 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/Toast";
 
 import OnboardingShell from "@/components/layout/OnboardingShell";
 import Button from "@/components/ui/Button";
@@ -10,6 +12,8 @@ import { Loader2 } from "lucide-react";
 import { useCreatorGuard } from "@/lib/hooks/useCreatorGuard";
 
 export default function Step2() {
+  const router = useRouter();
+  const toast = useToast();
   const { loading: guardLoading } = useCreatorGuard(2);
   const [saving, setSaving] = useState(false);
   const [isReadyToAdvance, setIsReadyToAdvance] = useState(false);
@@ -43,16 +47,16 @@ export default function Step2() {
 
   const onNext = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!isReadyToAdvance && !confirm("No photos uploaded? Skip?")) return;
+
+    if (!isReadyToAdvance) {
+      toast.push({
+        type: "success",
+        text: "Możesz dodać zdjęcia później na profilu.",
+      });
+    }
 
     setSaving(true);
-    // Mimic the delay before navigation or perform backend sync if needed
-    // In strict implementations we would verify the uploads are linked in DB here
-
-    // For now proceed
-    setTimeout(() => {
-      location.assign("/onboarding/creator/step-3");
-    }, 500);
+    router.push("/onboarding/creator/step-3");
   };
 
   if (guardLoading) {

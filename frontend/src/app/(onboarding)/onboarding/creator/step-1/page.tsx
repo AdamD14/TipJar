@@ -3,6 +3,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import OnboardingShell from "@/components/layout/OnboardingShell";
 import Button from "@/components/ui/Button";
@@ -11,6 +12,7 @@ import { api } from "@/lib/api";
 import { useOnboardingStore } from "@/lib/store/onboardingStore";
 
 export default function Step1() {
+  const router = useRouter();
   const [saving, setSaving] = useState(false);
 
   // Zustand store
@@ -47,7 +49,7 @@ export default function Step1() {
         }),
       });
 
-      location.assign("/onboarding/creator/step-2");
+      router.push("/onboarding/creator/step-2");
     } catch (error) {
       console.error("Failed to save step 1", error);
       setSaving(false);
