@@ -1,13 +1,22 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Copy, Check } from "lucide-react";
+import {
+  Copy,
+  Check,
+  ShieldCheck,
+  ArrowRight,
+  CheckCircle,
+} from "lucide-react";
 
 import confetti from "canvas-confetti";
 import OnboardingShell from "@/components/layout/OnboardingShell";
 import Button from "@/components/ui/Button";
 import AvatarCarousel from "@/components/ui/AvatarCarousel";
 import { GoalBar } from "@/components/GoalBar";
+import ContentGrid, {
+  ContentItem,
+} from "@/components/mock-preview/ContentGrid"; // Ensure this path is correct based on where you put it
 import apiClient from "@/lib/apiClient";
 import { useAuthStore } from "@/lib/store/authStore";
 
@@ -24,6 +33,36 @@ interface SummaryData {
     goalDeadline?: string;
   };
 }
+
+const MOCK_CONTENT: ContentItem[] = [
+  {
+    id: "1",
+    title: "Studio Tour 2024: New Setup",
+    coverUrl:
+      "https://images.unsplash.com/photo-1598550476439-6847785fcea6?q=80&w=600&auto=format&fit=crop",
+    locked: true,
+    type: "video",
+    date: "2 days ago",
+  },
+  {
+    id: "2",
+    title: "Digital Art Process Time-lapse",
+    coverUrl:
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop",
+    locked: false,
+    type: "video",
+    date: "5 days ago",
+  },
+  {
+    id: "3",
+    title: "My Top 10 VS Code Extensions",
+    coverUrl:
+      "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=600&auto=format&fit=crop",
+    locked: false,
+    type: "post",
+    date: "1 week ago",
+  },
+];
 
 export default function Step5() {
   const { loading: guardLoading } = useCreatorGuard(5);
@@ -101,8 +140,8 @@ export default function Step5() {
     data?.avatarUrls && data.avatarUrls.length > 0
       ? data.avatarUrls
       : data?.avatarUrl
-      ? [data.avatarUrl]
-      : [];
+        ? [data.avatarUrl]
+        : [];
 
   const displayName = data?.displayName || user?.displayName || `@${username}`;
 
@@ -142,22 +181,104 @@ export default function Step5() {
           )}
         </button>
 
-        {/* GOAL PREVIEW */}
-        {data?.profile?.goalTarget && (
-          <div className="w-full max-w-md mt-12 mb-4">
-            <div className="text-center mb-4 text-xs font-bold uppercase tracking-widest text-teal-400">
-              Active Goal Preview
-            </div>
-            <GoalBar
-              goal={{
-                title: data.profile.goalLabel || "Goal",
-                target: data.profile.goalTarget,
-                current: 0,
-                deadline: data.profile.goalDeadline || "",
-              }}
-            />
+        {/* --- PREMIUM PREVIEW SECTION --- */}
+        <div className="w-full mt-16 space-y-12 relative border-t border-white/5 pt-12">
+          <div className="flex items-center gap-4 text-yellow-500/50 mb-8 px-4">
+            <div className="h-px bg-yellow-500/30 flex-1"></div>
+            <span className="text-xs font-bold uppercase tracking-[0.2em]">
+              Live Page Preview
+            </span>
+            <div className="h-px bg-yellow-500/30 flex-1"></div>
           </div>
-        )}
+
+          {/* Featured In / Verify */}
+          <section className="rounded-2xl border border-white/5 bg-white/5 px-6 py-5 shadow-sm">
+            <div className="flex flex-wrap items-center gap-6 text-sm text-gray-400">
+              <span className="font-semibold text-white/80">Featured in:</span>
+              {["Forbes", "TechCrunch", "Wired", "Business Insider"].map(
+                (logo) => (
+                  <span
+                    key={logo}
+                    className="font-bold text-white/40 hover:text-yellow-500 transition-colors cursor-default"
+                  >
+                    {logo}
+                  </span>
+                ),
+              )}
+              <div className="hidden lg:flex ml-auto items-center gap-6 border-l border-white/10 pl-6">
+                <span className="flex items-center gap-2 font-semibold text-white/60 whitespace-nowrap">
+                  <ShieldCheck size={14} className="text-yellow-500" />
+                  Verified Protocol
+                </span>
+              </div>
+            </div>
+          </section>
+
+          {/* Content Hub Preview */}
+          <section className="space-y-6 relative group">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-white">Content Hub</h2>
+              <span className="text-xs font-bold uppercase tracking-widest text-teal-400">
+                Top 3 Materials
+              </span>
+            </div>
+            <ContentGrid items={MOCK_CONTENT} />
+          </section>
+
+          {/* Core Offer / Goal Preview */}
+          <section className="rounded-3xl bg-white/5 p-8 shadow-md ring-1 ring-white/5 border-b-4 border-yellow-500">
+            <div className="flex flex-col gap-8 md:flex-row md:items-start">
+              <div className="space-y-4 md:w-2/3">
+                <span className="inline-flex items-center gap-2 rounded-full bg-teal-900/30 px-3 py-1 text-xs font-bold uppercase tracking-widest text-teal-400 border border-teal-500/20">
+                  Flagship Goal
+                </span>
+                <h2 className="text-3xl font-bold text-white">
+                  {data?.profile?.goalLabel || "My Next Big Project"}
+                </h2>
+                <p className="text-gray-400 text-lg leading-relaxed">
+                  Join me in building something extraordinary. Your support
+                  directly funds the production quality and frequency of content
+                  you love.
+                </p>
+                <ul className="grid gap-3 sm:grid-cols-2 text-sm text-white/80 pt-2">
+                  {[
+                    "Early Access to Content",
+                    "Exclusive Behind the Scenes",
+                    "Direct Community Access",
+                    "Supporter Badge",
+                  ].map((item) => (
+                    <li key={item} className="flex items-center gap-3">
+                      <CheckCircle
+                        size={18}
+                        className="text-yellow-500 shrink-0"
+                      />
+                      <span className="font-medium">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="w-full md:w-1/3">
+                <div className="bg-[#0A0A0B]/60 rounded-2xl p-2 border border-white/10">
+                  <GoalBar
+                    goal={{
+                      title: data?.profile?.goalLabel || "Goal",
+                      target: data?.profile?.goalTarget || 1000,
+                      current: 0,
+                      deadline: data?.profile?.goalDeadline || "",
+                    }}
+                  />
+                  <Button
+                    variant="gold"
+                    fullWidth
+                    className="mt-4 shadow-lg shadow-yellow-500/10"
+                  >
+                    Support Goal <ArrowRight size={18} />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
 
         {/* LAUNCH BUTTON */}
         <div className="flex flex-col items-center gap-4 mt-8">

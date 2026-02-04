@@ -20,7 +20,7 @@ interface AvatarUploaderProps {
 const getCircularOffset = (
   index: number,
   focusedIndex: number,
-  length: number
+  length: number,
 ) => {
   let offset = (index - focusedIndex) % length;
   if (offset > length / 2) offset -= length;
@@ -102,11 +102,11 @@ export default function AvatarUploader({
       "[DEBUG] Filled slots:",
       filledSlots.length,
       "Uploaded URLs:",
-      uploadedUrls.length
+      uploadedUrls.length,
     );
     console.log(
       "[DEBUG] cloudinaryUrls:",
-      filledSlots.map((s) => s.cloudinaryUrl?.substring(0, 50))
+      filledSlots.map((s) => s.cloudinaryUrl?.substring(0, 50)),
     );
 
     if (uploadedUrls.length === filledSlots.length) {
@@ -126,13 +126,13 @@ export default function AvatarUploader({
       setTempPreviewUrl(URL.createObjectURL(file));
       setModalOpen(true);
     },
-    [tempPreviewUrl]
+    [tempPreviewUrl],
   );
 
   const handleEditorConfirm = (
     slotId: number,
     blob: Blob,
-    fileName: string
+    fileName: string,
   ) => {
     const file = new File([blob], fileName, { type: blob.type });
     // Preview URL for the slot will be managed by store (store doesn't assume revoke ownership usually, but we should be careful)
@@ -161,7 +161,7 @@ export default function AvatarUploader({
     } else {
       // Fallback if no file in registry (e.g. initialUrl mode)
       alert(
-        "Cannot edit this avatar (missing source file). Please remove and add a new one."
+        "Cannot edit this avatar (missing source file). Please remove and add a new one.",
       );
     }
   };
@@ -169,7 +169,7 @@ export default function AvatarUploader({
   const handleFinalUpload = async () => {
     console.log(
       "handleFinalUpload – stan store przed uploadem:",
-      useAvatarStore.getState()
+      useAvatarStore.getState(),
     );
     try {
       await performUploadAll();
@@ -184,7 +184,7 @@ export default function AvatarUploader({
   const handleNext = () => setFocusedIndex((p) => (p + 1) % slots.length);
 
   const canSave = slots.some(
-    (s) => s.isFilled && !s.isUploading && !s.cloudinaryUrl
+    (s) => s.isFilled && !s.isUploading && !s.cloudinaryUrl,
   );
   const allUploaded = slots.every((s) => s.isFilled && s.cloudinaryUrl);
 
@@ -208,7 +208,7 @@ export default function AvatarUploader({
               const offset = getCircularOffset(
                 index,
                 focusedIndex,
-                slots.length
+                slots.length,
               );
               return (
                 <div key={slot.id} className="pointer-events-auto">
@@ -263,8 +263,8 @@ export default function AvatarUploader({
                       canSave
                         ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-[0_0_30px_rgba(124,58,237,0.3)] hover:shadow-[0_0_50px_rgba(124,58,237,0.5)] hover:-translate-y-1"
                         : allUploaded
-                        ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 cursor-default pointer-events-none"
-                        : "bg-slate-800/50 text-slate-500 border border-white/5 cursor-not-allowed"
+                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 cursor-default pointer-events-none"
+                          : "bg-slate-800/50 text-slate-500 border border-white/5 cursor-not-allowed"
                     }
                 `}
           >

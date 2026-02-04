@@ -38,7 +38,7 @@ const PLATFORM_STYLES: Record<
     gradientFull:
       "linear-gradient(135deg, #F58529 0%, #DD2A7B 50%, #8134AF 100%)",
   },
-  "knowledge-architect": { mid: "#222222", full: "#000000" },
+  "knowledge-architect": { mid: "#C6A66A", full: "#FFD700" },
   "micro-entertainer": { mid: "#00F2EA", full: "#00F2EA", hasGlitch: true },
   "health-coach": { mid: "#1877F2", full: "#0077B5" },
 };
@@ -146,10 +146,10 @@ export default function ArchetypeSelector({
               onMouseLeave={() => setHoveredGlitch(null)}
               className={clsx(
                 "group relative w-full flex items-center gap-4 p-4 rounded-2xl transition-all duration-300",
-                isSelected && "scale-[1.02]"
+                isSelected && "scale-[1.02]",
               )}
               style={{
-                background: `${noiseSvg}, linear-gradient(135deg, #001919 0%, #093439 100%)`,
+                background: `${noiseSvg}, linear-gradient(135deg, #021a1a 0%, #0E2A2D 100%)`,
               }}
             >
               {/* Main border */}
@@ -160,8 +160,8 @@ export default function ArchetypeSelector({
                     colors.isGradient && isSelected
                       ? "none"
                       : isSelected
-                      ? `2px solid ${colors.full}`
-                      : "2px solid #7aaaab",
+                        ? `2px solid ${colors.full}`
+                        : "2px solid #7aaaab",
                   background:
                     colors.isGradient && isSelected
                       ? colors.gradientFull
@@ -211,7 +211,7 @@ export default function ArchetypeSelector({
                 <div
                   className={clsx(
                     "absolute inset-0 rounded-2xl pointer-events-none transition-all duration-300",
-                    !isSelected && "opacity-0 group-hover:opacity-100"
+                    !isSelected && "opacity-0 group-hover:opacity-100",
                   )}
                   style={{
                     border: colors.isGradient
@@ -234,7 +234,7 @@ export default function ArchetypeSelector({
               <div
                 className={clsx(
                   "absolute inset-[-2px] rounded-3xl pointer-events-none transition-all duration-300",
-                  isSelected ? "opacity-100" : "opacity-0"
+                  isSelected ? "opacity-100" : "opacity-0",
                 )}
                 style={{
                   boxShadow: `0 0 15px ${colors.full}60, 0 0 30px ${colors.full}30`,
