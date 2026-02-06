@@ -5,17 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   Check,
-  PlayCircle,
-  FileText,
-  Mail,
-  ArrowRight,
   ArrowLeft,
 } from "lucide-react";
 import { getPublicProfile } from "@/lib/users";
 import AvatarCarousel from "@/components/ui/AvatarCarousel";
 import Button from "@/components/ui/Button";
-import CommunitySection from "@/components/creator/CommunitySection";
-import SupportTierCard from "@/components/creator/SupportTierCard";
 import { GoalBar } from "@/components/GoalBar";
 import { useAuthStore } from "@/lib/store/authStore";
 
@@ -34,26 +28,9 @@ type UserProfile = {
     goalLabel: string | null;
     goalTarget: number | null;
     goalDeadline: string | null;
-    socials: Record<string, boolean> | null;
+    socials: Record<string, string | boolean | null> | null;
   } | null;
 };
-
-// Mock Data
-const MOCK_TIERS = [
-  {
-    id: "tier-1",
-    name: "Supporter",
-    priceMonthly: 5,
-    perks: ["Supporter Badge", "Exclusive Discord Channel", "Early Access"],
-  },
-  {
-    id: "tier-2",
-    name: "Super Fan",
-    priceMonthly: 15,
-    perks: ["All Previous Perks", "Monthly Q&A", "Merch Discount"],
-    recommended: true,
-  },
-];
 
 export default function CreatorProfile() {
   const { username } = useParams<{ username: string }>();
@@ -115,6 +92,14 @@ export default function CreatorProfile() {
   }
 
   const safeDisplayName = profile.displayName || profile.username || "Creator";
+  const hasBio = Boolean(profile.profile?.bio?.trim());
+  const validSocialLinks = Object.entries(profile.profile?.socials ?? {}).filter(
+    ([, value]) => typeof value === "string" && value.trim().startsWith("http"),
+  );
+
+  // CHECK: search for "top supporters" / "fan wall" fields in getPublicProfile response.
+  const topSupporters: Array<{ name: string; avatarUrl?: string; totalContributed?: number }> = [];
+
   const goal = {
     title: profile.profile?.goalLabel || "Goal",
     target: profile.profile?.goalTarget || 500,
@@ -230,17 +215,16 @@ export default function CreatorProfile() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN: Info & Goal */}
-          <div className="flex-1 flex flex-col xl:flex-row gap-8 w-full pt-8">
-            {/* Identity Info */}
-            <div className="flex-1 space-y-4 text-center md:text-left">
+          {/* RIGHT COLUMN: Identity -> Fan Wall -> Goal */}
+          <div className="flex-1 flex flex-col gap-6 w-full pt-8">
+            <section className="rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8 shadow-[0_0_60px_rgba(20,184,166,0.08)]">
               {/* Display Name */}
-              <h1 className="text-5xl md:text-6xl font-black text-white tracking-tight leading-none">
+              <h1 className="text-5xl md:text-6xl font-black text-white tracking-tight leading-none text-center md:text-left">
                 {safeDisplayName}
               </h1>
 
               {/* Archetype & Industry */}
-              <div className="space-y-1">
+              <div className="space-y-1 mt-4 text-center md:text-left">
                 {profile.profile?.archetype && (
                   <div className="text-yellow-400 font-bold uppercase tracking-widest text-xs">
                     {profile.profile.archetype.replace(/-/g, " ")}
@@ -254,144 +238,75 @@ export default function CreatorProfile() {
               </div>
 
               {/* Bio */}
-              <p className="text-gray-400 text-base leading-relaxed max-w-xl font-light mx-auto md:mx-0 pt-4 border-t border-white/5 mt-4">
-                {profile.profile?.bio ||
-                  "Welcome to my page! I create content and build communities."}
+              <p className="text-gray-300 text-base leading-relaxed max-w-2xl font-light mx-auto md:mx-0 pt-4 border-t border-white/5 mt-4 text-center md:text-left">
+                {hasBio
+                  ? profile.profile?.bio
+                  : "This creator has not added a bio yet."}
               </p>
 
               {/* Socials */}
-              {profile.profile?.socials &&
-                Object.keys(profile.profile.socials).length > 0 && (
-                  <div className="flex items-center gap-3 pt-4">
-                    {profile.profile.socials.twitch && (
-                      <a
-                        href="https://twitch.tv"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-3 py-2 bg-[#9146FF]/10 border border-[#9146FF]/30 rounded-lg hover:bg-[#9146FF]/20 transition-colors"
-                      >
-                        <Image
-                          src="/twitch-glitch.svg"
-                          alt="Twitch"
-                          width={20}
-                          height={20}
-                          className="w-5 h-5"
-                        />
-                        <span className="text-sm font-bold text-[#9146FF]">
-                          Twitch
-                        </span>
-                      </a>
-                    )}
-                  </div>
-                )}
-            </div>
+              {validSocialLinks.length > 0 && (
+                <div className="flex items-center gap-3 pt-4 justify-center md:justify-start flex-wrap">
+                  {validSocialLinks.map(([label, url]) => (
+                    <a
+                      key={label}
+                      href={url as string}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/15 rounded-xl hover:bg-white/10 transition-colors"
+                    >
+                      <span className="text-sm font-bold text-white capitalize">
+                        {label}
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              )}
+            </section>
+
+            {/* Fan Wall */}
+            {topSupporters.length > 0 && (
+              <section className="rounded-3xl border border-teal-300/20 bg-gradient-to-br from-white/[0.06] to-white/[0.02] p-6 md:p-8 shadow-[0_0_70px_rgba(45,212,191,0.12)]">
+                <h2 className="text-lg font-extrabold tracking-wider uppercase text-white mb-4">
+                  Top Supporters
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {topSupporters.slice(0, 8).map((supporter) => (
+                    <article
+                      key={supporter.name}
+                      className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 flex items-center gap-3"
+                    >
+                      <div className="h-10 w-10 rounded-full bg-gradient-to-br from-teal-500/60 to-yellow-500/30 border border-white/20 overflow-hidden">
+                        {supporter.avatarUrl && (
+                          <Image
+                            src={supporter.avatarUrl}
+                            alt={supporter.name}
+                            width={40}
+                            height={40}
+                            className="h-full w-full object-cover"
+                          />
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-white">{supporter.name}</p>
+                        {typeof supporter.totalContributed === "number" && (
+                          <p className="text-xs text-teal-300 font-semibold">
+                            ${supporter.totalContributed}
+                          </p>
+                        )}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* Goal Bar */}
             {profile.profile?.goalTarget && (
-              <div className="w-full xl:w-[400px] shrink-0">
+              <div className="w-full max-w-[420px]">
                 <GoalBar goal={goal} />
               </div>
             )}
-          </div>
-        </div>
-
-        {/* --- MOCK PREVIEW SECTION --- */}
-        <div className="space-y-12 relative mt-32 opacity-80 hover:opacity-100 transition-opacity">
-          <div className="flex items-center gap-4 text-yellow-500/30 mb-8 px-4">
-            <div className="h-px bg-yellow-500/20 flex-1"></div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em]">
-              Mock Data Preview
-            </span>
-            <div className="h-px bg-yellow-500/20 flex-1"></div>
-          </div>
-
-          {/* Top Supporters (Fan Wall) */}
-          <div className="relative group rounded-xl border border-white/5 bg-white/[0.02] p-6 overflow-hidden">
-            <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-              🏆 Top Supporters
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {["CryptoKing", "DesignLvr", "Web3Fan"].map((s, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-3 bg-white/5 p-4 rounded-xl border border-white/5 shadow-md"
-                >
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-600 to-teal-900 ring-1 ring-white/10"></div>
-                  <div>
-                    <div className="text-sm font-bold text-white">{s}</div>
-                    <div className="text-xs text-teal-400 font-mono">
-                      ${(3 - i) * 50}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Content Hub */}
-          <section className="space-y-6 relative">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-white">Content Hub</h2>
-            </div>
-            <div className="grid gap-6 md:grid-cols-3">
-              {[
-                {
-                  icon: <PlayCircle size={22} className="text-teal-400" />,
-                  title: "Viral Engineering 101",
-                  desc: "Learn the structure behind 1M+ view content.",
-                  cta: "Watch",
-                },
-                {
-                  icon: <FileText size={22} className="text-teal-400" />,
-                  title: "Case Study: $42k Launch",
-                  desc: "Step-by-step breakdown of the campaign strategy.",
-                  cta: "Read",
-                },
-                {
-                  icon: <Mail size={22} className="text-teal-400" />,
-                  title: "Conversion Templates",
-                  desc: "5 ready-to-use email sequences for sales.",
-                  cta: "Download",
-                },
-              ].map((card) => (
-                <div
-                  key={card.title}
-                  className="flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6"
-                >
-                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-teal-400">
-                    {card.icon}
-                    Premium
-                  </div>
-                  <h3 className="mt-4 text-lg font-bold text-white leading-tight">
-                    {card.title}
-                  </h3>
-                  <p className="mt-3 text-sm text-gray-400 flex-1 leading-relaxed">
-                    {card.desc}
-                  </p>
-                  <button className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-teal-400 hover:text-white transition-colors">
-                    {card.cta} <ArrowRight size={16} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Offers / Tiers */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative">
-            {/* Community Mock */}
-            <div className="relative group rounded-xl border border-white/5 bg-white/[0.02] p-6 overflow-hidden">
-              <CommunitySection
-                links={[
-                  { label: "Discord", href: "#" },
-                  { label: "Twitter", href: "#" },
-                ]}
-              />
-            </div>
-
-            {/* Tiers Mock */}
-            <div className="relative group rounded-xl border border-white/5 bg-white/[0.02] p-6 overflow-hidden">
-              <SupportTierCard tier={MOCK_TIERS[0]} />
-            </div>
           </div>
         </div>
       </main>
