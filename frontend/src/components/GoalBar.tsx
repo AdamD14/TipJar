@@ -128,6 +128,9 @@ export function GoalBar({ goal }: { goal: Goal }) {
     </div>
   );
 }
+// Re-export UnifiedLivePreview logic if it was intended to be shared,
+// or implementation of a similar visual style for the dashboard.
+// For now, we'll implement a visual match for the dashboard/preview context.
 
 export function UnifiedLivePreview({ goal }: { goal: Goal }) {
   const percentage = Math.min((goal.current / (goal.target || 1)) * 100, 100);
