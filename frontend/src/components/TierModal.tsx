@@ -38,15 +38,10 @@ export default function TierModal({
       price: Math.round(Number(f.price) * 100),
       perks: f.perks.filter((p) => p.trim().length >= 2).slice(0, 5),
     });
-    const t: Tier = initial
-      ? await api(`/api/v1/subscriptions/tiers/${initial.id}`, {
-          method: "PUT",
-          body: JSON.stringify(payload),
-        })
-      : await api(`/api/v1/subscriptions/tiers`, {
-          method: "POST",
-          body: JSON.stringify(payload),
-        });
+    const response = initial
+      ? await api.put(`/api/v1/subscriptions/tiers/${initial.id}`, payload)
+      : await api.post(`/api/v1/subscriptions/tiers`, payload);
+    const t: Tier = response.data;
     onSaved(t);
     onClose();
   };

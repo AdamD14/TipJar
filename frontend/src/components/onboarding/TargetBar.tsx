@@ -31,7 +31,6 @@ function UnifiedLivePreview({ goal }: { goal: Goal }) {
   };
 
   return (
-  return (
     <div className="bg-gradient-to-br from-[#1a2e2e]/80 to-[#0A0A0B]/95 border border-teal-500/20 rounded-3xl p-6 shadow-2xl relative overflow-hidden group backdrop-blur-md">
       {/* Main Info Row */}
       <div className="flex justify-between items-center mb-6 gap-4">

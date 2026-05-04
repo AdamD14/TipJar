@@ -24,10 +24,7 @@ export default function GoalModal({
       targetAmount: Math.round(Number(f.targetAmount) * 100),
       description: f.description || undefined,
     });
-    const g = await api("/api/v1/goal", {
-      method: "POST",
-      body: JSON.stringify(parsed),
-    });
+    const { data: g } = await api.post("/api/v1/goal", parsed);
     onSaved(g);
     onClose();
   };
