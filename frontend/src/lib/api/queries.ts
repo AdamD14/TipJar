@@ -80,3 +80,11 @@ export function useCreatorSubscriptions(params?: {
     staleTime: 30_000,
   });
 }
+
+export function useTip() {
+  return useMutation({
+    mutationFn: async (payload: { creatorId: string; amount: number; message?: string }) => 
+      (await api.post(`/creators/${payload.creatorId}/tips`, payload)).data,
+  });
+}
+

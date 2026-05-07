@@ -14,12 +14,8 @@ import OnboardingShell from "@/components/layout/OnboardingShell";
 import Button from "@/components/ui/Button";
 import AvatarCarousel from "@/components/ui/AvatarCarousel";
 import { GoalBar } from "@/components/GoalBar";
-import ContentGrid, {
-  ContentItem,
-} from "@/components/mock-preview/ContentGrid"; // Ensure this path is correct based on where you put it
 import apiClient from "@/lib/apiClient";
 import { useAuthStore } from "@/lib/store/authStore";
-
 import { useCreatorGuard } from "@/lib/hooks/useCreatorGuard";
 
 interface SummaryData {
@@ -33,36 +29,6 @@ interface SummaryData {
     goalDeadline?: string;
   };
 }
-
-const MOCK_CONTENT: ContentItem[] = [
-  {
-    id: "1",
-    title: "Studio Tour 2024: New Setup",
-    coverUrl:
-      "https://images.unsplash.com/photo-1598550476439-6847785fcea6?q=80&w=600&auto=format&fit=crop",
-    locked: true,
-    type: "video",
-    date: "2 days ago",
-  },
-  {
-    id: "2",
-    title: "Digital Art Process Time-lapse",
-    coverUrl:
-      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop",
-    locked: false,
-    type: "video",
-    date: "5 days ago",
-  },
-  {
-    id: "3",
-    title: "My Top 10 VS Code Extensions",
-    coverUrl:
-      "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=600&auto=format&fit=crop",
-    locked: false,
-    type: "post",
-    date: "1 week ago",
-  },
-];
 
 export default function Step5() {
   const { loading: guardLoading } = useCreatorGuard(5);
@@ -89,7 +55,6 @@ export default function Step5() {
   }, []);
 
   const username = data?.username || user?.username || "creator";
-
   const profileUrl = `tipjar.plus/@${username}`;
 
   const handleCopy = async () => {
@@ -104,7 +69,6 @@ export default function Step5() {
 
   const onFinish = async () => {
     setFinishing(true);
-    // Fire confetti!
     confetti({
       particleCount: 150,
       spread: 70,
@@ -114,7 +78,6 @@ export default function Step5() {
 
     try {
       await apiClient.post("/api/v1/creator/onboarding/complete");
-      // Wait for confetti to look cool before redirecting
       setTimeout(() => {
         router.push(`/@${username}?preview=true`);
       }, 1500);
@@ -135,7 +98,6 @@ export default function Step5() {
     );
   }
 
-  // Get avatar URLs from API response
   const avatarUrls =
     data?.avatarUrls && data.avatarUrls.length > 0
       ? data.avatarUrls
@@ -212,17 +174,6 @@ export default function Step5() {
                 </span>
               </div>
             </div>
-          </section>
-
-          {/* Content Hub Preview */}
-          <section className="space-y-6 relative group">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-white">Content Hub</h2>
-              <span className="text-xs font-bold uppercase tracking-widest text-teal-400">
-                Top 3 Materials
-              </span>
-            </div>
-            <ContentGrid items={MOCK_CONTENT} />
           </section>
 
           {/* Core Offer / Goal Preview */}

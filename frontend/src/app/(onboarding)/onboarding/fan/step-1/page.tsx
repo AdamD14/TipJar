@@ -7,7 +7,7 @@ import AvatarUploader from "@/components/onboarding/AvatarUploader";
 import Card from "../../../../../components/ui/Card";
 import Button from "@/components/ui/Button";
 
-import { createClient } from "@/lib/supabase/client";
+import { supabase } from "@/lib/supabase";
 
 export default function FanOnboardingStep1() {
   const router = useRouter();
@@ -19,7 +19,6 @@ export default function FanOnboardingStep1() {
   } | null>(null);
 
   useEffect(() => {
-    const supabase = createClient();
     const getSession = async () => {
       const {
         data: { session },
