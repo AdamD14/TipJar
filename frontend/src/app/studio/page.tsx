@@ -83,7 +83,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Action Card - Gold */}
-        <Link to="/monetization" className="bg-[#FFD700] p-8 rounded-[3rem] text-[#003737] shadow-xl hover:scale-[1.02] transition-all flex flex-col justify-between group">
+        <Link href="/monetization" className="bg-[#FFD700] p-8 rounded-[3rem] text-[#003737] shadow-xl hover:scale-[1.02] transition-all flex flex-col justify-between group">
           <div>
             <p className="text-[10px] font-black uppercase tracking-widest mb-1">STRATEGIA (AI)</p>
             <h4 className="text-xl font-black italic leading-tight">Zwiększ subskrypcje Silver o 30% jednym kliknięciem!</h4>
@@ -138,7 +138,7 @@ const Dashboard: React.FC = () => {
           <div className="bg-white/80 backdrop-blur-xl p-10 rounded-[3.5rem] border border-slate-100 shadow-sm">
             <div className="flex justify-between items-center mb-8">
                <h3 className="font-black text-slate-800 italic flex items-center gap-2 tracking-tight"><MessageSquare size={18} className="text-[#4D194D]" /> Web3 Activity</h3>
-               <Link to="/wallet" className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-[#4D194D]">Wallet</Link>
+               <Link href="/wallet" className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-[#4D194D]">Wallet</Link>
             </div>
             <div className="space-y-6">
               {[{ user: 'Marcin_K', amount: 25, time: '2m temu' }, { user: 'CryptoPanda', amount: 100, time: '15m temu' }, { user: 'Fan_88', amount: 50, time: '3h temu' }].map((item, idx) => (
