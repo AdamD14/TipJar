@@ -17,7 +17,7 @@ export default function NotFoundPage() {
           <h2 className="text-2xl font-black text-white">Strona nie istnieje</h2>
           <p className="text-slate-400 font-medium">Wygląda na to, że ten link wygasł lub adres jest niepoprawny.</p>
         </div>
-        <Link to="/" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-[#FFD700] text-[#003737] font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-all">
+        <Link href="/" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-[#FFD700] text-[#003737] font-black text-xs uppercase tracking-widest shadow-xl hover:scale-105 transition-all">
           <ArrowLeft size={16} /> Powrót na start
         </Link>
       </div>
