@@ -120,7 +120,7 @@ export default function CreatorProfile() {
               </span>
             </div>
             <Link
-              href={`/@${safeHandle}/dashboard`}
+              href={`/@${safeHandle}/creator/dashboard`}
               className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-white font-bold text-sm uppercase tracking-wider transition-all"
             >
               <ArrowLeft size={16} />
