@@ -1,10 +1,32 @@
-import Skeleton from './Skeleton';
+import Skeleton from "./Skeleton";
 
-export default function LoadingSkeleton({ lines = 3 }: { lines?: number }) {
+/**
+ * LoadingSkeleton — convenience wrapper for multi-line text skeletons.
+ *
+ * @param lines  number of skeleton rows (default 3)
+ * @param heights CSS values for each row (cycled if fewer items than lines)
+ */
+interface LoadingSkeletonProps {
+  lines?: number;
+  heights?: string[];
+  gap?: string;
+}
+
+export default function LoadingSkeleton({
+  lines = 3,
+  heights = ["16px", "16px", "12px"],
+  gap = "12px",
+}: LoadingSkeletonProps) {
   return (
-    <div className="space-y-3">
+    <div style={{ display: "flex", flexDirection: "column", gap }}>
       {Array.from({ length: lines }).map((_, i) => (
-        <Skeleton key={i} className="h-4 w-full" />
+        <Skeleton
+          key={i}
+          variant="text"
+          height={heights[i % heights.length]}
+          /* Vary widths to look more natural */
+          width={i === lines - 1 ? "65%" : "100%"}
+        />
       ))}
     </div>
   );

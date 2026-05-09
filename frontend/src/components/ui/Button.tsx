@@ -1,48 +1,70 @@
 "use client";
 
-import React from "react";
+import React, { forwardRef } from "react";
 import Link from "next/link";
 import clsx from "clsx";
-import { forwardRef } from "react";
 
-// Twój spinner – zostawiam taki jaki miałeś, tylko z propsem className
-function Spinner({ className }: { className?: string }) {
+/**
+ * Button — TipJar+ Design System (system.md §2.1)
+ *
+ * Variants:
+ *  primary    — gold CTA  (#FFD700 bg, #003737 text — WCAG AAA)
+ *  secondary  — purple/gold outline
+ *  ghost      — transparent, white text
+ *  danger     — destructive action
+ *  link       — text-only, gold underline on hover
+ *  glass      — glassmorphism surface
+ *
+ * Sizes (8-pt grid):
+ *  sm  — 40px height, 16px padding-x
+ *  md  — 48px height, 24px padding-x  (default)
+ *  lg  — 56px height, 32px padding-x
+ *
+ * Touch target: "sm" uses a pseudo-element to hit 44px minimum.
+ */
+
+/* ── Inline spinner (matches Spinner.tsx gradient look, small size) ── */
+function ButtonSpinner({ dark }: { dark?: boolean }) {
   return (
     <svg
-      className={clsx("animate-spin", className || "h-4 w-4")}
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
+      className="animate-[spin_1.5s_linear_infinite]"
+      width="18"
+      height="18"
       viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
     >
       <circle
-        className="opacity-25"
         cx="12"
         cy="12"
         r="10"
-        stroke="currentColor"
-        strokeWidth="4"
+        stroke={dark ? "rgba(0,55,55,0.25)" : "rgba(255,255,255,0.2)"}
+        strokeWidth="3"
       />
       <path
-        className="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        d="M12 2a10 10 0 0 1 10 10"
+        stroke={dark ? "#003737" : "#ffffff"}
+        strokeWidth="3"
+        strokeLinecap="round"
+        className="animate-dash"
       />
     </svg>
   );
 }
 
-// ──────────────────────────────────────────────────────────────
+/* ─────────────────── Types ─────────────────── */
 
 type Variant =
-  | "primary"
+  | "primary"   // gold CTA
+  | "secondary" // purple outline
+  | "ghost"     // transparent
+  | "danger"    // destructive
+  | "link"      // text-only
+  | "glass"     // glassmorphism
+  // legacy aliases — kept for backward compat
   | "gold"
   | "solid"
-  | "secondary"
-  | "outline"
-  | "ghost"
-  | "danger"
-  | "link"
-  | "glass";
+  | "outline";
 
 type Size = "sm" | "md" | "lg";
 
@@ -57,22 +79,20 @@ type BaseProps = {
   children: React.ReactNode;
 };
 
-// Button (bez href)
 export type ButtonProps = BaseProps &
   React.ButtonHTMLAttributes<HTMLButtonElement> & {
     href?: never;
   };
 
-// Link (z href)
-type LinkProps = BaseProps &
+type LinkButtonProps = BaseProps &
   React.AnchorHTMLAttributes<HTMLAnchorElement> & {
     href: string;
     prefetch?: boolean;
   };
 
-type Props = ButtonProps | LinkProps;
+type Props = ButtonProps | LinkButtonProps;
 
-// ──────────────────────────────────────────────────────────────
+/* ─────────────────── Component ─────────────────── */
 
 const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
   (
@@ -87,67 +107,115 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
       children,
       ...rest
     },
-    ref
+    ref,
   ) => {
     const isLink = "href" in rest && !!rest.href;
 
+    /* ── Base (shared across all variants) ── */
     const base = clsx(
-      "inline-flex items-center justify-center gap-2 rounded-xl font-medium transition-all duration-200",
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD700]/60",
-      "select-none disabled:opacity-60 disabled:cursor-not-allowed",
-      "hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]",
+      // layout
+      "inline-flex items-center justify-center gap-2",
+      "font-heading font-semibold select-none",
+      "transition-all duration-200",
+      // focus ring — system.md: --border-focus (purple-300)
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9d4edd] focus-visible:ring-offset-2 focus-visible:ring-offset-[#001f1f]",
+      // disabled
+      "disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none",
+      // full width
       fullWidth && "w-full",
-      // rozmiary
+
+      /* ── Sizes (8-pt grid) ── */
       {
-        "h-9 px-3 text-sm": size === "sm",
-        "h-11 px-4 text-base": size === "md",
-        "h-12 px-6 text-lg": size === "lg",
+        // Small: 40px height, 44px touch area via relative + ::before
+        "relative h-10 px-4 text-sm rounded-[8px] before:absolute before:inset-[-2px] before:content-['']":
+          size === "sm",
+        // Medium: 48px (default)
+        "h-12 px-6 text-base rounded-[8px]": size === "md",
+        // Large: 56px
+        "h-14 px-8 text-lg rounded-[8px]": size === "lg",
       },
-      // warianty
-      {
-        // primary – złoty
-        "bg-[#FFD700] text-[#003737] hover:brightness-110 active:brightness-95 shadow-lg shadow-[#FFD700]/20":
-          variant === "primary",
 
-        // gold – gradient
-        "bg-gradient-to-r from-[#FFD700] via-[#ffde50] to-[#b38f00] text-black hover:from-[#b38f00] hover:via-[#FFD700] hover:to-[#ffde50] ring-1 ring-black/10 shadow-lg":
-          variant === "gold",
+      /* ── Variants ── */
+      // PRIMARY — gold bg, teal text (WCAG AAA 11.2:1)
+      variant === "primary" && [
+        "bg-gold-400 text-teal-800",
+        "shadow-1",
+        "hover:bg-gold-300 hover:shadow-2 hover:-translate-y-0.5",
+        "active:bg-gold-500 active:scale-[0.98] active:translate-y-0 active:shadow-1",
+        !loading && "active:scale-[0.98]",
+      ],
 
-        // solid – ciemny turkus
-        "bg-[#166060] text-white hover:bg-[#1a7373] active:bg-[#145252] shadow-lg shadow-[#166060]/20":
-          variant === "solid",
+      // GOLD (alias for primary)
+      variant === "gold" && [
+        "bg-gold-400 text-teal-800",
+        "shadow-1",
+        "hover:bg-gold-300 hover:shadow-2 hover:-translate-y-0.5",
+        "active:bg-gold-500 active:scale-[0.98]",
+      ],
 
-        "border border-white/20 text-white hover:bg-white/10 active:bg-white/15":
-          variant === "secondary",
+      // SECONDARY — purple outline
+      (variant === "secondary" || variant === "outline") && [
+        "bg-transparent text-purple-300 border border-purple-300",
+        "hover:bg-purple-300/10 hover:-translate-y-0.5",
+        "active:bg-purple-300/15 active:scale-[0.98] active:translate-y-0",
+        "focus-visible:ring-[#9d4edd]",
+      ],
 
-        "border border-white/20 text-white hover:bg-white/5 active:bg-white/10":
-          variant === "outline",
+      // SOLID (legacy alias) — teal solid
+      variant === "solid" && [
+        "bg-teal-600 text-white border border-teal-500",
+        "hover:bg-teal-500 hover:-translate-y-0.5",
+        "active:bg-teal-700 active:scale-[0.98]",
+      ],
 
-        "text-white hover:bg-white/10 active:bg-white/15": variant === "ghost",
+      // GHOST — transparent, white text
+      variant === "ghost" && [
+        "bg-transparent text-white",
+        "hover:bg-white/10 hover:-translate-y-0.5",
+        "active:bg-white/15 active:scale-[0.98]",
+      ],
 
-        "bg-red-600 text-white hover:bg-red-500 active:bg-red-700 shadow-lg shadow-red-600/20":
-          variant === "danger",
+      // DANGER — destructive (system.md §1.4)
+      variant === "danger" && [
+        "bg-transparent text-[#b00020] border border-[#b00020]/60",
+        "hover:bg-[#b00020]/5 hover:-translate-y-0.5",
+        "active:bg-[#b00020]/10 active:scale-[0.98]",
+        "focus-visible:ring-[#b00020]",
+      ],
 
-        "bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 active:bg-white/25":
-          variant === "glass",
+      // LINK — text only
+      variant === "link" && [
+        "bg-transparent text-gold-400 h-auto px-0 rounded-none",
+        "hover:underline underline-offset-4",
+        "active:opacity-70",
+      ],
 
-        "text-[#FFD700] hover:underline underline-offset-4": variant === "link",
-      },
-      className
+      // GLASS — glassmorphism
+      variant === "glass" && [
+        "bg-[rgba(0,31,31,0.44)] backdrop-blur-[20px] border border-white/[0.125] text-white",
+        "hover:bg-[rgba(0,31,31,0.6)] hover:-translate-y-0.5",
+        "active:scale-[0.98]",
+      ],
+
+      className,
     );
 
     const content = (
       <>
-        {loading ? <Spinner className="h-4 w-4" /> : leftIcon}
-        {children && <span>{children}</span>}
-        {rightIcon}
+        {loading ? (
+          <ButtonSpinner dark={variant === "primary" || variant === "gold"} />
+        ) : (
+          leftIcon
+        )}
+        {children && (
+          <span className={loading ? "opacity-0" : undefined}>{children}</span>
+        )}
+        {!loading && rightIcon}
       </>
     );
 
-    // ───── LINK (poprawny sposób w Next.js App Router) ─────
     if (isLink) {
-      const { href, prefetch = true, ...linkProps } = rest as LinkProps;
-
+      const { href, prefetch = true, ...linkProps } = rest as LinkButtonProps;
       return (
         <Link
           href={href}
@@ -161,7 +229,6 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
       );
     }
 
-    // ───── BUTTON ─────
     return (
       <button
         ref={ref as React.Ref<HTMLButtonElement>}
@@ -176,7 +243,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
         {content}
       </button>
     );
-  }
+  },
 );
 
 Button.displayName = "Button";
