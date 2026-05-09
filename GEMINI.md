@@ -121,3 +121,65 @@ Stop immediately and ask for approval if:
 - Product: creator support platform, USDC-centric
 - Priority: keep existing API + infra structure intact
 - Goal: better onboarding quality, less friction, clearer UX, stronger edge-case handling
+  TipJar+ – Frontend
+
+Language: TypeScript
+Linting: ESLint with @typescript-eslint
+Formatting: Prettier
+
+## Stack
+
+- Next.js 16.2.4 (App Router), React 19.2.5, TypeScript
+- Tailwind CSS v4.2+
+- State: Zustand
+- Data Fetching: @tanstack/react-query
+- Formularze: react-hook-form + zod
+- UI: shadcn/ui (primitive components)
+- Wirtualizacja: react-virtuoso
+- Ikony: lucide-react
+- Web3: wagmi, RainbowKit, viem, ethers.js
+- Animacja: framer-motion
+- Auth: JWT (HttpOnly cookie)
+
+## Komendy
+
+- `cd frontend && npm run dev` – dev (port 3000)
+- `cd frontend && npm run build` – build
+- `cd frontend && npm run lint` – ESLint
+- `cd frontend && npm run format` – Prettier
+- `cd frontend && npm run test` – testy
+
+## Auth – Strategie (NestJS Passport)
+
+- Logowanie klasyczne (email/hasło): local.strategy.ts
+- Google OAuth: google.strategy.ts
+- Twitch OAuth: twitch.strategy.ts
+- Ochrona routów: jwt.strategy.ts
+- Refresh token: jwt-refresh.strategy.ts
+- JWT w HttpOnly cookie, frontend używa credentials: 'include'
+
+## Design System
+
+- Tokeny CSS: @rules/design/system.md
+- Atomy: @rules/design/components.md – Button, Input, Avatar, Toggle
+- Reszta specyfikacji: @docs/design/
+
+## Circle (Backend)
+
+- DCW + SCA + Gas Station
+- Endpointy Circle Payments/Payouts: @docs/api/circle.md
+- Webhook Circle: POST /api/v1/circle/webhook
+
+## Konwencje kodu
+
+- Server Components domyślnie, 'use client' tylko przy stanie/efektach
+- Importy: @/components/..., @/lib/..., @/stores/...
+- Kwoty: font-feature-settings: "tnum"
+- Kolory: tylko tokeny semantyczne z @rules/design/system.md
+- Lazy loading: React.lazy + Suspense dla dużych komponentów
+- Listy: react-virtuoso dla wirtualizacji (historia transakcji, feed)
+
+## API (Backend:3001)
+
+- Pełna lista: @docs/api/endpoints.md
+- Circle: @docs/api/circle.md
