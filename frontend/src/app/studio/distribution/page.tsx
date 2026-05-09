@@ -14,7 +14,6 @@ import {
   Layers,
   Sparkles,
   Link as LinkIcon,
-  Twitter,
   MessageSquare,
   Eye
 } from 'lucide-react';
@@ -71,7 +70,7 @@ const DistributionHubPage: React.FC = () => {
                  <div className="flex justify-between items-center">
                     <h3 className="text-xl font-black text-slate-800 italic">Podgląd Social Card</h3>
                     <div className="flex gap-2">
-                       <button className="p-2 bg-slate-50 text-slate-400 rounded-xl hover:text-slate-600" title="Twitter"><Twitter size={18} /></button>
+                       <button className="p-2 bg-slate-50 text-slate-400 rounded-xl hover:text-slate-600" title="Twitter"><span className="font-black text-xs">X</span></button>
                        <button className="p-2 bg-slate-50 text-slate-400 rounded-xl hover:text-slate-600" title="Discord (Standard Icon)"><MessageSquare size={18} /></button>
                     </div>
                  </div>

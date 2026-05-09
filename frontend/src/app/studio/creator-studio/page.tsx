@@ -29,7 +29,8 @@ import {
 import { useWidgetStore } from '@/lib/store/widgetStore';
 import TipModal from '@/components/payments/TipModal';
 import GoalModal from '@/components/GoalModal';
-import GoalCard, { Goal } from '@/components/GoalCard';
+import GoalCard from '@/components/GoalCard';
+import type { Goal } from '@/lib/types';
 import SubscribeModal, { TierPub } from '@/components/SubscribeModal';
 import OverlayEditor from '@/components/studio/overlay/OverlayEditor';
 import { QRCodeSVG } from 'qrcode.react';

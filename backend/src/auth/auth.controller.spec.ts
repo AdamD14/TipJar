@@ -12,7 +12,7 @@ describe('AuthController', () => {
       controllers: [AuthController],
       providers: [
         { provide: AuthService, useValue: {} },
-        { provide: ConfigService, useValue: {} },
+        { provide: ConfigService, useValue: { get: jest.fn().mockReturnValue('test') } },
         { provide: JwtService, useValue: {} },
       ],
     }).compile();

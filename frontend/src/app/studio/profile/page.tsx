@@ -7,10 +7,6 @@ import {
   Camera, 
   Check, 
   Link as LinkIcon, 
-  Instagram, 
-  Twitter, 
-  Twitch, 
-  Youtube, 
   Sparkles,
   User,
   MapPin,
@@ -121,10 +117,10 @@ const ProfilePage: React.FC = () => {
               <h3 className="font-black text-slate-800 text-sm uppercase tracking-widest flex items-center gap-2"><LinkIcon size={16} /> Social Media</h3>
               <div className="grid grid-cols-2 gap-4">
                  {[
-                   { icon: <Twitter size={18} />, label: 'Twitter / X', color: 'hover:border-slate-900 hover:text-slate-900' },
-                   { icon: <Instagram size={18} />, label: 'Instagram', color: 'hover:border-rose-500 hover:text-rose-500' },
-                   { icon: <Twitch size={18} />, label: 'Twitch', color: 'hover:border-[#9146FF] hover:text-[#9146FF]' },
-                   { icon: <Youtube size={18} />, label: 'YouTube', color: 'hover:border-rose-600 hover:text-rose-600' },
+                   { icon: <span className="font-black text-xs">X</span>, label: 'Twitter / X', color: 'hover:border-slate-900 hover:text-slate-900' },
+                   { icon: <span className="font-black text-xs">IG</span>, label: 'Instagram', color: 'hover:border-rose-500 hover:text-rose-500' },
+                   { icon: <span className="font-black text-xs">TW</span>, label: 'Twitch', color: 'hover:border-[#9146FF] hover:text-[#9146FF]' },
+                   { icon: <span className="font-black text-xs">YT</span>, label: 'YouTube', color: 'hover:border-rose-600 hover:text-rose-600' },
                  ].map((social, i) => (
                    <button key={i} className={`flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100 transition-all text-slate-400 font-bold text-xs ${social.color}`}>
                       {social.icon}

@@ -5,7 +5,8 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { CircleService } from '../circle/circle.service';
 import { MailerService } from '@nestjs-modules/mailer';
-
+import { AuthService } from './auth.service';
+import { UserRole } from '@prisma/client';
 describe('AuthService', () => {
   let service: AuthService;
 
@@ -13,7 +14,9 @@ describe('AuthService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
-
+        { provide: UsersService, useValue: {} },
+        { provide: JwtService, useValue: {} },
+        { provide: ConfigService, useValue: {} },
         { provide: CircleService, useValue: {} },
         { provide: MailerService, useValue: {} },
         { provide: 'REDIS_CLIENT', useValue: {} },

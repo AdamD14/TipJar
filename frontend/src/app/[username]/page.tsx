@@ -51,6 +51,13 @@ export default function CreatorProfile() {
   useEffect(() => {
     if (!cleanUsername) return;
 
+    // Zabezpieczenie: jeśli username to tak naprawdę plik (np. brakujący obrazek .svg/.png), nie próbuj pobierać profilu
+    if (/\.(png|svg|ico|jpg|jpeg|gif|webp)$/i.test(cleanUsername)) {
+      setLoading(false);
+      setError("Not a user");
+      return;
+    }
+
     const fetchProfile = async () => {
       try {
         const data = await getPublicProfile(cleanUsername);

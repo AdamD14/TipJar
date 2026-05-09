@@ -29,9 +29,11 @@ export default function Page() {
         <HowItWorks />
       </section>
 
+      {/* 
       <section id="studio">
         <StartBuildingShowcase handle="AdamDuda" creatorId="adam-duda-1" />
       </section>
+      */}
 
       {/* Example Profile Modal - pokazuje się tylko gdy isProfileOpen = true */}
       <ExampleProfile

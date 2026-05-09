@@ -311,13 +311,7 @@ export default function AuthForm() {
           disabled={loading}
           className="flex items-center justify-center gap-3 bg-white/20 hover:bg-white/30 transition-all text-white font-semibold rounded-lg py-3.5 text-base border border-white/10 hover:border-white/20 disabled:opacity-60"
         >
-          <Image
-            src="/google-original-logo.svg"
-            alt="Google logo"
-            width={20}
-            height={20}
-            className="w-5 h-5"
-          />
+          <div className="flex items-center justify-center w-5 h-5 bg-white text-black rounded-full font-bold text-xs">G</div>
           Continue with Google
         </button>
         <button
@@ -326,13 +320,7 @@ export default function AuthForm() {
           disabled={loading}
           className="flex items-center justify-center gap-3 bg-[#9146FF]/80 hover:bg-[#9146FF] transition-all text-white font-semibold rounded-lg py-3.5 text-base shadow-lg disabled:opacity-60"
         >
-          <Image
-            src="/twitch-logo.svg"
-            alt="Twitch logo"
-            width={20}
-            height={20}
-            className="w-5 h-5"
-          />
+          <div className="flex items-center justify-center w-5 h-5 bg-white text-[#9146FF] rounded-sm font-bold text-xs">T</div>
           Continue with Twitch
         </button>
       </div>

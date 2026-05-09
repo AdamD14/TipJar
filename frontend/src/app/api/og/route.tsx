@@ -35,8 +35,7 @@ export async function GET(req: Request) {
         }}
       >
         {cover ? (
-          // @ts-expect-error
-          <img src={cover} style={{ position: 'absolute', inset: 0, objectFit: 'cover', opacity: 0.25 }} />
+          <img src={cover} style={{ position: 'absolute', inset: 0, objectFit: 'cover', opacity: 0.2 }} />
         ) : null}
 
         <div style={{

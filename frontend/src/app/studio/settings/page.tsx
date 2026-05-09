@@ -7,8 +7,6 @@ import {
   Key, 
   Bell, 
   Globe, 
-  Twitch, 
-  Youtube, 
   Smartphone, 
   Check, 
   Trash2, 
@@ -36,7 +34,7 @@ const SettingsPage: React.FC = () => {
              { id: 'security', label: 'Bezpieczeństwo', icon: <Shield size={18} /> },
              { id: 'global', label: 'Globalne & Podatki', icon: <Globe size={18} /> },
              { id: 'activity', label: 'Log Aktywności', icon: <Activity size={18} /> },
-             { id: 'integrations', label: 'Integracje', icon: <Twitch size={18} /> },
+             { id: 'integrations', label: 'Integracje', icon: <span className="font-bold">I</span> },
              { id: 'notifications', label: 'Powiadomienia', icon: <Bell size={18} /> },
            ].map(item => (
              <button 
@@ -136,12 +134,8 @@ const SettingsPage: React.FC = () => {
              <div className="bg-white p-8 md:p-10 rounded-[3rem] border border-slate-100 shadow-sm space-y-10 animate-in slide-in-from-right-4 duration-300">
                 <div><h3 className="text-xl font-black text-slate-900 mb-2 italic">Połączone Konta</h3><p className="text-sm text-slate-400 font-medium">Umożliwia automatyczne zaciąganie danych i powiadomienia na streamie.</p></div>
                 <div className="grid md:grid-cols-2 gap-6">
-                   <div className="p-6 border-2 border-[#9146FF]/10 bg-[#9146FF]/5 rounded-[2.5rem] flex items-center justify-between group">
-                      <div className="flex items-center gap-4"><Twitch size={32} className="text-[#9146FF]" /><div><p className="text-xs font-black text-slate-400 uppercase tracking-widest">Twitch</p><p className="text-sm font-black text-slate-800">@alex_streamer</p></div></div>
-                      <button className="text-slate-300 hover:text-rose-500 transition-colors"><Trash2 size={20} /></button>
-                   </div>
                    <div className="p-6 border-2 border-dashed border-slate-200 rounded-[2.5rem] flex items-center justify-center gap-3 hover:border-[#FF0000] transition-all cursor-pointer group">
-                      <Youtube size={24} className="text-slate-300 group-hover:text-[#FF0000] transition-colors" /><span className="text-xs font-black text-slate-400 uppercase tracking-widest">Połącz YouTube</span>
+                      <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Połącz YouTube</span>
                    </div>
                 </div>
              </div>
