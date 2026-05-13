@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { me } from "@/lib/auth";
 import { usePathname, useRouter } from "next/navigation";
+import Spinner from "@/components/ui/Spinner";
 
 export default function RequireAuth({
   children,
@@ -37,8 +38,11 @@ export default function RequireAuth({
 
   if (state === "loading")
     return (
-      <div className="grid min-h-[40vh] place-items-center text-sm text-white/70">
-        Checking session…
+      <div className="grid min-h-[40vh] place-items-center gap-3">
+        <Spinner size="md" />
+        <span className="font-body text-sm text-teal-25">
+          Checking session…
+        </span>
       </div>
     );
   if (state === "redir") return null;

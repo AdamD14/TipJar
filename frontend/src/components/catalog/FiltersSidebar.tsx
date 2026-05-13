@@ -2,6 +2,7 @@
 
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
+import Checkbox from '@/components/ui/Checkbox';
 
 const CATEGORIES = ['Writer', 'Musician', 'Podcaster', 'Illustrator', 'Designer'] as const;
 const MONETIZATION = ['Memberships', 'Commissions', 'Tips'] as const;
@@ -37,69 +38,57 @@ export default function FiltersSidebar() {
 
   return (
     <aside aria-label="Filters" className="hidden w-72 shrink-0 lg:block">
-      <fieldset className="mb-6 rounded-2xl border border-[rgba(255,215,0,0.12)] p-4">
-        <legend className="px-1 text-sm font-semibold text-[#DDE0DA]">Category</legend>
+      <fieldset className="mb-6 rounded-2xl border border-gold-400/12 p-4">
+        <legend className="px-1 text-sm font-semibold text-text-ds-primary font-heading">Category</legend>
         <ul className="mt-2 space-y-2">
           {CATEGORIES.map((v) => {
             const active = selected.category.includes(v);
             return (
               <li key={v}>
-                <label className="flex cursor-pointer items-center gap-2 text-sm text-[#DDE0DA]">
-                  <input
-                    type="checkbox"
-                    className="h-4 w-4 accent-[#FFD700]"
-                    checked={active}
-                    onChange={() => update('category', toggle(v, selected.category))}
-                    aria-checked={active}
-                  />
-                  <span>{v}</span>
-                </label>
+                <Checkbox
+                  color="gold"
+                  checked={active}
+                  onChange={() => update('category', toggle(v, selected.category))}
+                  label={<span className="text-text-ds-primary">{v}</span>}
+                />
               </li>
             );
           })}
         </ul>
       </fieldset>
 
-      <fieldset className="mb-6 rounded-2xl border border-[rgba(255,215,0,0.12)] p-4">
-        <legend className="px-1 text-sm font-semibold text-[#DDE0DA]">Monetization</legend>
+      <fieldset className="mb-6 rounded-2xl border border-gold-400/12 p-4">
+        <legend className="px-1 text-sm font-semibold text-text-ds-primary font-heading">Monetization</legend>
         <ul className="mt-2 space-y-2">
           {MONETIZATION.map((v) => {
             const active = selected.monetization.includes(v);
             return (
               <li key={v}>
-                <label className="flex cursor-pointer items-center gap-2 text-sm text-[#DDE0DA]">
-                  <input
-                    type="checkbox"
-                    className="h-4 w-4 accent-[#FFD700]"
-                    checked={active}
-                    onChange={() => update('monetization', toggle(v, selected.monetization))}
-                    aria-checked={active}
-                  />
-                  <span>{v}</span>
-                </label>
+                <Checkbox
+                  color="gold"
+                  checked={active}
+                  onChange={() => update('monetization', toggle(v, selected.monetization))}
+                  label={<span className="text-text-ds-primary">{v}</span>}
+                />
               </li>
             );
           })}
         </ul>
       </fieldset>
 
-      <fieldset className="rounded-2xl border border-[rgba(255,215,0,0.12)] p-4">
-        <legend className="px-1 text-sm font-semibold text-[#DDE0DA]">Activity</legend>
+      <fieldset className="rounded-2xl border border-gold-400/12 p-4">
+        <legend className="px-1 text-sm font-semibold text-text-ds-primary font-heading">Activity</legend>
         <ul className="mt-2 space-y-2">
           {ACTIVITY.map((v) => {
             const active = selected.activity.includes(v);
             return (
               <li key={v}>
-                <label className="flex cursor-pointer items-center gap-2 text-sm text-[#DDE0DA]">
-                  <input
-                    type="checkbox"
-                    className="h-4 w-4 accent-[#FFD700]"
-                    checked={active}
-                    onChange={() => update('activity', toggle(v, selected.activity))}
-                    aria-checked={active}
-                  />
-                  <span>{v}</span>
-                </label>
+                <Checkbox
+                  color="gold"
+                  checked={active}
+                  onChange={() => update('activity', toggle(v, selected.activity))}
+                  label={<span className="text-text-ds-primary">{v}</span>}
+                />
               </li>
             );
           })}
@@ -108,4 +97,3 @@ export default function FiltersSidebar() {
     </aside>
   );
 }
-

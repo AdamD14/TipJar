@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import CreatorCard from './CreatorCard';
 import type { Creator } from './types';
 import { useSearchParams } from 'next/navigation';
+import Skeleton from '@/components/ui/Skeleton';
 
 type ApiResponse = {
   data: Creator[];
@@ -36,17 +37,13 @@ export default function ResultsGrid() {
     return (
       <div aria-busy="true" className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div
-            key={i}
-            className="h-44 animate-pulse rounded-2xl bg-[rgba(255,255,255,0.06)]"
-            aria-hidden
-          />
+          <Skeleton key={i} height="176px" variant="card" />
         ))}
       </div>
     );
   }
   if (state.error || !state.res) {
-    return <p className="text-sm text-[#DDE0DA]">No results.</p>;
+    return <p className="text-sm text-text-ds-primary font-body">No results.</p>;
   }
 
   const { data } = state.res;
@@ -58,4 +55,3 @@ export default function ResultsGrid() {
     </div>
   );
 }
-

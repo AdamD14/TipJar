@@ -16,7 +16,7 @@ type ButtonCtaProps = {
 export type SecondaryCtaProps = AnchorCtaProps | ButtonCtaProps;
 
 type CommonProps = {
-  children?: React.ReactNode;    // Default: "Explore as a Fan"
+  children?: React.ReactNode;
   isLoading?: boolean;
   analyticsId?: string;
   ariaLabel?: string;
@@ -26,7 +26,7 @@ function Spinner(): JSX.Element {
   return (
     <span
       aria-hidden
-      className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-[#4d194d] border-t-transparent"
+      className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-purple-300 border-t-transparent"
     />
   );
 }
@@ -37,7 +37,6 @@ function isAnchorProps(
   return typeof (p as { href?: unknown }).href === 'string';
 }
 
-/** Secondary CTA — glossy purple; kształt/cienie jak było, podmienione TYLKO kolory gradientu */
 export default function SecondaryCta(
   props: SecondaryCtaProps & CommonProps,
 ): JSX.Element {
@@ -52,14 +51,12 @@ export default function SecondaryCta(
   const base =
     'group relative inline-flex items-center justify-center gap-2 h-12 px-10 text-lg font-ui font-bold rounded-[16px] ' +
     'text-white ' +
-    // ⬇️ PODMIANA TYLKO KOLORÓW GRADIENTU (reszta bez zmian)
-    'bg-[linear-gradient(180deg,#5a2b5a_0%,#4d194d_40%,#2b0f2b_100%)] ' +                          // base
-    'hover:bg-[linear-gradient(180deg,#7a347a_0%,#4d194d_40%,#3a113a_100%)] ' +                     // hover
-    'active:bg-[linear-gradient(180deg,#541a54_0%,#451245_38%,#2b0f2b_100%)] ' +                    // active (zachowano 38%)
-    // ⬆️ TYLKO kolory; wszystko poniżej jak w oryginale
-    'shadow-[0_10px_24px_rgba(0,0,0,0.35)] ring-1 ring-black/10 ' +
+    'bg-[linear-gradient(180deg,#5a2b5a_0%,#4d194d_40%,#2b0f2b_100%)] ' +
+    'hover:bg-[linear-gradient(180deg,#7a347a_0%,#4d194d_40%,#3a113a_100%)] ' +
+    'active:bg-[linear-gradient(180deg,#541a54_0%,#451245_38%,#2b0f2b_100%)] ' +
+    'shadow-2 ring-1 ring-black/10 ' +
     'transform-gpu will-change-transform transition-transform transition-colors duration-150 hover:scale-[1.015] active:translate-y-[1px] ' +
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8b5cf6]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#2A0F14] ' +
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300/70 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-900 ' +
     'disabled:opacity-60 disabled:cursor-not-allowed ' +
     `${styles.sheen} ${styles.bevel}`;
 
@@ -89,7 +86,7 @@ export default function SecondaryCta(
         <span
           className={
             (isLoading ? 'opacity-0' : 'opacity-100') +
-            ' transition-colors group-hover:text-[#0A0A0A]'
+            ' transition-colors group-hover:text-surface-app'
           }
         >
           {children}
@@ -120,7 +117,7 @@ export default function SecondaryCta(
       <span
         className={
           (isLoading ? 'opacity-0' : 'opacity-100') +
-          ' transition-colors group-hover:text-[#0A0A0A]'
+          ' transition-colors group-hover:text-surface-app'
         }
       >
         {children}

@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { normalize } from "@/lib/api/errors";
 import { useRegistrationStore } from "@/lib/store/registrationStore";
+import Checkbox from "@/components/ui/Checkbox";
+import Spinner from "@/components/ui/Spinner";
 
 type MeResponse = {
   id: string;
@@ -15,7 +17,6 @@ type MeResponse = {
   hasCompletedRegistration?: boolean;
 };
 
-// Stałe dla ścieżek - lepsze zarządzanie
 const PATHS = {
   CREATOR: {
     onboarding: "/onboarding/creator/step-1",
@@ -35,11 +36,9 @@ export default function ChooseUsernameForm() {
   const [checking, setChecking] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
 
-  // Zgody
   const [allRequired, setAllRequired] = useState(false);
   const [marketing, setMarketing] = useState(false);
 
-  // Sprawdź stan użytkownika przy mount (po OAuth redirect)
   useEffect(() => {
     let isMounted = true;
 
@@ -50,7 +49,6 @@ export default function ChooseUsernameForm() {
         if (!isMounted) return;
 
         if (!meRes) {
-          // Brak danych użytkownika - pokaż formularz jako fallback
           setInitialLoading(false);
           return;
         }
@@ -59,7 +57,6 @@ export default function ChooseUsernameForm() {
         setRole(normalizedRole);
         setUser(meRes);
 
-        // Jeśli już ma username i completed registration -> onboarding
         if (meRes.username && meRes.hasCompletedRegistration) {
           const targetPath =
             normalizedRole === "CREATOR"
@@ -69,7 +66,6 @@ export default function ChooseUsernameForm() {
           return;
         }
 
-        // Ma username ale nie ukończył onboarding -> następny krok
         if (meRes.username) {
           const targetPath =
             normalizedRole === "CREATOR"
@@ -78,10 +74,7 @@ export default function ChooseUsernameForm() {
           router.replace(targetPath);
           return;
         }
-
-        // Nie ma username -> zostaje na tej stronie (nic nie robimy)
       } catch (err) {
-        // User nie zalogowany lub błąd - pokaż formularz
         console.error("Failed to fetch user:", err);
       } finally {
         if (isMounted) {
@@ -95,7 +88,6 @@ export default function ChooseUsernameForm() {
     };
   }, [router, setRole, setUser]);
 
-  // Debounced check dostępności username z AbortController
   useEffect(() => {
     const name = (drafts.username || "").trim().toLowerCase();
 
@@ -156,7 +148,6 @@ export default function ChooseUsernameForm() {
 
     const username = (drafts.username || "").trim().toLowerCase();
 
-    // Walidacja
     if (!username) {
       setError("Username is required.");
       setBusy(false);
@@ -184,7 +175,6 @@ export default function ChooseUsernameForm() {
     }
 
     try {
-      // Zapisz username i zgody
       await api<void>("/api/v1/users/set-username", {
         method: "POST",
         body: JSON.stringify({
@@ -198,13 +188,11 @@ export default function ChooseUsernameForm() {
         }),
       });
 
-      // Odśwież dane użytkownika
       const meRes = await api<MeResponse>("/api/v1/auth/me");
 
       if (meRes) {
         setUser(meRes);
 
-        // Przekieruj do następnego kroku onboarding
         const role = meRes.role === "CREATOR" ? "CREATOR" : "FAN";
         const targetPath =
           role === "CREATOR" ? PATHS.CREATOR.onboarding : PATHS.FAN.onboarding;
@@ -221,7 +209,6 @@ export default function ChooseUsernameForm() {
     }
   };
 
-  // Funkcja pomocnicza do aktualizacji username bez trimowania w trakcie pisania
   const handleUsernameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setDraft({ username: e.target.value });
@@ -229,21 +216,20 @@ export default function ChooseUsernameForm() {
     [setDraft]
   );
 
-  // Loading state przy sprawdzaniu initial
   if (initialLoading) {
     return (
-      <section className="w-full max-w-md bg-teal-900/20 backdrop-blur-md border border-teal-400/20 rounded-2xl shadow-2xl p-8">
+      <section className="w-full max-w-md bg-teal-900/20 backdrop-blur-md border border-teal-400/20 rounded-2xl shadow-2 p-8">
         <div className="flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-teal-400 border-t-transparent rounded-full animate-spin" />
+          <Spinner size="md" />
         </div>
       </section>
     );
   }
 
   return (
-    <section className="w-full max-w-md bg-teal-900/20 backdrop-blur-md border border-teal-400/20 rounded-2xl shadow-2xl p-2">
+    <section className="w-full max-w-md bg-teal-900/20 backdrop-blur-md border border-teal-400/20 rounded-2xl shadow-2 p-2">
       <div className="flex justify-center mb-6">
-        <div className="bg-gradient-to-r from-teal-500 to-purple-500 text-white px-4 py-2 rounded-xl font-bold text-xl shadow-lg flex items-center gap-3">
+        <div className="bg-gradient-to-r from-teal-500 to-purple-300 text-white px-4 py-2 rounded-xl font-heading font-bold text-xl shadow-lg flex items-center gap-3">
           <div
             className="inline-block select-none"
             onDragStart={(e) => e.preventDefault()}
@@ -265,12 +251,12 @@ export default function ChooseUsernameForm() {
         <div>
           <label
             htmlFor="username"
-            className="block text-white text-base mb-2 font-medium"
+            className="block text-text-ds-primary text-base mb-2 font-medium font-body"
           >
             Choose your username
           </label>
           <div className="flex items-center gap-2">
-            <span className="text-[#8FA19A]">tipjar.plus/@</span>
+            <span className="text-teal-25 font-body">tipjar.plus/@</span>
             <input
               id="username"
               type="text"
@@ -279,7 +265,7 @@ export default function ChooseUsernameForm() {
               onChange={handleUsernameChange}
               minLength={3}
               maxLength={24}
-              className="flex-1 bg-slate-900/60 border border-teal-400/40 rounded-lg px-4 py-3 text-white text-base placeholder-gray-300 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all disabled:opacity-50"
+              className="flex-1 bg-teal-850 border border-teal-400/40 rounded-lg px-4 py-3 text-text-ds-primary text-base placeholder-teal-25/50 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all duration-200 disabled:opacity-50 font-body"
               placeholder="your-handle"
               disabled={busy}
               aria-describedby="username-status username-hint"
@@ -288,77 +274,74 @@ export default function ChooseUsernameForm() {
             />
           </div>
 
-          <div className="mt-2 text-sm" id="username-status">
+          <div className="mt-2 text-sm font-body" id="username-status">
             {checking && (
-              <span className="text-[#BCC1B6]" aria-live="polite">
+              <span className="text-teal-25" aria-live="polite">
                 Checking availability…
               </span>
             )}
             {!checking && available === true && (
-              <span className="text-emerald-300" aria-live="polite">
+              <span className="text-success-light" aria-live="polite">
                 Available ✓
               </span>
             )}
             {!checking && available === false && (
-              <span className="text-amber-300" aria-live="assertive">
+              <span className="text-gold-400" aria-live="assertive">
                 Username already taken
               </span>
             )}
           </div>
 
-          <p id="username-hint" className="mt-2 text-sm text-[#8FA19A]">
+          <p id="username-hint" className="mt-2 text-sm text-teal-25 font-body">
             3–24 characters: letters, numbers, dot, underscore or hyphen
           </p>
         </div>
 
-        {/* Zgody */}
         <div className="space-y-2 pt-2">
-          <label className="flex items-start gap-3 text-sm">
-            <input
-              type="checkbox"
-              className="size-4 self-start rounded border-white/20 bg-white/5 outline-none focus-visible:ring-2 focus-visible:ring-teal-400"
-              checked={allRequired}
-              onChange={(e) => setAllRequired(e.target.checked)}
-            />
-            <span className="text-[#DDE0DA]">
-              I am at least 16 years old and accept the{" "}
-              <a
-                href="/terms"
-                className="underline hover:text-teal-300 transition-colors"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Terms of Service
-              </a>{" "}
-              and{" "}
-              <a
-                href="/privacy"
-                className="underline hover:text-teal-300 transition-colors"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Privacy Policy
-              </a>
-            </span>
-          </label>
+          <Checkbox
+            color="gold"
+            checked={allRequired}
+            onChange={(e) => setAllRequired(e.target.checked)}
+            label={
+              <span className="text-teal-25">
+                I am at least 16 years old and accept the{" "}
+                <a
+                  href="/terms"
+                  className="underline hover:text-teal-50 transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Terms of Service
+                </a>{" "}
+                and{" "}
+                <a
+                  href="/privacy"
+                  className="underline hover:text-teal-50 transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Privacy Policy
+                </a>
+              </span>
+            }
+          />
 
-          <label className="flex items-start gap-3 text-sm">
-            <input
-              type="checkbox"
-              className="size-4 self-start rounded border-white/20 bg-white/5 outline-none focus-visible:ring-2 focus-visible:ring-teal-400"
-              checked={marketing}
-              onChange={(e) => setMarketing(e.target.checked)}
-            />
-            <span className="text-[#DDE0DA]">
-              Send me product updates and creator highlights (optional)
-            </span>
-          </label>
+          <Checkbox
+            color="gold"
+            checked={marketing}
+            onChange={(e) => setMarketing(e.target.checked)}
+            label={
+              <span className="text-teal-25">
+                Send me product updates and creator highlights (optional)
+              </span>
+            }
+          />
         </div>
 
         {error && (
           <p
             role="alert"
-            className="mt-2 text-sm text-[#FFD700] bg-amber-900/20 px-4 py-3 rounded-lg border border-amber-700/30"
+            className="mt-2 text-sm text-gold-400 bg-error-dark/30 px-4 py-3 rounded-lg border border-gold-700/30 font-body"
             aria-live="assertive"
           >
             {error}
@@ -368,7 +351,7 @@ export default function ChooseUsernameForm() {
         <button
           type="submit"
           disabled={busy || available === false || !allRequired}
-          className="w-full bg-gradient-to-r from-teal-500 to-purple-500 text-white font-bold py-3.5 text-lg rounded-lg hover:from-teal-600 hover:to-purple-600 hover:scale-[1.02] transform transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none disabled:transform-none shadow-lg relative"
+          className="w-full bg-gradient-to-r from-teal-500 to-purple-300 text-white font-bold py-3.5 text-lg rounded-lg hover:from-teal-600 hover:to-purple-400 hover:scale-[1.02] transform transition-all duration-200 ease-spring disabled:opacity-60 disabled:pointer-events-none disabled:transform-none shadow-lg relative font-ui"
           aria-busy={busy}
         >
           {busy ? (
@@ -376,9 +359,9 @@ export default function ChooseUsernameForm() {
               <span className="opacity-0" aria-hidden="true">
                 Processing…
               </span>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              </div>
+              <span className="absolute inset-0 flex items-center justify-center">
+                <Spinner size="sm" />
+              </span>
             </>
           ) : (
             "Continue"
