@@ -2,18 +2,15 @@ import React from "react";
 import clsx from "clsx";
 
 /**
- * Select — TipJar+ Design System (system.md §2.4)
+ * Select — TipJar+ Design System (design.md §2.4)
  *
  * Native <select> with custom chevron that rotates 180° on open.
- * (Full custom dropdown with animations requires a separate Combobox/Listbox
- * component — this is the accessible native fallback.)
+ * Trigger: same as Input (48px, surface-base, border-subtle)
+ * Chevron: rotates 180deg on open
+ * Selected option text: gold-400
  *
  * States: default | error | success
- *
- * Visual:
- *  - Trigger: same as Input (48px, surface-base, border-subtle)
- *  - Chevron: rotates 180deg on open (CSS :focus-within trick)
- *  - Selected option text: inherited (gold-400 only possible in custom dropdown)
+ * Text: --text-primary (teal-25 = #E0F2F2)
  */
 
 type SelectState = "default" | "error" | "success";
@@ -22,7 +19,6 @@ type Props = React.SelectHTMLAttributes<HTMLSelectElement> & {
   state?: SelectState;
   /** @deprecated — use state="error" instead */
   invalid?: boolean;
-  /** Optional wrapper className */
   wrapperClassName?: string;
 };
 
@@ -40,35 +36,33 @@ export default function Select({
     <div className={clsx("relative group", wrapperClassName)}>
       <select
         className={clsx(
-          // layout
           "w-full h-12 px-4 pr-10 rounded-[6px]",
           "appearance-none cursor-pointer",
           "font-body text-base outline-none",
           "transition-all duration-200",
 
-          // base
-          "bg-teal-800 text-white",
+          "bg-teal-800 text-teal-25",
 
-          // border states
           resolvedState === "default" && [
             "border border-teal-700",
             "hover:border-teal-600",
             "focus:border-gold-400",
-            "focus:shadow-[0_0_0_1px_#ffd700,0_0_0_4px_rgba(255,215,0,0.25)]",
+            "focus:shadow-[0_0_0_1px_#FFD700,0_0_0_4px_rgba(255,215,0,0.25)]",
           ],
 
           resolvedState === "error" && [
             "border border-error-base",
-            "shadow-[0_0_0_4px_rgba(255,180,171,0.25)]",
-            "focus:shadow-[0_0_0_1px_#ff5252,0_0_0_4px_rgba(255,180,171,0.3)]",
+            "shadow-[0_0_0_4px_rgba(255,82,82,0.25)]",
+            "focus:shadow-[0_0_0_1px_#FF5252,0_0_0_4px_rgba(255,82,82,0.3)]",
           ],
 
           resolvedState === "success" && [
             "border border-success-base",
-            "focus:shadow-[0_0_0_1px_#00e676]",
+            "focus:shadow-[0_0_0_1px_#00E676]",
           ],
 
           "disabled:opacity-40 disabled:cursor-not-allowed",
+          "disabled:border-dashed disabled:border-teal-700",
 
           className,
         )}
@@ -76,14 +70,12 @@ export default function Select({
         {...rest}
       />
 
-      {/* Chevron — rotates 180° when select is focused (open) */}
       <div
         aria-hidden="true"
         className={clsx(
           "absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none",
-          "text-[#5c7a7a]",
+          "text-teal-100",
           "transition-transform duration-200",
-          // Rotate when select has focus (approximation — native select focus)
           "group-has-[:focus]:rotate-180",
         )}
       >

@@ -1,33 +1,30 @@
 /**
- * Skeleton — TipJar+ Design System (system.md §5.2)
+ * Skeleton — TipJar+ Design System (design.md §3.5.2)
  *
  * Shimmer animation: teal-800 → teal-700 → teal-800
  * Uses `.skeleton-shimmer` utility from globals.css.
  *
  * Border radius variants:
- *  text    — 4px
- *  card    — 8px  (default)
- *  avatar  — 50%
- *  full    — 9999px
+ * text   — 4px
+ * card   — 12px (design.md §3.1: "Friendly Modern" 12px)
+ * avatar — 50%
+ * full   — 9999px
  */
 
 type SkeletonVariant = "text" | "card" | "avatar" | "full";
 
 interface SkeletonProps {
-  /** Width — CSS value e.g. "100%", "120px" */
   width?: string;
-  /** Height — CSS value e.g. "16px", "48px" */
   height?: string;
-  /** Visual shape / border-radius */
   variant?: SkeletonVariant;
   className?: string;
 }
 
 const RADIUS: Record<SkeletonVariant, string> = {
-  text:   "4px",
-  card:   "8px",
+  text: "4px",
+  card: "12px",
   avatar: "50%",
-  full:   "9999px",
+  full: "9999px",
 };
 
 export default function Skeleton({

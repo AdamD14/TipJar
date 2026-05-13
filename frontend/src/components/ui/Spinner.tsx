@@ -1,13 +1,16 @@
 /**
- * Spinner — TipJar+ Design System (system.md §5.1)
+ * Spinner — TipJar+ Design System (design.md §3.5.1)
  *
  * SVG spinner with gold→purple gradient track.
- * Uses the CSS @keyframes `dash` and `spin-gradient` defined in globals.css.
+ * Gradient: linear-gradient(135deg, --gold-400 0%, --purple-300 100%)
+ * i.e. #FFD700 → #4D194D
+ *
+ * Animation: rotate + dash (1.5–2s)
  *
  * Sizes:
- *  sm — 24px, stroke 4.5px  (buttons, inputs)
- *  md — 48px, stroke 3.5px  (cards, modals)   [default]
- *  lg — 72px, stroke 3.0px  (full-screen)
+ * sm — 24px, stroke 4.5px (buttons, inputs)
+ * md — 48px, stroke 3.5px (cards, modals) [default]
+ * lg — 72px, stroke 3.0px (full-screen)
  */
 
 const SIZES = {
@@ -21,7 +24,6 @@ type SpinnerSize = keyof typeof SIZES;
 interface SpinnerProps {
   size?: SpinnerSize | number;
   className?: string;
-  /** Accessible label (hidden visually via aria-label + role=status) */
   label?: string;
 }
 
@@ -41,7 +43,6 @@ export default function Spinner({
   const r = (px - stroke) / 2;
   const cx = px / 2;
   const circumference = 2 * Math.PI * r;
-  // Unique ID per instance isn't needed (SVG is self-contained)
   const gradId = `${GRADIENT_ID_PREFIX}-${px}`;
 
   return (
@@ -60,14 +61,13 @@ export default function Spinner({
         className="animate-[spin_1.5s_linear_infinite]"
       >
         <defs>
-          {/* Gold → Purple gradient (system.md §5.1) */}
+          {/* Gold → Purple gradient — design.md §5.1: --gold-400 → --purple-300 */}
           <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%"   stopColor="#FFD700" />
-            <stop offset="100%" stopColor="#800080" />
+            <stop offset="0%" stopColor="#FFD700" />
+            <stop offset="100%" stopColor="#4D194D" />
           </linearGradient>
         </defs>
 
-        {/* Track (background circle) */}
         <circle
           cx={cx}
           cy={cx}
@@ -76,7 +76,6 @@ export default function Spinner({
           strokeWidth={stroke}
         />
 
-        {/* Animated arc */}
         <circle
           cx={cx}
           cy={cx}

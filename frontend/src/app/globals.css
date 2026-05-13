@@ -1,14 +1,15 @@
 @import "tailwindcss";
 
 /* ================================================================
-   TIPJAR+ DESIGN SYSTEM — globals.css
-   Single source of truth for all design tokens.
-   Spec: .docs/system.md
-   ================================================================ */
+TIPJAR+ DESIGN SYSTEM — globals.css
+Single source of truth for all design tokens.
+Spec: design.md
+================================================================ */
 
 /* ----------------------------------------------------------------
-   FONTS (local @font-face — Mukta Malar + IBM Plex Sans)
-   ---------------------------------------------------------------- */
+FONTS (local @font-face — Mukta Malar + IBM Plex Sans)
+design.md §3: Mukta Malar (headings, buttons), IBM Plex Sans (body)
+---------------------------------------------------------------- */
 
 @font-face {
   font-family: "MuktaMalar";
@@ -55,70 +56,81 @@
 }
 
 /* ================================================================
-   TAILWIND v4 @theme — token registration
-   Maps CSS custom properties to Tailwind utility classes.
-   e.g. bg-teal-800, text-gold-400, shadow-modal
-   ================================================================ */
+TAILWIND v4 @theme — token registration
+Maps CSS custom properties to Tailwind utility classes.
+e.g. bg-teal-800, text-gold-400, shadow-modal
+================================================================ */
 
 @theme {
-  /* --- Primitive: Teal --- */
-  --color-teal-50: #e0f2f2;
-  --color-teal-100: #b3d9d9;
-  --color-teal-200: #80bfbf;
-  --color-teal-300: #4da6a6;
-  --color-teal-400: #268c8c;
+  /* --- Primitive: Teal — design.md §1.1 --- */
+  --color-teal-25: #E0F2F2;
+  --color-teal-50: #CCF7F4;
+  --color-teal-100: #ABE1E1;
+  --color-teal-200: #76CBCB;
+  --color-teal-300: #3FB5B5;
+  --color-teal-400: #2A8A8A;
+  --color-teal-450: #0F7F7F;
   --color-teal-500: #007373;
   --color-teal-600: #005959;
   --color-teal-700: #004545;
   --color-teal-800: #003737;
-  --color-teal-900: #001f1f;
+  --color-teal-850: #002121;
+  --color-teal-900: #001F1F;
 
-  /* --- Primitive: Gold --- */
-  --color-gold-100: #fff9c4;
-  --color-gold-200: #fff176;
-  --color-gold-300: #ffea00;
-  --color-gold-400: #ffd700;
-  --color-gold-500: #ffc107;
-  --color-gold-600: #ffab00;
-  --color-gold-700: #ff8f00;
+  /* --- Primitive: Gold — design.md §1.1 --- */
+  --color-gold-50: #FEFFE0;
+  --color-gold-100: #FAFF46;
+  --color-gold-200: #FFEA00;
+  --color-gold-300: #FFE100;
+  --color-gold-400: #FFD700;
+  --color-gold-500: #FFC312;
+  --color-gold-600: #FFAB00;
+  --color-gold-700: #FF8F00;
+  --color-gold-800: #F08010;
+  --color-gold-900: #CC7A06;
 
-  /* --- Primitive: Purple --- */
-  --color-purple-100: #e0b3ff;
-  --color-purple-200: #c27aff;
-  --color-purple-300: #9d4edd;
-  --color-purple-400: #7b2cbf;
-  --color-purple-500: #5a189a;
+  /* --- Primitive: Purple — design.md §1.1 --- */
+  --color-purple-100: #661B66;
+  --color-purple-200: #5C005C;
+  --color-purple-300: #4D194D;
+  --color-purple-400: #3A143A;
+  --color-purple-500: #2F0D2F;
 
-  /* --- Validation --- */
-  --color-error-light: #ffb4ab;
-  --color-error-base: #ff5252;
-  --color-error-dark: #3d1010;
-  --color-success-light: #69f0ae;
-  --color-success-base: #00e676;
-  --color-success-dark: #004d26;
-  --color-warning-base: #ff9100;
-  --color-info-base: #66d9e8;
+  /* --- Validation — design.md §1.1 --- */
+  --color-error-light: #FFB4AB;
+  --color-error-base: #FF5252;
+  --color-error-dark: #3D1010;
+  --color-success-light: #69F0AE;
+  --color-success-base: #00E676;
+  --color-success-dark: #004D26;
+  --color-warning-base: #FF9100;
+  --color-info-base: #66D9E8;
 
-  /* --- Semantic surface --- */
-  --color-surface-app: #001f1f;
+  /* --- Semantic surface — design.md §1.2 --- */
+  --color-surface-app: #001F1F;
   --color-surface-base: #003737;
   --color-surface-elevated: #004545;
   --color-surface-modal: #003737;
 
-  /* --- Semantic text --- */
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #d6ebeb;
-  --color-text-tertiary: #5c7a7a;
+  /* --- Semantic text — design.md §1.2 --- */
+  --color-text-primary: #E0F2F2;
+  --color-text-secondary: #CCF7F4;
+  --color-text-tertiary: #ABE1E1;
 
-  /* --- Semantic border --- */
+  /* --- Semantic border — design.md §1.2 --- */
   --color-border-subtle: #004545;
-  --color-border-focus: #9d4edd;
+  --color-border-focus: #4D194D;
 
-  /* --- Fonts --- */
+  /* --- Semantic action — design.md §1.2 --- */
+  --color-action-primary-bg: #FFD700;
+  --color-action-primary-text: #001F1F;
+  --color-action-secondary-bg: #4D194D;
+
+  /* --- Fonts — design.md §3 --- */
   --font-heading: var(--font-heading-var, "MuktaMalar"), sans-serif;
   --font-body: var(--font-body-var, "IBMPlexSans"), sans-serif;
 
-  /* --- Font sizes (fluid) --- */
+  /* --- Font sizes (fluid) — design.md §3 --- */
   --font-size-display: clamp(2.5rem, 4vw + 1.5rem, 4rem);
   --font-size-h1: clamp(2rem, 1.5vw + 1.6rem, 2.5rem);
   --font-size-h2: clamp(1.75rem, 1vw + 1.5rem, 2rem);
@@ -127,12 +139,12 @@
   --font-size-caption: 0.75rem;
   --font-size-button: 1rem;
 
-  /* --- Shadows --- */
+  /* --- Shadows — design.md §4 --- */
   --shadow-1: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
   --shadow-2: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
   --shadow-modal: 0 24px 48px -12px rgba(0, 0, 0, 0.7);
 
-  /* --- Z-index --- */
+  /* --- Z-index — design.md §5 --- */
   --z-base: 0;
   --z-elevated: 10;
   --z-dropdown: 100;
@@ -142,7 +154,7 @@
   --z-tooltip: 1500;
   --z-toast: 9999;
 
-  /* --- Motion (cubic-bezier) --- */
+  /* --- Motion (cubic-bezier) — design.md §4 --- */
   --ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
   --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -154,7 +166,7 @@
   --radius-xl: 16px;
   --radius-full: 9999px;
 
-  /* --- Breakpoints --- */
+  /* --- Breakpoints — design.md §6 --- */
   --breakpoint-xs: 320px;
   --breakpoint-sm: 640px;
   --breakpoint-md: 768px;
@@ -163,112 +175,118 @@
 }
 
 /* ================================================================
-   CSS CUSTOM PROPERTIES — :root
-   Use these in components via var(). They mirror the @theme tokens
-   and add aliases that can't be expressed in @theme.
-   ================================================================ */
+CSS CUSTOM PROPERTIES — :root
+Use these in components via var(). They mirror the @theme tokens
+and add aliases that can't be expressed in @theme.
+================================================================ */
 
 :root {
-  /* Primitive: Teal */
-  --teal-50:  #e0f2f2;
-  --teal-100: #b3d9d9;
-  --teal-200: #80bfbf;
-  --teal-300: #4da6a6;
-  --teal-400: #268c8c;
+  /* Primitive: Teal — design.md §1.1 */
+  --teal-25: #E0F2F2;
+  --teal-50: #CCF7F4;
+  --teal-100: #ABE1E1;
+  --teal-200: #76CBCB;
+  --teal-300: #3FB5B5;
+  --teal-400: #2A8A8A;
+  --teal-450: #0F7F7F;
   --teal-500: #007373;
   --teal-600: #005959;
   --teal-700: #004545;
   --teal-800: #003737;
-  --teal-900: #001f1f;
+  --teal-850: #002121;
+  --teal-900: #001F1F;
 
-  /* Primitive: Gold */
-  --gold-100: #fff9c4;
-  --gold-200: #fff176;
-  --gold-300: #ffea00;
-  --gold-400: #ffd700;
-  --gold-500: #ffc107;
-  --gold-600: #ffab00;
-  --gold-700: #ff8f00;
+  /* Primitive: Gold — design.md §1.1 */
+  --gold-50: #FEFFE0;
+  --gold-100: #FAFF46;
+  --gold-200: #FFEA00;
+  --gold-300: #FFE100;
+  --gold-400: #FFD700;
+  --gold-500: #FFC312;
+  --gold-600: #FFAB00;
+  --gold-700: #FF8F00;
+  --gold-800: #F08010;
+  --gold-900: #CC7A06;
 
-  /* Primitive: Purple */
-  --purple-100: #e0b3ff;
-  --purple-200: #c27aff;
-  --purple-300: #9d4edd;
-  --purple-400: #7b2cbf;
-  --purple-500: #5a189a;
+  /* Primitive: Purple — design.md §1.1 */
+  --purple-100: #661B66;
+  --purple-200: #5C005C;
+  --purple-300: #4D194D;
+  --purple-400: #3A143A;
+  --purple-500: #2F0D2F;
 
-  /* Validation */
-  --error-light:   #ffb4ab;
-  --error-base:    #ff5252;
-  --error-dark:    #3d1010;
-  --success-light: #69f0ae;
-  --success-base:  #00e676;
-  --success-dark:  #004d26;
-  --warning-base:  #ff9100;
-  --info-base:     #66d9e8;
+  /* Validation — design.md §1.1 */
+  --error-light: #FFB4AB;
+  --error-base: #FF5252;
+  --error-dark: #3D1010;
+  --success-light: #69F0AE;
+  --success-base: #00E676;
+  --success-dark: #004D26;
+  --warning-base: #FF9100;
+  --info-base: #66D9E8;
 
-  /* Semantic: surfaces */
-  --bg-app-global:      var(--teal-900); /* body background — NEVER #000000 */
-  --bg-surface-base:    var(--teal-800); /* cards, dropdowns, containers */
-  --bg-surface-elevated:var(--teal-700); /* hover rows, elevated cards */
-  --bg-surface-modal:   var(--teal-800); /* modal windows */
+  /* Semantic: surfaces — design.md §1.2 */
+  --bg-app-global: var(--teal-900);
+  --bg-surface-base: var(--teal-800);
+  --bg-surface-elevated: var(--teal-700);
+  --bg-surface-modal: var(--teal-800);
 
-  /* Semantic: text */
-  --text-primary:   #ffffff;
-  --text-secondary: #d6ebeb; /* 85% white tint */
-  --text-tertiary:  #5c7a7a; /* placeholders, timestamps, inactive */
+  /* Semantic: text — design.md §1.2 */
+  --text-primary: var(--teal-25);
+  --text-secondary: var(--teal-50);
+  --text-tertiary: var(--teal-100);
 
-  /* Semantic: borders */
-  --border-subtle: var(--teal-700); /* default card/input borders */
-  --border-focus:  var(--purple-300); /* keyboard navigation ring */
+  /* Semantic: borders — design.md §1.2 */
+  --border-subtle: var(--teal-700);
+  --border-focus: var(--purple-300);
 
-  /* Semantic: actions */
-  --action-primary-bg:   var(--gold-400);  /* CTA button background */
-  --action-primary-text: var(--teal-800);  /* CTA text — WCAG AAA 11.2:1 */
+  /* Semantic: actions — design.md §1.2 */
+  --action-primary-bg: var(--gold-400);
+  --action-primary-text: var(--teal-900);
   --action-secondary-bg: var(--purple-300);
 
-  /* Typography */
+  /* Typography — design.md §3 */
   --font-heading: "MuktaMalar", sans-serif;
-  --font-body:    "IBMPlexSans", sans-serif;
+  --font-body: "IBMPlexSans", sans-serif;
 
-  /* Fluid font sizes */
+  /* Fluid font sizes — design.md §3 */
   --fs-display: clamp(2.5rem, 4vw + 1.5rem, 4rem);
-  --fs-h1:      clamp(2rem, 1.5vw + 1.6rem, 2.5rem);
-  --fs-h2:      clamp(1.75rem, 1vw + 1.5rem, 2rem);
-  --fs-h3:      clamp(1.5rem, 0.5vw + 1.3rem, 1.75rem);
-  --fs-body-m:  1rem;
+  --fs-h1: clamp(2rem, 1.5vw + 1.6rem, 2.5rem);
+  --fs-h2: clamp(1.75rem, 1vw + 1.5rem, 2rem);
+  --fs-h3: clamp(1.5rem, 0.5vw + 1.3rem, 1.75rem);
+  --fs-body-m: 1rem;
   --fs-caption: 0.75rem;
-  --fs-button:  1rem;
+  --fs-button: 1rem;
 
-  /* Elevation */
-  --shadow-1:     0 4px 6px -1px rgba(0, 0, 0, 0.5);
-  --shadow-2:     0 10px 25px -5px rgba(0, 0, 0, 0.6);
+  /* Elevation — design.md §4 */
+  --shadow-1: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  --shadow-2: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
   --shadow-modal: 0 24px 48px -12px rgba(0, 0, 0, 0.7);
 
-  /* Glassmorphism */
+  /* Glassmorphism — design.md §4 */
   --glass-overlay: rgba(0, 31, 31, 0.44);
-  --glass-blur:    blur(20px) saturate(200%);
-  --glass-border:  1px solid rgba(255, 255, 255, 0.125);
+  --glass-blur: blur(20px) saturate(200%);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.125);
 
-  /* Motion */
+  /* Motion — design.md §4 */
   --ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
-  --ease-enter:    cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-spring:   cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
-  /* Z-index stack */
-  --z-base:     0;
+  /* Z-index stack — design.md §5 */
+  --z-base: 0;
   --z-elevated: 10;
   --z-dropdown: 100;
-  --z-fab:      200;
+  --z-fab: 200;
   --z-backdrop: 500;
-  --z-modal:    1000;
-  --z-tooltip:  1500;
-  --z-toast:    9999;
+  --z-modal: 1000;
+  --z-tooltip: 1500;
+  --z-toast: 9999;
 }
 
 /* ================================================================
-   GLOBAL BASE STYLES
-   ================================================================ */
+GLOBAL BASE STYLES
+================================================================ */
 
 html,
 body {
@@ -286,14 +304,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Numeric figures — prevent layout shift on dynamic numbers */
+/* Numeric figures — prevent layout shift on dynamic numbers — design.md §3 */
 [data-numeric],
 .tnum {
   font-feature-settings: "tnum";
   font-variant-numeric: tabular-nums;
 }
 
-/* Custom scrollbar (textarea, overflow containers) */
+/* Custom scrollbar (textarea, overflow containers) — design.md §2.3 */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -310,11 +328,11 @@ body {
 }
 
 /* ================================================================
-   KEYFRAMES
-   ================================================================ */
+KEYFRAMES
+================================================================ */
 
 @keyframes shimmer {
-  0%   { background-position: 200% 0; }
+  0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
 
@@ -323,8 +341,8 @@ body {
 }
 
 @keyframes dash {
-  0%   { stroke-dasharray: 1, 150; stroke-dashoffset: 0; }
-  50%  { stroke-dasharray: 90, 150; stroke-dashoffset: -35; }
+  0% { stroke-dasharray: 1, 150; stroke-dashoffset: 0; }
+  50% { stroke-dasharray: 90, 150; stroke-dashoffset: -35; }
   100% { stroke-dasharray: 90, 150; stroke-dashoffset: -124; }
 }
 
@@ -352,29 +370,29 @@ body {
 
 @keyframes toast-fade-out {
   from { opacity: 1; }
-  to   { opacity: 0; transform: scale(0.96); }
+  to { opacity: 0; transform: scale(0.96); }
 }
 
 @keyframes fade-in {
   from { opacity: 0; }
-  to   { opacity: 1; }
+  to { opacity: 1; }
 }
 
 @keyframes slide-down {
   from { opacity: 0; transform: translateY(-12px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes slide-up {
   from { opacity: 0; transform: translateY(100%); }
-  to   { opacity: 1; transform: translateY(0); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ================================================================
-   UTILITY CLASSES
-   ================================================================ */
+UTILITY CLASSES
+================================================================ */
 
-/* Rich main background (aurora gradient — preserved from original) */
+/* Rich main background (aurora gradient) */
 .bg-gradient-main {
   background-color: #021a1a;
   background-image:
@@ -383,22 +401,22 @@ body {
     radial-gradient(600px 320px at 76% 34%, rgba(255, 215, 0, 0.14) 0%, rgba(255, 215, 0, 0.00) 60%),
     linear-gradient(
       135deg,
-      hsl(180 100% 7%)   0%,
-      hsl(180 100% 8%)  10%,
-      hsl(178  60% 11%) 20%,
-      hsl(185  62% 12%) 30%,
-      hsl(192  68% 13%) 40%,
-      hsl(196  72% 13%) 50%,
-      hsl(202  78% 12%) 60%,
-      hsl(208  80% 11%) 70%,
-      hsl(212  82% 11%) 82%,
+      hsl(180 100% 7%) 0%,
+      hsl(180 100% 8%) 10%,
+      hsl(178 60% 11%) 20%,
+      hsl(185 62% 12%) 30%,
+      hsl(192 68% 13%) 40%,
+      hsl(196 72% 13%) 50%,
+      hsl(202 78% 12%) 60%,
+      hsl(208 80% 11%) 70%,
+      hsl(212 82% 11%) 82%,
       hsl(215 100% 11%) 100%
     );
   background-repeat: no-repeat;
   background-size: auto, auto, auto, cover;
   background-position: center;
   -webkit-mask-image: radial-gradient(140% 140% at 50% 40%, #000 60%, transparent 100%);
-          mask-image: radial-gradient(140% 140% at 50% 40%, #000 60%, transparent 100%);
+  mask-image: radial-gradient(140% 140% at 50% 40%, #000 60%, transparent 100%);
 }
 
 @media (min-width: 1024px) {
@@ -409,22 +427,22 @@ body {
       radial-gradient(660px 360px at 78% 30%, rgba(255, 215, 0, 0.12) 0%, rgba(255, 215, 0, 0.00) 62%),
       linear-gradient(
         135deg,
-        hsl(180 100% 7%)   0%,
-        hsl(180 100% 8%)  12%,
-        hsl(178  60% 11%) 24%,
-        hsl(185  62% 12%) 36%,
-        hsl(192  68% 13%) 48%,
-        hsl(196  72% 13%) 60%,
-        hsl(202  78% 12%) 72%,
-        hsl(208  80% 11%) 84%,
+        hsl(180 100% 7%) 0%,
+        hsl(180 100% 8%) 12%,
+        hsl(178 60% 11%) 24%,
+        hsl(185 62% 12%) 36%,
+        hsl(192 68% 13%) 48%,
+        hsl(196 72% 13%) 60%,
+        hsl(202 78% 12%) 72%,
+        hsl(208 80% 11%) 84%,
         hsl(215 100% 11%) 100%
       );
     -webkit-mask-image: radial-gradient(135% 135% at 50% 42%, #000 62%, transparent 100%);
-            mask-image: radial-gradient(135% 135% at 50% 42%, #000 62%, transparent 100%);
+    mask-image: radial-gradient(135% 135% at 50% 42%, #000 62%, transparent 100%);
   }
 }
 
-/* Shimmer skeleton utility */
+/* Shimmer skeleton utility — design.md §5.2 */
 .skeleton-shimmer {
   background: linear-gradient(
     110deg,
@@ -436,7 +454,7 @@ body {
   animation: shimmer 1.5s linear infinite;
 }
 
-/* Glass surface utility */
+/* Glass surface utility — design.md §4 */
 .glass-surface {
   background: var(--glass-overlay);
   backdrop-filter: var(--glass-blur);
@@ -444,7 +462,7 @@ body {
   border: var(--glass-border);
 }
 
-/* Safe-area helpers */
+/* Safe-area helpers — design.md §6 */
 .safe-bottom {
   padding-bottom: calc(72px + env(safe-area-inset-bottom));
 }

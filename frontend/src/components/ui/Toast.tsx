@@ -1,23 +1,28 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import clsx from "clsx";
 
 /**
- * Toast / Snackbar — TipJar+ Design System (system.md §4)
+ * Toast / Snackbar — TipJar+ Design System (design.md §3.4)
  *
  * Types: success | error | info | warning
- * - role="alert"  for error + warning  (intrusive, screen-reader interrupts)
- * - role="status" for success + info   (polite)
+ * - role="alert" for error + warning (intrusive, screen-reader interrupts)
+ * - role="status" for success + info (polite)
  *
  * Position:
  * - Desktop (≥640px): bottom-right, slide in from right
- * - Mobile  (<640px):  top, slide in from top + safe-area
+ * - Mobile (<640px): top, slide in from top + safe-area
  *
  * Duration: 4 000 ms, paused on hover.
  * Dismiss: auto-timeout | swipe | Escape | ✕ button
+ *
+ * Accent colors (design.md §3.4):
+ * success → --success-base (#00E676)
+ * error   → --error-base   (#FF5252)
+ * info    → --info-base     (#66D9E8)
+ * warning → --warning-base  (#FF9100)
  */
-
-/* ── Types ── */
 
 export type ToastType = "success" | "error" | "info" | "warning";
 
@@ -27,8 +32,6 @@ interface ToastMessage {
   text: string;
   duration?: number;
 }
-
-/* ── Global imperative API ── */
 
 type PushFn = (m: Omit<ToastMessage, "id">) => void;
 let pushGlobal: PushFn | null = null;
@@ -48,35 +51,15 @@ export function useToast() {
   };
 }
 
-/* ── Visual config (system.md §4.2) ── */
-
 const TOAST_CONFIG: Record<
   ToastType,
   { accent: string; icon: string; role: "alert" | "status" }
 > = {
-  success: {
-    accent: "#34d399", // Emerald
-    icon: "✓",
-    role: "status",
-  },
-  error: {
-    accent: "#f43f5e", // Rose
-    icon: "✕",
-    role: "alert",
-  },
-  info: {
-    accent: "#a78bfa", // Violet
-    icon: "ℹ",
-    role: "status",
-  },
-  warning: {
-    accent: "#fbbf24", // Amber
-    icon: "⚠",
-    role: "alert",
-  },
+  success: { accent: "var(--success-base)", icon: "✓", role: "status" },
+  error: { accent: "var(--error-base)", icon: "✕", role: "alert" },
+  info: { accent: "var(--info-base)", icon: "ℹ", role: "status" },
+  warning: { accent: "var(--warning-base)", icon: "⚠", role: "alert" },
 };
-
-/* ── Individual Toast ── */
 
 function ToastItem({
   toast,
@@ -110,7 +93,6 @@ function ToastItem({
     };
   }, [startTimer]);
 
-  // Escape key dismissal
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") dismiss();
@@ -125,94 +107,54 @@ function ToastItem({
       aria-live={cfg.role === "alert" ? "assertive" : "polite"}
       onMouseEnter={pauseTimer}
       onMouseLeave={startTimer}
-      style={{
-        /* Base (system.md §4.1) */
-        background: "#002f2f",
-        color: "#ffffff",
-        padding: "14px 16px",
-        borderRadius: "12px",
-        boxShadow: "0px 8px 24px -4px rgba(0, 0, 0, 0.6)",
-        border: "1px solid rgba(255, 255, 255, 0.1)",
-        display: "flex",
-        alignItems: "center",
-        gap: "12px",
-        maxWidth: "400px",
-        width: "100%",
-        pointerEvents: "auto",
-        opacity: exiting ? 0 : 1,
-        transform: exiting ? "scale(0.96)" : undefined,
-        transition: "opacity 200ms ease, transform 200ms ease",
-        /* Desktop animation class is applied by parent */
-      }}
+      className={clsx(
+        "flex items-center gap-3",
+        "bg-teal-800",
+        "text-text-ds-primary",
+        "px-4 py-[14px]",
+        "rounded-lg",
+        "shadow-toast",
+        "border border-white/[0.1]",
+        "max-w-[400px] w-full",
+        "pointer-events-auto",
+        "transition-[opacity,transform] duration-200 ease-standard",
+        exiting && "opacity-0 scale-[0.96]",
+      )}
     >
-      {/* Accent bar */}
       <div
         aria-hidden="true"
-        style={{
-          width: "3px",
-          alignSelf: "stretch",
-          borderRadius: "2px",
-          background: cfg.accent,
-          flexShrink: 0,
-        }}
+        className="w-[3px] self-stretch rounded-sm flex-shrink-0"
+        style={{ background: cfg.accent }}
       />
 
-      {/* Icon */}
       <span
         aria-hidden="true"
-        style={{
-          fontSize: "16px",
-          color: cfg.accent,
-          fontWeight: 700,
-          lineHeight: 1,
-          flexShrink: 0,
-        }}
+        className="text-base font-bold leading-none flex-shrink-0"
+        style={{ color: cfg.accent }}
       >
         {cfg.icon}
       </span>
 
-      {/* Message */}
-      <span
-        style={{
-          flex: 1,
-          fontSize: "0.875rem",
-          fontFamily: "var(--font-body)",
-          lineHeight: 1.5,
-          color: "#d6ebeb",
-        }}
-      >
+      <span className="flex-1 text-sm font-body leading-relaxed text-text-ds-secondary">
         {toast.text}
       </span>
 
-      {/* Dismiss button */}
       <button
         onClick={dismiss}
         aria-label="Zamknij powiadomienie"
-        style={{
-          background: "transparent",
-          border: "none",
-          cursor: "pointer",
-          color: "#5c7a7a",
-          fontSize: "18px",
-          lineHeight: 1,
-          padding: "2px",
-          flexShrink: 0,
-          transition: "color 200ms ease",
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.color = "#ffffff";
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.color = "#5c7a7a";
-        }}
+        className={clsx(
+          "bg-transparent border-none cursor-pointer",
+          "text-teal-600",
+          "text-lg leading-none p-0.5 flex-shrink-0",
+          "transition-colors duration-200",
+          "hover:text-text-ds-primary",
+        )}
       >
         ×
       </button>
     </div>
   );
 }
-
-/* ── Toast Host (mount once in layout) ── */
 
 export default function ToastHost() {
   const [queue, setQueue] = useState<ToastMessage[]>([]);
@@ -233,59 +175,38 @@ export default function ToastHost() {
 
   return (
     <>
-      {/* Desktop: bottom-right (system.md §4.1) */}
+      {/* Desktop: bottom-right (design.md §3.4) */}
       <div
         aria-live="polite"
-        style={{
-          position: "fixed",
-          bottom: "24px",
-          right: "24px",
-          zIndex: "var(--z-toast)",
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
-          pointerEvents: "none",
-          /* Hidden on mobile via media query below */
-        }}
-        className="hidden sm:flex"
+        className={clsx(
+          "hidden sm:flex",
+          "fixed bottom-6 right-6",
+          "z-toast",
+          "flex-col gap-[10px]",
+          "pointer-events-none",
+        )}
       >
         {queue.map((t) => (
-          <div
-            key={t.id}
-            style={{
-              animation:
-                "toast-slide-in-desktop 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both",
-            }}
-          >
+          <div key={t.id} className="animate-toast-desktop">
             <ToastItem toast={t} onDismiss={dismiss} />
           </div>
         ))}
       </div>
 
-      {/* Mobile: top with safe-area (system.md §4.1) */}
+      {/* Mobile: top + safe-area (design.md §3.4) */}
       <div
         aria-live="polite"
-        style={{
-          position: "fixed",
-          top: `calc(24px + env(safe-area-inset-top))`,
-          left: "16px",
-          right: "16px",
-          zIndex: "var(--z-toast)",
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
-          pointerEvents: "none",
-        }}
-        className="flex sm:hidden"
+        className={clsx(
+          "flex sm:hidden",
+          "fixed left-4 right-4",
+          "z-toast",
+          "flex-col gap-[10px]",
+          "pointer-events-none",
+        )}
+        style={{ top: "calc(24px + env(safe-area-inset-top))" }}
       >
         {queue.map((t) => (
-          <div
-            key={t.id}
-            style={{
-              animation:
-                "toast-slide-in-mobile 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both",
-            }}
-          >
+          <div key={t.id} className="animate-toast-mobile">
             <ToastItem toast={t} onDismiss={dismiss} />
           </div>
         ))}
