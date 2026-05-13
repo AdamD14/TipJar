@@ -12,14 +12,14 @@ export default function Hero() {
     >
       {/* FULL-BLEED background /1.png — zawsze 100vw × 100vh */}
       <div className="pointer-events-none absolute inset-0 -z-20" aria-hidden>
-        <Image 
-          src="/1.png" 
-          alt="" 
-          fill 
-          priority 
-          sizes="100vw" 
+        <Image
+          src="/1.png"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
           quality={90}
-          className="object-cover rounded-2xl pointer-events-none select-none" 
+          className="object-cover rounded-2xl pointer-events-none select-none"
         />
       </div>
 
@@ -39,7 +39,10 @@ export default function Hero() {
           </h1>
 
           <p className="mt-6 lg:mt-8 text-lg sm:text-xl md:text-2xl font-ui text-white max-w-2xl">
-            Instant micro-payments in USDC for creators: podcasters, streamers, YouTubers, digital models, musicians, artists, bloggers, coaches, educators, journalists, influencers - simply anyone creating valuable content.
+            Instant micro-payments in USDC for creators: podcasters, streamers,
+            YouTubers, digital models, musicians, artists, bloggers, coaches,
+            educators, journalists, influencers - simply anyone creating
+            valuable content.
           </p>
 
           {/* "Enter" wysokość między subhero a trust strip */}
@@ -50,7 +53,13 @@ export default function Hero() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 ring-1 ring-white/10 hover:text-white"
             >
-              <Image src="/c.png" alt="Circle" width={16} height={16} priority />
+              <Image
+                src="/c.png"
+                alt="Circle"
+                width={16}
+                height={16}
+                priority
+              />
               <span>
                 Powered by <span className="font-semibold">circle.com</span>
               </span>
@@ -85,7 +94,7 @@ export default function Hero() {
               >
                 <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
               </svg>
-              <span>3.5% transaction fee</span>
+              <span>2.5% transaction fee</span>
             </span>
 
             <span className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 ring-1 ring-white/10">
