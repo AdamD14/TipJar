@@ -1,26 +1,40 @@
 "use client";
+
+import Input from "@/components/ui/Input";
+
 const KNOWN = [
-  { k: 'twitch', label: 'Twitch' },
-  { k: 'youtube', label: 'YouTube' },
-  { k: 'x', label: 'X' },
-  { k: 'instagram', label: 'Instagram' },
-  { k: 'website', label: 'Website' },
+  { k: "twitch", label: "Twitch" },
+  { k: "youtube", label: "YouTube" },
+  { k: "x", label: "X" },
+  { k: "instagram", label: "Instagram" },
+  { k: "website", label: "Website" },
 ];
 
-export default function SocialLinksForm({ value, onChange }: { value: { [k: string]: string }; onChange: (v: any) => void }) {
+export default function SocialLinksForm({
+  value,
+  onChange,
+}: {
+  value: { [k: string]: string };
+  onChange: (v: any) => void;
+}) {
   const set = (k: string, v: string) => onChange({ ...value, [k]: v });
+
   return (
     <div>
-      <div className="text-sm mb-4">Socials</div>
+      <div className="font-heading font-semibold text-sm text-text-ds-secondary mb-4">
+        Socials
+      </div>
       <div className="space-y-3">
         {KNOWN.map(({ k, label }) => (
           <div key={k} className="flex items-center gap-3">
-            <span className="w-28 text-sm text-white/70">{label}</span>
-            <input
-              value={value?.[k] || ''}
+            <span className="w-28 font-body text-sm text-text-ds-tertiary shrink-0">
+              {label}
+            </span>
+            <Input
+              value={value?.[k] || ""}
               onChange={(e) => set(k, e.target.value)}
-              placeholder={`https://...`}
-              className="flex-1 bg-transparent border-b border-white/20 focus:border-[#FFD700] outline-none py-1"
+              placeholder="https://..."
+              className="flex-1"
             />
           </div>
         ))}
@@ -28,4 +42,3 @@ export default function SocialLinksForm({ value, onChange }: { value: { [k: stri
     </div>
   );
 }
-

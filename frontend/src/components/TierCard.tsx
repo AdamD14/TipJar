@@ -1,30 +1,58 @@
 "use client";
-import type { Tier } from '@/lib/types';
 
-export default function TierCard({ t, onEdit, onArchive }: { t: Tier; onEdit: (t: Tier) => void; onArchive: (id: string) => void }) {
+import clsx from "clsx";
+import type { Tier } from "@/lib/types";
+import Button from "@/components/ui/Button";
+
+export default function TierCard({
+  t,
+  onEdit,
+  onArchive,
+}: {
+  t: Tier;
+  onEdit: (t: Tier) => void;
+  onArchive: (id: string) => void;
+}) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-4 flex flex-col">
+    <div className="rounded-xl border border-white/[0.05] bg-teal-800 p-4 flex flex-col shadow-1 hover:shadow-2 hover:-translate-y-1 transition-all duration-200">
       <div className="flex items-start justify-between">
         <div>
-          <div className="font-semibold">{t.name}</div>
-          <div className="text-2xl font-bold mt-1">
-            {(t.price / 100).toFixed(2)} <span className="text-sm">USDC/mo</span>
+          <div className="font-heading font-semibold text-text-ds-primary">
+            {t.name}
+          </div>
+          <div className="text-2xl font-heading font-bold text-text-ds-primary mt-1 tnum">
+            {(t.price / 100).toFixed(2)}{" "}
+            <span className="text-sm font-body font-normal text-text-ds-tertiary">
+              USDC/mo
+            </span>
           </div>
         </div>
-        <span className={`text-xs px-2 py-1 rounded ${t.active ? 'bg-emerald-400/20 text-emerald-300' : 'bg-white/10 text-white/60'}`}>{t.active ? 'Active' : 'Inactive'}</span>
+        <span
+          className={clsx(
+            "text-xs font-body font-medium px-2 py-1 rounded",
+            t.active
+              ? "bg-success-dark text-success-light"
+              : "bg-teal-850 text-text-ds-tertiary",
+          )}
+        >
+          {t.active ? "Active" : "Inactive"}
+        </span>
       </div>
 
-      <ul className="mt-3 space-y-1 text-sm text-white/80 flex-1">
+      <ul className="mt-3 space-y-1 text-sm font-body text-text-ds-secondary flex-1">
         {t.perks.map((p, i) => (
           <li key={i}>• {p}</li>
         ))}
       </ul>
 
       <div className="mt-4 flex gap-2">
-        <button onClick={() => onEdit(t)} className="px-3 py-1.5 rounded-lg border border-white/15 text-sm">Edit</button>
-        <button onClick={() => onArchive(t.id)} className="px-3 py-1.5 rounded-lg text-sm bg-white/10">Archive</button>
+        <Button variant="secondary" size="sm" onClick={() => onEdit(t)}>
+          Edit
+        </Button>
+        <Button variant="ghost" size="sm" onClick={() => onArchive(t.id)}>
+          Archive
+        </Button>
       </div>
     </div>
   );
 }
-

@@ -1,6 +1,10 @@
 "use client";
 
 import React, { useState, Suspense } from "react";
+import clsx from "clsx";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
+import Spinner from "@/components/ui/Spinner";
 
 const QRCode = React.lazy(() =>
   import("react-qrcode-logo").then((m) => ({ default: m.QRCode })),
@@ -19,43 +23,49 @@ export default function QRGenerator() {
 
   return (
     <div className="flex flex-col items-center gap-6 p-8 w-full max-w-sm mx-auto">
-      <input
-        className="w-full rounded-md bg-slate-800 text-white px-3 py-2"
+      <Input
         value={profileUrl}
         placeholder="Profile link"
         onChange={(e) => setProfileUrl(e.target.value)}
       />
 
-      <div className="flex flex-row gap-4 w-full text-white items-center">
-        <div className="flex flex-col text-sm">
-          <span>QR color</span>
+      <div className="flex flex-row gap-4 w-full items-center">
+        <div className="flex flex-col gap-1">
+          <span className="font-body text-sm text-text-ds-secondary">
+            QR color
+          </span>
           <input
             type="color"
             value={fgColor}
             onChange={(e) => setFgColor(e.target.value)}
-            className="h-10 w-20 rounded-md"
+            className="h-10 w-20 rounded-md bg-teal-800 border border-teal-700 cursor-pointer"
           />
         </div>
-        <div className="flex flex-col text-sm">
-          <span>Background</span>
+        <div className="flex flex-col gap-1">
+          <span className="font-body text-sm text-text-ds-secondary">
+            Background
+          </span>
           <input
             type="color"
             value={bgColor}
             onChange={(e) => setBgColor(e.target.value)}
-            className="h-10 w-20 rounded-md"
+            className="h-10 w-20 rounded-md bg-teal-800 border border-teal-700 cursor-pointer"
           />
         </div>
       </div>
 
-      <button
-        onClick={handleGenerate}
-        className="w-full px-4 py-2 rounded-lg bg-yellow-400 text-black font-semibold hover:bg-yellow-500 transition"
-      >
+      <Button variant="primary" fullWidth onClick={handleGenerate}>
         Generate
-      </button>
+      </Button>
 
       {qrValue && (
-        <Suspense fallback={<div>Loading QR Code...</div>}>
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center h-56">
+              <Spinner size="md" />
+            </div>
+          }
+        >
           <QRCode
             value={qrValue}
             size={220}

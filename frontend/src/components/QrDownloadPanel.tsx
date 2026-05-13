@@ -1,5 +1,8 @@
 "use client";
+
 import { useRef } from "react";
+import clsx from "clsx";
+import Button from "@/components/ui/Button";
 // @ts-expect-error - QRGenerator component has dynamic props that TypeScript cannot verify
 import QRGenerator from "@/components/QRGenerator";
 
@@ -36,22 +39,16 @@ export default function QrDownloadPanel({ url }: { url: string }) {
 
   return (
     <div className="space-y-3">
-      <div className="rounded-xl border border-white/10 p-4 bg-white/5">
+      <div className="rounded-xl border border-white/[0.05] p-4 bg-teal-850">
         <QRGenerator value={url} onCanvasReady={onQrReady} />
       </div>
       <div className="flex gap-2">
-        <button
-          onClick={downloadPng}
-          className="px-3 py-2 rounded-lg bg-[#FFD700] text-[#003737] font-semibold text-sm"
-        >
+        <Button variant="primary" size="sm" onClick={downloadPng}>
           Download PNG
-        </button>
-        <button
-          onClick={downloadPdf}
-          className="px-3 py-2 rounded-lg border border-white/15 text-sm"
-        >
+        </Button>
+        <Button variant="secondary" size="sm" onClick={downloadPdf}>
           Download PDF
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -1,6 +1,8 @@
 "use client";
+
 import { useState } from "react";
 import Image from "next/image";
+import Button from "@/components/ui/Button";
 
 export default function TwitchConnect() {
   const [connected] = useState<boolean>(false);
@@ -10,28 +12,27 @@ export default function TwitchConnect() {
   };
 
   return (
-    <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+    <div className="rounded-xl border border-white/[0.05] bg-teal-800 p-4 shadow-1">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Image src="/twitch-logo.svg" alt="Twitch" width={24} height={24} />
           <div>
-            <div className="font-medium text-white">Twitch</div>
-            <div className="text-sm text-white/60">
+            <div className="font-heading font-semibold text-text-ds-primary">
+              Twitch
+            </div>
+            <div className="font-body text-sm text-text-ds-tertiary">
               {connected ? "Connected" : "Not connected"}
             </div>
           </div>
         </div>
         {connected ? (
-          <button className="px-3 py-2 rounded-lg border border-white/15 text-sm text-gray-300 hover:bg-white/5">
+          <Button variant="ghost" size="sm">
             Disconnect
-          </button>
+          </Button>
         ) : (
-          <button
-            onClick={handleConnect}
-            className="px-4 py-2 rounded-lg bg-[#9146FF] text-white text-sm font-medium hover:bg-[#7c3aed]"
-          >
+          <Button variant="primary" size="sm" onClick={handleConnect}>
             Connect
-          </button>
+          </Button>
         )}
       </div>
     </div>

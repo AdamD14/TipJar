@@ -1,20 +1,15 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { apiClient } from "@/lib/apiClient";
+import Skeleton from "@/components/ui/Skeleton";
 
-/**
- * Displays the creator's current USDC balance.  On mount it
- * fetches the balance from the backend.  Should be rendered by
- * authenticated creator pages.  If no balance endpoint has been
- * implemented yet the component will simply show an error in the
- * console and display zero.
- */
 export default function CreatorBalance() {
   const [balance, setBalance] = useState<number | null>(null);
+
   useEffect(() => {
     async function fetchBalance() {
       try {
-        // Assumes an endpoint exists at /api/v1/creator/wallet/balance which
-        // returns { balance: number }
         const res = await apiClient.get("/creator/wallet/balance");
         setBalance(res.data.balance ?? 0);
       } catch (err) {
@@ -24,13 +19,24 @@ export default function CreatorBalance() {
     }
     fetchBalance();
   }, []);
+
   if (balance === null) {
-    return <div className="text-gray-500">Ładowanie salda...</div>;
+    return (
+      <div className="p-6 bg-teal-800 border border-white/[0.05] rounded-lg">
+        <Skeleton variant="text" width="40%" height="14px" />
+        <Skeleton variant="text" width="60%" height="28px" className="mt-2" />
+      </div>
+    );
   }
+
   return (
-    <div className="p-4 bg-gray-50 border rounded">
-      <p className="text-sm text-gray-700">Twoje saldo</p>
-      <p className="text-2xl font-semibold">${balance.toFixed(2)}</p>
+    <div className="p-6 bg-teal-800 border border-white/[0.05] rounded-lg shadow-1">
+      <p className="text-sm font-body text-text-ds-tertiary mb-1">
+        Your balance
+      </p>
+      <p className="text-2xl font-heading font-bold text-text-ds-primary tnum">
+        ${balance.toFixed(2)}
+      </p>
     </div>
   );
 }

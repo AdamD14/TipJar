@@ -1,32 +1,100 @@
-import type { Goal } from '@/lib/types';
+import type { Goal } from "@/lib/types";
+import clsx from "clsx";
 
 export default function GoalCard({ g }: { g: Goal }) {
-  const pct = Math.min(100, Math.round((g.raised / Math.max(1, g.targetAmount)) * 100));
+  const pct = Math.min(
+    100,
+    Math.round((g.raised / Math.max(1, g.targetAmount)) * 100),
+  );
+
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+    <div
+      className={clsx(
+        "rounded-lg",
+        "border border-white/[0.05]",
+        "bg-teal-800",
+        "p-6",
+        "shadow-1",
+      )}
+    >
       <div className="flex items-center justify-between">
-        <div className="font-semibold">{g.title}</div>
-        <span className={`text-xs ${g.active ? 'text-emerald-400' : 'text-white/50'}`}>{g.active ? 'Active' : 'Inactive'}</span>
+        <div className="font-heading font-semibold text-text-ds-primary">
+          {g.title}
+        </div>
+        <span
+          className={clsx(
+            "text-xs font-body",
+            g.active ? "text-success-base" : "text-text-ds-tertiary",
+          )}
+        >
+          {g.active ? "Active" : "Inactive"}
+        </span>
       </div>
-      {g.description && <div className="mt-2 text-sm text-white/70">{g.description}</div>}
+
+      {g.description && (
+        <p className="mt-2 text-sm font-body text-text-ds-secondary">
+          {g.description}
+        </p>
+      )}
+
+      {/* Progress bar */}
       <div className="mt-4">
-        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-          <div className="h-full bg-[#FFD700]" style={{ width: `${pct}%` }} />
+        <div className="h-2 bg-teal-850 rounded-full overflow-hidden border border-white/[0.05]">
+          <div
+            className="h-full bg-gold-400 transition-all duration-700 ease-standard"
+            style={{ width: `${pct}%` }}
+          />
         </div>
-        <div className="flex justify-between text-xs text-white/60 mt-1">
-          <span>{(g.raised / 100).toFixed(2)} USDC</span>
-          <span>Target {(g.targetAmount / 100).toFixed(2)} USDC</span>
+        <div className="flex justify-between text-xs font-body text-text-ds-tertiary mt-1">
+          <span className="tnum">{(g.raised / 100).toFixed(2)} USDC</span>
+          <span className="tnum">
+            Target {(g.targetAmount / 100).toFixed(2)} USDC
+          </span>
         </div>
       </div>
-      <div className="mt-3 flex gap-2">
-        <button className="px-3 py-1.5 rounded-lg border border-white/15 text-sm">Edit</button>
+
+      {/* Actions */}
+      <div className="mt-4 flex gap-2">
+        <button
+          className={clsx(
+            "px-3 py-1.5",
+            "rounded-lg",
+            "border border-teal-500/20",
+            "text-sm font-body text-text-ds-secondary",
+            "hover:bg-teal-700 hover:text-text-ds-primary",
+            "transition-colors duration-200",
+          )}
+        >
+          Edit
+        </button>
         {g.active ? (
-          <button className="px-3 py-1.5 rounded-lg text-sm bg-white/10">Finish</button>
+          <button
+            className={clsx(
+              "px-3 py-1.5",
+              "rounded-lg",
+              "text-sm font-body text-text-ds-secondary",
+              "bg-teal-700",
+              "hover:bg-teal-600 hover:text-text-ds-primary",
+              "transition-colors duration-200",
+            )}
+          >
+            Finish
+          </button>
         ) : (
-          <button className="px-3 py-1.5 rounded-lg text-sm bg-white/10">Activate</button>
+          <button
+            className={clsx(
+              "px-3 py-1.5",
+              "rounded-lg",
+              "text-sm font-body text-text-ds-secondary",
+              "bg-teal-700",
+              "hover:bg-teal-600 hover:text-text-ds-primary",
+              "transition-colors duration-200",
+            )}
+          >
+            Activate
+          </button>
         )}
       </div>
     </div>
   );
 }
-

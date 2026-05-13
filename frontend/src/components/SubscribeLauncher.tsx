@@ -1,14 +1,29 @@
-'use client';
-import { useState } from 'react';
-import SubscribeModal, { TierPub } from './SubscribeModal';
+"use client";
 
-export default function SubscribeLauncher({ username, tiers }:{ username:string; tiers:TierPub[] }) {
+import { useState } from "react";
+import Button from "@/components/ui/Button";
+import SubscribeModal, { TierPub } from "./SubscribeModal";
+
+export default function SubscribeLauncher({
+  username,
+  tiers,
+}: {
+  username: string;
+  tiers: TierPub[];
+}) {
   const [open, setOpen] = useState(false);
+
   return (
     <>
-      <button onClick={()=>setOpen(true)} className="px-5 py-3 rounded-xl border border-white/15">Subscribe</button>
-      <SubscribeModal username={username} tiers={tiers} open={open} onClose={()=>setOpen(false)} />
+      <Button variant="secondary" size="md" onClick={() => setOpen(true)}>
+        Subscribe
+      </Button>
+      <SubscribeModal
+        username={username}
+        tiers={tiers}
+        open={open}
+        onClose={() => setOpen(false)}
+      />
     </>
   );
 }
-

@@ -1,7 +1,12 @@
 "use client";
+
 import { useState } from "react";
 import api from "@/lib/apiClient";
 import { GoalSchema } from "@/lib/validators";
+import Modal from "@/components/ui/Modal";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
+import Textarea from "@/components/ui/Textarea";
 
 interface Goal {
   id: string;
@@ -18,54 +23,88 @@ export default function GoalModal({
   onSaved: (g: Goal) => void;
 }) {
   const [f, setF] = useState({ title: "", targetAmount: "", description: "" });
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const submit = async () => {
-    const parsed = GoalSchema.parse({
-      title: f.title,
-      targetAmount: Math.round(Number(f.targetAmount) * 100),
-      description: f.description || undefined,
-    });
-    const { data: g } = await api.post("/api/v1/goal", parsed);
-    onSaved(g);
-    onClose();
+    setError(null);
+    try {
+      setBusy(true);
+      const parsed = GoalSchema.parse({
+        title: f.title,
+        targetAmount: Math.round(Number(f.targetAmount) * 100),
+        description: f.description || undefined,
+      });
+      const { data: g } = await api.post("/api/v1/goal", parsed);
+      onSaved(g);
+      onClose();
+    } catch (e: any) {
+      setError(e?.message || "Nie udało się utworzyć celu.");
+    } finally {
+      setBusy(false);
+    }
   };
+
   return (
-    <div className="fixed inset-0 bg-black/60 grid place-items-center p-4">
-      <div className="w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl p-6">
-        <h3 className="font-semibold mb-4">New goal</h3>
-        <label className="text-sm">Title</label>
-        <input
-          value={f.title}
-          onChange={(e) => setF({ ...f, title: e.target.value })}
-          className="w-full bg-transparent border-b border-white/20 mb-3"
-        />
-        <label className="text-sm">Target (USDC)</label>
-        <input
-          type="number"
-          value={f.targetAmount}
-          onChange={(e) => setF({ ...f, targetAmount: e.target.value })}
-          className="w-full bg-transparent border-b border-white/20 mb-3"
-        />
-        <label className="text-sm">Description (optional)</label>
-        <textarea
-          value={f.description}
-          onChange={(e) => setF({ ...f, description: e.target.value })}
-          className="w-full bg-transparent border border-white/20 rounded-lg p-2"
-        />
-        <div className="mt-5 flex gap-2 justify-end">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 rounded-lg border border-white/15"
-          >
+    <Modal open onClose={onClose} size="form" title="New goal">
+      <div className="space-y-4">
+        <div>
+          <label className="block font-body text-sm text-text-ds-secondary mb-1">
+            Title
+          </label>
+          <Input
+            value={f.title}
+            onChange={(e) => setF({ ...f, title: e.target.value })}
+            placeholder="e.g. New streaming setup"
+          />
+        </div>
+
+        <div>
+          <label className="block font-body text-sm text-text-ds-secondary mb-1">
+            Target (USDC)
+          </label>
+          <Input
+            type="number"
+            value={f.targetAmount}
+            onChange={(e) => setF({ ...f, targetAmount: e.target.value })}
+            placeholder="100.00"
+            inputSize="large"
+            className="tnum"
+          />
+        </div>
+
+        <div>
+          <label className="block font-body text-sm text-text-ds-secondary mb-1">
+            Description (optional)
+          </label>
+          <Textarea
+            value={f.description}
+            onChange={(e) => setF({ ...f, description: e.target.value })}
+            placeholder="What is this goal for?"
+          />
+        </div>
+
+        {error && (
+          <p className="text-sm text-error-light" role="alert">
+            {error}
+          </p>
+        )}
+
+        <div className="flex gap-2 justify-end pt-2">
+          <Button variant="secondary" size="sm" onClick={onClose}>
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="primary"
+            size="sm"
+            loading={busy}
+            disabled={!f.title || !f.targetAmount}
             onClick={submit}
-            className="px-4 py-2 rounded-lg bg-[#FFD700] text-[#003737] font-semibold"
           >
             Create
-          </button>
+          </Button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
