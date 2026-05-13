@@ -20,7 +20,7 @@ docker compose up -d
 bash supabase-start.sh
 ```
 
-Copy `.env.example` to `.env` in both `backend/` and `frontend/` before running.
+
 
 ## Commands (must cd into subdirectory first)
 
@@ -65,6 +65,7 @@ npm run dev             # dev server
 
 ## Agent rules
 
+**UI Rule:** For UI-related design.md is the most important.
 See `GEMINI.md` for project-level AI agent constraints, including:
 
 - No API contract, DTO, or schema changes without explicit approval
