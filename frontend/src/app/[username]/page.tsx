@@ -2,12 +2,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import {
-  Check,
-  ArrowLeft,
-  Share2,
-  Copy,
-} from "lucide-react";
+import { Check, ArrowLeft, Share2, Copy } from "lucide-react";
 import { getPublicProfile } from "@/lib/users";
 import Button from "@/components/ui/Button";
 import Spinner from "@/components/ui/Spinner";
@@ -37,7 +32,13 @@ type UserProfile = {
 };
 
 /* ── Archetype Badge ── */
-function ArchetypeBadge({ label, variant = "archetype" }: { label: string; variant?: "archetype" | "specialization" }) {
+function ArchetypeBadge({
+  label,
+  variant = "archetype",
+}: {
+  label: string;
+  variant?: "archetype" | "specialization";
+}) {
   return (
     <span
       className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.25em] border shadow-xl ${
@@ -187,7 +188,10 @@ export default function CreatorProfile() {
                 {copied ? (
                   <Check size={12} className="text-green-400" />
                 ) : (
-                  <Copy size={12} className="text-teal-600 group-hover:text-gold-400 transition-colors" />
+                  <Copy
+                    size={12}
+                    className="text-teal-600 group-hover:text-gold-400 transition-colors"
+                  />
                 )}
               </button>
 
@@ -211,14 +215,18 @@ export default function CreatorProfile() {
 
               {/* Stats */}
               <div className="grid grid-cols-2 w-full gap-4 mt-6 pt-6 border-t border-teal-700/30 text-center">
-                <div>
-                  <p className="text-xl font-black text-white leading-none">0</p>
+                  <div>
+                  <p className="text-xl font-bold text-white leading-none">
+                    0
+                  </p>
                   <p className="text-[8px] uppercase tracking-widest text-teal-400 mt-1 font-bold">
                     Followers
                   </p>
                 </div>
                 <div>
-                  <p className="text-xl font-black text-white leading-none">0</p>
+                  <p className="text-xl font-bold text-white leading-none">
+                    0
+                  </p>
                   <p className="text-[8px] uppercase tracking-widest text-teal-400 mt-1 font-bold">
                     Supporters
                   </p>
@@ -257,7 +265,7 @@ export default function CreatorProfile() {
               )}
 
               {/* Display Name */}
-              <h1 className="text-5xl md:text-6xl lg:text-8xl font-heading font-black text-white tracking-tighter leading-none">
+              <h1 className="text-5xl md:text-6xl lg:text-8xl font-heading font-bold text-white tracking-tighter leading-none">
                 {safeDisplayName}
               </h1>
 

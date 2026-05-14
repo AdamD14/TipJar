@@ -2,18 +2,11 @@
 
 import { useState } from "react";
 import api from "@/lib/apiClient";
-import { GoalSchema } from "@/lib/validators";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Textarea from "@/components/ui/Textarea";
-
-interface Goal {
-  id: string;
-  title: string;
-  targetAmount: number;
-  description?: string;
-}
+import type { Goal } from "@/lib/types";
 
 export default function GoalModal({
   onClose,
@@ -30,11 +23,11 @@ export default function GoalModal({
     setError(null);
     try {
       setBusy(true);
-      const parsed = GoalSchema.parse({
+      const parsed = {
         title: f.title,
         targetAmount: Math.round(Number(f.targetAmount) * 100),
         description: f.description || undefined,
-      });
+      };
       const { data: g } = await api.post("/api/v1/goal", parsed);
       onSaved(g);
       onClose();
@@ -46,23 +39,19 @@ export default function GoalModal({
   };
 
   return (
-    <Modal open onClose={onClose} size="form" title="New goal">
+    <Modal open onClose={onClose} size="form" title="Nowy cel">
       <div className="space-y-4">
         <div>
-          <label className="block font-body text-sm text-text-ds-secondary mb-1">
-            Title
-          </label>
+          <label className="block font-body text-sm text-teal-50 mb-1">Nazwa</label>
           <Input
             value={f.title}
             onChange={(e) => setF({ ...f, title: e.target.value })}
-            placeholder="e.g. New streaming setup"
+            placeholder="np. Nowy setup do streamowania"
           />
         </div>
 
         <div>
-          <label className="block font-body text-sm text-text-ds-secondary mb-1">
-            Target (USDC)
-          </label>
+          <label className="block font-body text-sm text-teal-50 mb-1">Cel (USDC)</label>
           <Input
             type="number"
             value={f.targetAmount}
@@ -74,25 +63,21 @@ export default function GoalModal({
         </div>
 
         <div>
-          <label className="block font-body text-sm text-text-ds-secondary mb-1">
-            Description (optional)
-          </label>
+          <label className="block font-body text-sm text-teal-50 mb-1">Opis (opcjonalnie)</label>
           <Textarea
             value={f.description}
             onChange={(e) => setF({ ...f, description: e.target.value })}
-            placeholder="What is this goal for?"
+            placeholder="Na co zbierasz?"
           />
         </div>
 
         {error && (
-          <p className="text-sm text-error-light" role="alert">
-            {error}
-          </p>
+          <p className="text-sm text-error-light" role="alert">{error}</p>
         )}
 
         <div className="flex gap-2 justify-end pt-2">
           <Button variant="secondary" size="sm" onClick={onClose}>
-            Cancel
+            Anuluj
           </Button>
           <Button
             variant="primary"
@@ -101,7 +86,7 @@ export default function GoalModal({
             disabled={!f.title || !f.targetAmount}
             onClick={submit}
           >
-            Create
+            Utwórz
           </Button>
         </div>
       </div>

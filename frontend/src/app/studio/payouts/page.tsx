@@ -11,12 +11,12 @@ export default function StudioPayoutsPage() {
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
             <h2 className="font-medium text-[#DDE0DA]">Withdraw (FIAT)</h2>
-            <p className="text-sm text-white/60 mt-1">Przelew na IBAN / karta / Revolut.</p>
+            <p className="text-sm text-teal-25/60 mt-1">Przelew na IBAN / karta / Revolut.</p>
             <Link href="/creator/wallet/withdraw-fiat" className="inline-block mt-3 rounded-lg bg-[#FFD700] px-4 py-2 font-semibold text-[#003737]">Open</Link>
           </section>
           <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
             <h2 className="font-medium text-[#DDE0DA]">Withdraw (Crypto)</h2>
-            <p className="text-sm text-white/60 mt-1">USDC → zewnętrzny adres (EVM).</p>
+            <p className="text-sm text-teal-25/60 mt-1">USDC → zewnętrzny adres (EVM).</p>
             <Link href="/creator/wallet/withdraw-crypto" className="inline-block mt-3 rounded-lg bg-[#FFD700] px-4 py-2 font-semibold text-[#003737]">Open</Link>
           </section>
         </div>

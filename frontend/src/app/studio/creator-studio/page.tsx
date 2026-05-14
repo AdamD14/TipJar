@@ -1,30 +1,17 @@
 "use client";
 
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   QrCode, 
   Sparkles, 
-  HelpCircle, 
-  LineChart as ChartIcon, 
-  Zap, 
   Wallet, 
-  Video, 
-  Mic2, 
-  Users, 
-  LayoutDashboard, 
-  BrainCircuit, 
-  Goal as GoalIcon, 
-  ShoppingBag, 
-  Radio, 
-  ShieldCheck, 
-  Gamepad2, 
-  Megaphone, 
-  CheckCircle2, 
-  Copy,
+  Crown,
   Plus,
-  Crown
+  Download,
+  FileText,
+  Play,
+  Zap
 } from 'lucide-react';
 import { Target, Tv, Share2 } from 'lucide-react';
 import { useWidgetStore } from '@/lib/store/widgetStore';
@@ -56,75 +43,73 @@ const CreatorStudio: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] p-4 md:p-8 lg:p-10 pb-32">
-      <div className="max-w-[1400px] mx-auto space-y-8 animate-in fade-in duration-700">
-        <header className="flex flex-col gap-6">
-          <div>
-            <h1 className="text-4xl font-black text-[#003737] tracking-tight italic">Creator Studio</h1>
-            <p className="text-slate-500 font-black uppercase text-[10px] tracking-[0.3em] mt-1">Management Hub & Monetization Control</p>
-          </div>
-          
-          <div className="flex overflow-x-auto no-scrollbar gap-2 p-1.5 bg-[#003737]/5 rounded-[2.5rem] shadow-inner border border-slate-100">
-            {TABS.map((t) => (
-              <button
-                key={t}
-                onClick={() => setActiveTab(t)}
-                className={`relative flex-shrink-0 rounded-full px-8 py-3 text-[10px] transition-all duration-300 font-black uppercase tracking-widest flex items-center justify-center gap-2 ${
-                  activeTab === t ? 'bg-[#003737] text-[#FFD700] shadow-xl' : 'text-slate-400 hover:text-[#003737]'
-                }`}
-              >
-                {t === 'QR Hub' && <QrCode size={14} />}
-                {t === 'Tip Modal' && <Wallet size={14} />}
-                {t === 'Goals' && <Target size={14} />}
-                {t === 'Subscriptions' && <Crown size={14} />}
-                {t === 'Overlay' && <Tv size={14} />}
-                {t === 'Social' && <Share2 size={14} />}
-                <span className="whitespace-nowrap italic">{t}</span>
-              </button>
-            ))}
-          </div>
-        </header>
+    <div className="space-y-8 animate-in fade-in duration-700 pb-20">
+      <header className="flex flex-col gap-6">
+        <div>
+          <h1 className="text-4xl font-bold font-heading text-teal-25 tracking-tight italic">Creator Studio</h1>
+          <p className="text-teal-50 font-bold uppercase text-[10px] tracking-[0.3em] mt-1">Management Hub & Monetization Control</p>
+        </div>
+        
+        <div className="flex overflow-x-auto no-scrollbar gap-2 p-1.5 bg-teal-800 rounded-lg shadow-inner border border-teal-700">
+          {TABS.map((t) => (
+            <button
+              key={t}
+              onClick={() => setActiveTab(t)}
+              className={`relative flex-shrink-0 rounded-md px-6 py-2.5 text-[10px] transition-all ease-standard font-bold uppercase tracking-widest flex items-center justify-center gap-2 font-heading ${
+                activeTab === t ? 'bg-teal-700 text-gold-400 shadow-lg' : 'text-teal-100 hover:text-teal-25'
+              }`}
+            >
+              {t === 'QR Hub' && <QrCode size={14} />}
+              {t === 'Tip Modal' && <Wallet size={14} />}
+              {t === 'Goals' && <Target size={14} />}
+              {t === 'Subscriptions' && <Crown size={14} />}
+              {t === 'Overlay' && <Tv size={14} />}
+              {t === 'Social' && <Share2 size={14} />}
+              <span className="whitespace-nowrap italic">{t}</span>
+            </button>
+          ))}
+        </div>
+      </header>
 
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white/80 backdrop-blur-2xl border border-slate-100 rounded-[3rem] p-6 lg:p-12 shadow-sm min-h-[600px]"
-        >
-          {renderContent()}
-        </motion.div>
-      </div>
+      <motion.div
+        key={activeTab}
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-teal-800 border border-teal-700 rounded-lg p-6 lg:p-10 shadow-sm min-h-[600px]"
+      >
+        {renderContent()}
+      </motion.div>
     </div>
   );
 };
 
 function QRHub() {
   const { config } = useWidgetStore();
-  const profileUrl = `${window.location.origin}/#/@${config.handle}`;
+  const profileUrl = `${window.location.origin}/@/${config.handle}`;
   
   return (
     <div className="grid lg:grid-cols-2 gap-12">
       <div className="space-y-8">
         <div>
-          <h3 className="text-3xl font-black italic text-[#003737]">QR & Print Hub</h3>
-          <p className="text-slate-500 font-medium mt-2 leading-relaxed">Pobierz kody QR w wysokiej rozdzielczości do umieszczenia na streamie lub w fizycznych lokalizacjach.</p>
+          <h3 className="text-3xl font-bold font-heading italic text-teal-25">QR & Print Hub</h3>
+          <p className="text-teal-50 font-medium mt-2 leading-relaxed">Pobierz kody QR w wysokiej rozdzielczości do umieszczenia na streamie lub w fizycznych lokalizacjach.</p>
         </div>
         <div className="grid grid-cols-2 gap-4">
-           <button className="flex items-center justify-center gap-3 py-5 bg-[#FFD700] text-[#003737] rounded-3xl font-black text-xs uppercase tracking-widest shadow-lg shadow-[#FFD700]/10 hover:scale-[1.02] transition-all">
+           <button className="flex items-center justify-center gap-3 py-5 bg-gold-400 text-teal-900 rounded-md font-bold text-xs uppercase tracking-widest shadow-lg shadow-gold-400/10 hover:scale-[1.02] transition-all ease-standard">
               <Download size={18} /> Pobierz PNG 2K
            </button>
-           <button className="flex items-center justify-center gap-3 py-5 border-2 border-[#003737] text-[#003737] rounded-3xl font-black text-xs uppercase tracking-widest hover:bg-[#003737] hover:text-white transition-all">
+           <button className="flex items-center justify-center gap-3 py-5 border-2 border-teal-600 text-teal-50 rounded-md font-bold text-xs uppercase tracking-widest hover:bg-teal-700 hover:text-teal-25 transition-all ease-standard">
               <FileText size={18} /> Drukuj Plakat A4
            </button>
         </div>
-        <div className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 italic text-xs text-slate-400 font-bold">
+        <div className="bg-teal-700 p-6 rounded-lg border border-teal-600 italic text-xs text-teal-100 font-bold">
            "Twój kod QR kieruje fana bezpośrednio do Twojego Tip Modala na Polygon."
         </div>
       </div>
-      <div className="flex items-center justify-center bg-[#f1f5f9] rounded-[3.5rem] border-2 border-dashed border-slate-200 p-10">
-         <div className="bg-white p-8 rounded-[3rem] shadow-2xl flex flex-col items-center gap-6">
+      <div className="flex items-center justify-center bg-teal-800 rounded-lg border-2 border-dashed border-teal-600 p-10">
+         <div className="bg-teal-700 p-8 rounded-lg shadow-2xl flex flex-col items-center gap-6">
             <QRCodeSVG value={profileUrl} size={200} includeMargin level="H" />
-            <div className="text-[10px] font-mono text-slate-400 font-bold bg-slate-50 px-4 py-2 rounded-full border border-slate-100 italic">{profileUrl}</div>
+            <div className="text-[10px] font-mono text-teal-100 font-bold bg-teal-800 px-4 py-2 rounded-md border border-teal-600 italic">{profileUrl}</div>
          </div>
       </div>
     </div>
@@ -138,42 +123,40 @@ function TipModalSection({ handle }: { handle: string }) {
     <div className="grid lg:grid-cols-2 gap-12">
       <div className="space-y-8">
         <div>
-          <h3 className="text-3xl font-black italic text-[#003737]">Dedykowany Tip Modal</h3>
-          <p className="text-slate-500 font-medium mt-2 leading-relaxed">Interfejs fana zoptymalizowany pod szybkie wpłaty. Obsługuje GPay, Revolut i portfele krypto (Circle API Ready).</p>
+          <h3 className="text-3xl font-bold font-heading italic text-teal-25">Dedykowany Tip Modal</h3>
+          <p className="text-teal-50 font-medium mt-2 leading-relaxed">Interfejs fana zoptymalizowany pod szybkie wpłaty. Obsługuje GPay, Revolut i portfele krypto (Circle API Ready).</p>
         </div>
-        <div className="p-8 bg-[#003737] rounded-[3rem] text-white space-y-6 relative overflow-hidden group">
-           <Zap size={100} className="absolute -bottom-10 -right-10 opacity-10 group-hover:scale-110 transition-transform duration-700" />
+        <div className="p-8 bg-teal-700 rounded-lg text-teal-25 space-y-6 relative overflow-hidden group">
+           <Zap size={100} className="absolute -bottom-10 -right-10 opacity-10 group-hover:scale-110 transition-transform ease-standard" />
            <div className="relative z-10 space-y-4">
-              <h4 className="font-black italic text-xl text-[#FFD700]">Podgląd Płatności</h4>
-              <p className="text-xs text-slate-300 leading-relaxed font-medium">Ustawienia: Presety $1-$20, Cent-based Logic, Multi-payment Icons.</p>
+              <h4 className="font-bold font-heading italic text-xl text-gold-400">Podgląd Płatności</h4>
+              <p className="text-xs text-teal-50 leading-relaxed font-medium">Ustawienia: Presety $1-$20, Cent-based Logic, Multi-payment Icons.</p>
               <button 
                 onClick={() => setShowTest(true)}
-                className="w-full py-4 bg-[#FFD700] text-[#003737] rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-[#FFD700]/10 flex items-center justify-center gap-2 hover:scale-[1.02] transition-all"
+                className="w-full py-4 bg-gold-400 text-teal-900 rounded-md font-bold text-xs uppercase tracking-widest shadow-xl shadow-gold-400/10 flex items-center justify-center gap-2 hover:scale-[1.02] transition-all ease-standard"
               >
                 <Play size={16} fill="currentColor" /> Testuj Płynność Modala
               </button>
            </div>
         </div>
       </div>
-      <div className="bg-[#f1f5f9] rounded-[3.5rem] border-2 border-dashed border-slate-200 p-6 flex items-center justify-center relative overflow-hidden">
+      <div className="bg-teal-800 rounded-lg border-2 border-dashed border-teal-600 p-6 flex items-center justify-center relative overflow-hidden">
          <div className="text-center opacity-10">
-            <Wallet size={150} className="text-slate-400 mx-auto mb-4" />
-            <p className="font-black uppercase tracking-[0.4em]">Checkout Preview Area</p>
+            <Wallet size={150} className="text-teal-100 mx-auto mb-4" />
+            <p className="font-bold uppercase tracking-[0.4em] text-teal-100">Checkout Preview Area</p>
          </div>
-         <TipModal username={handle} open={showTest} onClose={() => setShowTest(false)} />
+         <TipModal creatorId={handle} open={showTest} onClose={() => setShowTest(false)} onSuccess={() => setShowTest(false)} />
       </div>
     </div>
   );
 }
 
 function GoalsHub() {
-  // Explicitly typing goals state using the exported Goal interface to prevent JSX assignment errors.
   const [goals, setGoals] = useState<Goal[]>([
-    { id: 1, title: 'Nowy Setup do Streamowania 🐺', raised: 425000, targetAmount: 1000000, description: 'Zbieramy na RTX 5090 i monitor 4K!', active: true }
+    { id: '1', title: 'Nowy Setup do Streamowania', raised: 425000, targetAmount: 1000000, description: 'Zbieramy na RTX 5090 i monitor 4K!', active: true }
   ]);
   const [showCreate, setShowCreate] = useState(false);
 
-  // Added type annotation for handleSaved to ensure consistency.
   const handleSaved = (newGoal: Goal) => {
     setGoals([...goals, newGoal]);
   };
@@ -182,28 +165,27 @@ function GoalsHub() {
     <div className="space-y-10">
       <div className="flex justify-between items-center">
         <div>
-           <h3 className="text-3xl font-black italic text-[#003737]">Goal Hub</h3>
-           <p className="text-slate-500 font-medium">Zarządzaj celami finansowymi swojego kanału.</p>
+           <h3 className="text-3xl font-bold font-heading italic text-teal-25">Goal Hub</h3>
+           <p className="text-teal-50 font-medium">Zarządzaj celami finansowymi swojego kanału.</p>
         </div>
         <button 
           onClick={() => setShowCreate(true)}
-          className="px-8 py-3 bg-[#006D6D] text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl flex items-center gap-2"
+          className="px-8 py-3 bg-teal-600 text-teal-25 rounded-md font-bold text-xs uppercase tracking-widest shadow-xl flex items-center gap-2 transition-all ease-standard hover:bg-teal-500"
         >
           <Plus size={18} /> Dodaj Nowy Cel
         </button>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
-        {/* Fixed mapping: using GoalCard with proper Goal typing and React.FC to handle 'key' correctly. */}
         {goals.map(g => <GoalCard key={g.id} g={g} />)}
         
         {goals.length === 1 && (
            <div 
              onClick={() => setShowCreate(true)}
-             className="border-4 border-dashed border-slate-100 rounded-[2.5rem] flex flex-col items-center justify-center p-12 text-slate-300 hover:border-[#006D6D] hover:text-[#006D6D] transition-all cursor-pointer group"
+             className="border-4 border-dashed border-teal-700 rounded-lg flex flex-col items-center justify-center p-12 text-teal-100 hover:border-teal-500 hover:text-teal-500 transition-all ease-standard cursor-pointer group"
            >
-              <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mb-4 group-hover:bg-[#006D6D]/10 transition-all"><Plus size={32} /></div>
-              <p className="font-black uppercase text-xs tracking-[0.2em]">Stwórz Cel Drugorzędny</p>
+              <div className="w-16 h-16 rounded-full bg-teal-700 flex items-center justify-center mb-4 group-hover:bg-teal-500/10 transition-all"><Plus size={32} className="text-teal-100" /></div>
+              <p className="font-bold uppercase text-xs tracking-[0.2em]">Stwórz Cel Drugorzędny</p>
            </div>
         )}
       </div>
@@ -226,33 +208,33 @@ function SubscriptionsHub({ handle }: { handle: string }) {
     <div className="grid lg:grid-cols-2 gap-12">
       <div className="space-y-8">
          <div>
-            <h3 className="text-3xl font-black italic text-[#003737]">Subscriptions</h3>
-            <p className="text-slate-500 font-medium">Buduj stały dochód dzięki systemom subskrypcji w USDC.</p>
+            <h3 className="text-3xl font-bold font-heading italic text-teal-25">Subscriptions</h3>
+            <p className="text-teal-50 font-medium">Buduj stały dochód dzięki systemom subskrypcji w USDC.</p>
          </div>
          <div className="space-y-4">
             {tiers.map(t => (
-              <div key={t.id} className="bg-white p-6 rounded-[2rem] border border-slate-100 flex justify-between items-center group">
+              <div key={t.id} className="bg-teal-700 p-6 rounded-lg border border-teal-600 flex justify-between items-center group">
                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-[#006D6D]"><Crown size={24} /></div>
+                    <div className="w-12 h-12 rounded-md bg-teal-800 flex items-center justify-center text-gold-400"><Crown size={24} /></div>
                     <div>
-                       <h4 className="font-black text-slate-800">{t.name}</h4>
-                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">{(t.price/100).toFixed(2)} USDC / msc</p>
+                       <h4 className="font-bold text-teal-25">{t.name}</h4>
+                       <p className="text-[10px] font-bold text-teal-100 uppercase tracking-widest italic">{(t.price/100).toFixed(2)} USDC / msc</p>
                     </div>
                  </div>
-                 <button className="px-5 py-2.5 bg-slate-50 text-slate-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#003737] hover:text-white transition-all">Edytuj</button>
+                 <button className="px-5 py-2.5 bg-teal-800 text-teal-100 rounded-md text-[10px] font-bold uppercase tracking-widest hover:bg-teal-600 hover:text-teal-25 transition-all ease-standard">Edytuj</button>
               </div>
             ))}
-            <button className="w-full py-4 border-2 border-dashed border-slate-100 rounded-[2rem] text-slate-300 font-black uppercase text-[10px] tracking-widest hover:border-[#006D6D] hover:text-[#006D6D] transition-all">+ Nowy Próg</button>
+            <button className="w-full py-4 border-2 border-dashed border-teal-700 rounded-lg text-teal-100 font-bold uppercase text-[10px] tracking-widest hover:border-teal-500 hover:text-teal-500 transition-all ease-standard">+ Nowy Próg</button>
          </div>
       </div>
-      <div className="bg-[#f1f5f9] rounded-[3.5rem] border-2 border-dashed border-slate-200 p-6 flex flex-col items-center justify-center relative overflow-hidden">
+      <div className="bg-teal-800 rounded-lg border-2 border-dashed border-teal-600 p-6 flex flex-col items-center justify-center relative overflow-hidden">
          <div className="text-center opacity-10 mb-8">
-            <Crown size={150} className="text-slate-400 mx-auto mb-4" />
-            <p className="font-black uppercase tracking-[0.4em]">Subscription Preview</p>
+            <Crown size={150} className="text-teal-100 mx-auto mb-4" />
+            <p className="font-bold uppercase tracking-[0.4em] text-teal-100">Subscription Preview</p>
          </div>
          <button 
            onClick={() => setShowSubscribe(true)}
-           className="px-10 py-5 bg-[#003737] text-[#FFD700] rounded-[2rem] font-black text-xs uppercase tracking-widest shadow-2xl hover:scale-105 transition-all flex items-center gap-3"
+           className="px-10 py-5 bg-teal-700 text-gold-400 rounded-md font-bold text-xs uppercase tracking-widest shadow-2xl hover:scale-105 transition-all ease-standard flex items-center gap-3"
          >
            <Play size={16} fill="currentColor" /> Testuj Subscribe Modal
          </button>
@@ -266,8 +248,8 @@ function OverlaySection({ creatorId }: { creatorId: string }) {
   return (
     <div className="space-y-8">
       <div>
-        <h3 className="text-2xl font-black italic text-[#003737]">OBS Studio Overlay</h3>
-        <p className="text-slate-500 font-medium mt-2 italic text-xs uppercase tracking-widest">Personalizacja alertów na żywo.</p>
+        <h3 className="text-2xl font-bold font-heading italic text-teal-25">OBS Studio Overlay</h3>
+        <p className="text-teal-50 font-medium mt-2 italic text-xs uppercase tracking-widest">Personalizacja alertów na żywo.</p>
       </div>
       <OverlayEditor creatorId={creatorId} />
     </div>
@@ -278,19 +260,19 @@ function SocialSection() {
   return (
     <div className="space-y-8">
       <div>
-        <h3 className="text-2xl font-black italic text-[#003737]">Social Distribution</h3>
-        <p className="text-slate-500 font-medium mt-2 text-xs uppercase tracking-[0.2em]">Zwiększ zasięgi swojego profilu.</p>
+        <h3 className="text-2xl font-bold font-heading italic text-teal-25">Social Distribution</h3>
+        <p className="text-teal-50 font-medium mt-2 text-xs uppercase tracking-[0.2em]">Zwiększ zasięgi swojego profilu.</p>
       </div>
       <div className="grid md:grid-cols-2 gap-6 text-center">
-        <div className="p-8 bg-slate-50 rounded-[3rem] border border-slate-100 space-y-4 hover:border-[#006D6D] transition-all">
-           <h4 className="font-black text-slate-800 italic">Twitter / X Post</h4>
-           <p className="text-xs text-slate-400">Automatyczny generator grafik z linkiem do profilu.</p>
-           <button className="px-8 py-3 bg-[#006D6D] text-white rounded-xl font-black text-xs uppercase tracking-widest">Generuj Post</button>
+        <div className="p-8 bg-teal-700 rounded-lg border border-teal-600 space-y-4 hover:border-teal-500 transition-all ease-standard">
+           <h4 className="font-bold text-teal-25 font-heading italic">Twitter / X Post</h4>
+           <p className="text-xs text-teal-100">Automatyczny generator grafik z linkiem do profilu.</p>
+           <button className="px-8 py-3 bg-teal-600 text-teal-25 rounded-md font-bold text-xs uppercase tracking-widest transition-all ease-standard hover:bg-teal-500">Generuj Post</button>
         </div>
-        <div className="p-8 bg-slate-50 rounded-[3rem] border border-slate-100 space-y-4 hover:border-[#006D6D] transition-all">
-           <h4 className="font-black text-slate-800 italic">Instagram Story</h4>
-           <p className="text-xs text-slate-400">Pobierz format 9:16 zintegrowany z Twoim brandem.</p>
-           <button className="px-8 py-3 bg-[#006D6D] text-white rounded-xl font-black text-xs uppercase tracking-widest">Pobierz Story</button>
+        <div className="p-8 bg-teal-700 rounded-lg border border-teal-600 space-y-4 hover:border-teal-500 transition-all ease-standard">
+           <h4 className="font-bold text-teal-25 font-heading italic">Instagram Story</h4>
+           <p className="text-xs text-teal-100">Pobierz format 9:16 zintegrowany z Twoim brandem.</p>
+           <button className="px-8 py-3 bg-teal-600 text-teal-25 rounded-md font-bold text-xs uppercase tracking-widest transition-all ease-standard hover:bg-teal-500">Pobierz Story</button>
         </div>
       </div>
     </div>

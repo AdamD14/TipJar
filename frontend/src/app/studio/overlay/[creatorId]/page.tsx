@@ -67,14 +67,14 @@ export default function OverlayPage() {
               initial={{ opacity: 0, x: -50, scale: 0.8 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9, x: 20 }}
-              className="bg-[#006D6D]/95 backdrop-blur-md border-2 border-[#FFD700] p-6 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-center gap-6 max-w-md text-white overflow-hidden relative"
+              className="bg-teal-600/95 backdrop-blur-md border-2 border-gold-400 p-6 rounded-lg shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex items-center gap-6 max-w-md text-teal-25 overflow-hidden relative"
             >
               {/* Special Effect for 50+ tips */}
               {current.amount >= 50 && (
                 <div className="absolute inset-0 bg-[#FFD700]/10 animate-pulse pointer-events-none" />
               )}
               
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#FFD700] to-[#A27A00] flex-shrink-0 border-4 border-white/20 shadow-inner flex items-center justify-center text-white font-black text-3xl">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#FFD700] to-[#A27A00] flex-shrink-0 border-4 border-white/20 shadow-inner flex items-center justify-center text-teal-25 font-black text-3xl">
                 {current.nickname[0]}
               </div>
 
@@ -109,7 +109,7 @@ export default function OverlayPage() {
              <div className="bg-white p-3 rounded-2xl shadow-2xl border-4 border-[#006D6D]">
                 <QRCodeSVG value={profileUrl} size={120} />
              </div>
-             <div className="bg-[#006D6D] text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">
+             <div className="bg-teal-600 text-teal-25 px-4 py-1.5 rounded-md text-[10px] font-black uppercase tracking-widest shadow-lg">
                 Wesprzyj Profil
              </div>
           </motion.div>

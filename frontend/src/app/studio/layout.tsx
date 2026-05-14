@@ -26,7 +26,7 @@ const SidebarSection: React.FC<{ title: string, items: MenuItem[], onClose: () =
   const pathname = usePathname() || '';
   return (
     <div className="mb-6">
-      <p className="px-4 mb-2 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{title}</p>
+      <p className="px-4 mb-2 text-[10px] font-black text-teal-100 uppercase tracking-[0.2em]">{title}</p>
       <div className="space-y-0.5">
         {items.map((item) => {
           const isActive = pathname === item.path;
@@ -35,11 +35,11 @@ const SidebarSection: React.FC<{ title: string, items: MenuItem[], onClose: () =
               key={item.id} 
               href={item.path} 
               onClick={onClose} 
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all font-bold text-[13px] ${
-                isActive ? 'bg-[#003737] text-[#FFD700] shadow-lg shadow-black/20' : 'text-slate-400 hover:bg-white/5 hover:text-white'
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-md transition-all font-bold text-[13px] font-heading ${
+                isActive ? 'bg-teal-800 text-gold-400 shadow-lg shadow-black/20' : 'text-teal-100 hover:bg-teal-700 hover:text-teal-25'
               }`}
             >
-              <span className={isActive ? 'text-[#FFD700]' : 'text-slate-500'}>{item.icon}</span>
+              <span className={isActive ? 'text-gold-400' : 'text-teal-100'}>{item.icon}</span>
               {item.label}
             </Link>
           );
@@ -71,19 +71,19 @@ const Sidebar = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) 
         {isOpen && (
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] md:hidden" 
+            className="fixed inset-0 bg-teal-900/80 backdrop-blur-md z-[60] md:hidden" 
             onClick={onClose} 
           />
         )}
       </AnimatePresence>
-      <aside className={`fixed md:sticky top-0 left-0 z-[70] h-screen w-64 bg-[#003737]/90 backdrop-blur-2xl border-r border-white/5 transition-transform duration-300 ease-in-out flex flex-col text-slate-300 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+      <aside className={`fixed md:sticky top-0 left-0 z-[70] h-screen w-64 bg-teal-800/90 backdrop-blur-2xl border-r border-teal-700 transition-transform duration-300 ease-standard flex flex-col text-teal-50 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         <div className="p-6 overflow-y-auto no-scrollbar flex-1">
           <div className="flex items-center justify-between mb-8">
             <Link href="/" onClick={onClose} className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#FFD700] flex items-center justify-center text-[#003737] font-black text-xl shadow-lg">T+</div>
-              <span className="font-black text-xl tracking-tighter text-white">TipJar+</span>
+              <div className="w-10 h-10 rounded-md bg-gold-400 flex items-center justify-center text-teal-900 font-heading font-bold text-xl shadow-lg">T+</div>
+              <span className="font-heading font-bold text-xl tracking-tighter text-teal-25">TipJar+</span>
             </Link>
-            <button onClick={onClose} className="md:hidden p-2 text-slate-500 hover:text-white"><X size={24} /></button>
+            <button onClick={onClose} className="md:hidden p-2 text-teal-100 hover:text-teal-25"><X size={24} /></button>
           </div>
           <nav className="pb-10">
             {Object.entries(grouped).map(([title, items]) => (
@@ -111,7 +111,7 @@ const HeaderDropdown = ({ trigger, children, isOpen, setIsOpen }: { trigger: Rea
         {isOpen && (
           <motion.div 
             initial={{ opacity: 0, y: 10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            className="absolute top-full right-0 mt-3 w-72 bg-[#003737] border border-white/10 rounded-[2rem] shadow-2xl overflow-hidden z-[100] backdrop-blur-2xl"
+            className="absolute top-full right-0 mt-3 w-72 bg-teal-800 border border-teal-700 rounded-xl shadow-modal overflow-hidden z-dropdown backdrop-blur-2xl"
           >
             {children}
           </motion.div>
@@ -132,21 +132,21 @@ const Header = ({ onMenuOpen }: { onMenuOpen: () => void }) => {
   if (pathname.includes('preview') || pathname.includes('overlay')) return null;
   
   return (
-    <header className="h-20 bg-white/80 border-b border-slate-100 flex items-center justify-between px-6 md:px-8 sticky top-0 z-40 backdrop-blur-xl">
+    <header className="h-20 bg-teal-800/80 border-b border-teal-700 flex items-center justify-between px-6 md:px-8 sticky top-0 z-40 backdrop-blur-xl">
       <div className="flex items-center gap-4">
-        <Link href="/" className="md:hidden"><div className="w-9 h-9 rounded-xl bg-[#003737] flex items-center justify-center text-[#FFD700] font-black text-lg">T+</div></Link>
-        <button onClick={onMenuOpen} className="p-2 text-slate-500 hover:bg-slate-50 rounded-xl transition-colors"><Menu size={24} /></button>
-        <div className="hidden lg:flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-xl px-4 py-2 text-slate-400">
+        <Link href="/" className="md:hidden"><div className="w-9 h-9 rounded-md bg-teal-800 flex items-center justify-center text-gold-400 font-heading font-bold text-lg">T+</div></Link>
+        <button onClick={onMenuOpen} className="p-2 text-teal-100 hover:bg-teal-700 rounded-md transition-colors"><Menu size={24} /></button>
+        <div className="hidden lg:flex items-center gap-2 bg-teal-800 border border-teal-700 rounded-md px-4 py-2 text-teal-100">
           <Search size={16} />
-          <input type="text" placeholder="Szukaj funkcji..." className="bg-transparent border-none text-xs font-bold outline-none w-48 text-slate-600" />
+          <input type="text" placeholder="Szukaj funkcji..." className="bg-transparent border-none text-xs font-bold outline-none w-48 text-teal-25 placeholder:text-teal-100" />
         </div>
       </div>
 
       <div className="hidden sm:block">
-        <Link href="/studio" className="group relative flex items-center gap-3 px-6 py-2.5 bg-[#FFD700] text-[#003737] rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-xl hover:scale-105 transition-all">
+        <Link href="/studio/creator-studio" className="group relative flex items-center gap-3 px-6 py-2.5 bg-gold-400 text-teal-900 rounded-md font-bold font-heading text-[11px] uppercase tracking-widest shadow-xl hover:scale-105 transition-all ease-standard">
           <Sparkles size={14} className="group-hover:animate-spin" />
           <span>Creator Studio</span>
-          <span className="bg-[#003737] text-[8px] px-1.5 py-0.5 rounded-full text-white animate-bounce">Live</span>
+          <span className="bg-teal-900 text-[8px] px-1.5 py-0.5 rounded-full text-gold-400 animate-bounce">Live</span>
         </Link>
       </div>
       
@@ -154,21 +154,21 @@ const Header = ({ onMenuOpen }: { onMenuOpen: () => void }) => {
         <HeaderDropdown 
           isOpen={isWalletOpen} setIsOpen={setIsWalletOpen}
           trigger={
-            <div className={`p-2.5 rounded-xl border transition-all ${isWalletOpen ? 'bg-[#4D194D] text-white border-[#4D194D]' : 'bg-white text-slate-400 border-slate-100 hover:bg-slate-50'}`}>
+            <div className={`p-2.5 rounded-md border transition-all ease-standard ${isWalletOpen ? 'bg-purple-300 text-teal-25 border-purple-300' : 'bg-teal-800 text-teal-100 border-teal-700 hover:bg-teal-700'}`}>
               <Wallet size={20} />
             </div>
           }
         >
           <div className="p-6 space-y-4">
              <div className="flex justify-between items-center">
-                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Saldo Web3</p>
-                <Link href="/studio/wallet" className="text-[10px] font-black text-[#FFD700] uppercase">Szczegóły</Link>
+                <p className="text-[10px] font-black text-teal-100 uppercase tracking-widest">Saldo Web3</p>
+                <Link href="/studio/wallet" className="text-[10px] font-black text-gold-400 uppercase">Szczegóły</Link>
              </div>
              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-black italic tracking-tighter text-white">1,234.50</span>
-                <span className="text-sm font-black text-[#FFD700] italic">USDC</span>
+                <span className="text-3xl font-black font-heading italic tracking-tighter text-teal-25">1,234.50</span>
+                <span className="text-sm font-black text-gold-400 italic">USDC</span>
              </div>
-             <button className="w-full py-4 bg-[#4D194D] text-white font-black rounded-2xl text-[10px] uppercase tracking-widest shadow-lg shadow-black/20 flex items-center justify-center gap-2">
+             <button className="w-full py-4 bg-purple-300 text-teal-25 font-bold rounded-md text-[10px] uppercase tracking-widest shadow-lg shadow-black/20 flex items-center justify-center gap-2 transition-all ease-standard hover:bg-purple-400">
                 Wypłata On-Chain <ArrowUpRight size={14} />
              </button>
           </div>
@@ -176,29 +176,29 @@ const Header = ({ onMenuOpen }: { onMenuOpen: () => void }) => {
 
         <button 
           onClick={() => setDrawerOpen(true)}
-          className="p-2.5 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-50 relative border border-slate-100 transition-all active:scale-90"
+          className="p-2.5 text-teal-100 hover:text-teal-25 rounded-md hover:bg-teal-700 relative border border-teal-700 transition-all ease-standard active:scale-98"
         >
           <Bell size={20} />
-          {unreadCount > 0 && <span className="absolute top-2 right-2 w-4 h-4 bg-rose-500 text-white text-[8px] font-black flex items-center justify-center rounded-full border-2 border-white">{unreadCount}</span>}
+          {unreadCount > 0 && <span className="absolute top-2 right-2 w-4 h-4 bg-error-base text-teal-25 text-[8px] font-black flex items-center justify-center rounded-full border-2 border-teal-900">{unreadCount}</span>}
         </button>
 
-        <div className="h-8 w-px bg-slate-100 mx-1"></div>
+        <div className="h-8 w-px bg-teal-700 mx-1"></div>
 
         <HeaderDropdown 
           isOpen={isProfileOpen} setIsOpen={setIsProfileOpen}
           trigger={
             <div className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-              <div className="w-10 h-10 rounded-xl bg-slate-100 border-2 border-white shadow-sm overflow-hidden shrink-0 ring-2 ring-transparent">
-                <img src="https://picsum.photos/100/100" alt="Avatar" />
+              <div className="w-10 h-10 rounded-md bg-gradient-to-br from-gold-400 to-purple-300 border-2 border-teal-800 shadow-sm overflow-hidden shrink-0 flex items-center justify-center font-bold font-heading text-teal-900 text-sm shadow-black/20">
+                AS
               </div>
-              <ChevronDown size={14} className={`text-slate-400 transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown size={14} className={`text-teal-100 transition-transform ease-standard ${isProfileOpen ? 'rotate-180' : ''}`} />
             </div>
           }
         >
           <div className="p-2">
-             <div className="p-4 border-b border-white/5">
-                <p className="text-sm font-black text-white">Alex Streamer</p>
-                <div className="flex items-center gap-1.5 mt-1 text-[#FFD700]">
+             <div className="p-4 border-b border-teal-700">
+                <p className="text-sm font-bold font-heading text-teal-25">Alex Streamer</p>
+                <div className="flex items-center gap-1.5 mt-1 text-gold-400">
                    <ShieldCheck size={12} />
                    <p className="text-[9px] font-bold uppercase tracking-widest">Verified Pro</p>
                 </div>
@@ -211,7 +211,7 @@ const Header = ({ onMenuOpen }: { onMenuOpen: () => void }) => {
                 ].map(item => (
                   <Link 
                     key={item.path} href={item.path} onClick={() => setIsProfileOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-slate-300 font-bold text-xs transition-colors"
+                    className="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-teal-700 text-teal-100 font-bold text-xs transition-colors"
                   >
                     {item.icon} {item.label}
                   </Link>
@@ -227,11 +227,11 @@ const Header = ({ onMenuOpen }: { onMenuOpen: () => void }) => {
 export default function StudioLayout({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   return (
-    <div className="flex min-h-screen bg-slate-50/50">
+    <div className="flex min-h-screen bg-teal-900">
       <Sidebar isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
       <main className="flex-1 min-w-0 flex flex-col">
         <Header onMenuOpen={() => setIsMobileMenuOpen(true)} />
-        <div className="flex-1">
+        <div className="flex-1 p-4 md:p-8 lg:p-10">
           {children}
         </div>
       </main>
