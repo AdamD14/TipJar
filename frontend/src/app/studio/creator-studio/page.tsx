@@ -73,7 +73,7 @@ const CreatorStudio: React.FC = () => {
                 }`}
               >
                 {t === 'QR Hub' && <QrCode size={14} />}
-                {t === 'Tip Modal' && <CreditCard size={14} />}
+                {t === 'Tip Modal' && <Wallet size={14} />}
                 {t === 'Goals' && <Target size={14} />}
                 {t === 'Subscriptions' && <Crown size={14} />}
                 {t === 'Overlay' && <Tv size={14} />}
@@ -156,7 +156,7 @@ function TipModalSection({ handle }: { handle: string }) {
       </div>
       <div className="bg-[#f1f5f9] rounded-[3.5rem] border-2 border-dashed border-slate-200 p-6 flex items-center justify-center relative overflow-hidden">
          <div className="text-center opacity-10">
-            <CreditCard size={150} className="text-slate-400 mx-auto mb-4" />
+            <Wallet size={150} className="text-slate-400 mx-auto mb-4" />
             <p className="font-black uppercase tracking-[0.4em]">Checkout Preview Area</p>
          </div>
          <TipModal username={handle} open={showTest} onClose={() => setShowTest(false)} />
