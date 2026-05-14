@@ -5,8 +5,11 @@ import { useRouter } from "next/navigation";
 
 import OnboardingShell from "@/components/ui/layout/OnboardingShell";
 import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
+import Textarea from "@/components/ui/Textarea";
 import SpecializationPicker from "@/components/onboarding/SpecializationPicker";
 import TwitchConnect from "@/components/creator/TwitchConnect";
+import Spinner from "@/components/ui/Spinner";
 import apiClient from "@/lib/apiClient";
 
 import { useCreatorGuard } from "@/lib/hooks/useCreatorGuard";
@@ -65,7 +68,7 @@ export default function Step3() {
     return (
       <OnboardingShell step={3} title="Checking status...">
         <div className="flex justify-center py-20">
-          <div className="animate-spin h-10 w-10 border-4 border-yellow-500 border-t-transparent rounded-full" />
+          <Spinner size="md" />
         </div>
       </OnboardingShell>
     );
@@ -81,16 +84,15 @@ export default function Step3() {
             className="block text-lg font-medium text-white"
           >
             Display Name
-            <span className="text-gray-500 text-sm ml-2 font-normal">
+            <span className="text-text-ds-tertiary text-sm ml-2 font-normal">
               (your public display name)
             </span>
           </label>
-          <input
+          <Input
             id="displayName"
             type="text"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/50 text-base"
             placeholder={username || "Your Name or Brand"}
           />
         </div>
@@ -99,11 +101,11 @@ export default function Step3() {
         <div className="space-y-3">
           <label htmlFor="bio" className="block text-lg font-medium text-white">
             Bio
-            <span className="text-gray-500 text-sm ml-2 font-normal">
+            <span className="text-text-ds-tertiary text-sm ml-2 font-normal">
               (optional, max 200 words)
             </span>
           </label>
-          <textarea
+          <Textarea
             id="bio"
             value={bio}
             onChange={(e) => {
@@ -113,10 +115,9 @@ export default function Step3() {
               }
             }}
             rows={4}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/50 text-base resize-none"
             placeholder="Tell your audience a bit about yourself..."
           />
-          <p className="text-xs text-gray-498">
+          <p className="text-xs text-text-ds-tertiary">
             {bio.split(/\s+/).filter(Boolean).length}/200 words
           </p>
         </div>
@@ -144,16 +145,16 @@ export default function Step3() {
         </div>
 
         {/* FOOTER */}
-        <div className="flex items-center justify-between pt-8 border-t border-white/5">
+        <div className="flex items-center justify-between pt-8 border-t border-teal-700/20">
           <Link
             href="/"
-            className="text-sm text-gray-500 hover:text-white transition-colors"
+            className="text-sm text-text-ds-tertiary hover:text-white transition-colors"
           >
             Skip for now
           </Link>
           <Button
             type="submit"
-            variant="gold"
+            variant="primary"
             size="lg"
             loading={saving}
             disabled={!canProceed}

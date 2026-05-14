@@ -7,7 +7,7 @@ import { useToast } from "@/components/ui/notifications/Toast";
 import OnboardingShell from "@/components/ui/layout/OnboardingShell";
 import Button from "@/components/ui/Button";
 import AvatarUploader from "@/components/onboarding/AvatarUploader";
-import { Loader2 } from "lucide-react";
+import Spinner from "@/components/ui/Spinner";
 
 import { useCreatorGuard } from "@/lib/hooks/useCreatorGuard";
 
@@ -63,7 +63,7 @@ export default function Step2() {
     return (
       <OnboardingShell step={2} title="Upload your Avatar">
         <div className="flex justify-center py-20">
-          <Loader2 className="animate-spin h-10 w-10 text-[#FFD700]" />
+          <Spinner size="md" />
         </div>
       </OnboardingShell>
     );
@@ -83,16 +83,16 @@ export default function Step2() {
           />
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t border-white/5">
+        <div className="flex items-center justify-between pt-4 border-t border-teal-700/20">
           <Link
             href="/"
-            className="text-sm text-gray-500 hover:text-white transition-colors"
+            className="text-sm text-text-ds-tertiary hover:text-white transition-colors"
           >
             Skip for now
           </Link>
           <Button
             type="submit"
-            variant="gold"
+            variant="primary"
             size="lg"
             loading={saving}
             className="min-w-[180px] px-4"

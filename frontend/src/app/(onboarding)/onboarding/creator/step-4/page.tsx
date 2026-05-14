@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import OnboardingShell from "@/components/ui/layout/OnboardingShell";
 import Button from "@/components/ui/Button";
 import TargetBar from "@/components/onboarding/TargetBar";
+import Spinner from "@/components/ui/Spinner";
 import apiClient from "@/lib/apiClient";
 
 import { useCreatorGuard } from "@/lib/hooks/useCreatorGuard";
@@ -54,7 +55,7 @@ export default function Step4() {
     return (
       <OnboardingShell step={4} title="Checking status...">
         <div className="flex justify-center py-20">
-          <div className="animate-spin h-10 w-10 border-4 border-yellow-500 border-t-transparent rounded-full" />
+          <Spinner size="md" />
         </div>
       </OnboardingShell>
     );
@@ -66,21 +67,21 @@ export default function Step4() {
         <TargetBar onPublish={handlePublish} />
 
         {/* FOOTER */}
-        <div className="flex items-center justify-between pt-8 border-t border-white/5">
+        <div className="flex items-center justify-between pt-8 border-t border-teal-700/20">
           <Link
             href="/"
-            className="text-sm text-gray-500 hover:text-white transition-colors"
+            className="text-sm text-text-ds-tertiary hover:text-white transition-colors"
           >
             Skip for now
           </Link>
           <Button
             type="submit"
-            variant={publishedGoal ? "gold" : "ghost"}
+            variant={publishedGoal ? "primary" : "ghost"}
             size="lg"
             loading={saving}
             className={`min-w-[180px] px-8 ${
               !publishedGoal
-                ? "opacity-50 cursor-not-allowed bg-gray-600 hover:bg-gray-600"
+                ? "opacity-50 cursor-not-allowed"
                 : ""
             }`}
             disabled={!publishedGoal}

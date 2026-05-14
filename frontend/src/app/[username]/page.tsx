@@ -2,15 +2,18 @@
 import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import {
   Check,
   ArrowLeft,
+  Share2,
+  Copy,
 } from "lucide-react";
 import { getPublicProfile } from "@/lib/users";
-import AvatarCarousel from "@/components/ui/AvatarCarousel";
 import Button from "@/components/ui/Button";
+import Spinner from "@/components/ui/Spinner";
 import { GoalBar } from "@/components/creator/GoalBar";
+import AvatarCarousel from "@/components/ui/AvatarCarousel";
+import Header from "@/components/landing/Header";
 import { useAuthStore } from "@/lib/store/authStore";
 
 // Types
@@ -25,12 +28,28 @@ type UserProfile = {
     bannerUrl: string | null;
     archetype: string | null;
     industry: string | null;
+    specializations?: string[];
     goalLabel: string | null;
     goalTarget: number | null;
     goalDeadline: string | null;
     socials: Record<string, string | boolean | null> | null;
   } | null;
 };
+
+/* ── Archetype Badge ── */
+function ArchetypeBadge({ label, variant = "archetype" }: { label: string; variant?: "archetype" | "specialization" }) {
+  return (
+    <span
+      className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.25em] border shadow-xl ${
+        variant === "archetype"
+          ? "bg-teal-900 text-gold-400 border-gold-400/20"
+          : "bg-teal-900 text-teal-300 border-teal-600/20"
+      }`}
+    >
+      {label.replace(/-/g, " ")}
+    </span>
+  );
+}
 
 export default function CreatorProfile() {
   const { username } = useParams<{ username: string }>();
@@ -46,12 +65,11 @@ export default function CreatorProfile() {
   const safeHandle = cleanUsername || "creator";
 
   const user = useAuthStore((state) => state.user);
-  const isOwner = user?.username === cleanUsername;
 
   useEffect(() => {
     if (!cleanUsername) return;
 
-    // Zabezpieczenie: jeśli username to tak naprawdę plik (np. brakujący obrazek .svg/.png), nie próbuj pobierać profilu
+    // Guard: don't try to load profiles for asset filenames
     if (/\.(png|svg|ico|jpg|jpeg|gif|webp)$/i.test(cleanUsername)) {
       setLoading(false);
       setError("Not a user");
@@ -82,7 +100,7 @@ export default function CreatorProfile() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-main flex items-center justify-center">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-400" />
+        <Spinner size="lg" />
       </div>
     );
   }
@@ -91,7 +109,7 @@ export default function CreatorProfile() {
     return (
       <div className="min-h-screen bg-gradient-main flex flex-col items-center justify-center text-white">
         <p className="text-xl mb-4">Profile not found</p>
-        <Link href="/" className="text-teal-400 hover:underline">
+        <Link href="/" className="text-teal-300 hover:underline">
           Go home
         </Link>
       </div>
@@ -100,12 +118,6 @@ export default function CreatorProfile() {
 
   const safeDisplayName = profile.displayName || profile.username || "Creator";
   const hasBio = Boolean(profile.profile?.bio?.trim());
-  const validSocialLinks = Object.entries(profile.profile?.socials ?? {}).filter(
-    ([, value]) => typeof value === "string" && value.trim().startsWith("http"),
-  );
-
-  // CHECK: search for "top supporters" / "fan wall" fields in getPublicProfile response.
-  const topSupporters: Array<{ name: string; avatarUrl?: string; totalContributed?: number }> = [];
 
   const goal = {
     title: profile.profile?.goalLabel || "Goal",
@@ -114,9 +126,12 @@ export default function CreatorProfile() {
     deadline: profile.profile?.goalDeadline || "",
   };
 
+  // Build badge list: archetype + specializations
+  const specializations: string[] = profile.profile?.specializations ?? [];
+
   return (
-    <div className="min-h-screen bg-gradient-main text-white">
-      {/* Preview Banner */}
+    <div className="min-h-screen bg-gradient-main text-white selection:bg-teal-600/30">
+      {/* ═══ PREVIEW BANNER ═══ */}
       {isPreview && (
         <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-teal-600 via-teal-500 to-teal-600 shadow-lg">
           <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -131,45 +146,25 @@ export default function CreatorProfile() {
               className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-white font-bold text-sm uppercase tracking-wider transition-all"
             >
               <ArrowLeft size={16} />
-              Back to Dashboard
+              Back to Studio
             </Link>
           </div>
         </div>
       )}
 
-      {/* Header - only show when not in preview mode */}
-      {!isPreview && (
-        <header className="fixed inset-x-0 top-0 z-40 bg-gradient-main/80 backdrop-blur-md border-b border-white/5">
-          <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-            <Link
-              href="/"
-              className="text-sm font-semibold tracking-widest uppercase text-gray-400 hover:text-white transition-colors"
-            >
-              TIPJAR.PLUS
-            </Link>
-            {isOwner && (
-              <Link
-                href={`/@${safeHandle}/creator/dashboard`}
-                className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-xs font-bold uppercase tracking-widest"
-              >
-                <ArrowLeft size={14} />
-                <span>Back to Dashboard</span>
-              </Link>
-            )}
-          </div>
-        </header>
-      )}
+      {/* ═══ HEADER / NAVBAR — Landing page style ═══ */}
+      {!isPreview && <Header />}
 
+      {/* ═══ MAIN CONTENT ═══ */}
       <main
         className={`${
-          isPreview ? "pt-20" : "pt-32"
-        } max-w-7xl mx-auto px-4 pb-20`}
+          isPreview ? "pt-20" : "pt-28"
+        } max-w-7xl mx-auto px-6 pb-20`}
       >
-        <div className="flex flex-col md:flex-row gap-12 items-start">
-          {/* LEFT COLUMN: Avatar, Link, Buttons, Stats */}
-          <div className="w-full md:w-[300px] flex-shrink-0 flex flex-col items-center">
-            {/* Avatar */}
-            <div className="w-full relative mb-3">
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
+          {/* ── LEFT COLUMN: Avatar + Link + Buttons + Stats ── */}
+          <div className="w-full lg:w-[320px] flex-shrink-0 flex flex-col items-center">
+            <div className="w-full relative mb-3 scale-90 sm:scale-100">
               <AvatarCarousel
                 avatarUrls={
                   profile.avatarUrls?.length
@@ -179,141 +174,102 @@ export default function CreatorProfile() {
               />
             </div>
 
-            {/* Profile Link (raised right under carousel) */}
-            <button
-              onClick={copyProfileLink}
-              className="text-lg font-bold text-white hover:text-teal-400 transition-colors mb-6 tracking-tight flex items-center gap-2"
-            >
-              <span>tipjar.plus/@{safeHandle}</span>
-              {copied && <Check size={18} className="text-green-400" />}
-            </button>
-
-            {/* Buttons */}
-            <div className="w-full grid grid-cols-2 gap-3 mb-6">
-              <Button
-                variant="gold"
-                className="w-full justify-center shadow-xl shadow-yellow-500/10 uppercase tracking-widest text-xs py-4"
+            {/* Profile link */}
+            <div className="mt-4 flex flex-col items-center w-full">
+              <button
+                onClick={copyProfileLink}
+                className="text-xs font-bold text-teal-100 hover:text-gold-400 transition-all flex items-center gap-2 group"
               >
-                TIP IT
-              </Button>
-              <Button
-                variant="secondary"
-                className="w-full justify-center uppercase tracking-widest text-xs py-4"
-              >
-                Follow
-              </Button>
-            </div>
+                <span className="text-teal-600 group-hover:text-teal-300 transition-colors">
+                  tipjar.plus/
+                </span>
+                <span>@{safeHandle}</span>
+                {copied ? (
+                  <Check size={12} className="text-green-400" />
+                ) : (
+                  <Copy size={12} className="text-teal-600 group-hover:text-gold-400 transition-colors" />
+                )}
+              </button>
 
-            {/* Stats */}
-            <div className="flex w-full justify-between px-2 pt-2 border-t border-white/5">
-              {[
-                { label: "Followers", value: "0" },
-                { label: "Supporters", value: "0" },
-              ].map((item) => (
-                <div key={item.label} className="text-center">
-                  <p className="text-xl font-black text-white leading-none mb-1">
-                    {item.value}
-                  </p>
-                  <p className="text-[9px] uppercase tracking-[0.2em] text-gray-500 font-bold">
-                    {item.label}
+              {/* Action buttons */}
+              <div className="w-full grid grid-cols-2 gap-3 mt-6">
+                <Button
+                  variant="glass"
+                  className="text-[10px] tracking-widest uppercase"
+                >
+                  Follow
+                </Button>
+                <Button
+                  variant="glass"
+                  onClick={copyProfileLink}
+                  className="text-[10px] tracking-widest uppercase gap-1.5"
+                >
+                  <Share2 size={12} />
+                  Share
+                </Button>
+              </div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-2 w-full gap-4 mt-6 pt-6 border-t border-teal-700/30 text-center">
+                <div>
+                  <p className="text-xl font-black text-white leading-none">0</p>
+                  <p className="text-[8px] uppercase tracking-widest text-teal-400 mt-1 font-bold">
+                    Followers
                   </p>
                 </div>
-              ))}
+                <div>
+                  <p className="text-xl font-black text-white leading-none">0</p>
+                  <p className="text-[8px] uppercase tracking-widest text-teal-400 mt-1 font-bold">
+                    Supporters
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* RIGHT COLUMN: Identity -> Fan Wall -> Goal */}
-          <div className="flex-1 flex flex-col gap-6 w-full pt-8">
-            <section className="rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8 shadow-[0_0_60px_rgba(20,184,166,0.08)]">
-              {/* Display Name */}
-              <h1 className="text-5xl md:text-6xl font-black text-white tracking-tight leading-none text-center md:text-left">
-                {safeDisplayName}
-              </h1>
-
-              {/* Archetype & Industry */}
-              <div className="space-y-1 mt-4 text-center md:text-left">
-                {profile.profile?.archetype && (
-                  <div className="text-yellow-400 font-bold uppercase tracking-widest text-xs">
-                    {profile.profile.archetype.replace(/-/g, " ")}
-                  </div>
-                )}
-                {profile.profile?.industry && (
-                  <div className="text-teal-400 font-bold uppercase tracking-widest text-xs">
-                    {profile.profile.industry}
-                  </div>
-                )}
-              </div>
-
-              {/* Bio */}
-              <p className="text-gray-300 text-base leading-relaxed max-w-2xl font-light mx-auto md:mx-0 pt-4 border-t border-white/5 mt-4 text-center md:text-left">
-                {hasBio
-                  ? profile.profile?.bio
-                  : "This creator has not added a bio yet."}
-              </p>
-
-              {/* Socials */}
-              {validSocialLinks.length > 0 && (
-                <div className="flex items-center gap-3 pt-4 justify-center md:justify-start flex-wrap">
-                  {validSocialLinks.map(([label, url]) => (
-                    <a
-                      key={label}
-                      href={url as string}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/15 rounded-xl hover:bg-white/10 transition-colors"
-                    >
-                      <span className="text-sm font-bold text-white capitalize">
-                        {label}
-                      </span>
-                    </a>
+          {/* ── RIGHT COLUMN: Main profile card ── */}
+          <div className="flex-1 w-full lg:pt-16">
+            <section className="relative rounded-[32px] border border-teal-700/30 bg-teal-800 p-8 flex flex-col gap-8 shadow-2xl">
+              {/* Specialization badges — floating on top edge, half in / half out */}
+              {(profile.profile?.archetype || specializations.length > 0) && (
+                <div className="absolute top-0 left-8 -translate-y-1/2 flex gap-2.5 flex-wrap z-10">
+                  {profile.profile?.archetype && (
+                    <ArchetypeBadge
+                      label={profile.profile.archetype}
+                      variant="archetype"
+                    />
+                  )}
+                  {specializations.map((spec) => (
+                    <ArchetypeBadge
+                      key={spec}
+                      label={spec}
+                      variant="specialization"
+                    />
                   ))}
                 </div>
               )}
-            </section>
 
-            {/* Fan Wall */}
-            {topSupporters.length > 0 && (
-              <section className="rounded-3xl border border-teal-300/20 bg-gradient-to-br from-white/[0.06] to-white/[0.02] p-6 md:p-8 shadow-[0_0_70px_rgba(45,212,191,0.12)]">
-                <h2 className="text-lg font-extrabold tracking-wider uppercase text-white mb-4">
-                  Top Supporters
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {topSupporters.slice(0, 8).map((supporter) => (
-                    <article
-                      key={supporter.name}
-                      className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 flex items-center gap-3"
-                    >
-                      <div className="h-10 w-10 rounded-full bg-gradient-to-br from-teal-500/60 to-yellow-500/30 border border-white/20 overflow-hidden">
-                        {supporter.avatarUrl && (
-                          <Image
-                            src={supporter.avatarUrl}
-                            alt={supporter.name}
-                            width={40}
-                            height={40}
-                            className="h-full w-full object-cover"
-                          />
-                        )}
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-white">{supporter.name}</p>
-                        {typeof supporter.totalContributed === "number" && (
-                          <p className="text-xs text-teal-300 font-semibold">
-                            ${supporter.totalContributed}
-                          </p>
-                        )}
-                      </div>
-                    </article>
-                  ))}
+              {/* GoalBar */}
+              {profile.profile?.goalTarget && (
+                <div className="w-full max-w-xl">
+                  <GoalBar goal={goal} />
                 </div>
-              </section>
-            )}
+              )}
 
-            {/* Goal Bar */}
-            {profile.profile?.goalTarget && (
-              <div className="w-full max-w-[420px]">
-                <GoalBar goal={goal} />
+              {/* Display Name */}
+              <h1 className="text-5xl md:text-6xl lg:text-8xl font-heading font-black text-white tracking-tighter leading-none">
+                {safeDisplayName}
+              </h1>
+
+              {/* Bio */}
+              <div className="pt-8 border-t border-teal-700/30">
+                <p className="text-xl text-teal-100 leading-relaxed max-w-4xl mb-6">
+                  {hasBio
+                    ? profile.profile?.bio
+                    : "This creator has not added a bio yet."}
+                </p>
               </div>
-            )}
+            </section>
           </div>
         </div>
       </main>

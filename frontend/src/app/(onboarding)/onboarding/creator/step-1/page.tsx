@@ -84,16 +84,16 @@ export default function Step1() {
           />
         </div>
 
-        <div className="flex items-center justify-between pt-8 border-t border-white/5">
+        <div className="flex items-center justify-between pt-8 border-t border-teal-700/20">
           <Link
             href="/"
-            className="text-sm text-gray-500 hover:text-white transition-colors"
+            className="text-sm text-text-ds-tertiary hover:text-white transition-colors"
           >
             Skip for now
           </Link>
           <Button
             type="submit"
-            variant="gold"
+            variant="primary"
             size="lg"
             loading={saving}
             className="min-w-[180px] px-8"
