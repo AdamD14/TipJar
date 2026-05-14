@@ -26,6 +26,7 @@ import {
   Plus,
   Crown
 } from 'lucide-react';
+import { Target, Tv, Share2 } from 'lucide-react';
 import { useWidgetStore } from '@/lib/store/widgetStore';
 import TipModal from '@/components/payments/TipModal';
 import GoalModal from '@/components/creator/GoalModal';
