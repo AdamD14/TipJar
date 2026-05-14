@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import RequireAuth from "@/components/auth/RequireAuth";
+import RequireAuth from "@/components/onboarding/auth/RequireAuth";
 
 export default function StudioPayoutsPage() {
   return (

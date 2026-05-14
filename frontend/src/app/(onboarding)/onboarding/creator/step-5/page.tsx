@@ -10,10 +10,10 @@ import {
 } from "lucide-react";
 
 import confetti from "canvas-confetti";
-import OnboardingShell from "@/components/layout/OnboardingShell";
+import OnboardingShell from "@/components/ui/layout/OnboardingShell";
 import Button from "@/components/ui/Button";
 import AvatarCarousel from "@/components/ui/AvatarCarousel";
-import { GoalBar } from "@/components/GoalBar";
+import { GoalBar } from "@/components/creator/GoalBar";
 import apiClient from "@/lib/apiClient";
 import { useAuthStore } from "@/lib/store/authStore";
 import { useCreatorGuard } from "@/lib/hooks/useCreatorGuard";

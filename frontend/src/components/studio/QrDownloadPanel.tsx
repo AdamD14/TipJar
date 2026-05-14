@@ -4,7 +4,7 @@ import { useRef } from "react";
 import clsx from "clsx";
 import Button from "@/components/ui/Button";
 // @ts-expect-error - QRGenerator component has dynamic props that TypeScript cannot verify
-import QRGenerator from "@/components/QRGenerator";
+import QRGenerator from "@/components/studio/QRGenerator";
 
 export default function QrDownloadPanel({ url }: { url: string }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);

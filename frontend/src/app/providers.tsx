@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { injected } from "wagmi/connectors";
 import { mainnet } from "wagmi/chains";
-import ToastHost from "@/components/ui/Toast";
+import ToastHost from "@/components/ui/notifications/Toast";
 
 // Konfiguracja wagmi, która mówi, z jakimi sieciami blockchain ma się łączyć.
 export const config = createConfig({

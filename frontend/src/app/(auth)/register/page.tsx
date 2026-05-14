@@ -1,5 +1,5 @@
 'use client';
-import AuthForm from "@/components/auth/AuthForm";
+import AuthForm from "@/components/onboarding/auth/AuthForm";
 
 export default function RegisterPage() {
   return (

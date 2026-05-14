@@ -1,7 +1,7 @@
 "use client";
 
 import FeaturedHero from "./FeaturedHero";
-import CreatorCard from "@/components/discover/CreatorCard";
+import CreatorCard from "@/components/explore/discover/CreatorCard";
 
 export type Item = {
   handle: string;

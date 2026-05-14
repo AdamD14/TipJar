@@ -1,4 +1,4 @@
-import Receipt from "@/components/tip/Receipt";
+import Receipt from "@/components/payments/tip/Receipt";
 import Link from "next/link";
 
 export default function Page({

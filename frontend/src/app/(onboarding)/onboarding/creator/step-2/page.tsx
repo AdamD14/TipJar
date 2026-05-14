@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/components/ui/Toast";
+import { useToast } from "@/components/ui/notifications/Toast";
 
-import OnboardingShell from "@/components/layout/OnboardingShell";
+import OnboardingShell from "@/components/ui/layout/OnboardingShell";
 import Button from "@/components/ui/Button";
 import AvatarUploader from "@/components/onboarding/AvatarUploader";
 import { Loader2 } from "lucide-react";

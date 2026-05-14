@@ -1,5 +1,5 @@
 "use client";
-import ProfileForm from "@/components/dashboard/ProfileForm";
+import ProfileForm from "@/components/ui/forms/ProfileForm";
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
 import ErrorState from "@/components/ui/ErrorState";
 import {
@@ -7,7 +7,7 @@ import {
   useUpdateProfile,
   uploadImage,
 } from "@/lib/api/queries";
-import { useToast } from "@/components/ui/Toast";
+import { useToast } from "@/components/ui/notifications/Toast";
 import { track } from "@/lib/analytics/track";
 
 export default function ProfileSettingsPage() {

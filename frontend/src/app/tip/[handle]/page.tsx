@@ -1,12 +1,12 @@
 "use client";
 import { useMemo, useState } from "react";
-import TipFlowShell from "@/components/tip/TipFlowShell";
-import AmountInput from "@/components/tip/AmountInput";
-import PaymentMethod, { type MethodKey } from "@/components/tip/PaymentMethod";
-import FeeBreakdown from "@/components/tip/FeeBreakdown";
-import OnrampPanel from "@/components/tip/OnrampPanel";
+import TipFlowShell from "@/components/payments/tip/TipFlowShell";
+import AmountInput from "@/components/payments/tip/AmountInput";
+import PaymentMethod, { type MethodKey } from "@/components/payments/tip/PaymentMethod";
+import FeeBreakdown from "@/components/payments/tip/FeeBreakdown";
+import OnrampPanel from "@/components/payments/tip/OnrampPanel";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/components/ui/Toast";
+import { useToast } from "@/components/ui/notifications/Toast";
 
 export default function Page({ params }: { params: { handle: string } }) {
   const router = useRouter();

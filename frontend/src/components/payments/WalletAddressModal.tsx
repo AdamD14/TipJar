@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useToast } from "@/components/ui/Toast";
+import { useToast } from "@/components/ui/notifications/Toast";
 
 export default function WalletAddressModal({ address }: { address: string }) {
   const [open, setOpen] = useState(false);

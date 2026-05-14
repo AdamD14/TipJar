@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useTip } from "@/lib/api/queries";
-import { useToast } from "@/components/ui/Toast";
+import { useToast } from "@/components/ui/notifications/Toast";
 import { formatUSDC, parseAmount, isValidUsdc } from "@/lib/currency";
 import { track } from "@/lib/analytics/track";
 

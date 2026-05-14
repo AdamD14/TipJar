@@ -1,7 +1,7 @@
 "use client";
 
-import PrimaryCta from "@/components/cta/PrimaryCta";
-import SecondaryCta from "@/components/cta/SecondaryCta";
+import PrimaryCta from "@/components/ui/buttons/PrimaryCta";
+import SecondaryCta from "@/components/ui/buttons/SecondaryCta";
 
 type Props = {
   primaryHref?: string;

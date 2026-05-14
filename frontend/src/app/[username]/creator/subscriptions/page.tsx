@@ -1,5 +1,5 @@
 "use client";
-import SubscriptionsList from "@/components/dashboard/SubscriptionsList";
+import SubscriptionsList from "@/components/community/SubscriptionsList";
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
 import ErrorState from "@/components/ui/ErrorState";
 import { useCreatorSubscriptions } from "@/lib/api/queries";

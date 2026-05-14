@@ -1,6 +1,6 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import WidgetPreview from "@/components/WidgetPreview";
+import WidgetPreview from "@/components/studio/WidgetPreview";
 
 export default function WidgetPreviewPage() {
   const searchParams = useSearchParams();

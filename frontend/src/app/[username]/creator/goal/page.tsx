@@ -1,9 +1,9 @@
 "use client";
-import GoalForm from "@/components/dashboard/GoalForm";
+import GoalForm from "@/components/payments/GoalForm";
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
 import ErrorState from "@/components/ui/ErrorState";
 import { useGoal, useSaveGoal } from "@/lib/api/queries";
-import { useToast } from "@/components/ui/Toast";
+import { useToast } from "@/components/ui/notifications/Toast";
 import { track } from "@/lib/analytics/track";
 
 export default function GoalPage() {

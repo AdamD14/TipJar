@@ -1,6 +1,6 @@
 "use client";
 
-import ChooseUsernameForm from "../../../components/auth/ChooseUsernameForm";
+import ChooseUsernameForm from "@/components/onboarding/auth/ChooseUsernameForm";
 
 export default function ChooseUsernamePage() {
   return (

@@ -10,7 +10,7 @@ import {
 import { getPublicProfile } from "@/lib/users";
 import AvatarCarousel from "@/components/ui/AvatarCarousel";
 import Button from "@/components/ui/Button";
-import { GoalBar } from "@/components/GoalBar";
+import { GoalBar } from "@/components/creator/GoalBar";
 import { useAuthStore } from "@/lib/store/authStore";
 
 // Types

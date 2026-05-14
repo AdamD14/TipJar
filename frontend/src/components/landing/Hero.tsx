@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import PrimaryCta from "@/components/cta/PrimaryCta";
-import SecondaryCta from "@/components/cta/SecondaryCta";
+import PrimaryCta from "@/components/ui/buttons/PrimaryCta";
+import SecondaryCta from "@/components/ui/buttons/SecondaryCta";
 
 export default function Hero() {
   return (

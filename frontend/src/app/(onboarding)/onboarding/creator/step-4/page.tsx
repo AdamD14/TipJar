@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import OnboardingShell from "@/components/layout/OnboardingShell";
+import OnboardingShell from "@/components/ui/layout/OnboardingShell";
 import Button from "@/components/ui/Button";
 import TargetBar from "@/components/onboarding/TargetBar";
 import apiClient from "@/lib/apiClient";

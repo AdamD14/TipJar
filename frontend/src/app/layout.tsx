@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 import { Mukta_Malar, IBM_Plex_Sans } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Providers } from "./providers";
-import UserHeader from "@/components/layout/UserHeader";
+import UserHeader from "@/components/ui/layout/UserHeader";
 
 /**
  * Headings, buttons — Mukta Malar (system.md: --font-heading)

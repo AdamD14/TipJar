@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { login, me } from "@/lib/auth";
 import { useAuthStore } from "@/lib/store/authStore";
-import { useToast } from "@/components/ui/Toast";
+import { useToast } from "@/components/ui/notifications/Toast";
 
 export default function Page() {
   const router = useRouter();

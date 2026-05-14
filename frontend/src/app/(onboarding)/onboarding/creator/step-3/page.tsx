@@ -3,10 +3,10 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import OnboardingShell from "@/components/layout/OnboardingShell";
+import OnboardingShell from "@/components/ui/layout/OnboardingShell";
 import Button from "@/components/ui/Button";
 import SpecializationPicker from "@/components/onboarding/SpecializationPicker";
-import TwitchConnect from "@/components/TwitchConnect";
+import TwitchConnect from "@/components/creator/TwitchConnect";
 import apiClient from "@/lib/apiClient";
 
 import { useCreatorGuard } from "@/lib/hooks/useCreatorGuard";

@@ -13,8 +13,8 @@ import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import clsx from "clsx";
-import PrimaryCta from "@/components/cta/PrimaryCta";
-import LoginButton from "@/components/ui/LoginButton";
+import PrimaryCta from "@/components/ui/buttons/PrimaryCta";
+import LoginButton from "@/components/ui/buttons/LoginButton";
 
 type NavItem = {
   label: string;
