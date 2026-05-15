@@ -43,12 +43,12 @@ export default function FeaturedHero({
             Featured
           </span>
           {typeof score === "number" && (
-            <span className="rounded-full border border-[#FFD700] bg-[#FFD700]/20 px-2 py-0.5 text-[11px] font-semibold text-[#FFD700]">
+            <span className="rounded-full border border-gold-400 bg-gold-400/20 px-2 py-0.5 text-[11px] font-semibold text-gold-400">
               ★ {Math.max(0, Math.min(100, Math.round(score)))}
             </span>
           )}
           {live && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-[#FF365E] px-2 py-0.5 text-[10px] font-bold text-white">
+            <span className="inline-flex items-center gap-1 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-white">
               <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-white" /> LIVE
             </span>
           )}

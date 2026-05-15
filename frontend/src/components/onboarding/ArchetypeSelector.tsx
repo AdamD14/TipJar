@@ -148,20 +148,20 @@ export default function ArchetypeSelector({
                 "group relative w-full flex items-center gap-4 p-4 rounded-2xl transition-all duration-300",
                 isSelected && "scale-[1.02]",
               )}
-              style={{
-                background: `${noiseSvg}, linear-gradient(135deg, #021a1a 0%, #0E2A2D 100%)`,
-              }}
+    style={{
+      background: `${noiseSvg}, linear-gradient(135deg, var(--color-teal-950, #021a1a) 0%, var(--color-teal-800, #0E2A2D) 100%)`,
+    }}
             >
               {/* Main border */}
               <div
                 className="absolute inset-0 rounded-2xl pointer-events-none transition-all duration-300"
-                style={{
-                  border:
-                    colors.isGradient && isSelected
-                      ? "none"
-                      : isSelected
-                        ? `2px solid ${colors.full}`
-                        : "2px solid #7aaaab",
+          style={{
+            border:
+              colors.isGradient && isSelected
+                ? "none"
+                : isSelected
+                ? `2px solid ${colors.full}`
+                : "2px solid var(--color-teal-500, #7aaaab)",
                   background:
                     colors.isGradient && isSelected
                       ? colors.gradientFull
@@ -185,7 +185,7 @@ export default function ArchetypeSelector({
                 <div
                   className="absolute inset-0 rounded-2xl pointer-events-none"
                   style={{
-                    border: "2px solid #0ff",
+                    border: "2px solid var(--color-cyan-400, #0ff)",
                     opacity: 0.7,
                     animation:
                       "glitch-shift 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite",
@@ -198,7 +198,7 @@ export default function ArchetypeSelector({
                 <div
                   className="absolute inset-0 rounded-2xl pointer-events-none"
                   style={{
-                    border: "2px solid #ff00ff",
+                    border: "2px solid var(--color-fuchsia-500, #ff00ff)",
                     opacity: 0.7,
                     animation:
                       "glitch-shift 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite reverse",
@@ -279,12 +279,12 @@ export default function ArchetypeSelector({
               ) : (
                 <span
                   className="text-left text-base md:text-lg font-semibold leading-tight transition-colors z-10 group-hover:text-white"
-                  style={{
-                    color: isSelected
-                      ? archetype.id === "knowledge-architect"
-                        ? "#000000"
-                        : colors.full
-                      : "#e5e7eb",
+          style={{
+            color: isSelected
+              ? archetype.id === "knowledge-architect"
+                ? "var(--color-teal-900, #000000)"
+                : colors.full
+              : "var(--color-gray-200, #e5e7eb)",
                   }}
                 >
                   {archetype.label}

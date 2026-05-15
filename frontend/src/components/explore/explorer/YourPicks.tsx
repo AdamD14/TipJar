@@ -22,7 +22,7 @@ export default function YourPicks() {
           <Link
             key={handle}
             href={`/tip/${handle}`}
-            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-white/90 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#FFD700]"
+            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-white/90 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-gold-400"
           >
             <span className="font-semibold">@{handle}</span>
             <span className="rounded-full border border-white/10 bg-white/10 px-2 py-0.5 text-[11px]">

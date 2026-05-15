@@ -17,7 +17,7 @@ export default function Stepper({ active }: { active: 1 | 2 | 3 | 4 | 5 }) {
       {/* Progress track */}
       <div className="absolute top-4.5 md:top-6 left-0 w-full h-0.5 bg-teal-700/30 rounded-full overflow-hidden transition-all duration-300">
         <div
-          className="h-full bg-gold-400 shadow-[0_0_10px_rgba(255,215,0,0.3)] transition-all duration-700 ease-out"
+          className="h-full bg-gold-400 shadow-gold-glow transition-all duration-700 ease-out"
           style={{ width: `${progressPercentage}%` }}
         />
       </div>

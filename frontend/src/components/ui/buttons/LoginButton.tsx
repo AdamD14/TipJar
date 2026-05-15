@@ -47,17 +47,17 @@ export const LoginButton: React.FC<Props> = ({
         'rounded-[16px]',
         // „Mokre szkło" (glass) z kolorem teal
         'backdrop-blur-md',
-        'bg-[#1a4d4d]/35',
-        'border border-[#cfd6d8]/15',
-        'text-[#DDE0DA]',
+        'bg-teal-700/35',
+        'border border-white/15',
+        'text-muted',
         // Cień (efekt wypukłości)
         'shadow-[0_8px_18px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.50),inset_0_-6px_10px_rgba(0,0,0,0.10)]',
         // Interakcje
         'transition-all duration-200',
-        'hover:bg-[#1a4d4d]/45 hover:scale-[1.02]',
-        'active:scale-[0.99] active:bg-[#1a4d4d]/55',
+        'hover:bg-teal-700/45 hover:scale-[1.02]',
+        'active:scale-[0.99] active:bg-teal-700/55',
         // Dostępność – focus-visible
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4d4d]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f10]',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700/70 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-950',
         // Blokada
         'disabled:opacity-60 disabled:cursor-not-allowed',
         // Tła (akcent teal)
@@ -65,7 +65,7 @@ export const LoginButton: React.FC<Props> = ({
         'before:bg-[radial-gradient(12px_12px_at_20%_30%,rgba(26,77,77,0.12)_0%,rgba(26,77,77,0.00)_60%),radial-gradient(10px_10px_at_70%_60%,rgba(26,77,77,0.10)_0%,rgba(26,77,77,0.00)_70%)]',
         // Sheen
         'after:absolute after:inset-0 after:rounded-[inherit] after:pointer-events-none',
-        'after:bg-gradient-to-r after:from-transparent after:via-[#1a4d4d]/25 after:to-transparent',
+        'after:bg-gradient-to-r after:from-transparent after:via-teal-700/25 after:to-transparent',
         'after:-translate-x-[140%] after:will-change-transform',
         'after:animate-sheen',
         className, // ← MERGE klas z zewnątrz (np. w-full, justify-center)
@@ -76,7 +76,7 @@ export const LoginButton: React.FC<Props> = ({
       {isLoading && (
         <span
           aria-hidden
-          className="absolute inline-block h-4 w-4 animate-spin rounded-full border-2 border-[#1a4d4d]/70 border-t-transparent"
+          className="absolute inline-block h-4 w-4 animate-spin rounded-full border-2 border-teal-700/70 border-t-transparent"
         />
       )}
 

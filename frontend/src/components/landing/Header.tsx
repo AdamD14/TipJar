@@ -39,7 +39,7 @@ function AnimatedBrand() {
       {letters.map((letter, index) => (
         <span
           key={index}
-          className="inline-block hover:text-[#FFD700] transition-all duration-300 hover:scale-110 hover:-translate-y-1"
+          className="inline-block hover:text-gold-400 transition-all duration-300 hover:scale-110 hover:-translate-y-1"
           style={{
             animationDelay: `${index * 0.1}s`,
             animation: 'letterFloat 3s ease-in-out infinite'
@@ -143,8 +143,7 @@ export default function Header() {
                 className={clsx(
                   'md:hidden inline-flex items-center justify-center rounded-md p-2 outline-none ring-offset-2 transition-all',
                   'focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.7)]',
-                  'text-text-secondary hover:text-[#FFD700]',
-                  open && 'pointer-events-none opacity-0'
+                  'text-text-secondary hover:text-gold-400',                  open && 'pointer-events-none opacity-0'
                 )}
                 data-testid="hamburger"
               >
@@ -245,14 +244,14 @@ function HeaderLink(
       className={clsx(
         'relative inline-block outline-none text-xs font-semibold tracking-[0.18em] uppercase transition-colors duration-200',
         'focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.7)] focus-visible:rounded',
-        'text-text-secondary hover:text-[#FFD700]',
-        'after:absolute after:left-0 after:bottom-[-4px] after:h-[1px] after:w-full after:rounded-full after:bg-[#FFD700]',
-        'after:scale-x-0 hover:after:scale-x-100 focus-visible:after:scale-x-100 after:origin-left after:transition-transform after:duration-200'
-      )}
-    >
-      {props.children}
-    </Link>
-  );
+'text-text-secondary hover:text-gold-400',
+'after:absolute after:left-0 after:bottom-[-4px] after:h-[1px] after:w-full after:rounded-full after:bg-gold-400',
+'after:scale-x-0 hover:after:scale-x-100 focus-visible:after:scale-x-100 after:origin-left after:transition-transform after:duration-200'
+)}
+>
+{props.children}
+</Link>
+);
 }
 
 function MobileLink(
@@ -274,8 +273,8 @@ function MobileLink(
       <span
         className={clsx(
           'relative inline-block text-sm font-semibold tracking-[0.16em] uppercase transition-colors',
-          'text-text-secondary hover:text-[#FFD700]',
-          'after:absolute after:left-0 after:bottom-[-4px] after:h-[1px] after:w-full after:rounded-full after:bg-[#FFD700]',
+'text-text-secondary hover:text-gold-400',
+'after:absolute after:left-0 after:bottom-[-4px] after:h-[1px] after:w-full after:rounded-full after:bg-gold-400',
           'after:scale-x-0 hover:after:scale-x-100 focus-visible:after:scale-x-100 after:origin-left after:transition-transform after:duration-200'
         )}
       >

@@ -48,7 +48,7 @@ export default function CreatorCard({
           {live && (
             <span
               title="LIVE"
-              className="absolute -right-1 -top-1 inline-flex items-center gap-1 rounded-full bg-[#FF365E] px-2 py-0.5 text-[10px] font-bold text-white shadow"
+              className="absolute -right-1 -top-1 inline-flex items-center gap-1 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-white shadow"
             >
               <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-white" />
               LIVE
@@ -57,14 +57,14 @@ export default function CreatorCard({
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="text-xs text-[#BCC1B6]">Creator</p>
+          <p className="text-xs text-muted">Creator</p>
           <h3 className="truncate text-lg font-semibold text-white">@{handle}</h3>
 
           {hasMeta && (
             <div className="mt-2 flex flex-wrap items-center gap-2">
               {typeof score === "number" && (
                 <span
-                  className="inline-flex items-center rounded-full border border-[#FFD700] bg-[#FFD700]/20 px-2 py-0.5 text-[11px] font-semibold text-[#FFD700]"
+                  className="inline-flex items-center rounded-full border border-gold-400 bg-gold-400/20 px-2 py-0.5 text-[11px] font-semibold text-gold-400"
                   title="Trending score"
                 >
                   ★ {Math.max(0, Math.min(100, Math.round(score)))}

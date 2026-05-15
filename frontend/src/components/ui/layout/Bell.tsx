@@ -15,7 +15,7 @@ export default function Bell({ href = "/fan/notifications" }: { href?: string })
       {unread > 0 && (
         <span
           aria-hidden="true"
-          className="absolute -right-1 -top-1 inline-flex min-w-[18px] translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#FFD700] px-1 text-[10px] font-bold text-[#003737]"
+          className="absolute -right-1 -top-1 inline-flex min-w-[18px] translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-gold-400 px-1 text-[10px] font-bold text-teal-900"
         >
           {unread}
         </span>

@@ -22,12 +22,12 @@ export default function TrendingNow({ items }: { items: Trend[] }) {
           <Link
             key={t.handle}
             href={`/tip/${t.handle}`}
-            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#003737]/40 px-3 py-1.5 text-sm text-white/90 hover:bg-[#003737]/60 focus:outline-none focus:ring-2 focus:ring-[#FFD700]"
+            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-teal-800/40 px-3 py-1.5 text-sm text-white/90 hover:bg-teal-800/60 focus:outline-none focus:ring-2 focus:ring-gold-400"
             onClick={() => recordClick(t.handle, "trending")}
           >
             <span className="font-semibold">@{t.handle}</span>
             {typeof t.score === "number" && (
-              <span className="rounded-full border border-[#FFD700] bg-[#FFD700]/20 px-2 py-0.5 text-[11px] font-semibold text-[#003737]">
+              <span className="rounded-full border border-gold-400 bg-gold-400/20 px-2 py-0.5 text-[11px] font-semibold text-teal-900">
                 ★ {Math.max(0, Math.min(100, Math.round(t.score)))}
               </span>
             )}

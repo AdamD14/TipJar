@@ -31,7 +31,7 @@ function UnifiedLivePreview({ goal }: { goal: Goal }) {
   };
 
   return (
-    <div className="bg-gradient-to-br from-[#1a2e2e]/80 to-[#0A0A0B]/95 border border-teal-500/20 rounded-3xl p-6 shadow-2xl relative overflow-hidden group backdrop-blur-md">
+    <div className="bg-gradient-to-br from-teal-800/80 to-black/95 border border-teal-500/20 rounded-3xl p-6 shadow-2xl relative overflow-hidden group backdrop-blur-md">
       {/* Main Info Row */}
       <div className="flex justify-between items-center mb-6 gap-4">
         {/* Left: Goal */}
@@ -170,7 +170,7 @@ export default function TargetBar({ onPublish, initialGoal }: TargetBarProps) {
             <h2 className="text-sm font-medium text-teal-400">Configuration</h2>
           </div>
 
-          <div className="bg-[#0A0A0B]/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 space-y-5 shadow-2xl relative">
+          <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 space-y-5 shadow-2xl relative">
             {/* Goal */}
             <div className="space-y-2">
               <label className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/30 ml-1">

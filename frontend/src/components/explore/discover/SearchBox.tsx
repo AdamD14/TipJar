@@ -29,7 +29,7 @@ export default function SearchBox({
       value={value}
       onChange={handleChange}
       placeholder="Search @handle"
-      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-[#FFD700]"
+      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-gold-400"
     />
   );
 }

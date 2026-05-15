@@ -45,7 +45,7 @@ export default function HowItWorks() {
           />
         </div>
 
-        <div className="mx-auto max-w-[1600px] px-4 md:px-8 text-[#DDE0DA]">
+        <div className="mx-auto max-w-[1600px] px-4 md:px-8 text-muted">
           
           {/* Mobile Tabs - tylko na mobile */}
           <div className="mb-8 flex justify-center lg:hidden">
@@ -54,9 +54,9 @@ export default function HowItWorks() {
                 type="button"
                 onClick={() => setTab('fans')}
                 className={`px-8 py-3 text-lg font-semibold rounded-[16px] transition-all duration-300 ${
-                  tab === 'fans'
-                    ? 'bg-transparent text-[#4d194d] ring-2 ring-[#4d194d]'
-                    : 'bg-transparent text-[#DDE0DA] hover:bg-[#4d194d]/10 hover:text-[#4d194d]'
+          tab === 'fans'
+            ? 'bg-transparent text-purple-300 ring-2 ring-purple-300'
+            : 'bg-transparent text-muted hover:bg-purple-300/10 hover:text-purple-300'
                 }`}
               >
                 For Fans
@@ -66,9 +66,9 @@ export default function HowItWorks() {
                 type="button"
                 onClick={() => setTab('creators')}
                 className={`px-8 py-3 text-base font-semibold rounded-[16px] transition-all duration-300 ${
-                  tab === 'creators'
-                    ? 'bg-transparent text-[#FFD700] ring-2 ring-[#FFD700]'
-                    : 'bg-transparent text-[#DDE0DA] hover:bg-[#FFD700]/10 hover:text-[#FFD700]'
+          tab === 'creators'
+            ? 'bg-transparent text-gold-400 ring-2 ring-gold-400'
+            : 'bg-transparent text-muted hover:bg-gold-400/10 hover:text-gold-400'
                 }`}
               >
                 For Creators
@@ -81,7 +81,7 @@ export default function HowItWorks() {
             {/* For Fans - Lewa strona */}
             <div>
               <div className="flex justify-center mb-8">
-                <h2 className="text-3xl xl:text-4xl font-bold text-[#4d194d] border-2 border-[#4d194d] bg-transparent rounded-[16px] py-3 px-8">
+                <h2 className="text-3xl xl:text-4xl font-bold text-purple-300 border-2 border-purple-300 bg-transparent rounded-[16px] py-3 px-8">
                   For Fans
                 </h2>
               </div>
@@ -127,7 +127,7 @@ export default function HowItWorks() {
             {/* For Creators - Prawa strona */}
             <div>
               <div className="flex justify-center mb-8">
-                <h2 className="text-3xl xl:text-4xl font-bold text-[#FFD700] border-2 border-[#FFD700] bg-transparent rounded-[16px] py-3 px-8">
+                <h2 className="text-3xl xl:text-4xl font-bold text-gold-400 border-2 border-gold-400 bg-transparent rounded-[16px] py-3 px-8">
                   For Creators
                 </h2>
               </div>
@@ -281,10 +281,10 @@ function TileCard({
   description: string;
 }) {
   return (
-    <article className="group rounded-xl border border-white/10 bg-black/40 backdrop-blur-sm p-6 transition-all duration-300 hover:border-[#FFD700]/60 hover:shadow-[0_0_0_4px_rgba(255,215,0,0.10)_inset]">
+    <article className="group rounded-xl border border-white/10 bg-black/40 backdrop-blur-sm p-6 transition-all duration-300 hover:border-gold-400/60 hover:shadow-[0_0_0_4px_rgba(255,215,0,0.10)_inset]">
       <div className="flex flex-col items-center text-center space-y-3">
         {/* Icon */}
-        <div className="w-8 h-8 bg-[#FFD700]/10 rounded flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-[#FFD700]/20">
+        <div className="w-8 h-8 bg-gold-400/10 rounded flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-gold-400/20">
           {/* @ts-expect-error - lord-icon is a custom web component */}
           <lord-icon
             src={icon}
@@ -295,12 +295,12 @@ function TileCard({
         </div>
 
         {/* Title */}
-        <h3 className="text-lg sm:text-lg md:text-lg lg:text-xl font-semibold text-[#DDE0DA] uppercase">
+        <h3 className="text-lg sm:text-lg md:text-lg lg:text-xl font-semibold text-muted uppercase">
           {title}
         </h3>
 
         {/* Description */}
-        <p className="text-base md:text-base lg:text-md text-[#DDE0DA] leading-relaxed">
+        <p className="text-base md:text-base lg:text-md text-muted leading-relaxed">
           {description}
         </p>
       </div>

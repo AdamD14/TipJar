@@ -95,10 +95,7 @@ export default function AvatarEditorModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
-        className="rounded-2xl p-6 w-full max-w-2xl border-[0.5px] border-[#7aaaab]"
-        style={{
-          background: "linear-gradient(135deg, #001919 0%, #093439 100%)",
-        }}
+      className="rounded-2xl p-6 w-full max-w-2xl border-[0.5px] border-teal-500/40 bg-gradient-to-br from-teal-950 to-teal-800"
       >
         <div className="flex justify-end mb-4">
           <button
@@ -171,7 +168,7 @@ export default function AvatarEditorModal({
           </div>
 
           <div className="md:w-64 space-y-4">
-            <div className="bg-black/20 p-4 rounded-lg border border-[#7aaaab]/30">
+            <div className="bg-black/20 p-4 rounded-lg border border-teal-500/30">
               <h3 className="font-medium text-white mb-2">Tips</h3>
               <ul className="text-sm text-gray-300 space-y-1">
                 <li>• Drag image to adjust crop</li>
@@ -186,7 +183,7 @@ export default function AvatarEditorModal({
                 type="button"
                 onClick={handleConfirm}
                 disabled={!previewUrl || isProcessing}
-                className="w-full py-3 bg-gradient-to-r from-[#FFD700] to-[#f9c513] text-[#003737] font-semibold rounded-lg hover:brightness-110 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                className="w-full py-3 bg-gradient-to-r from-gold-400 to-gold-500 text-teal-900 font-semibold rounded-lg hover:brightness-110 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               >
                 {isProcessing ? "Processing..." : "Save & Continue"}
               </button>
@@ -194,7 +191,7 @@ export default function AvatarEditorModal({
                 type="button"
                 onClick={handleClose}
                 disabled={isProcessing}
-                className="w-full py-3 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3 bg-white/10 text-white font-semibold rounded-lg hover:bg-white/15 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancel
               </button>

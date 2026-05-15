@@ -20,7 +20,7 @@ export default function LearnPage() {
   };
 
   return (
-    <main className="bg-gradient-main text-[#DDE0DA]">
+    <main className="bg-gradient-main text-muted">
       <LearnHero searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
       <div className="mx-auto grid max-w-[1480px] grid-cols-1 gap-8 px-4 py-8 lg:grid-cols-[280px_1fr]">
@@ -41,7 +41,7 @@ export default function LearnPage() {
             <h2 id="advancedHeading" className="mb-2 text-2xl md:text-3xl font-semibold">
               Advanced Topics
             </h2>
-            <p className="mb-6 text-[14px] leading-[1.5] text-[#BCC1B6]">
+            <p className="mb-6 text-[14px] leading-[1.5] text-muted">
               Deep dive into smart contracts, security, and technical implementation details.
             </p>
 
@@ -78,7 +78,7 @@ export default function LearnPage() {
             <h2 id="guidesHeading" className="mb-2 text-2xl md:text-3xl font-semibold">
               Product Guides
             </h2>
-            <p className="mb-6 text-[14px] leading-[1.5] text-[#BCC1B6]">
+            <p className="mb-6 text-[14px] leading-[1.5] text-muted">
               Step-by-step setup guides. Open the editor and configure elements in minutes.
             </p>
 
@@ -109,20 +109,20 @@ function LearnHero({ searchTerm, setSearchTerm }: {
     <section className="border-b border-white/10 bg-card/40">
       <div className="mx-auto max-w-[1480px] px-4 py-12">
         <h1 className="text-3xl md:text-4xl font-semibold">Learn Web3 & TipJar</h1>
-        <p className="mt-2 max-w-[780px] text-[14px] leading-[1.6] text-[#BCC1B6]">
+        <p className="mt-2 max-w-[780px] text-[14px] leading-[1.6] text-muted">
           Quick answers upfront. Expand for details without leaving the page. 
           No jargon, just what you need to support creators and earn faster.
         </p>
         
         {/* Search */}
         <div className="mt-6 max-w-md relative">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#BCC1B6]" />
+          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
           <input
             type="text"
             placeholder="Search topics..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-card border border-white/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD700]/30"
+            className="w-full pl-10 pr-4 py-2 bg-card border border-white/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold-400/30"
           />
         </div>
       </div>
@@ -140,11 +140,11 @@ function LearnNav({ readTopics }: { readTopics: Set<string> }) {
       <div className="rounded-lg border border-white/10 bg-card p-3">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium">Reading Progress</span>
-          <span className="text-xs text-[#BCC1B6]">{progressCount}/{totalTopics}</span>
+          <span className="text-xs text-muted">{progressCount}/{totalTopics}</span>
         </div>
         <div className="w-full bg-white/10 rounded-full h-2">
           <div 
-            className="bg-[#FFD700] h-2 rounded-full transition-all duration-300"
+            className="bg-gold-400 h-2 rounded-full transition-all duration-300"
             style={{ width: `${(progressCount / totalTopics) * 100}%` }}
           />
         </div>
@@ -160,7 +160,7 @@ function LearnNav({ readTopics }: { readTopics: Set<string> }) {
                 href={`#${n.id}`}
                 className="flex items-center gap-3 rounded-[10px] border border-white/10 bg-card px-3 py-2 text-sm hover:bg-white/5 transition-colors"
               >
-                <Icon size={16} className="text-[#FFD700]" />
+                <Icon size={16} className="text-gold-400" />
                 {n.label}
               </a>
             </li>
@@ -171,7 +171,7 @@ function LearnNav({ readTopics }: { readTopics: Set<string> }) {
       <div className="mt-3">
         <Link
           href="/"
-          className="inline-flex w-full justify-center items-center gap-2 rounded-[10px] border border-[#FFD700] px-3 py-2 text-sm font-medium text-[#FFD700] hover:bg-[#FFD700]/10 transition-colors"
+          className="inline-flex w-full justify-center items-center gap-2 rounded-[10px] border border-gold-400 px-3 py-2 text-sm font-medium text-gold-400 hover:bg-gold-400/10 transition-colors"
         >
           <ArrowUp size={14} className="rotate-180" />
           Back to Home
@@ -195,23 +195,23 @@ function ArticleCard({
   return (
     <article className="rounded-[16px] border border-white/10 bg-card p-4 md:p-6 hover:border-white/20 transition-colors">
       <div className="flex items-start gap-3 mb-3">
-        <div className="w-10 h-10 rounded-lg bg-[#FFD700]/10 flex items-center justify-center shrink-0">
-          <Icon size={20} className="text-[#FFD700]" />
+        <div className="w-10 h-10 rounded-lg bg-gold-400/10 flex items-center justify-center shrink-0">
+          <Icon size={20} className="text-gold-400" />
         </div>
         <div className="flex-1">
           <h3 className="text-base font-semibold leading-[1.5] mb-1">{title}</h3>
-          <div className="flex items-center gap-2 text-xs text-[#8F9687]">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Clock size={12} />
             {readTime} read
           </div>
         </div>
       </div>
       
-      <p className="text-[13px] leading-[1.6] text-[#BCC1B6] mb-4">
+      <p className="text-[13px] leading-[1.6] text-muted mb-4">
         {description}
       </p>
       
-      <button className="text-sm text-[#FFD700] hover:text-[#FFEA70] transition-colors font-medium">
+      <button className="text-sm text-gold-400 hover:text-gold-200 transition-colors font-medium">
         Read article →
       </button>
     </article>
@@ -225,14 +225,14 @@ function GuideLink({ href, title, readTime }: { href: string; title: string; rea
       className="block rounded-[16px] border border-white/10 bg-card p-4 transition-all hover:-translate-y-[1px] hover:border-white/20"
     >
       <div className="mb-2 text-base font-semibold leading-[1.5]">{title}</div>
-      <div className="flex items-center gap-2 text-xs text-[#8F9687] mb-2">
+      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
         <Clock size={12} />
         {readTime} setup
       </div>
-      <div className="text-[13px] leading-[1.6] text-[#BCC1B6] mb-3">
+      <div className="text-[13px] leading-[1.6] text-muted mb-3">
         Open the editor and configure in a few steps with live preview.
       </div>
-      <div className="inline-flex items-center gap-2 text-sm text-[#FFD700]">
+      <div className="inline-flex items-center gap-2 text-sm text-gold-400">
         Open guide <ExternalLink size={14} />
       </div>
     </Link>
@@ -259,7 +259,7 @@ function BackToTop() {
     <button
       onClick={scrollToTop}
       aria-label="Back to top"
-      className="fixed bottom-4 right-4 z-50 inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#FFD700]/60 bg-black/40 text-[#FFD700] backdrop-blur transition hover:-translate-y-[1px] hover:bg-black/60"
+      className="fixed bottom-4 right-4 z-50 inline-flex h-10 w-10 items-center justify-center rounded-full border border-gold-400/60 bg-black/40 text-gold-400 backdrop-blur transition hover:-translate-y-[1px] hover:bg-black/60"
     >
       <ArrowUp size={16} />
     </button>
@@ -294,7 +294,7 @@ function LearnEssentials({
             USDC is a regulated, fully-reserved stablecoin. Funds are redeemable for USD through
             licensed partners. It reduces volatility and enables instant, low-fee transfers.
           </p>
-          <p className="text-[#FFD700]">TipJar pays creators in USDC by default.</p>
+          <p className="text-gold-400">TipJar pays creators in USDC by default.</p>
         </div>
       ),
     },
@@ -331,12 +331,12 @@ function LearnEssentials({
       <h2 id="essentialsHeading" className="mb-2 text-2xl md:text-3xl font-semibold">
         Essentials
       </h2>
-      <p className="mb-6 text-[14px] leading-[1.5] text-[#BCC1B6]">
-        Short answers up front. Tap <span className="text-[#FFD700]">More</span> to expand without leaving the page.
+      <p className="mb-6 text-[14px] leading-[1.5] text-muted">
+        Short answers up front. Tap <span className="text-gold-400">More</span> to expand without leaving the page.
       </p>
 
       {filteredTopics.length === 0 ? (
-        <div className="text-center py-8 text-[#BCC1B6]">
+        <div className="text-center py-8 text-muted">
           No topics found matching "{searchTerm}"
         </div>
       ) : (
@@ -385,23 +385,23 @@ function EssentialItem({
     <article 
       id={topic.id} 
       className={`rounded-[16px] border border-white/10 bg-card p-4 md:p-6 transition-colors ${
-        isRead ? 'border-[#FFD700]/30' : ''
+        isRead ? 'border-gold-400/30' : ''
       }`}
     >
       <header className="mb-3 flex items-start justify-between gap-3">
         <div className="flex gap-3 flex-1">
-          <div className="w-8 h-8 rounded-lg bg-[#FFD700]/10 flex items-center justify-center shrink-0 mt-1">
-            <Icon size={16} className="text-[#FFD700]" />
+          <div className="w-8 h-8 rounded-lg bg-gold-400/10 flex items-center justify-center shrink-0 mt-1">
+            <Icon size={16} className="text-gold-400" />
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
               <h3 className="text-base font-semibold leading-[1.5]">{topic.title}</h3>
               {isRead && (
-                <div className="w-2 h-2 rounded-full bg-[#FFD700]" title="Read" />
+                <div className="w-2 h-2 rounded-full bg-gold-400" title="Read" />
               )}
             </div>
-            <p className="text-[13px] text-[#8F9687] mb-1">{topic.teaser}</p>
-            <div className="flex items-center gap-2 text-xs text-[#8F9687]">
+            <p className="text-[13px] text-muted-foreground mb-1">{topic.teaser}</p>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Clock size={12} />
               {topic.readTime}
             </div>
@@ -420,7 +420,7 @@ function EssentialItem({
             onClick={handleToggle}
             aria-expanded={open}
             aria-controls={`${topic.id}-more`}
-            className="rounded-[10px] bg-[#FFD700] px-3 py-1.5 text-[12px] font-semibold text-[#003737] hover:bg-[#FFEA70] transition-colors"
+            className="rounded-[10px] bg-gold-400 px-3 py-1.5 text-[12px] font-semibold text-teal-900 hover:bg-gold-200 transition-colors"
           >
             {open ? 'Less' : 'More'}
           </button>

@@ -38,7 +38,7 @@ export default function WidgetGenerator() {
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-2xl border shadow-sm space-y-4">
         <h3 className="font-bold text-lg flex items-center gap-2">
-          <QrCode size={20} className="text-[#006D6D]" />
+          <QrCode size={20} className="text-teal-500" />
           Narzędzia Promocyjne
         </h3>
 

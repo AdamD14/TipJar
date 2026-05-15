@@ -238,8 +238,8 @@ const THEMES: Record<string, { glow: string; border: string; accent: string }> =
     },
     twitch: {
       glow: "shadow-[0_0_20px_-5px_rgba(145,70,255,0.4)]",
-      border: "border-[#9146FF]/30",
-      accent: "text-[#9146FF]",
+    border: "border-purple-500/30",
+    accent: "text-purple-500",
     },
     tiktok: {
       glow: "shadow-[0_0_20px_-5px_rgba(255,0,80,0.4)]",
@@ -617,7 +617,7 @@ export default function IndustrySelector({
         <button
           type="button"
           onClick={() => setShowNiche(!showNiche)}
-          className="relative z-10 bg-[#0a0a0a] px-5 py-1.5 flex items-center gap-2 text-xs md:text-sm text-gray-400 hover:text-white hover:border-white/20 uppercase tracking-widest font-bold border border-white/5 rounded-full transition-all cursor-pointer"
+          className="relative z-10 bg-black px-5 py-1.5 flex items-center gap-2 text-xs md:text-sm text-gray-400 hover:text-white hover:border-white/20 uppercase tracking-widest font-bold border border-white/5 rounded-full transition-all cursor-pointer"
         >
           More / Niche / Values
           {showNiche ? <ChevronUp size={14} /> : <ChevronDown size={14} />}

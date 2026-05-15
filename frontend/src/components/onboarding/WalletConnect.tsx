@@ -40,7 +40,7 @@ export default function WalletConnect() {
 
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-      <h3 className="text-sm text-[#BCC1B6]">Hosted wallet (Circle DCW)</h3>
+      <h3 className="text-sm text-muted">Hosted wallet (Circle DCW)</h3>
       <p className="mt-1 text-sm text-white/90">
         Create a custodial wallet to receive tips in USDC.
       </p>
@@ -48,7 +48,7 @@ export default function WalletConnect() {
         <button
           onClick={onCreate}
           disabled={busy}
-          className="rounded-xl bg-[#FFD700] px-4 py-3 font-semibold text-[#003737] disabled:opacity-60"
+          className="rounded-xl bg-gold-400 px-4 py-3 font-semibold text-teal-900 disabled:opacity-60"
         >
           {busy ? "Processing…" : "Create wallet"}
         </button>
@@ -56,9 +56,9 @@ export default function WalletConnect() {
           Balance: {bal === null ? "—" : `$ ${bal.toFixed(2)}`}
         </div>
       </div>
-      {ok && <p className="mt-2 text-sm text-emerald-300">{ok}</p>}
-      {err && <p className="mt-2 text-sm text-red-300">{err}</p>}
-      <p className="mt-2 text-xs text-[#BCC1B6]">
+      {ok && <p className="mt-2 text-sm text-emerald-400">{ok}</p>}
+      {err && <p className="mt-2 text-sm text-red-400">{err}</p>}
+      <p className="mt-2 text-xs text-muted">
         Self-custody przyjdzie później; ten moduł obsługuje DCW.
       </p>
     </div>

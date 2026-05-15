@@ -17,10 +17,10 @@ export default function CollectionCard({
     <Card>
       <div className="mb-3">
         <h3 className="text-lg font-semibold text-white">{title}</h3>
-        {description && <p className="text-sm text-[#BCC1B6]">{description}</p>}
+        {description && <p className="text-sm text-muted">{description}</p>}
       </div>
       {first.length === 0 ? (
-        <p className="text-sm text-[#BCC1B6]">Brak elementów w tej kolekcji.</p>
+        <p className="text-sm text-muted">Brak elementów w tej kolekcji.</p>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
           {first.map((h) => {

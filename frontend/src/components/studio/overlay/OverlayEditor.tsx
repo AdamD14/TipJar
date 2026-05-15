@@ -22,7 +22,7 @@ const PRESET_BG: Record<OverlayColorPreset, string> = {
 const Field: React.FC<React.PropsWithChildren<{ label: string }>> = ({ label, children }) => {
   return (
     <label className="block">
-      <div className="mb-2 text-sm text-[#BCC1B6] font-medium">{label}</div>
+        <div className="mb-2 text-sm text-muted font-medium">{label}</div>
       {children}
     </label>
   );
@@ -42,7 +42,7 @@ const OverlayBox: React.FC<any> = ({ className, style, entryAnimation, durationS
   return (
     <div className={`${className} ${entryAnimation === 'typewriter' ? 'oi-typewriter' : `oi-${entryAnimation}`}`} style={{ ...style, borderRadius: 14, padding: '12px 14px', border: '1px solid rgba(255,255,255,0.1)' }}>
       <div className="flex items-start gap-3">
-        <div className="h-10 w-10 shrink-0 rounded-full bg-gradient-to-br from-[#FFD700] to-[#A27A00]" />
+        <div className="h-10 w-10 shrink-0 rounded-full bg-gradient-to-br from-gold-400 to-gold-900" />
         <div className="min-w-[200px]">
           <div className="text-sm font-bold leading-tight">{data.name} tipped {data.amount} {data.currency}</div>
           <div className="mt-0.5 text-sm tw-text italic">{data.msg}</div>
@@ -103,13 +103,13 @@ export default function OverlayEditor({ creatorId }: { creatorId: string }) {
           <div className="flex gap-2">
             <button
               onClick={triggerPreview}
-              className="rounded-[12px] bg-[#FFD700] hover:bg-[#E6C200] px-3 py-1.5 text-sm font-bold text-[#003737] transition-all hover:-translate-y-[1px] active:scale-95"
+              className="rounded-[12px] bg-gold-400 hover:bg-gold-600 px-3 py-1.5 text-sm font-bold text-teal-900 transition-all hover:-translate-y-[1px] active:scale-95"
             >
               Trigger test tip
             </button>
             <button
               onClick={() => reset()}
-              className="rounded-[12px] border border-white/15 px-3 py-1.5 text-sm font-medium text-[#DDE0DA] hover:bg-white/5 transition-all"
+              className="rounded-[12px] border border-white/15 px-3 py-1.5 text-sm font-medium text-muted hover:bg-white/5 transition-all"
             >
               Reset
             </button>
@@ -131,7 +131,7 @@ export default function OverlayEditor({ creatorId }: { creatorId: string }) {
           {nowFx === 'confetti' && <div className="absolute inset-0 flex items-center justify-center text-6xl animate-bounce">🎉</div>}
           {nowFx === 'sparkle' && <div className="absolute inset-0 flex items-center justify-center text-6xl animate-ping">✨</div>}
         </div>
-        <div className="mt-3 text-[11px] text-[#BCC1B6] italic">
+        <div className="mt-3 text-[11px] text-muted italic">
           Position reflects selected corner. Preview restarts on trigger.
         </div>
       </div>
@@ -148,7 +148,7 @@ export default function OverlayEditor({ creatorId }: { creatorId: string }) {
           <select
             value={settings.position}
             onChange={(e) => set({ position: e.target.value as any })}
-            className="w-full rounded-[10px] border border-white/10 bg-[#021011] text-[#DDE0DA] px-4 py-2 text-sm focus:outline-none focus:border-[#FFD700]"
+            className="w-full rounded-[10px] border border-white/10 bg-teal-950 text-muted px-4 py-2 text-sm focus:outline-none focus:border-gold-400"
           >
             {POS.map((p) => <option key={p} value={p}>{p}</option>)}
           </select>
@@ -159,7 +159,7 @@ export default function OverlayEditor({ creatorId }: { creatorId: string }) {
             type="range" min={0.3} max={1} step={0.01}
             value={settings.opacity}
             onChange={(e) => set({ opacity: Number(e.target.value) })}
-            className="w-full h-1.5 bg-white/5 rounded-full appearance-none cursor-pointer accent-[#FFD700]"
+            className="w-full h-1.5 bg-white/5 rounded-full appearance-none cursor-pointer accent-gold-400"
           />
         </Field>
 
@@ -171,16 +171,16 @@ export default function OverlayEditor({ creatorId }: { creatorId: string }) {
                 const v = e.target.value;
                 set({ bgColor: v === 'custom' ? '#07393a' : v });
               }}
-              className="rounded-[10px] border border-white/10 bg-[#021011] text-[#DDE0DA] px-4 py-2 text-sm"
-            >
-              <option value="darkTurquoise">darkTurquoise</option>
-              <option value="black">black</option>
-              <option value="transparent">transparent</option>
-              <option value="custom">custom HEX</option>
-            </select>
-            <input
-              type="color"
-              value={bg.startsWith('#') ? bg : '#07393a'}
+          className="rounded-[10px] border border-white/10 bg-teal-950 text-muted px-4 py-2 text-sm"
+        >
+          <option value="darkTurquoise">darkTurquoise</option>
+          <option value="black">black</option>
+          <option value="transparent">transparent</option>
+          <option value="custom">custom HEX</option>
+        </select>
+        <input
+          type="color"
+          value={bg.startsWith('#') ? bg : '#07393a'}
               onChange={(e) => set({ bgColor: e.target.value })}
               className="h-10 w-full cursor-pointer rounded-[10px] border border-white/10 bg-transparent p-1"
             />
@@ -191,7 +191,7 @@ export default function OverlayEditor({ creatorId }: { creatorId: string }) {
           <select
             value={settings.entryAnimation}
             onChange={(e) => set({ entryAnimation: e.target.value as any })}
-            className="w-full rounded-[10px] border border-white/10 bg-[#021011] text-[#DDE0DA] px-4 py-2 text-sm"
+            className="w-full rounded-[10px] border border-white/10 bg-teal-950 text-muted px-4 py-2 text-sm"
           >
             {ANIM.map((a) => <option key={a} value={a}>{a}</option>)}
           </select>
@@ -201,7 +201,7 @@ export default function OverlayEditor({ creatorId }: { creatorId: string }) {
           <button
             type="submit"
             disabled={pending}
-            className="w-full rounded-[12px] bg-[#006D6D] hover:bg-[#004D4D] px-4 py-3 text-sm font-bold text-white transition-all shadow-xl shadow-[#006D6D]/10 disabled:opacity-50"
+            className="w-full rounded-[12px] bg-teal-500 hover:bg-teal-600 px-4 py-3 text-sm font-bold text-white transition-all shadow-xl shadow-teal-500/10 disabled:opacity-50"
           >
             {pending ? 'Saving settings...' : 'Save All Changes'}
           </button>

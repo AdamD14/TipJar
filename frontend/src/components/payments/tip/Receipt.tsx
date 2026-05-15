@@ -34,7 +34,7 @@ export default function Receipt({
 function Info({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="rounded-xl bg-white/5 p-4">
-      <p className="text-xs text-[#BCC1B6]">{label}</p>
+      <p className="text-xs text-muted">{label}</p>
       <div className="mt-1 text-sm text-white/90 break-all">{value}</div>
     </div>
   );
@@ -63,7 +63,7 @@ function Share({ amount, handle }: { amount: string; handle: string }) {
       href={`https://twitter.com/intent/tweet?text=${text}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="font-ui rounded-xl bg-[#FFD700] px-4 py-2 font-semibold text-[#003737]"
+      className="font-ui rounded-xl bg-gold-400 px-4 py-2 font-semibold text-teal-900"
     >
       Share
     </a>

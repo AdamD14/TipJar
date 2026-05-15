@@ -31,8 +31,8 @@ export default function SidebarNav() {
               className={[
                 "group flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition-colors",
                 active
-                  ? "bg-[#003737] text-white"
-                  : "text-[#BCC1B6] hover:text-white hover:bg-[#003737]/70",
+                  ? "bg-teal-800 text-white"
+                  : "text-muted hover:text-white hover:bg-teal-800/70",
               ].join(" ")}
             >
               <Icon className="h-5 w-5 opacity-90" />

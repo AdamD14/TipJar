@@ -15,7 +15,7 @@ export default function Suggestions({
   if (!query || items.length === 0) return null;
   return (
     <div className="mt-2 rounded-xl border border-white/10 bg-white/5 p-2">
-      <p className="mb-1 px-2 text-xs text-[#BCC1B6]">Suggestions</p>
+      <p className="mb-1 px-2 text-xs text-muted">Suggestions</p>
       <ul className="divide-y divide-white/10">
         {items.map((s) => (
           <li key={`${s.source}:${s.handle}`}>
@@ -24,7 +24,7 @@ export default function Suggestions({
               className="block px-2 py-2 text-sm text-white/90 hover:bg-white/10"
               onClick={() => recordClick(s.handle, "suggestion")}
             >
-              @{s.handle} <span className="text-xs text-[#BCC1B6]">({s.source})</span>
+              @{s.handle} <span className="text-xs text-muted">({s.source})</span>
             </Link>
           </li>
         ))}

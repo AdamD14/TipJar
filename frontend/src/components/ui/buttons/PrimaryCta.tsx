@@ -26,7 +26,7 @@ function Spinner(): JSX.Element {
   return (
     <span
       aria-hidden
-      className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-[#E6C200] border-t-transparent"
+      className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-gold-600 border-t-transparent"
     />
   );
 }
@@ -49,7 +49,7 @@ export default function PrimaryCta(
 
   const base =
     'group relative inline-flex items-center justify-center gap-2 h-12 px-8 text-lg font-ui font-bold rounded-[16px] ' +
-    'text-[#0A0A0A] ' +
+        'text-black ' +
     // kolory gradientu (base/hover/active)
     'bg-[linear-gradient(180deg,#FFE658_0%,#FFD700_40%,#B38F00_100%)] ' +
     'hover:bg-[linear-gradient(180deg,#FFF085_0%,#FFE331_40%,#C19A00_100%)] ' +
@@ -57,7 +57,7 @@ export default function PrimaryCta(
     // cienie/efekty jak było
     'shadow-[0_10px_24px_rgba(0,0,0,0.35)] ring-1 ring-black/10 ' +
     'transform-gpu will-change-transform transition-transform transition-colors duration-150 hover:scale-[1.015] active:translate-y-[1px] ' +
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD700]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#2A0F14] ' +
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-purple-300 ' +
     'disabled:opacity-60 disabled:cursor-not-allowed ' +
     `${styles.sheen} ${styles.bevel}`;
 
@@ -90,7 +90,7 @@ export default function PrimaryCta(
         <span
           className={
             (isLoading ? 'opacity-0' : 'opacity-100') +
-            ' transition-colors group-hover:text-[#003737]'
+            ' transition-colors group-hover:text-teal-900'
           }
         >
           {children}

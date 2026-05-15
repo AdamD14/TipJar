@@ -31,10 +31,10 @@ export default function ExampleProfile({ isOpen, onClose }: ExampleProfileProps)
       />
       
       {/* Modal */}
-      <div className="relative bg-[#0f3847] rounded-3xl p-8 w-full max-w-md border border-[#FFD700]/20">
+      <div className="relative bg-teal-800 rounded-3xl p-8 w-full max-w-md border border-gold-400/20">
         
         {/* Avatar z żółtym obramowaniem */}
-        <div className="w-32 h-32 mx-auto mb-4 rounded-full border-4 border-[#FFD700] overflow-hidden bg-gray-700">
+        <div className="w-32 h-32 mx-auto mb-4 rounded-full border-4 border-gold-400 overflow-hidden bg-gray-700">
           <Image
             src="/weeee.png"
             alt="AdamDuda"
@@ -82,9 +82,9 @@ export default function ExampleProfile({ isOpen, onClose }: ExampleProfileProps)
             value={tipAmount}
             onChange={(e) => setTipAmount(Number(e.target.value))}
             className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-            style={{
-              background: `linear-gradient(to right, #FFD700 0%, #FFD700 ${tipAmount}%, #374151 ${tipAmount}%, #374151 100%)`
-            }}
+style={{
+          background: `linear-gradient(to right, var(--color-gold-400) 0%, var(--color-gold-400) ${tipAmount}%, #374151 ${tipAmount}%, #374151 100%)`
+        }}
           />
           <style jsx>{`
             .slider::-webkit-slider-thumb {
@@ -92,14 +92,14 @@ export default function ExampleProfile({ isOpen, onClose }: ExampleProfileProps)
               width: 20px;
               height: 20px;
               border-radius: 50%;
-              background: #FFD700;
-              cursor: pointer;
-            }
-            .slider::-moz-range-thumb {
-              width: 20px;
-              height: 20px;
-              border-radius: 50%;
-              background: #FFD700;
+background: var(--color-gold-400);
+  cursor: pointer;
+}
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-gold-400);
               cursor: pointer;
               border: none;
             }
@@ -112,37 +112,37 @@ export default function ExampleProfile({ isOpen, onClose }: ExampleProfileProps)
             onClick={() => setTipAmount(1)}
             className={`flex-1 py-3 rounded-lg font-semibold transition-all ${
               tipAmount === 1 
-                ? 'bg-[#FFD700] text-black' 
-                : 'bg-gray-700 text-white hover:bg-gray-600'
-            }`}
-          >
-            $1
-          </button>
-          <button 
-            onClick={() => setTipAmount(2)}
-            className={`flex-1 py-3 rounded-lg font-semibold transition-all ${
-              tipAmount === 2 
-                ? 'bg-[#FFD700] text-black' 
-                : 'bg-gray-700 text-white hover:bg-gray-600'
-            }`}
-          >
-            $2
-          </button>
-          <button 
-            onClick={() => setTipAmount(5)}
-            className={`flex-1 py-3 rounded-lg font-semibold transition-all ${
-              tipAmount === 5
-                ? 'bg-[#FFD700] text-black' 
-                : 'bg-gray-700 text-white hover:bg-gray-600'
-            }`}
-          >
-            $5
-          </button>
-          <button 
-            onClick={() => setTipAmount(10)}
-            className={`flex-1 py-3 rounded-lg font-semibold transition-all ${
-              tipAmount === 10 
-                ? 'bg-[#FFD700] text-black' 
+? 'bg-gold-400 text-black'
+  : 'bg-gray-700 text-white hover:bg-gray-600'
+}`}
+>
+  $1
+</button>
+<button
+  onClick={() => setTipAmount(2)}
+  className={`flex-1 py-3 rounded-lg font-semibold transition-all ${
+  tipAmount === 2
+  ? 'bg-gold-400 text-black'
+  : 'bg-gray-700 text-white hover:bg-gray-600'
+}`}
+>
+  $2
+</button>
+<button
+  onClick={() => setTipAmount(5)}
+  className={`flex-1 py-3 rounded-lg font-semibold transition-all ${
+  tipAmount === 5
+  ? 'bg-gold-400 text-black'
+  : 'bg-gray-700 text-white hover:bg-gray-600'
+}`}
+>
+  $5
+</button>
+<button
+  onClick={() => setTipAmount(10)}
+  className={`flex-1 py-3 rounded-lg font-semibold transition-all ${
+  tipAmount === 10
+  ? 'bg-gold-400 text-black'
                 : 'bg-gray-700 text-white hover:bg-gray-600'
             }`}
           >
@@ -151,7 +151,7 @@ export default function ExampleProfile({ isOpen, onClose }: ExampleProfileProps)
         </div>
 
         {/* Tip Button */}
-        <button className="w-full bg-[#FFD700] text-black py-4 rounded-lg font-bold text-lg hover:bg-[#FFC700] transition-all flex items-center justify-center gap-2">
+        <button className="w-full bg-gold-400 text-black py-4 rounded-lg font-bold text-lg hover:bg-gold-600 transition-all flex items-center justify-center gap-2">
           Tip ${tipAmount}.00
           <Image 
             src="/assets/logo_usdc_1.png" 

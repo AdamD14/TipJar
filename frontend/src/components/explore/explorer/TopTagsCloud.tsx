@@ -22,7 +22,7 @@ export default function TopTagsCloud({
             aria-pressed={active}
             className={`rounded-full border px-3 py-1 text-xs font-semibold ${
               active
-                ? "border-[#FFD700] bg-[#FFD700]/20 text-[#FFD700]"
+                ? "border-gold-400 bg-gold-400/20 text-gold-400"
                 : "border-white/10 bg-white/5 text-white/80 hover:bg-white/10"
             }`}
             title={`#${tag} • ${count}`}

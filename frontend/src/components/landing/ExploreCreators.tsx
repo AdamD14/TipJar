@@ -85,7 +85,7 @@ export default function ExploreCreators() {
   };
 
   return (
-    <section className="py-12 md:py-16 bg-gradient-to-b from-[#0a1f2e] to-[#0c2a3d]">
+    <section className="py-12 md:py-16 bg-gradient-to-b from-teal-950 to-teal-950">
       <div className="mx-auto max-w-[1480px] px-4">
         <div className="mb-6 flex items-center justify-between">
           <div>
@@ -94,7 +94,7 @@ export default function ExploreCreators() {
           </div>
           <Link
             href="#"
-            className="hidden md:inline-flex rounded-full border-2 border-[#FFD700] px-6 py-2 text-[#FFD700] font-semibold hover:bg-[#FFD700] hover:text-black transition-all"
+            className="hidden md:inline-flex rounded-full border-2 border-gold-400 px-6 py-2 text-gold-400 font-semibold hover:bg-gold-400 hover:text-black transition-all"
           >
             Discover all creators
           </Link>
@@ -151,24 +151,24 @@ function CreatorCard({
   goalPercent: number;
 }) {
   return (
-    <article className="min-w-[320px] bg-[#0f3847] rounded-2xl p-6 border border-gray-700/50">
+    <article className="min-w-[320px] bg-teal-800 rounded-2xl p-6 border border-gray-700/50">
       <div className="flex items-center justify-between mb-6">
         <span className="px-3 py-1 bg-gray-800 text-gray-300 rounded-full text-sm">{category}</span>
         {goalPercent && (
           <div className="flex items-center gap-2">
             <div className="w-20 h-2 bg-gray-700 rounded-full overflow-hidden">
               <div 
-                className="h-full bg-[#FFD700] rounded-full"
+                className="h-full bg-gold-400 rounded-full"
                 style={{ width: `${goalPercent}%` }}
               />
             </div>
-            <span className="text-[#FFD700] text-sm font-bold">{goalPercent}%</span>
+            <span className="text-gold-400 text-sm font-bold">{goalPercent}%</span>
           </div>
         )}
       </div>
 
       {/* Avatar placeholder */}
-      <div className="w-32 h-32 mx-auto mb-4 bg-[#FFD700] rounded-full flex items-center justify-center">
+      <div className="w-32 h-32 mx-auto mb-4 bg-gold-400 rounded-full flex items-center justify-center">
         <span className="text-5xl font-bold text-black">{initial}</span>
       </div>
 
@@ -183,7 +183,7 @@ function CreatorCard({
         <button className="flex-1 py-2 px-4 bg-transparent border border-gray-600 text-white rounded-lg hover:bg-gray-700/50 transition-all">
           View profile
         </button>
-        <button className="py-2 px-6 bg-[#FFD700] text-black font-bold rounded-lg hover:bg-[#FFC700] transition-all">
+        <button className="py-2 px-6 bg-gold-400 text-black font-bold rounded-lg hover:bg-gold-600 transition-all">
           Tip
         </button>
       </div>

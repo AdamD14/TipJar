@@ -51,9 +51,9 @@ export default function SecondaryCta(
   const base =
     'group relative inline-flex items-center justify-center gap-2 h-12 px-10 text-lg font-ui font-bold rounded-[16px] ' +
     'text-white ' +
-    'bg-[linear-gradient(180deg,#5a2b5a_0%,#4d194d_40%,#2b0f2b_100%)] ' +
-    'hover:bg-[linear-gradient(180deg,#7a347a_0%,#4d194d_40%,#3a113a_100%)] ' +
-    'active:bg-[linear-gradient(180deg,#541a54_0%,#451245_38%,#2b0f2b_100%)] ' +
+        'bg-[linear-gradient(180deg,#5a2b5a_0%,var(--color-purple-300)_40%,#2b0f2b_100%)] ' +
+        'hover:bg-[linear-gradient(180deg,#7a347a_0%,var(--color-purple-300)_40%,#3a113a_100%)] ' +
+        'active:bg-[linear-gradient(180deg,#541a54_0%,#451245_38%,#2b0f2b_100%)] ' +
     'shadow-2 ring-1 ring-black/10 ' +
     'transform-gpu will-change-transform transition-transform transition-colors duration-150 hover:scale-[1.015] active:translate-y-[1px] ' +
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300/70 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-900 ' +

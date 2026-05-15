@@ -20,7 +20,7 @@ export default function FilterChips({
             onClick={() => onToggle(c.slug)}
             className={`rounded-full px-3 py-1 text-xs font-semibold border ${
               active
-                ? "border-[#FFD700] bg-[#FFD700]/20 text-[#FFD700]"
+                ? "border-gold-400 bg-gold-400/20 text-gold-400"
                 : "border-white/10 bg-white/5 text-white/80 hover:bg-white/10"
             }`}
             aria-pressed={active}
