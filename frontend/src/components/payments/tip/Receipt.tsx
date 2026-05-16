@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Button from "@/components/ui/buttons/Button";
 
 export default function Receipt({
   handle,
@@ -11,7 +12,7 @@ export default function Receipt({
 }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-white">
-      <h2 className="text-xl font-semibold">Thanks for your tip!</h2>
+      <h2 className="font-heading text-xl font-semibold">Thanks for your tip!</h2>
       <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Info label="Creator" value={`@${handle}`} />
         <Info label="Amount" value={`${amount} USDC`} />
@@ -19,12 +20,13 @@ export default function Receipt({
         <Info label="Date" value={new Date().toLocaleString()} />
       </div>
       <div className="mt-6 flex flex-wrap gap-3">
-        <Link
+        <Button
           href={`/tip/${handle}`}
-          className="font-ui rounded-xl border border-white/15 px-4 py-2 font-semibold text-white/90"
+          variant="outline"
+          size="sm"
         >
           Tip again
-        </Link>
+        </Button>
         <Share amount={amount} handle={handle} />
       </div>
     </div>
@@ -34,7 +36,7 @@ export default function Receipt({
 function Info({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="rounded-xl bg-white/5 p-4">
-      <p className="text-xs text-muted">{label}</p>
+      <p className="text-xs text-text-ds-tertiary">{label}</p>
       <div className="mt-1 text-sm text-white/90 break-all">{value}</div>
     </div>
   );
@@ -44,12 +46,14 @@ function TxHash({ hash }: { hash: string }) {
   return (
     <div className="flex items-center gap-2">
       <code className="text-[12px]">{short(hash)}</code>
-      <button
+      <Button
         onClick={() => navigator.clipboard?.writeText(hash)}
+        variant="ghost"
+        size="sm"
         className="font-ui rounded-lg border border-white/15 px-2 py-1 text-[12px] text-white/80 hover:bg-white/10"
       >
         Copy
-      </button>
+      </Button>
     </div>
   );
 }
@@ -59,14 +63,15 @@ function Share({ amount, handle }: { amount: string; handle: string }) {
     `I just tipped @${handle} ${amount} USDC on tipjar+ ✨`,
   );
   return (
-    <a
+    <Button
       href={`https://twitter.com/intent/tweet?text=${text}`}
+      variant="primary"
+      size="sm"
       target="_blank"
       rel="noopener noreferrer"
-      className="font-ui rounded-xl bg-gold-400 px-4 py-2 font-semibold text-teal-900"
     >
       Share
-    </a>
+    </Button>
   );
 }
 

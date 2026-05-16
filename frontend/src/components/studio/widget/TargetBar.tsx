@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { Crosshair, PencilLine, Eye, CheckCircle2 } from "lucide-react";
+import Button from "@/components/ui/buttons/Button";
+import Input from "@/components/ui/forms/Input";
 
 interface Goal {
   title: string;
@@ -16,14 +18,10 @@ interface TargetBarProps {
   initialGoal?: Partial<Goal>;
 }
 
-/**
- * UnifiedLivePreview – Premium goal visualization with teal glassmorphism.
- */
 function UnifiedLivePreview({ goal }: { goal: Goal }) {
   const percentage = Math.min((goal.current / (goal.target || 1)) * 100, 100);
   const radius = 18;
 
-  // Format date to dd-mm-yyyy
   const formatDeadline = (dateStr: string) => {
     if (!dateStr) return "";
     const [year, month, day] = dateStr.split("-");
@@ -36,10 +34,10 @@ function UnifiedLivePreview({ goal }: { goal: Goal }) {
       <div className="flex justify-between items-center mb-6 gap-4">
         {/* Left: Goal */}
         <div className="flex-1 min-w-0">
-          <div className="text-[10px] font-bold text-teal-500/40 uppercase tracking-widest mb-1">
+          <div className="text-[10px] font-heading font-bold text-teal-500/40 uppercase tracking-widest mb-1">
             Goal
           </div>
-          <h3 className="text-xl font-black text-white tracking-tight leading-tight line-clamp-2 font-sans">
+          <h3 className="text-xl font-heading font-black text-white tracking-tight leading-tight line-clamp-2">
             {(goal.title || "Goal Title").slice(0, 40)}
           </h3>
         </div>
@@ -47,7 +45,7 @@ function UnifiedLivePreview({ goal }: { goal: Goal }) {
         {/* Right: Progress Circle + Target */}
         <div className="flex items-center gap-4 shrink-0">
           <div className="flex flex-col items-center">
-            <span className="text-[10px] font-bold text-teal-500/40 uppercase tracking-widest mb-1">
+            <span className="text-[10px] font-heading font-bold text-teal-500/40 uppercase tracking-widest mb-1">
               Progress
             </span>
             <div className="relative w-14 h-14 bg-teal-500/5 rounded-full flex items-center justify-center border border-teal-500/10 shadow-inner">
@@ -76,7 +74,7 @@ function UnifiedLivePreview({ goal }: { goal: Goal }) {
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-lg font-black text-white">
+                <span className="text-lg font-heading font-black text-white">
                   {Math.round(percentage)}%
                 </span>
               </div>
@@ -84,10 +82,10 @@ function UnifiedLivePreview({ goal }: { goal: Goal }) {
           </div>
 
           <div className="flex flex-col border-l border-teal-500/20 pl-4">
-            <span className="text-[10px] font-bold text-teal-500/40 uppercase tracking-widest">
+            <span className="text-[10px] font-heading font-bold text-teal-500/40 uppercase tracking-widest">
               Target Amount
             </span>
-            <span className="text-xl font-black text-teal-400 tracking-tight font-mono">
+            <span className="text-xl font-heading font-black text-teal-400 tracking-tight tnum">
               ${goal.target.toLocaleString()}
             </span>
           </div>
@@ -97,7 +95,7 @@ function UnifiedLivePreview({ goal }: { goal: Goal }) {
       {/* Deadline (if exists) - above progress bar */}
       {goal.deadline && (
         <div className="flex justify-end mb-2">
-          <span className="text-[10px] font-bold text-teal-500/40 uppercase tracking-widest">
+          <span className="text-[10px] font-heading font-bold text-teal-500/40 uppercase tracking-widest">
             Deadline: {formatDeadline(goal.deadline)}
           </span>
         </div>
@@ -113,9 +111,9 @@ function UnifiedLivePreview({ goal }: { goal: Goal }) {
             <div className="absolute inset-0 bg-white/20 animate-pulse" />
           </div>
         </div>
-        <div className="flex justify-between text-[10px] font-bold text-teal-500/40 uppercase tracking-widest mt-2">
+        <div className="flex justify-between text-[10px] font-heading font-bold text-teal-500/40 uppercase tracking-widest mt-2">
           <span>Funds raised</span>
-          <span className="text-lg text-white font-bold font-mono">
+          <span className="text-lg text-white font-heading font-bold tnum">
             ${goal.current.toLocaleString()}
           </span>
         </div>
@@ -123,21 +121,15 @@ function UnifiedLivePreview({ goal }: { goal: Goal }) {
 
       {/* Tip Button */}
       <div className="flex justify-center pt-2">
-        <button
-          type="button"
-          className="w-full bg-teal-500 text-black py-3 rounded-2xl text-lg font-black uppercase tracking-[0.2em] shadow-lg shadow-teal-500/20 hover:bg-teal-400 transition-all flex items-center justify-center gap-2"
-        >
+        <Button variant="gold" fullWidth className="py-3 text-lg uppercase tracking-[0.2em] shadow-lg shadow-teal-500/20">
           <Image src="/logo.png" alt="" width={40} height={40} className="w-10 h-10 object-contain" />
           TIP IT
-        </button>
+        </Button>
       </div>
     </div>
   );
 }
 
-/**
- * TargetBar – Full configuration + preview component for onboarding step-4.
- */
 export default function TargetBar({ onPublish, initialGoal }: TargetBarProps) {
   const [goal, setGoal] = useState<Goal>({
     title: initialGoal?.title || "",
@@ -167,63 +159,59 @@ export default function TargetBar({ onPublish, initialGoal }: TargetBarProps) {
         <section className="space-y-6">
           <div className="flex items-center gap-3 border-l-4 border-teal-400 pl-4">
             <PencilLine size={16} className="text-teal-400" />
-            <h2 className="text-sm font-medium text-teal-400">Configuration</h2>
+            <h2 className="text-sm font-heading font-medium text-teal-400">Configuration</h2>
           </div>
 
           <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 space-y-5 shadow-2xl relative">
             {/* Goal */}
             <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/30 ml-1">
+              <label className="text-[10px] font-heading font-bold uppercase tracking-[0.15em] text-white/30 ml-1">
                 Goal (max 40 characters)
               </label>
-              <input
-                type="text"
+              <Input
                 value={goal.title}
-                maxLength={40}
                 onChange={(e) => handleUpdate("title", e.target.value)}
-                className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-teal-500 transition-all text-base font-medium font-sans"
               />
             </div>
 
             {/* Target + Deadline */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/30 ml-1">
+                <label className="text-[10px] font-heading font-bold uppercase tracking-[0.15em] text-white/30 ml-1">
                   Target (USDC)
                 </label>
-                <input
+                <Input
                   type="text"
                   inputMode="numeric"
-                  pattern="[0-9]*"
                   value={goal.target}
                   onChange={(e) => {
                     const val = e.target.value.replace(/\D/g, "");
                     handleUpdate("target", val ? Number(val) : 0);
                   }}
-                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-teal-500 font-medium font-mono"
+                  className="tnum"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/30 ml-1">
+                <label className="text-[10px] font-heading font-bold uppercase tracking-[0.15em] text-white/30 ml-1">
                   Deadline
                 </label>
-                <input
+                <Input
                   type="date"
                   value={goal.deadline}
                   min={new Date().toISOString().split("T")[0]}
                   onChange={(e) => handleUpdate("deadline", e.target.value)}
                   placeholder="Optional"
-                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-teal-500 font-medium font-sans"
                 />
               </div>
             </div>
 
             {/* Publish Button */}
             <div className="pt-4">
-              <button
-                type="button"
+              <Button
+                variant="primary"
+                fullWidth
                 onClick={publishGoal}
-                className="group relative w-full overflow-hidden rounded-xl bg-teal-500 px-6 py-4 text-black font-bold uppercase tracking-widest shadow-xl transition-all hover:bg-teal-400"
+                className="py-4 uppercase tracking-widest"
               >
                 <div className="relative flex items-center justify-center gap-2">
                   {isSaved ? (
@@ -233,7 +221,7 @@ export default function TargetBar({ onPublish, initialGoal }: TargetBarProps) {
                   )}
                   {isSaved ? "Mission Accomplished" : "Set target"}
                 </div>
-              </button>
+              </Button>
             </div>
           </div>
         </section>
@@ -242,7 +230,7 @@ export default function TargetBar({ onPublish, initialGoal }: TargetBarProps) {
         <section className="space-y-6">
           <div className="flex items-center gap-3 border-l-4 border-teal-400 pl-4">
             <Eye size={16} className="text-teal-400" />
-            <h2 className="text-sm font-medium text-teal-400">
+            <h2 className="text-sm font-heading font-medium text-teal-400">
               Synthesized Preview
             </h2>
           </div>

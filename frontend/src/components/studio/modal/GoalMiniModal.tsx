@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Zap } from 'lucide-react';
+import Button from '@/components/ui/buttons/Button';
 import GoalBadge from './GoalBadge';
 
 interface GoalMiniModalProps {
@@ -30,13 +31,13 @@ export default function GoalMiniModal({ title, current, target, isOpen, onClose 
             <div className="w-6 h-6 rounded-lg bg-gold-400 flex items-center justify-center text-teal-900">
               <Zap size={14} fill="currentColor" />
             </div>
-            <h4 className="text-[10px] font-black text-white uppercase tracking-widest">Aktualny Cel</h4>
+            <h4 className="text-[10px] font-heading font-black text-white uppercase tracking-widest">Current Goal</h4>
           </div>
           <GoalBadge percent={percent} amount={current} goal={target} currency="USDC" />
         </div>
 
         <div>
-          <p className="text-sm font-black text-white italic line-clamp-1">{title}</p>
+          <p className="text-sm font-heading font-black text-white italic line-clamp-1">{title}</p>
         </div>
 
         <div className="h-1.5 bg-white/5 rounded-full overflow-hidden p-0.5">
@@ -46,12 +47,14 @@ export default function GoalMiniModal({ title, current, target, isOpen, onClose 
           />
         </div>
 
-        <button
+        <Button
+          variant="ghost"
+          fullWidth
           onClick={onClose}
-          className="w-full py-2 bg-white/5 hover:bg-white/10 rounded-xl text-[9px] font-black uppercase text-white/40 tracking-widest transition-all"
+          className="py-2 bg-white/5 hover:bg-white/10 rounded-xl text-[9px] uppercase text-white/40 tracking-widest"
         >
-          Zamknij podgląd
-        </button>
+          Close Preview
+        </Button>
       </div>
     </motion.div>
   );

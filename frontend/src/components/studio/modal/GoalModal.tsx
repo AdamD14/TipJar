@@ -7,6 +7,7 @@ import Button from "@/components/ui/buttons/Button";
 import Input from "@/components/ui/forms/Input";
 import Textarea from "@/components/ui/forms/Textarea";
 import type { Goal } from "@/lib/types";
+import { normalize } from "@/lib/api/errors";
 
 export default function GoalModal({
   onClose,
@@ -31,27 +32,28 @@ export default function GoalModal({
       const { data: g } = await api.post("/api/v1/goal", parsed);
       onSaved(g);
       onClose();
-    } catch (e: any) {
-      setError(e?.message || "Nie udało się utworzyć celu.");
+    } catch (e: unknown) {
+      const n = normalize(e);
+      setError(n.msg || "Failed to create goal.");
     } finally {
       setBusy(false);
     }
   };
 
   return (
-    <Modal open onClose={onClose} size="form" title="Nowy cel">
+    <Modal open onClose={onClose} size="form" title="New Goal">
       <div className="space-y-4">
         <div>
-          <label className="block font-body text-sm text-teal-50 mb-1">Nazwa</label>
+          <label className="block font-body text-sm text-teal-50 mb-1">Name</label>
           <Input
             value={f.title}
             onChange={(e) => setF({ ...f, title: e.target.value })}
-            placeholder="np. Nowy setup do streamowania"
+            placeholder="e.g. New streaming setup"
           />
         </div>
 
         <div>
-          <label className="block font-body text-sm text-teal-50 mb-1">Cel (USDC)</label>
+          <label className="block font-body text-sm text-teal-50 mb-1">Target (USDC)</label>
           <Input
             type="number"
             value={f.targetAmount}
@@ -63,11 +65,11 @@ export default function GoalModal({
         </div>
 
         <div>
-          <label className="block font-body text-sm text-teal-50 mb-1">Opis (opcjonalnie)</label>
+          <label className="block font-body text-sm text-teal-50 mb-1">Description (optional)</label>
           <Textarea
             value={f.description}
             onChange={(e) => setF({ ...f, description: e.target.value })}
-            placeholder="Na co zbierasz?"
+            placeholder="What are you raising funds for?"
           />
         </div>
 
@@ -77,7 +79,7 @@ export default function GoalModal({
 
         <div className="flex gap-2 justify-end pt-2">
           <Button variant="secondary" size="sm" onClick={onClose}>
-            Anuluj
+            Cancel
           </Button>
           <Button
             variant="primary"
@@ -86,7 +88,7 @@ export default function GoalModal({
             disabled={!f.title || !f.targetAmount}
             onClick={submit}
           >
-            Utwórz
+            Create
           </Button>
         </div>
       </div>

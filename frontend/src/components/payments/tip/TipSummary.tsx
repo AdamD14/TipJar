@@ -6,10 +6,10 @@ export interface TipSummaryProps {
 }
 
 export const TipSummary = ({ amount, fee }: TipSummaryProps) => (
-  <div className="mb-4 text-sm text-brand-light-text">
+  <div className="mb-4 text-sm text-text-ds-secondary">
     <p>
-      Twórca otrzyma:{" "}
-      <span className="font-bold text-brand-gold">
+      Creator receives:{" "}
+      <span className="font-heading font-bold text-gold-400">
         ${(amount - fee).toFixed(2)}
       </span>
     </p>

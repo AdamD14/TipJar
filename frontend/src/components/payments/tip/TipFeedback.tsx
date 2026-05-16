@@ -1,4 +1,5 @@
 "use client";
+import Button from "@/components/ui/buttons/Button";
 
 export interface TipFeedbackProps {
   success?: boolean;
@@ -15,12 +16,14 @@ export const TipFeedback = ({
     className={`mt-4 rounded-md p-3 text-center ${success ? "bg-emerald-600" : "bg-red-600"}`}
   >
     <p>{message}</p>
-    <button
+    <Button
       type="button"
       onClick={onClose}
-      className="mt-2 text-sm text-brand-gold underline"
+      variant="link"
+      size="sm"
+      className="mt-2"
     >
-      Zamknij
-    </button>
+      Close
+    </Button>
   </div>
 );

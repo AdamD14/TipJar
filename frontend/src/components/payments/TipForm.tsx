@@ -10,6 +10,13 @@ import Textarea from "@/components/ui/forms/Textarea";
 import Button from "@/components/ui/buttons/Button";
 import Checkbox from "@/components/ui/forms/Checkbox";
 
+interface TipPayload {
+  amount: string;
+  creatorId: string;
+  message?: string;
+  isAnonymous: boolean;
+}
+
 interface TipFormProps {
   creatorId: string;
   onComplete?: () => void;
@@ -47,7 +54,7 @@ const TipForm: React.FC<TipFormProps> = ({ creatorId, onComplete }) => {
     }
     try {
       setLoading(true);
-      const payload: any = {
+      const payload: TipPayload = {
         amount: amountToSend,
         creatorId,
         message: message || undefined,
@@ -67,7 +74,7 @@ const TipForm: React.FC<TipFormProps> = ({ creatorId, onComplete }) => {
       setMessage("");
       setIsAnonymous(false);
     } catch (err: unknown) {
-      const { msg } = normalize(err as any);
+      const { msg } = normalize(err);
       setError(msg || "Failed to send tip.");
     } finally {
       setLoading(false);
@@ -86,9 +93,10 @@ const TipForm: React.FC<TipFormProps> = ({ creatorId, onComplete }) => {
               setCustomAmount("");
             }}
             className={clsx(
-              "px-3 py-2 rounded-lg border text-sm font-body transition-colors duration-150",
+              "px-3 py-2 rounded-lg border text-sm font-heading font-semibold transition-colors duration-150",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app",
               selectedAmount === amt && !customAmount
-                ? "bg-gold-400 text-teal-900 border-gold-400 font-semibold"
+                ? "bg-gold-400 text-teal-900 border-gold-400"
                 : "bg-teal-850 border-white/[0.05] text-text-ds-secondary hover:border-teal-600",
             )}
           >
@@ -135,7 +143,7 @@ const TipForm: React.FC<TipFormProps> = ({ creatorId, onComplete }) => {
       <label className="flex items-center gap-2 cursor-pointer">
         <Checkbox
           checked={isAnonymous}
-          onCheckedChange={(v) => setIsAnonymous(v === true)}
+          onChange={(e) => setIsAnonymous(e.target.checked)}
         />
         <span className="font-body text-sm text-text-ds-secondary">
           Send as anonymous

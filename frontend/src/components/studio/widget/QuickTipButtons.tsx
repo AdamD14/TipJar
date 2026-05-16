@@ -1,5 +1,7 @@
 "use client";
 
+import Button from '@/components/ui/buttons/Button';
+
 export interface QuickTipButtonsProps {
   amounts: number[];
   active: number;
@@ -13,16 +15,14 @@ export const QuickTipButtons = ({
 }: QuickTipButtonsProps) => (
   <div className="mb-4 flex gap-2">
     {amounts.map((amt) => (
-      <button
+      <Button
         key={amt}
-        type="button"
+        variant={active === amt ? "gold" : "outline"}
+        size="sm"
         onClick={() => onSelect(amt)}
-        className={`rounded-md border border-brand-gold px-3 py-1 font-mono ${
-          active === amt ? "bg-brand-gold text-brand-dark" : "text-brand-gold"
-        }`}
       >
         {`$${amt}`}
-      </button>
+      </Button>
     ))}
   </div>
 );

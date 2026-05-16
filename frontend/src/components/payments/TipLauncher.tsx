@@ -12,11 +12,12 @@ export default function TipLauncher({ username }: { username: string }) {
       <Button variant="primary" size="lg" onClick={() => setOpen(true)}>
         Tip USDC
       </Button>
-      <TipModal
-        username={username}
-        open={open}
-        onClose={() => setOpen(false)}
-      />
+    <TipModal
+      creatorId={username}
+      open={open}
+      onClose={() => setOpen(false)}
+      onSuccess={() => setOpen(false)}
+    />
     </>
   );
 }

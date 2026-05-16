@@ -47,10 +47,10 @@ export default function GoalBadge({ percent, amount, goal, currency, className =
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-[8px] font-bold text-gold-400">{clampedPercent}%</span>
-        </div>
+      <span className="text-[8px] font-heading font-bold text-gold-400">{clampedPercent}%</span>
       </div>
-      <span className="font-medium text-gold-400 uppercase tracking-tighter">
+      </div>
+      <span className="font-heading font-medium text-gold-400 uppercase tracking-tighter">
         {getCurrencySymbol()}{formatAmount(amount)}/{formatAmount(goal)}
       </span>
     </div>

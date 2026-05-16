@@ -1,4 +1,5 @@
 "use client";
+import Button from "@/components/ui/buttons/Button";
 
 export interface SubmitTipButtonProps {
   disabled?: boolean;
@@ -11,12 +12,14 @@ export const SubmitTipButton = ({
   loading,
   onSubmit,
 }: SubmitTipButtonProps) => (
-  <button
+  <Button
     type="button"
     onClick={onSubmit}
     disabled={disabled || loading}
-    className="w-full rounded-lg bg-brand-gold py-2 font-bold text-brand-dark hover:brightness-110 disabled:opacity-50"
+    loading={loading}
+    variant="primary"
+    fullWidth
   >
-    {loading ? "Wysyłanie..." : "Wyślij napiwek"}
-  </button>
+    {loading ? "Sending..." : "Send tip"}
+  </Button>
 );

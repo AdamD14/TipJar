@@ -1,4 +1,5 @@
 "use client";
+import Button from "@/components/ui/buttons/Button";
 
 export interface PaymentMethod {
   id: string;
@@ -23,24 +24,21 @@ export const PaymentMethodSelector = ({
   <div className="mb-4">
     <div className="mb-2 flex gap-3">
       {methods.map((m) => (
-        <button
+        <Button
           key={m.id}
           type="button"
           onClick={() => onSelect(m.id)}
           title={m.tooltip}
-          className={`rounded-lg border px-3 py-2 ${
-            selected === m.id
-              ? "border-brand-gold bg-brand-gold text-brand-dark"
-              : "border-brand-gold text-brand-gold"
-          }`}
+          variant={selected === m.id ? "primary" : "outline"}
+          size="sm"
         >
           {m.icon}
-        </button>
+        </Button>
       ))}
     </div>
     {selected === "internal" && balance !== undefined && (
-      <div className="text-sm text-brand-light-text">
-        Saldo: ${balance.toFixed(2)}
+      <div className="text-sm text-text-ds-secondary">
+        Balance: ${balance.toFixed(2)}
       </div>
     )}
   </div>

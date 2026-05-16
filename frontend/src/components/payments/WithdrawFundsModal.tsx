@@ -32,7 +32,7 @@ export default function WithdrawFundsModal({
       onClose();
     } catch (err: unknown) {
       console.error(err);
-      const { msg } = normalize(err as any);
+      const { msg } = normalize(err);
       setError(msg || "Withdrawal failed.");
     } finally {
       setLoading(false);

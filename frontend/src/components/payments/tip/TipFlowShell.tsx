@@ -5,7 +5,7 @@ export default function TipFlowShell({ title, children }: { title: string; child
   return (
     <main className="min-h-screen bg-teal-950 p-6 text-white">
       <div className="mx-auto max-w-md">
-        <h1 className="text-xl font-semibold">{title}</h1>
+        <h1 className="font-heading text-xl font-semibold">{title}</h1>
         <div className="mt-6">{children}</div>
       </div>
     </main>

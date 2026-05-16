@@ -6,6 +6,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import { Copy, Check, FileText, QrCode } from 'lucide-react';
+import Button from '@/components/ui/buttons/Button';
 
 export default function WidgetGenerator() {
   const { config } = useWidgetStore();
@@ -21,7 +22,7 @@ export default function WidgetGenerator() {
     const imgData = canvas.toDataURL('image/png');
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     pdf.setFontSize(22);
-    pdf.text(`Wspieraj @${config.handle}`, 20, 20);
+    pdf.text(`Support @${config.handle}`, 20, 20);
     pdf.addImage(imgData, 'PNG', 20, 30, 100, 100);
     pdf.setFontSize(12);
     pdf.text(profileUrl, 20, 140);
@@ -37,9 +38,9 @@ export default function WidgetGenerator() {
   return (
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-2xl border shadow-sm space-y-4">
-        <h3 className="font-bold text-lg flex items-center gap-2">
+        <h3 className="font-heading font-bold text-lg flex items-center gap-2">
           <QrCode size={20} className="text-teal-500" />
-          Narzędzia Promocyjne
+          Promotional Tools
         </h3>
 
         <div ref={containerRef} className="p-8 border-2 border-dashed border-slate-100 rounded-2xl flex flex-col items-center gap-4 bg-white">
@@ -50,23 +51,25 @@ export default function WidgetGenerator() {
         </div>
 
         <div className="flex gap-3">
-          <button
+          <Button
+            variant="primary"
+            fullWidth
             onClick={downloadPDF}
-            className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-600/20"
           >
-            <FileText size={18} /> Pobierz PDF (A4)
-          </button>
-          <button
+            <FileText size={18} /> Download PDF (A4)
+          </Button>
+          <Button
+            variant="secondary"
+            fullWidth
             onClick={copyScript}
-            className="flex-1 bg-slate-800 hover:bg-slate-900 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all"
           >
             {copied ? <Check size={18} className="text-emerald-400" /> : <Copy size={18} />}
-            Kopiuj Skrypt
-          </button>
+            {copied ? 'Copied' : 'Copy Script'}
+          </Button>
         </div>
 
         <div className="bg-slate-900 rounded-xl p-4 text-slate-300 font-mono text-[10px] break-all border border-slate-800 shadow-inner">
-          <div className="text-slate-500 mb-2 font-bold uppercase tracking-widest">KOD HTML</div>
+          <div className="text-slate-500 mb-2 font-heading font-bold uppercase tracking-widest">HTML CODE</div>
           {scriptTag}
         </div>
       </div>

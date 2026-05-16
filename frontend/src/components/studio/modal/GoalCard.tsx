@@ -1,4 +1,5 @@
 import type { Goal } from "@/lib/types";
+import Button from "@/components/ui/buttons/Button";
 
 export default function GoalCard({ g }: { g: Goal }) {
   const pct = Math.min(
@@ -35,17 +36,17 @@ export default function GoalCard({ g }: { g: Goal }) {
       </div>
 
       <div className="mt-4 flex gap-2">
-        <button className="px-3 py-1.5 rounded-lg border border-teal-500/20 text-sm font-body text-teal-50 hover:bg-teal-700 hover:text-teal-25 transition-colors ease-standard">
+        <Button variant="outline" size="sm">
           Edit
-        </button>
+        </Button>
         {g.active ? (
-          <button className="px-3 py-1.5 rounded-lg text-sm font-body text-teal-50 bg-teal-700 hover:bg-teal-600 hover:text-teal-25 transition-colors ease-standard">
+          <Button variant="secondary" size="sm">
             Finish
-          </button>
+          </Button>
         ) : (
-          <button className="px-3 py-1.5 rounded-lg text-sm font-body text-teal-50 bg-teal-700 hover:bg-teal-600 hover:text-teal-25 transition-colors ease-standard">
+          <Button variant="secondary" size="sm">
             Activate
-          </button>
+          </Button>
         )}
       </div>
     </div>

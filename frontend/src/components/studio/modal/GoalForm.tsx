@@ -1,6 +1,8 @@
 "use client";
 import { useState } from 'react';
 import type { Goal } from '@/lib/api/contracts';
+import Input from '@/components/ui/forms/Input';
+import Button from '@/components/ui/buttons/Button';
 
 export default function GoalForm({
   initial,
@@ -18,29 +20,26 @@ export default function GoalForm({
       }}
       className="grid gap-3"
     >
-      <input
-        className="rounded-lg bg-white/5 border border-white/10 p-2"
-        placeholder="Tytuł"
+      <Input
+        placeholder="Title"
         value={v.title}
         onChange={(e) => setV((s) => ({ ...s, title: e.target.value }))}
       />
-      <input
+      <Input
         type="number"
         min={0}
-        className="rounded-lg bg-white/5 border border-white/10 p-2"
-        placeholder="Kwota docelowa (USDC)"
+        placeholder="Target amount (USDC)"
         value={v.target}
         onChange={(e) => setV((s) => ({ ...s, target: Number(e.target.value || 0) }))}
       />
-      <input
+      <Input
         type="date"
-        className="rounded-lg bg-white/5 border border-white/10 p-2"
         value={v.deadline}
         onChange={(e) => setV((s) => ({ ...s, deadline: e.target.value }))}
       />
-      <button className="rounded-lg bg-[var(--color-primary)] text-black font-semibold px-4 py-2">
-        Zapisz cel
-      </button>
+      <Button variant="primary" fullWidth type="submit">
+        Save Goal
+      </Button>
     </form>
   );
 }

@@ -1,6 +1,5 @@
 "use client";
 
-
 import React, { useEffect, useMemo, useState } from 'react';
 import { useOverlaySettingsStore } from '@/lib/store/overlaySettingsStore';
 import {
@@ -9,6 +8,7 @@ import {
   OverlaySpecialEffectType,
   OverlayColorPreset,
 } from '@/lib/types/overlay';
+import Button from '@/components/ui/buttons/Button';
 
 const POS: OverlayPosition[] = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
 const ANIM: OverlayEntryAnimation[] = ['slide-up', 'slide-in-left', 'fade-in', 'typewriter'];
@@ -19,18 +19,31 @@ const PRESET_BG: Record<OverlayColorPreset, string> = {
   transparent: 'rgba(0,0,0,0)',
 };
 
-const Field: React.FC<React.PropsWithChildren<{ label: string }>> = ({ label, children }) => {
+interface FieldProps {
+  label: string;
+  children: React.ReactNode;
+}
+
+const Field: React.FC<React.PropsWithChildren<FieldProps>> = ({ label, children }) => {
   return (
     <label className="block">
-        <div className="mb-2 text-sm text-muted font-medium">{label}</div>
+      <div className="mb-2 text-sm text-text-ds-tertiary font-heading font-medium">{label}</div>
       {children}
     </label>
   );
 };
 
-const OverlayBox: React.FC<any> = ({ className, style, entryAnimation, durationSec, data }) => {
+interface OverlayBoxProps {
+  className?: string;
+  style?: React.CSSProperties;
+  entryAnimation: OverlayEntryAnimation;
+  durationSec: number;
+  data: { name: string; amount: number; currency: string; msg: string };
+}
+
+const OverlayBox: React.FC<OverlayBoxProps> = ({ className, style, entryAnimation, durationSec, data }) => {
   const [visible, setVisible] = useState(true);
-  
+
   useEffect(() => {
     setVisible(true);
     const t = window.setTimeout(() => setVisible(false), durationSec * 1000);
@@ -44,8 +57,8 @@ const OverlayBox: React.FC<any> = ({ className, style, entryAnimation, durationS
       <div className="flex items-start gap-3">
         <div className="h-10 w-10 shrink-0 rounded-full bg-gradient-to-br from-gold-400 to-gold-900" />
         <div className="min-w-[200px]">
-          <div className="text-sm font-bold leading-tight">{data.name} tipped {data.amount} {data.currency}</div>
-          <div className="mt-0.5 text-sm tw-text italic">{data.msg}</div>
+          <div className="text-sm font-bold font-heading leading-tight">{data.name} tipped {data.amount} {data.currency}</div>
+          <div className="mt-0.5 text-sm tw-text italic font-body">{data.msg}</div>
         </div>
       </div>
     </div>
@@ -92,33 +105,27 @@ export default function OverlayEditor({ creatorId }: { creatorId: string }) {
     window.setTimeout(() => setNowFx('none'), 1500);
   };
 
-  const demoTip = { name: 'alice.eth', amount: 12.34, currency: 'USDC', msg: 'Love your stream! ☕' };
+  const demoTip = { name: 'alice.eth', amount: 12.34, currency: 'USDC', msg: 'Love your stream! \u2615' };
 
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
       {/* LIVE PREVIEW */}
       <div className="rounded-[16px] border border-white/10 bg-black/40 p-4">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-base font-semibold text-white">Live Preview</h3>
+          <h3 className="text-base font-semibold font-heading text-text-ds-primary">Live Preview</h3>
           <div className="flex gap-2">
-            <button
-              onClick={triggerPreview}
-              className="rounded-[12px] bg-gold-400 hover:bg-gold-600 px-3 py-1.5 text-sm font-bold text-teal-900 transition-all hover:-translate-y-[1px] active:scale-95"
-            >
+            <Button variant="gold" size="sm" onClick={triggerPreview}>
               Trigger test tip
-            </button>
-            <button
-              onClick={() => reset()}
-              className="rounded-[12px] border border-white/15 px-3 py-1.5 text-sm font-medium text-muted hover:bg-white/5 transition-all"
-            >
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => reset()}>
               Reset
-            </button>
+            </Button>
           </div>
         </div>
 
         <div className="relative h-[400px] w-full overflow-hidden rounded-[12px] bg-black/40 border border-white/5">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,rgba(255,215,0,0.04),transparent_40%),radial-gradient(ellipse_at_70%_80%,rgba(0,255,255,0.04),transparent_40%)]" />
-          
+
           <OverlayBox
             key={previewKey}
             className={posClass}
@@ -127,11 +134,11 @@ export default function OverlayEditor({ creatorId }: { creatorId: string }) {
             durationSec={settings.durationSec}
             data={demoTip}
           />
-          
-          {nowFx === 'confetti' && <div className="absolute inset-0 flex items-center justify-center text-6xl animate-bounce">🎉</div>}
-          {nowFx === 'sparkle' && <div className="absolute inset-0 flex items-center justify-center text-6xl animate-ping">✨</div>}
+
+          {nowFx === 'confetti' && <div className="absolute inset-0 flex items-center justify-center text-6xl animate-bounce">{'\uD83C\uDF89'}</div>}
+          {nowFx === 'sparkle' && <div className="absolute inset-0 flex items-center justify-center text-6xl animate-ping">{'\u2728'}</div>}
         </div>
-        <div className="mt-3 text-[11px] text-muted italic">
+        <div className="mt-3 text-[11px] text-text-ds-tertiary italic font-body">
           Position reflects selected corner. Preview restarts on trigger.
         </div>
       </div>
@@ -147,8 +154,8 @@ export default function OverlayEditor({ creatorId }: { creatorId: string }) {
         <Field label="Position">
           <select
             value={settings.position}
-            onChange={(e) => set({ position: e.target.value as any })}
-            className="w-full rounded-[10px] border border-white/10 bg-teal-950 text-muted px-4 py-2 text-sm focus:outline-none focus:border-gold-400"
+            onChange={(e) => set({ position: e.target.value as OverlayPosition })}
+            className="w-full rounded-[10px] border border-white/10 bg-teal-950 text-text-ds-tertiary px-4 py-2 text-sm font-body focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app"
           >
             {POS.map((p) => <option key={p} value={p}>{p}</option>)}
           </select>
@@ -171,18 +178,18 @@ export default function OverlayEditor({ creatorId }: { creatorId: string }) {
                 const v = e.target.value;
                 set({ bgColor: v === 'custom' ? '#07393a' : v });
               }}
-          className="rounded-[10px] border border-white/10 bg-teal-950 text-muted px-4 py-2 text-sm"
-        >
-          <option value="darkTurquoise">darkTurquoise</option>
-          <option value="black">black</option>
-          <option value="transparent">transparent</option>
-          <option value="custom">custom HEX</option>
-        </select>
-        <input
-          type="color"
-          value={bg.startsWith('#') ? bg : '#07393a'}
+              className="rounded-[10px] border border-white/10 bg-teal-950 text-text-ds-tertiary px-4 py-2 text-sm font-body focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app"
+            >
+              <option value="darkTurquoise">darkTurquoise</option>
+              <option value="black">black</option>
+              <option value="transparent">transparent</option>
+              <option value="custom">custom HEX</option>
+            </select>
+            <input
+              type="color"
+              value={bg.startsWith('#') ? bg : '#07393a'}
               onChange={(e) => set({ bgColor: e.target.value })}
-              className="h-10 w-full cursor-pointer rounded-[10px] border border-white/10 bg-transparent p-1"
+              className="h-10 w-full cursor-pointer rounded-[10px] border border-white/10 bg-transparent p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app"
             />
           </div>
         </Field>
@@ -190,35 +197,36 @@ export default function OverlayEditor({ creatorId }: { creatorId: string }) {
         <Field label="Entry Animation">
           <select
             value={settings.entryAnimation}
-            onChange={(e) => set({ entryAnimation: e.target.value as any })}
-            className="w-full rounded-[10px] border border-white/10 bg-teal-950 text-muted px-4 py-2 text-sm"
+            onChange={(e) => set({ entryAnimation: e.target.value as OverlayEntryAnimation })}
+            className="w-full rounded-[10px] border border-white/10 bg-teal-950 text-text-ds-tertiary px-4 py-2 text-sm font-body focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app"
           >
             {ANIM.map((a) => <option key={a} value={a}>{a}</option>)}
           </select>
         </Field>
 
         <div className="pt-4">
-          <button
+          <Button
             type="submit"
+            variant="solid"
+            fullWidth
             disabled={pending}
-            className="w-full rounded-[12px] bg-teal-500 hover:bg-teal-600 px-4 py-3 text-sm font-bold text-white transition-all shadow-xl shadow-teal-500/10 disabled:opacity-50"
           >
             {pending ? 'Saving settings...' : 'Save All Changes'}
-          </button>
-          {error && <p className="mt-2 text-xs text-red-500 text-center">{error}</p>}
+          </Button>
+          {error && <p className="mt-2 text-xs text-error-base text-center font-body">{error}</p>}
         </div>
       </form>
 
       <style>{`
-        .oi-slide-up { animation: oislideup 0.4s ease-out both; }
-        .oi-fade-in { animation: oifade 0.4s ease-out both; }
-        .oi-typewriter .tw-text { overflow: hidden; white-space: nowrap; border-right: 2px solid #FFD700; animation: oitw 1s steps(20) both, oicaret 0.75s step-end infinite; }
-        
-        @keyframes oislideup { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes oifade { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes oitw { from { width: 0; } to { width: 100%; } }
-        @keyframes oicaret { 50% { border-color: transparent; } }
-      `}</style>
+.oi-slide-up { animation: oislideup 0.4s ease-out both; }
+.oi-fade-in { animation: oifade 0.4s ease-out both; }
+.oi-typewriter .tw-text { overflow: hidden; white-space: nowrap; border-right: 2px solid #FFD700; animation: oitw 1s steps(20) both, oicaret 0.75s step-end infinite; }
+
+@keyframes oislideup { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes oifade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes oitw { from { width: 0; } to { width: 100%; } }
+@keyframes oicaret { 50% { border-color: transparent; } }
+`}</style>
     </div>
   );
 }

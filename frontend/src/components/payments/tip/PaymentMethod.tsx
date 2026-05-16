@@ -12,6 +12,7 @@ export default function PaymentMethod({ value, onChange }: { value: MethodKey; o
           name="method"
           checked={value === "wallet"}
           onChange={() => onChange("wallet")}
+          className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app"
         />
         <span className="text-white/90">Wallet</span>
       </label>
@@ -21,6 +22,7 @@ export default function PaymentMethod({ value, onChange }: { value: MethodKey; o
           name="method"
           checked={value === "card"}
           onChange={() => onChange("card")}
+          className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app"
         />
         <span className="text-white/90">Card / SEPA</span>
       </label>

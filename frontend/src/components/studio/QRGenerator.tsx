@@ -34,23 +34,23 @@ export default function QRGenerator() {
           <span className="font-body text-sm text-text-ds-secondary">
             QR color
           </span>
-          <input
-            type="color"
-            value={fgColor}
-            onChange={(e) => setFgColor(e.target.value)}
-            className="h-10 w-20 rounded-md bg-teal-800 border border-teal-700 cursor-pointer"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <span className="font-body text-sm text-text-ds-secondary">
-            Background
-          </span>
-          <input
-            type="color"
-            value={bgColor}
-            onChange={(e) => setBgColor(e.target.value)}
-            className="h-10 w-20 rounded-md bg-teal-800 border border-teal-700 cursor-pointer"
-          />
+            <input
+              type="color"
+              value={fgColor}
+              onChange={(e) => setFgColor(e.target.value)}
+              className="h-10 w-20 rounded-md bg-teal-800 border border-teal-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="font-body text-sm text-text-ds-secondary">
+              Background
+            </span>
+            <input
+              type="color"
+              value={bgColor}
+              onChange={(e) => setBgColor(e.target.value)}
+              className="h-10 w-20 rounded-md bg-teal-800 border border-teal-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app"
+            />
         </div>
       </div>
 

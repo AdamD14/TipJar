@@ -51,7 +51,7 @@ export default function HoverSliderWidget({
             "active:scale-[0.98] active:translate-y-0 active:shadow-1",
             "font-heading font-semibold text-xl",
             "transition-all duration-200",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4D194D] focus-visible:ring-offset-2 focus-visible:ring-offset-[#001F1F]",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app",
           )}
           aria-label={`Tip @${handle}`}
         >
