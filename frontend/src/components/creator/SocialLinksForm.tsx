@@ -1,6 +1,6 @@
 "use client";
 
-import Input from "@/components/ui/Input";
+import Input from "@/components/ui/forms/Input";
 
 const KNOWN = [
   { k: "twitch", label: "Twitch" },

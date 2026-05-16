@@ -5,8 +5,8 @@ import api from "@/lib/apiClient";
 import { TierSchema } from "@/lib/validators";
 import type { Tier } from "@/lib/types";
 import Modal from "@/components/ui/Modal";
-import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
+import Button from "@/components/ui/buttons/Button";
+import Input from "@/components/ui/forms/Input";
 
 export default function TierModal({
   onClose,

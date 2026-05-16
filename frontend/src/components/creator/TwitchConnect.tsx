@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/buttons/Button";
 
 export default function TwitchConnect() {
   const [connected] = useState<boolean>(false);

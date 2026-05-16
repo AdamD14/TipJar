@@ -4,8 +4,8 @@ import { useState } from "react";
 import { apiClient } from "@/lib/apiClient";
 import { normalize } from "@/lib/api/errors";
 import Modal from "@/components/ui/Modal";
-import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
+import Input from "@/components/ui/forms/Input";
+import Button from "@/components/ui/buttons/Button";
 
 export default function WithdrawFundsModal({
   isOpen,

@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import Modal from "@/components/ui/Modal";
-import Button from "@/components/ui/Button";
-import Textarea from "@/components/ui/Textarea";
+import Button from "@/components/ui/buttons/Button";
+import Textarea from "@/components/ui/forms/Textarea";
 
 export default function TipModal({
   username,

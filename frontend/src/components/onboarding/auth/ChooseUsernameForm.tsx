@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { normalize } from "@/lib/api/errors";
 import { useRegistrationStore } from "@/lib/store/registrationStore";
-import Checkbox from "@/components/ui/Checkbox";
+import Checkbox from "@/components/ui/forms/Checkbox";
 import Spinner from "@/components/ui/Spinner";
 
 type MeResponse = {

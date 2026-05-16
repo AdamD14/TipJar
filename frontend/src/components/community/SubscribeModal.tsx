@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 import Modal from "@/components/ui/Modal";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/buttons/Button";
 
 export type TierPub = {
   id: string;

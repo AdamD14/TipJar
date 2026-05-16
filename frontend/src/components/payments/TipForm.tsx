@@ -5,10 +5,10 @@ import clsx from "clsx";
 import apiClient from "@/lib/apiClient";
 import { normalize } from "@/lib/api/errors";
 import { useAuthStore } from "@/lib/store/authStore";
-import Input from "@/components/ui/Input";
-import Textarea from "@/components/ui/Textarea";
-import Button from "@/components/ui/Button";
-import Checkbox from "@/components/ui/Checkbox";
+import Input from "@/components/ui/forms/Input";
+import Textarea from "@/components/ui/forms/Textarea";
+import Button from "@/components/ui/buttons/Button";
+import Checkbox from "@/components/ui/forms/Checkbox";
 
 interface TipFormProps {
   creatorId: string;

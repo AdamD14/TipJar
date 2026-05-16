@@ -11,8 +11,8 @@ import { normalize } from "@/lib/api/errors";
 import { register as registerUser } from "@/lib/auth";
 import { useRegistrationStore } from "@/lib/store/registrationStore";
 import { registerSchema, RegisterFormValues } from "@/lib/schemas/authSchema";
-import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
+import Input from "@/components/ui/forms/Input";
+import Button from "@/components/ui/buttons/Button";
 import Spinner from "@/components/ui/Spinner";
 
 export default function AuthForm() {

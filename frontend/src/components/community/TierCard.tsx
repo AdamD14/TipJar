@@ -2,7 +2,7 @@
 
 import clsx from "clsx";
 import type { Tier } from "@/lib/types";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/buttons/Button";
 
 export default function TierCard({
   t,

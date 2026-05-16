@@ -2,8 +2,8 @@
 
 import React, { useState, Suspense } from "react";
 import clsx from "clsx";
-import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
+import Input from "@/components/ui/forms/Input";
+import Button from "@/components/ui/buttons/Button";
 import Spinner from "@/components/ui/Spinner";
 
 const QRCode = React.lazy(() =>

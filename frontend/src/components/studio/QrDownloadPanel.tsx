@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import clsx from "clsx";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/buttons/Button";
 // @ts-expect-error - QRGenerator component has dynamic props that TypeScript cannot verify
 import QRGenerator from "@/components/studio/QRGenerator";
 

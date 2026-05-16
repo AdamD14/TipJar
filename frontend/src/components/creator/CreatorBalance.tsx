@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { apiClient } from "@/lib/apiClient";
-import Skeleton from "@/components/ui/Skeleton";
+import Skeleton from "@/components/ui/layout/Skeleton";
 
 export default function CreatorBalance() {
   const [balance, setBalance] = useState<number | null>(null);
