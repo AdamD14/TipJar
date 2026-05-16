@@ -2,19 +2,19 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Page from "@/components/ui/layout/Page";
-import Card from "@/components/ui/Card";
-import SearchBox, { type SearchResult } from "@/components/explore/discover/SearchBox";
-import CreatorCard from "@/components/explore/discover/CreatorCard";
+import Card from "@/components/ui/forms/Card";
+import SearchBox, { type SearchResult } from "@/components/explore/SearchBox";
+import CreatorCard from "@/components/explore/CreatorCard";
 import { collections } from "@/data/collections";
-import CollectionCard from "@/components/explore/explorer/CollectionCard";
-import SortSelect from "@/components/explore/explorer/SortSelect";
-import FilterChips from "@/components/explore/explorer/FilterChips";
-import Suggestions, { type Suggestion } from "@/components/explore/explorer/Suggestions";
-import TrendingClient from "@/components/explore/explorer/TrendingClient";
-import YourPicks from "@/components/explore/explorer/YourPicks";
-import FeaturedGrid from "@/components/explore/explorer/FeaturedGrid";
-import Spotlight from "@/components/explore/explorer/Spotlight";
-import TopTagsCloud from "@/components/explore/explorer/TopTagsCloud";
+import CollectionCard from "@/components/explore/CollectionCard";
+import SortSelect from "@/components/explore/SortSelect";
+import FilterChips from "@/components/explore/FilterChips";
+import Suggestions, { type Suggestion } from "@/components/explore/Suggestions";
+import TrendingClient from "@/components/explore/TrendingClient";
+import YourPicks from "@/components/fan/YourPicks";
+import FeaturedGrid from "@/components/creator/FeaturedGrid";
+import Spotlight from "@/components/explore/Spotlight";
+import TopTagsCloud from "@/components/explore/TopTagsCloud";
 import {
   flattenCollections,
   applyFilters,

@@ -2,7 +2,7 @@
 
 
 import React from 'react';
-import PublicHeader from '@/components/studio/PublicHeader';
+import PublicHeader from '@/components/ui/layout/PublicHeader';
 import { Sparkles, Zap, BrainCircuit, Layout } from 'lucide-react';
 
 export default function AIPage() {

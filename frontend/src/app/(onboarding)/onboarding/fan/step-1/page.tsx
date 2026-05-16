@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useOnboardingStore } from "@/lib/store/onboardingStore";
 import AvatarUploader from "@/components/onboarding/AvatarUploader";
-import Card from "../../../../../components/ui/Card";
-import Button from "@/components/ui/Button";
+import Card from "@/components/ui/forms/Card";
+import Button from "@/components/ui/buttons/Button";
 
 import { supabase } from "@/lib/supabase";
 

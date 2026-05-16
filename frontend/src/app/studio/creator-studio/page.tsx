@@ -16,8 +16,8 @@ import {
 import { Target, Tv, Share2 } from 'lucide-react';
 import { useWidgetStore } from '@/lib/store/widgetStore';
 import TipModal from '@/components/payments/TipModal';
-import GoalModal from '@/components/creator/GoalModal';
-import GoalCard from '@/components/creator/GoalCard';
+import GoalModal from '@/components/studio/modal/GoalModal';
+import GoalCard from '@/components/studio/modal/GoalCard';
 import type { Goal } from '@/lib/types';
 import SubscribeModal, { TierPub } from '@/components/community/SubscribeModal';
 import OverlayEditor from '@/components/studio/overlay/OverlayEditor';

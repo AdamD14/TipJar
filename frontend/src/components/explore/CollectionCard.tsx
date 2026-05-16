@@ -1,6 +1,6 @@
 import Card from "@/components/ui/forms/Card";
 import Button from "@/components/ui/buttons/Button";
-import CreatorCard from "@/components/explore/discover/CreatorCard";
+import CreatorCard from "@/components/explore/CreatorCard";
 import type { HandleEntry } from "@/data/collections";
 
 export default function CollectionCard({

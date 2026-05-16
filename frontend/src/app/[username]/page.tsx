@@ -4,10 +4,10 @@ import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Check, ArrowLeft, Share2, Copy } from "lucide-react";
 import { getPublicProfile } from "@/lib/users";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/buttons/Button";
 import Spinner from "@/components/ui/Spinner";
-import { GoalBar } from "@/components/creator/GoalBar";
-import AvatarCarousel from "@/components/ui/AvatarCarousel";
+import { GoalBar } from "@/components/studio/modal/GoalBar";
+import AvatarCarousel from "@/components/onboarding/AvatarCarousel";
 import Header from "@/components/landing/Header";
 import { useAuthStore } from "@/lib/store/authStore";
 

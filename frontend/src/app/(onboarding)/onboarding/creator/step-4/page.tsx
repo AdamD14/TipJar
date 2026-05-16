@@ -3,9 +3,9 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import OnboardingShell from "@/components/ui/layout/OnboardingShell";
-import Button from "@/components/ui/Button";
-import TargetBar from "@/components/onboarding/TargetBar";
+import OnboardingShell from "@/components/onboarding/OnboardingShell";
+import Button from "@/components/ui/buttons/Button";
+import TargetBar from "@/components/studio/widget/TargetBar";
 import Spinner from "@/components/ui/Spinner";
 import apiClient from "@/lib/apiClient";
 

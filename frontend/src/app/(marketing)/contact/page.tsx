@@ -2,7 +2,7 @@
 
 
 import React, { useState } from 'react';
-import PublicHeader from '@/components/studio/PublicHeader';
+import PublicHeader from '@/components/ui/layout/PublicHeader';
 import { Send, CheckCircle2 } from 'lucide-react';
 
 export default function ContactPage() {

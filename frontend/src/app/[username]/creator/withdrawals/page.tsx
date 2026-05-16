@@ -1,7 +1,7 @@
 "use client";
 import WithdrawalForm from "@/components/ui/forms/WithdrawalForm";
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
-import ErrorState from "@/components/ui/ErrorState";
+import ErrorState from "@/components/ui/forms/ErrorState";
 import { useCreatorBalance, useWithdraw } from "@/lib/api/queries";
 import { useToast } from "@/components/ui/notifications/Toast";
 import { normalize } from "@/lib/api/errors";

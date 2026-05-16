@@ -1,6 +1,6 @@
 "use client";
 import { ReactNode, useState } from "react";
-import SidebarNav from "./SidebarNav";
+import SidebarNav from "@/components/ui/layout/SidebarNav";
 import { Menu } from "lucide-react";
 
 export default function FanShell({ title, children }: { title: string; children: ReactNode }) {

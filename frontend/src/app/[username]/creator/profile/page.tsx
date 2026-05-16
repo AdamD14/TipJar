@@ -1,7 +1,7 @@
 "use client";
 import ProfileForm from "@/components/ui/forms/ProfileForm";
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
-import ErrorState from "@/components/ui/ErrorState";
+import ErrorState from "@/components/ui/forms/ErrorState";
 import {
   useCreatorProfile,
   useUpdateProfile,

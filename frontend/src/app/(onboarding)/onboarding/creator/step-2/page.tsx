@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/notifications/Toast";
 
-import OnboardingShell from "@/components/ui/layout/OnboardingShell";
-import Button from "@/components/ui/Button";
+import OnboardingShell from "@/components/onboarding/OnboardingShell";
+import Button from "@/components/ui/buttons/Button";
 import AvatarUploader from "@/components/onboarding/AvatarUploader";
 import Spinner from "@/components/ui/Spinner";
 

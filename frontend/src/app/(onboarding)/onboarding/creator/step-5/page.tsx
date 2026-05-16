@@ -11,9 +11,9 @@ import {
 } from "lucide-react";
 
 import confetti from "canvas-confetti";
-import OnboardingShell from "@/components/ui/layout/OnboardingShell";
-import Button from "@/components/ui/Button";
-import AvatarCarousel from "@/components/ui/AvatarCarousel";
+import OnboardingShell from "@/components/onboarding/OnboardingShell";
+import Button from "@/components/ui/buttons/Button";
+import AvatarCarousel from "@/components/onboarding/AvatarCarousel";
 import Spinner from "@/components/ui/Spinner";
 import apiClient from "@/lib/apiClient";
 import { useAuthStore } from "@/lib/store/authStore";

@@ -1,7 +1,7 @@
 "use client";
 import SubscriptionsList from "@/components/community/SubscriptionsList";
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
-import ErrorState from "@/components/ui/ErrorState";
+import ErrorState from "@/components/ui/forms/ErrorState";
 import { useCreatorSubscriptions } from "@/lib/api/queries";
 
 export default function SubscriptionsPage() {

@@ -1,4 +1,4 @@
-import Skeleton from "./Skeleton";
+import Skeleton from "@/components/ui/layout/Skeleton";
 
 /**
  * LoadingSkeleton — convenience wrapper for multi-line text skeletons.

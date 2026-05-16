@@ -2,8 +2,8 @@
 
 
 import React from 'react';
-import PublicHeader from '@/components/studio/PublicHeader';
-import Section from '@/components/studio/marketing/Section';
+import PublicHeader from '@/components/ui/layout/PublicHeader';
+import Section from '@/components/ui/layout/Section';
 import { ShieldCheck, Zap, Globe, Coins } from 'lucide-react';
 
 export default function WhyPage() {

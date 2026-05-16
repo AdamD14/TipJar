@@ -1,7 +1,7 @@
 "use client";
-import GoalForm from "@/components/payments/GoalForm";
+import GoalForm from "@/components/studio/modal/GoalForm";
 import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
-import ErrorState from "@/components/ui/ErrorState";
+import ErrorState from "@/components/ui/forms/ErrorState";
 import { useGoal, useSaveGoal } from "@/lib/api/queries";
 import { useToast } from "@/components/ui/notifications/Toast";
 import { track } from "@/lib/analytics/track";

@@ -3,10 +3,10 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import OnboardingShell from "@/components/ui/layout/OnboardingShell";
-import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
-import Textarea from "@/components/ui/Textarea";
+import OnboardingShell from "@/components/onboarding/OnboardingShell";
+import Button from "@/components/ui/buttons/Button";
+import Input from "@/components/ui/forms/Input";
+import Textarea from "@/components/ui/forms/Textarea";
 import SpecializationPicker from "@/components/onboarding/SpecializationPicker";
 import TwitchConnect from "@/components/creator/TwitchConnect";
 import Spinner from "@/components/ui/Spinner";

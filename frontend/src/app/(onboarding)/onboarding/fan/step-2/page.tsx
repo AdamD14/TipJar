@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { useAuthStore } from "@/lib/store/authStore";
 import apiClient from "@/lib/apiClient";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/buttons/Button";
 import { Check, Loader2 } from "lucide-react";
 
 const CATEGORIES = [
