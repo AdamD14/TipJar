@@ -1,24 +1,45 @@
-import type { Subscription } from '@/lib/api/contracts';
+import clsx from "clsx";
+import type { Subscription } from "@/lib/api/contracts";
+import Card from "@/components/ui/forms/Card";
 
 export default function SubscriptionsList({ items }: { items: Subscription[] }) {
-  if (!items?.length) return <p className="opacity-70">Brak subskrypcji.</p>;
+  if (!items?.length)
+    return (
+      <p className="font-body text-sm text-text-ds-tertiary">
+        No subscriptions yet.
+      </p>
+    );
+
   return (
     <div className="grid gap-2">
       {items.map((s) => (
-        <div
+        <Card
           key={s.id}
-          className="rounded-xl bg-white/5 border border-white/10 p-3 grid grid-cols-3 sm:grid-cols-5 gap-2"
+          noPadding
+          variant="base"
+          className="p-3 grid grid-cols-3 sm:grid-cols-5 gap-2"
         >
-          <span>@{s.fan}</span>
-          <span>
+          <span className="font-body text-sm text-text-ds-primary">
+            @{s.fan}
+          </span>
+          <span className="font-body text-sm text-text-ds-primary">
             {s.amount} USDC / {s.period}
           </span>
-          <span className="opacity-75">{new Date(s.startedAt).toLocaleDateString()}</span>
-          <span className={`text-sm ${s.active ? 'text-green-300' : 'text-red-300'}`}>
-            {s.active ? 'aktywna' : 'nieaktywna'}
+          <span className="font-body text-sm text-text-ds-tertiary">
+            {new Date(s.startedAt).toLocaleDateString()}
           </span>
-          <span className="hidden sm:block text-right opacity-70">ID: {s.id}</span>
-        </div>
+          <span
+            className={clsx(
+              "text-sm font-body font-medium",
+              s.active ? "text-success-light" : "text-error-light",
+            )}
+          >
+            {s.active ? "Active" : "Inactive"}
+          </span>
+          <span className="hidden sm:block text-right font-body text-sm text-text-ds-tertiary">
+            ID: {s.id}
+          </span>
+        </Card>
       ))}
     </div>
   );

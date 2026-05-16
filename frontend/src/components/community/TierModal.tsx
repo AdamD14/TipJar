@@ -7,6 +7,8 @@ import type { Tier } from "@/lib/types";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/buttons/Button";
 import Input from "@/components/ui/forms/Input";
+import Field from "@/components/ui/forms/Field";
+import FormError from "@/components/ui/forms/FormError";
 
 export default function TierModal({
   onClose,
@@ -69,21 +71,15 @@ export default function TierModal({
       title={initial ? "Edit tier" : "New tier"}
     >
       <div className="space-y-4">
-        <div>
-          <label className="block font-body text-sm text-text-ds-secondary mb-1">
-            Name
-          </label>
+        <Field label="Name">
           <Input
             value={f.name}
             onChange={(e) => setF({ ...f, name: e.target.value })}
             placeholder="Tier name"
           />
-        </div>
+        </Field>
 
-        <div>
-          <label className="block font-body text-sm text-text-ds-secondary mb-1">
-            Price (USDC / month)
-          </label>
+        <Field label="Price (USDC / month)">
           <Input
             type="number"
             value={f.price}
@@ -92,12 +88,9 @@ export default function TierModal({
             inputSize="large"
             className="tnum"
           />
-        </div>
+        </Field>
 
-        <div>
-          <div className="font-body text-sm text-text-ds-secondary mb-1">
-            Perks (max 5)
-          </div>
+        <Field label="Perks (max 5)">
           <div className="space-y-2">
             {f.perks.map((p, i) => (
               <div key={i} className="flex gap-2">
@@ -119,19 +112,17 @@ export default function TierModal({
               </div>
             ))}
           </div>
-          <button
+          <Button
+            variant="link"
+            size="sm"
+            className="mt-2 text-xs"
             onClick={addPerk}
-            className="mt-2 font-body text-xs text-gold-400 underline underline-offset-4 hover:text-gold-300 transition-colors"
           >
             Add perk
-          </button>
-        </div>
+          </Button>
+        </Field>
 
-        {error && (
-          <p className="text-sm text-error-light" role="alert">
-            {error}
-          </p>
-        )}
+        <FormError message={error || undefined} />
 
         <div className="flex gap-2 justify-end pt-2">
           <Button variant="secondary" size="sm" onClick={onClose}>

@@ -3,6 +3,7 @@
 import clsx from "clsx";
 import type { Tier } from "@/lib/types";
 import Button from "@/components/ui/buttons/Button";
+import Card from "@/components/ui/forms/Card";
 
 export default function TierCard({
   t,
@@ -14,7 +15,7 @@ export default function TierCard({
   onArchive: (id: string) => void;
 }) {
   return (
-    <div className="rounded-xl border border-white/[0.05] bg-teal-800 p-4 flex flex-col shadow-1 hover:shadow-2 hover:-translate-y-1 transition-all duration-200">
+    <Card interactive noPadding variant="base" className="text-left p-4 flex flex-col">
       <div className="flex items-start justify-between">
         <div>
           <div className="font-heading font-semibold text-text-ds-primary">
@@ -29,7 +30,7 @@ export default function TierCard({
         </div>
         <span
           className={clsx(
-            "text-xs font-body font-medium px-2 py-1 rounded",
+            "text-xs font-body font-medium px-2 py-1 rounded-lg",
             t.active
               ? "bg-success-dark text-success-light"
               : "bg-teal-850 text-text-ds-tertiary",
@@ -53,6 +54,6 @@ export default function TierCard({
           Archive
         </Button>
       </div>
-    </div>
+    </Card>
   );
 }

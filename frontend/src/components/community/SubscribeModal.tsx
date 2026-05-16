@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import clsx from "clsx";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/buttons/Button";
+import Card from "@/components/ui/forms/Card";
 
 export type TierPub = {
   id: string;
@@ -53,17 +54,33 @@ export default function SubscribeModal({
 
   return (
     <Modal open={open} onClose={onClose} size="form" title={`Subscribe @${username}`}>
-      <div className="grid sm:grid-cols-2 gap-3 mt-2">
+      <div
+        className="grid sm:grid-cols-2 gap-3 mt-2"
+        role="radiogroup"
+        aria-label="Select a tier"
+      >
         {tiers.map((t) => (
-          <button
+          <Card
             key={t.id}
-            onClick={() => setTierId(t.id)}
+            interactive
+            noPadding
+            variant="base"
             className={clsx(
-              "text-left rounded-xl border p-4 transition-all duration-200",
+              "text-left p-4 cursor-pointer",
               tierId === t.id
                 ? "border-gold-400 bg-gold-400/10"
-                : "border-white/[0.05] bg-teal-850 hover:border-teal-600",
+                : "bg-teal-850 hover:border-teal-600",
             )}
+            onClick={() => setTierId(t.id)}
+            role="radio"
+            aria-checked={tierId === t.id}
+            tabIndex={tierId === t.id ? 0 : -1}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setTierId(t.id);
+              }
+            }}
           >
             <div className="font-heading font-semibold text-text-ds-primary">
               {t.name}
@@ -79,7 +96,7 @@ export default function SubscribeModal({
                 <li key={i}>• {p}</li>
               ))}
             </ul>
-          </button>
+          </Card>
         ))}
       </div>
 
