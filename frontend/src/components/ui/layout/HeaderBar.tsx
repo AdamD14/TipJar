@@ -10,11 +10,11 @@ import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import Link from "next/link";
 import clsx from "clsx";
 import PrimaryCta from "@/components/ui/buttons/PrimaryCta";
-import LoginButton from "@/components/ui/buttons/LoginButton";
+import Button from "@/components/ui/buttons/Button";
 
 type NavItem = {
   label: string;
@@ -151,7 +151,7 @@ export default function Header() {
             {/* 3) Prawa: Log in + Hamburger (BEZ Sign up na desktopie) */}
             <div className="flex-1 flex justify-end items-center">
               <div className="hidden md:block">
-                <LoginButton data-testid="desktop-login">Log in</LoginButton>
+                <Button variant="glass" href="/login" size="sm" leftIcon={<User size={16} />} data-testid="desktop-login">Log in</Button>
               </div>
               <button
                 type="button"
@@ -239,9 +239,7 @@ export default function Header() {
           {/* Mobile CTA — zostaje, Sign up -> /register */}
           <div className="mt-6 flex gap-3 border-t border-white/10 pt-6">
             <div className="flex-1">
-              <LoginButton data-testid="mobile-login" className="w-full h-12">
-                Log in
-              </LoginButton>
+                <Button variant="glass" href="/login" fullWidth leftIcon={<User size={16} />} data-testid="mobile-login">Log in</Button>
             </div>
             <div className="flex-1">
               <PrimaryCta

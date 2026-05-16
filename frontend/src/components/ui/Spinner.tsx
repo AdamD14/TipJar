@@ -32,7 +32,7 @@ const GRADIENT_ID_PREFIX = "tj-spinner-grad";
 export default function Spinner({
   size = "md",
   className = "",
-  label = "Ładowanie…",
+  label = "Loading…",
 }: SpinnerProps) {
   const config =
     typeof size === "number"
@@ -62,10 +62,10 @@ export default function Spinner({
       >
         <defs>
           {/* Gold → Purple gradient — design.md §5.1: --gold-400 → --purple-300 */}
-          <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#FFD700" />
-            <stop offset="100%" stopColor="#4D194D" />
-          </linearGradient>
+        <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="var(--gold-400)" />
+          <stop offset="100%" stopColor="var(--purple-300)" />
+        </linearGradient>
         </defs>
 
         <circle

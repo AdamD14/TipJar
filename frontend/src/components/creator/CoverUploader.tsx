@@ -1,7 +1,9 @@
 "use client";
 
-import { useCallback, type ChangeEvent } from "react";
-import clsx from "clsx";
+import { useCallback, useRef, type ChangeEvent } from "react";
+import Input from "@/components/ui/forms/Input";
+import Card from "@/components/ui/forms/Card";
+import Button from "@/components/ui/buttons/Button";
 
 type Props = {
   value?: string;
@@ -9,9 +11,12 @@ type Props = {
 };
 
 export default function CoverUploader({ value, onChange }: Props) {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const objUrlRef = useRef<string | null>(null);
+
   const upload = useCallback(
     async (_file: File) => {
-      // TODO: Presigned URL flow — analogicznie jak w AvatarUploader
+      // TODO: Presigned URL flow — same as AvatarUploader
     },
     [onChange],
   );
@@ -19,13 +24,21 @@ export default function CoverUploader({ value, onChange }: Props) {
   const handleFile = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
-      if (file) upload(file);
+      if (!file) return;
+      if (objUrlRef.current) {
+        URL.revokeObjectURL(objUrlRef.current);
+        objUrlRef.current = null;
+      }
+      const url = URL.createObjectURL(file);
+      objUrlRef.current = url;
+      onChange(url);
+      upload(file);
     },
-    [upload],
+    [upload, onChange],
   );
 
   return (
-    <div className="bg-teal-850 border border-white/[0.05] rounded-xl p-6">
+    <Card variant="elevated">
       <p className="text-sm font-body text-text-ds-tertiary mb-2">
         Cover (3:1)
       </p>
@@ -33,17 +46,26 @@ export default function CoverUploader({ value, onChange }: Props) {
         {value ? (
           <img src={value} alt="" className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full grid place-items-center text-teal-600 text-sm">
+          <div className="w-full h-full grid place-items-center text-teal-100 text-sm">
             No cover
           </div>
         )}
       </div>
       <input
+        ref={fileRef}
         type="file"
         accept="image/*"
-        className="mt-3 text-sm text-text-ds-tertiary file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-body file:bg-teal-700 file:text-teal-25 hover:file:bg-teal-600 file:cursor-pointer file:transition-colors"
+        className="sr-only"
         onChange={handleFile}
       />
-    </div>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="mt-3"
+        onClick={() => fileRef.current?.click()}
+      >
+        Choose file
+      </Button>
+    </Card>
   );
 }

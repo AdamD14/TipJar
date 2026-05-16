@@ -15,8 +15,8 @@ export default function Field({ label, htmlFor, hint, error, children }: FieldPr
         {label}
       </label>
       {children}
-      {hint && <p className="text-xs text-white/40">{hint}</p>}
-      {error && <p className="text-xs text-red-400">{error}</p>}
+      {hint && <p className="text-xs text-text-ds-tertiary">{hint}</p>}
+      {error && <p className="text-xs text-error-light">{error}</p>}
     </div>
   );
 }

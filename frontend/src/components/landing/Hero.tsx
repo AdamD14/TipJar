@@ -1,16 +1,16 @@
 "use client";
 
 import Image from "next/image";
+import Button from "@/components/ui/buttons/Button";
 import PrimaryCta from "@/components/ui/buttons/PrimaryCta";
 import SecondaryCta from "@/components/ui/buttons/SecondaryCta";
 
 export default function Hero() {
   return (
     <section
-      className="relative text-white min-h-screen lg:pb-0"
+      className="relative text-text-ds-primary min-h-screen lg:pb-0"
       aria-labelledby="hero-heading"
     >
-      {/* FULL-BLEED background /1.png — zawsze 100vw × 100vh */}
       <div className="pointer-events-none absolute inset-0 -z-20" aria-hidden>
         <Image
           src="/1.png"
@@ -24,11 +24,10 @@ export default function Hero() {
       </div>
 
       <div className="mx-auto px-4 md:px-8">
-        {/* kontener referencyjny */}
         <div className="relative max-w-7xl min-h-screen flex flex-col justify-start pt-16 lg:pt-20">
           <h1
             id="hero-heading"
-            className="font-ui font-bold tracking-tight leading-[1.15] text-5xl sm:text-5xl md:text-6xl lg:text-8xl"
+            className="font-heading font-bold tracking-tight leading-[1.15] text-5xl sm:text-5xl md:text-6xl lg:text-8xl"
           >
             <span className="block relative before:content-['\00a0\00a0\0009'] before:inline-block bg-gradient-to-r from-white via-yellow-200 to-white bg-clip-text text-transparent drop-shadow-lg">
               Support creativity
@@ -38,20 +37,19 @@ export default function Hero() {
             </span>
           </h1>
 
-          <p className="mt-6 lg:mt-8 text-lg sm:text-xl md:text-2xl font-ui text-white max-w-2xl">
+          <p className="mt-6 lg:mt-8 text-lg sm:text-xl md:text-2xl font-body text-text-ds-primary max-w-2xl">
             Instant micro-payments in USDC for creators: podcasters, streamers,
             YouTubers, digital models, musicians, artists, bloggers, coaches,
             educators, journalists, influencers - simply anyone creating
             valuable content.
           </p>
 
-          {/* "Enter" wysokość między subhero a trust strip */}
-          <div className="mt-10 lg:mt-12 flex flex-nowrap items-center gap-3 text-sm text-white/70 whitespace-nowrap overflow-x-auto">
-            <a
+          <div className="mt-10 lg:mt-12 flex flex-nowrap items-center gap-3 text-sm text-text-ds-tertiary whitespace-nowrap overflow-x-auto">
+            <Button
               href="https://circle.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 ring-1 ring-white/10 hover:text-white"
+              variant="ghost"
+              size="sm"
+              className="rounded-full bg-white/5 ring-1 ring-white/10 hover:text-text-ds-primary gap-2 px-3 py-1"
             >
               <Image
                 src="/c.png"
@@ -61,9 +59,9 @@ export default function Hero() {
                 priority
               />
               <span>
-                Powered by <span className="font-semibold">circle.com</span>
+                Powered by <span className="font-heading font-semibold">circle.com</span>
               </span>
-            </a>
+            </Button>
 
             <span className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 ring-1 ring-white/10">
               <svg
@@ -81,8 +79,7 @@ export default function Hero() {
             </span>
           </div>
 
-          {/* Dodatkowe badges pod spodem */}
-          <div className="mt-3 flex flex-nowrap items-center gap-3 text-sm text-white/70 whitespace-nowrap overflow-x-auto">
+          <div className="mt-3 flex flex-nowrap items-center gap-3 text-sm text-text-ds-tertiary whitespace-nowrap overflow-x-auto">
             <span className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 ring-1 ring-white/10">
               <svg
                 viewBox="0 0 24 24"
@@ -114,7 +111,6 @@ export default function Hero() {
             </span>
           </div>
 
-          {/* "Enter" wysokość między trust strip a buttonami - zwiększony na mobile */}
           <div className="mt-16 lg:mt-12 flex w-full flex-nowrap items-center justify-start gap-3">
             <PrimaryCta href="/register">Begin as a Creator</PrimaryCta>
             <SecondaryCta href="/explore">Explore as a Fan</SecondaryCta>

@@ -1,6 +1,14 @@
 "use client";
 import { useState } from 'react';
 import { isEvmAddress } from '@/lib/validators/address';
+import Field from '@/components/ui/forms/Field';
+import Input from '@/components/ui/forms/Input';
+import FormError from '@/components/ui/forms/FormError';
+import Button from '@/components/ui/buttons/Button';
+
+function isFetchError(e: unknown): e is { message?: string } {
+  return typeof e === 'object' && e !== null && 'message' in e;
+}
 
 export default function WithdrawalForm({
   balance,
@@ -21,13 +29,13 @@ export default function WithdrawalForm({
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErr(null);
-    if (!validAmt) return setErr('Nieprawidłowa kwota.');
-    if (!validAddr) return setErr('Nieprawidłowy adres EVM (0x…).');
+    if (!validAmt) return setErr('Invalid amount.');
+    if (!validAddr) return setErr('Invalid EVM address (0x…).');
     setLoading(true);
     try {
       await onSubmit({ amount: amt, address });
-    } catch (e: any) {
-      setErr(e?.message || 'Błąd wypłaty.');
+    } catch (e: unknown) {
+      setErr(isFetchError(e) ? e.message || 'Withdrawal failed.' : 'Withdrawal failed.');
     } finally {
       setLoading(false);
     }
@@ -35,52 +43,46 @@ export default function WithdrawalForm({
 
   return (
     <form onSubmit={submit} className="grid gap-3">
-      <div className="rounded-xl bg-white/5 border border-white/10 p-3">
-        <div className="text-sm opacity-80">Dostępne saldo</div>
-        <div className="text-xl font-bold">{balance.toFixed(2)} USDC</div>
+      <div className="rounded-xl bg-surface-elevated border border-white/10 p-3">
+        <div className="text-sm text-text-ds-secondary font-body">Available balance</div>
+        <div className="text-xl font-heading font-bold text-text-ds-primary">{balance.toFixed(2)} USDC</div>
       </div>
 
-      <label className="grid gap-1">
-        <span className="text-sm opacity-80">Kwota</span>
-        <input
+      <Field label="Amount" hint={`Max: ${balance.toFixed(2)} USDC`}>
+        <Input
           inputMode="decimal"
           required
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="rounded-lg bg-white/5 border border-white/10 p-2"
         />
-        <div className="text-xs opacity-70">Max: {balance.toFixed(2)} USDC</div>
-      </label>
+      </Field>
 
-      <label className="grid gap-1">
-        <span className="text-sm opacity-80">Adres wypłaty (EOA)</span>
-        <input
+      <Field label="Withdrawal address (EOA)">
+        <Input
           required
           value={address}
           onChange={(e) => setAddress(e.target.value)}
-          className="rounded-lg bg-white/5 border border-white/10 p-2"
           placeholder="0x…"
         />
-      </label>
+      </Field>
 
-      {err && <p className="text-red-300 text-sm">{err}</p>}
+      {err && <FormError message={err} />}
 
       <div className="flex gap-2">
-        <button
+        <Button
           type="submit"
-          disabled={loading || !validAmt || !validAddr}
-          aria-busy={loading}
-          className="rounded-lg bg-[var(--color-primary)] text-black font-semibold px-4 py-2 disabled:opacity-50"
+          loading={loading}
+          disabled={!validAmt || !validAddr}
         >
-          Wypłać
-        </button>
-        <button
+          Withdraw
+        </Button>
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => setAmount(String(balance.toFixed(2)))}
-          className="rounded-lg border border-white/20 px-4 py-2"
         >
-          Wypłać wszystko
-        </button>
+          Withdraw all
+        </Button>
       </div>
     </form>
   );

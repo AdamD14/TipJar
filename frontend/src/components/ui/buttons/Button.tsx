@@ -109,7 +109,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
       "inline-flex items-center justify-center gap-2",
       "font-heading font-semibold select-none",
       "transition-all duration-200",
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4D194D] focus-visible:ring-offset-2 focus-visible:ring-offset-[#001F1F]",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app",
       "disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none",
       fullWidth && "w-full",
 
@@ -130,12 +130,11 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
       ],
 
       /* ── Secondary — purple outline — design.md §2.1.3 ── */
-      (variant === "secondary" || variant === "outline") && [
-        "bg-transparent text-purple-300 border border-purple-300",
-        "hover:bg-[rgba(77,25,77,0.1)] hover:-translate-y-0.5",
-        "active:bg-[rgba(77,25,77,0.15)] active:scale-[0.98] active:translate-y-0",
-        "focus-visible:ring-[#4D194D]",
-      ],
+  (variant === "secondary" || variant === "outline") && [
+    "bg-transparent text-purple-300 border border-purple-300",
+    "hover:bg-[rgba(77,25,77,0.1)] hover:-translate-y-0.5",
+    "active:bg-[rgba(77,25,77,0.15)] active:scale-[0.98] active:translate-y-0",
+  ],
 
       /* ── Solid (legacy alias) — teal solid ── */
       variant === "solid" && [
@@ -152,12 +151,11 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
       ],
 
       /* ── Danger — destructive — design.md §2.1.4 ── */
-      variant === "danger" && [
-        "bg-transparent text-error-base border border-error-base/60",
-        "hover:bg-[rgba(255,82,82,0.1)] hover:-translate-y-0.5",
-        "active:bg-[rgba(255,82,82,0.15)] active:scale-[0.98]",
-        "focus-visible:ring-[#FF5252]",
-      ],
+  variant === "danger" && [
+    "bg-transparent text-error-base border border-error-base/60",
+    "hover:bg-[rgba(255,82,82,0.1)] hover:-translate-y-0.5",
+    "active:bg-[rgba(255,82,82,0.15)] active:scale-[0.98]",
+  ],
 
       /* ── Link — text only ── */
       variant === "link" && [

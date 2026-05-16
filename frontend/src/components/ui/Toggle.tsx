@@ -41,7 +41,7 @@ const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
               "absolute inset-0 rounded-full transition-colors duration-[400ms]",
               "bg-teal-850 border border-teal-600",
               "peer-checked:bg-purple-300 peer-checked:border-purple-300",
-              "peer-focus-visible:ring-2 peer-focus-visible:ring-[#4D194D] peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[#001F1F]",
+              "peer-focus-visible:ring-2 peer-focus-visible:ring-border-focus peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-surface-app",
             )}
             aria-hidden="true"
           />

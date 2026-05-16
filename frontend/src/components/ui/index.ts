@@ -23,7 +23,6 @@ export { default as Button } from './buttons/Button';
 export { default as PrimaryCta } from './buttons/PrimaryCta';
 export { default as SecondaryCta } from './buttons/SecondaryCta';
 export { default as HeroCtas } from './buttons/HeroCtas';
-export { default as LoginButton } from './buttons/LoginButton';
 export { default as CopyButton } from './buttons/CopyButton';
 export { default as Card } from './forms/Card';
 export { default as Checkbox } from './forms/Checkbox';

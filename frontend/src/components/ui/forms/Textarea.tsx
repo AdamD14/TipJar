@@ -41,23 +41,23 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 
           "overflow-y-auto",
 
-          resolvedState === "default" && [
-            "border border-teal-700",
-            "hover:border-teal-600",
-            "focus:border-gold-400",
-            "focus:shadow-[0_0_0_1px_#FFD700,0_0_0_4px_rgba(255,215,0,0.25)]",
-          ],
+        resolvedState === "default" && [
+          "border border-teal-700",
+          "hover:border-teal-600",
+          "focus:border-gold-400",
+          "focus:shadow-[0_0_0_1px_var(--gold-400),0_0_0_4px_rgba(255,215,0,0.25)]",
+        ],
 
-          resolvedState === "error" && [
-            "border border-error-base",
-            "shadow-[0_0_0_4px_rgba(255,82,82,0.25)]",
-            "focus:shadow-[0_0_0_1px_#FF5252,0_0_0_4px_rgba(255,82,82,0.3)]",
-          ],
+        resolvedState === "error" && [
+          "border border-error-base",
+          "shadow-[0_0_0_4px_rgba(255,82,82,0.25)]",
+          "focus:shadow-[0_0_0_1px_var(--error-base),0_0_0_4px_rgba(255,82,82,0.3)]",
+        ],
 
-          resolvedState === "success" && [
-            "border border-success-base",
-            "focus:shadow-[0_0_0_1px_#00E676]",
-          ],
+        resolvedState === "success" && [
+          "border border-success-base",
+          "focus:shadow-[0_0_0_1px_var(--success-base)]",
+        ],
 
           "disabled:opacity-40 disabled:cursor-not-allowed",
           "disabled:border-dashed disabled:border-teal-700",

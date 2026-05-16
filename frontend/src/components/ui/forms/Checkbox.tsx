@@ -44,10 +44,9 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           />
           <span
             className={clsx(
-              "w-5 h-5 rounded-[4px] border-2 transition-all duration-200",
-              "border-teal-700 bg-teal-800",
-              "peer-checked:border-0 peer-checked:" + checkedBg.replace("bg-", "bg-"),
-              "peer-focus-visible:ring-2 peer-focus-visible:ring-[#4D194D] peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[#001F1F]",
+        "w-5 h-5 rounded-[4px] border-2 transition-all duration-200",
+        "border-teal-700 bg-teal-800",
+        "peer-focus-visible:ring-2 peer-focus-visible:ring-border-focus peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-surface-app",
               "peer-hover:border-teal-600",
             )}
             style={{

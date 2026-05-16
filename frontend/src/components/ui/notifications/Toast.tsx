@@ -141,7 +141,7 @@ function ToastItem({
 
       <button
         onClick={dismiss}
-        aria-label="Zamknij powiadomienie"
+        aria-label="Dismiss notification"
         className={clsx(
           "bg-transparent border-none cursor-pointer",
           "text-teal-600",

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Card from '@/components/ui/forms/Card';
 import Button from '@/components/ui/buttons/Button';
 
 export type CreatorCardProps = {
@@ -40,7 +41,7 @@ export default function CreatorCard({
     const url = exists ? `/tip/${displayHandle}` : '/register';
 
     return (
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+      <Card>
         <div className="flex items-start justify-between gap-3">
           <div className="relative mr-2 h-12 w-12 shrink-0 overflow-hidden rounded-full border border-white/10">
             {avatarUrl ? (
@@ -51,7 +52,7 @@ export default function CreatorCard({
               />
             ) : (
               <div
-                className="grid h-full w-full place-items-center text-sm font-semibold text-white/90"
+                className="grid h-full w-full place-items-center text-sm font-heading font-semibold text-text-ds-primary"
                 style={gradientStyle(displayHandle)}
                 aria-hidden="true"
               >
@@ -61,7 +62,7 @@ export default function CreatorCard({
             {live && (
               <span
                 title="LIVE"
-                className="absolute -right-1 -top-1 inline-flex items-center gap-1 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-white shadow"
+                className="absolute -right-1 -top-1 inline-flex items-center gap-1 rounded-full bg-error-base px-2 py-0.5 text-[10px] font-heading font-bold text-text-ds-primary shadow"
               >
                 <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-white" />
                 LIVE
@@ -70,14 +71,14 @@ export default function CreatorCard({
           </div>
 
           <div className="min-w-0 flex-1">
-            <p className="text-xs text-muted">Creator</p>
-            <h3 className="truncate text-lg font-semibold text-white">@{displayHandle}</h3>
+            <p className="text-xs text-text-ds-tertiary">Creator</p>
+            <h3 className="truncate text-lg font-heading font-semibold text-text-ds-primary">@{displayHandle}</h3>
 
             {hasMeta && (
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 {typeof score === 'number' && (
                   <span
-                    className="inline-flex items-center rounded-full border border-gold-400 bg-gold-400/20 px-2 py-0.5 text-[11px] font-semibold text-gold-400"
+                    className="inline-flex items-center rounded-full border border-gold-400 bg-gold-400/20 px-2 py-0.5 text-[11px] font-heading font-semibold text-gold-400"
                     title="Trending score"
                   >
                     ★ {Math.max(0, Math.min(100, Math.round(score)))}
@@ -86,7 +87,7 @@ export default function CreatorCard({
                 {(tags ?? []).slice(0, 4).map((t) => (
                   <span
                     key={t}
-                    className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] text-white/80"
+                    className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] text-text-ds-secondary"
                   >
                     #{t}
                   </span>
@@ -95,47 +96,51 @@ export default function CreatorCard({
             )}
 
             {collections && collections.length > 0 && (
-              <p className="mt-1 truncate text-[11px] text-white/50">
+              <p className="mt-1 truncate text-[11px] text-text-ds-tertiary">
                 in: {collections.slice(0, 3).join(', ')}
                 {collections.length > 3 ? '…' : ''}
               </p>
             )}
           </div>
 
-          <a
+          <Button
             href={url}
-            className="font-ui"
-            aria-label={exists ? `Tip @${displayHandle}` : `Claim handle @${displayHandle}`}
+            variant="primary"
+            size="sm"
             onClick={() => recordClick(displayHandle, 'creator-card')}
+            aria-label={exists ? `Tip @${displayHandle}` : `Claim handle @${displayHandle}`}
           >
-            <Button>{exists ? 'Tip now' : 'Claim @handle'}</Button>
-          </a>
+            {exists ? 'Tip now' : 'Claim @handle'}
+          </Button>
         </div>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <Link
-      href={`/creators/${displayHandle}`}
-      className="block rounded-2xl bg-white/5 border border-white/10 p-4 hover:border-teal-400/50"
-    >
-      <div className="flex items-center gap-3">
-        <div
-          className="w-12 h-12 rounded-full bg-white/10"
-          style={avatarUrl ? { backgroundImage: `url(${avatarUrl})`, backgroundSize: 'cover' } : {}}
-        />
-        <div>
-          <div className="text-white font-semibold">{name ?? displayHandle}</div>
-          <div className="text-xs text-gray-400">
-            @{displayHandle}
-            {category ? ` • ${category}` : ''}
+    <Card interactive>
+      <Link
+        href={`/creators/${displayHandle}`}
+        className="block"
+        onClick={() => recordClick(displayHandle, 'creator-card')}
+      >
+        <div className="flex items-center gap-3">
+          <div
+            className="w-12 h-12 rounded-full bg-white/10"
+            style={avatarUrl ? { backgroundImage: `url(${avatarUrl})`, backgroundSize: 'cover' } : {}}
+          />
+          <div>
+            <div className="text-text-ds-primary font-heading font-semibold">{name ?? displayHandle}</div>
+            <div className="text-xs text-text-ds-tertiary">
+              @{displayHandle}
+              {category ? ` · ${category}` : ''}
+            </div>
           </div>
         </div>
-      </div>
-      {typeof stats?.tips === 'number' && (
-        <div className="mt-3 text-sm text-gray-300">Tips received: {stats.tips} USDC</div>
-      )}
-    </Link>
+        {typeof stats?.tips === 'number' && (
+          <div className="mt-3 text-sm text-text-ds-secondary">Tips received: {stats.tips} USDC</div>
+        )}
+      </Link>
+    </Card>
   );
 }

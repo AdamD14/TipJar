@@ -18,12 +18,9 @@ const Signup = () => (
     </Button>
     <p className="mt-4 font-body text-sm text-text-ds-tertiary">
       Already have an account?{" "}
-      <a
-        href="#"
-        className="text-gold-400 underline underline-offset-4 hover:text-gold-300 transition-colors"
-      >
-        Log In
-      </a>
+    <Button variant="link" href="/login">
+      Log In
+    </Button>
     </p>
   </section>
 );

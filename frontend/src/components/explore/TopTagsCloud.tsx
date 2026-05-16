@@ -1,5 +1,7 @@
 "use client";
 
+import Button from "@/components/ui/buttons/Button";
+
 export default function TopTagsCloud({
   items,
   selected,
@@ -15,20 +17,17 @@ export default function TopTagsCloud({
       {items.map(({ tag, count }) => {
         const active = selected.includes(tag);
         return (
-          <button
+          <Button
             key={tag}
-            type="button"
+            variant={active ? "gold" : "ghost"}
+            size="sm"
             onClick={() => onToggle(tag)}
             aria-pressed={active}
-            className={`rounded-full border px-3 py-1 text-xs font-semibold ${
-              active
-                ? "border-gold-400 bg-gold-400/20 text-gold-400"
-                : "border-white/10 bg-white/5 text-white/80 hover:bg-white/10"
-            }`}
+            className={active ? undefined : "border border-white/10 rounded-full"}
             title={`#${tag} • ${count}`}
           >
             #{tag} <span className="opacity-70">· {count}</span>
-          </button>
+          </Button>
         );
       })}
     </div>

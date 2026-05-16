@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import Button from "@/components/ui/buttons/Button";
 import { initials, gradientStyle } from "@/lib/avatar";
 import { recordClick } from "@/lib/metrics";
 
@@ -18,7 +19,7 @@ function getSeen(): string[] {
   if (typeof window === "undefined") return [];
   try {
     return JSON.parse(localStorage.getItem(SEEN_KEY) || "[]");
-  } catch {
+  } catch (_: unknown) {
     return [];
   }
 }
@@ -26,7 +27,7 @@ function setSeen(arr: string[]) {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(SEEN_KEY, JSON.stringify(arr.slice(0, 200)));
-  } catch {}
+  } catch (_: unknown) { /* quota exceeded */ }
 }
 
 export default function Spotlight({ pool }: { pool: SpotlightItem[] }) {
@@ -64,17 +65,17 @@ export default function Spotlight({ pool }: { pool: SpotlightItem[] }) {
   return (
     <section aria-label="Spotlight" className="space-y-3">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-semibold text-white">Spotlight</span>
-        <button
-          type="button"
-          onClick={() => {
-            markSeen(handle);
-          }}
-          className="rounded-xl border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/80 hover:bg-white/10"
-          aria-label="Dismiss spotlight"
-        >
-          Dismiss
-        </button>
+    <span className="text-sm font-heading font-semibold text-text-ds-primary">Spotlight</span>
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={() => {
+        markSeen(handle);
+      }}
+      aria-label="Dismiss spotlight"
+    >
+      Dismiss
+    </Button>
       </div>
 
       <Link
@@ -102,27 +103,27 @@ export default function Spotlight({ pool }: { pool: SpotlightItem[] }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
         <div className="absolute -bottom-4 left-4 grid h-16 w-16 place-items-center overflow-hidden rounded-full border border-white/10 bg-white/10 backdrop-blur">
-          <span className="text-base font-bold text-white">{initials(handle)}</span>
+          <span className="text-base font-heading font-bold text-text-ds-primary">{initials(handle)}</span>
         </div>
 
         <div className="absolute bottom-0 left-24 right-4 pb-3">
           <div className="mb-1 flex items-center gap-2">
-            <span className="rounded-full border border-white/10 bg-white/10 px-2 py-0.5 text-[11px] text-white/80">
+            <span className="rounded-full border border-white/10 bg-white/10 px-2 py-0.5 text-[11px] text-text-ds-secondary">
               Featured
             </span>
             {typeof score === "number" && (
-              <span className="rounded-full border border-gold-400 bg-gold-400/20 px-2 py-0.5 text-[11px] font-semibold text-gold-400">
+              <span className="rounded-full border border-gold-400 bg-gold-400/20 px-2 py-0.5 text-[11px] font-heading font-semibold text-gold-400">
                 ★ {Math.max(0, Math.min(100, Math.round(score)))}
               </span>
             )}
             {live && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-white">
-                <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-white" /> LIVE
+          <span className="inline-flex items-center gap-1 rounded-full bg-error-base px-2 py-0.5 text-[10px] font-heading font-bold text-text-ds-primary">
+            <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-white" /> LIVE
               </span>
             )}
           </div>
-          <h3 className="truncate text-xl font-semibold text-white">@{handle}</h3>
-          <p className="text-sm text-white/80">Tap to send a quick tip</p>
+      <h3 className="truncate text-xl font-heading font-semibold text-text-ds-primary">@{handle}</h3>
+      <p className="text-sm text-text-ds-secondary">Tap to send a quick tip</p>
         </div>
       </Link>
     </section>

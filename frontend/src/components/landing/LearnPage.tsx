@@ -1,9 +1,11 @@
-// app/learn/page.tsx
+// components/landing/LearnPage.tsx
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ElementType } from 'react';
 import { Search, Clock, Shield, Zap, Globe, Coins, ArrowUp, BookOpen, ExternalLink } from 'lucide-react';
+import Button from '@/components/ui/buttons/Button';
+import Input from '@/components/ui/forms/Input';
 
 const NAV = [
   { id: 'essentials', label: 'Essentials', icon: BookOpen },
@@ -20,7 +22,7 @@ export default function LearnPage() {
   };
 
   return (
-    <main className="bg-gradient-main text-muted">
+    <main className="bg-gradient-main text-text-ds-secondary">
       <LearnHero searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
       <div className="mx-auto grid max-w-[1480px] grid-cols-1 gap-8 px-4 py-8 lg:grid-cols-[280px_1fr]">
@@ -29,8 +31,8 @@ export default function LearnPage() {
         <div className="space-y-16">
           {/* Essentials */}
           <section id="essentials">
-            <LearnEssentials 
-              searchTerm={searchTerm} 
+            <LearnEssentials
+              searchTerm={searchTerm}
               onTopicRead={markAsRead}
               readTopics={readTopics}
             />
@@ -38,34 +40,34 @@ export default function LearnPage() {
 
           {/* Advanced */}
           <section id="advanced" aria-labelledby="advancedHeading" className="py-12 md:py-16">
-            <h2 id="advancedHeading" className="mb-2 text-2xl md:text-3xl font-semibold">
+            <h2 id="advancedHeading" className="mb-2 text-2xl md:text-3xl font-heading font-semibold">
               Advanced Topics
             </h2>
-            <p className="mb-6 text-[14px] leading-[1.5] text-muted">
+            <p className="mb-6 text-[14px] leading-[1.5] text-text-ds-tertiary font-body">
               Deep dive into smart contracts, security, and technical implementation details.
             </p>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <ArticleCard 
-                title="Smart Contracts & Security" 
+              <ArticleCard
+                title="Smart Contracts & Security"
                 readTime="8 min"
                 description="How TipJar smart contracts work, security audits, and multi-sig protection for user funds."
                 icon={Shield}
               />
-              <ArticleCard 
-                title="On/Off-ramps & KYC" 
+              <ArticleCard
+                title="On/Off-ramps & KYC"
                 readTime="6 min"
                 description="Circle's fiat on-ramps, verification requirements, limits, and compliance frameworks."
                 icon={Globe}
               />
-              <ArticleCard 
-                title="Multi-chain Strategy" 
+              <ArticleCard
+                title="Multi-chain Strategy"
                 readTime="10 min"
                 description="Network selection, gas optimization, cross-chain bridging, and cost-effective routing."
                 icon={Zap}
               />
-              <ArticleCard 
-                title="Self-custody Best Practices" 
+              <ArticleCard
+                title="Self-custody Best Practices"
                 readTime="12 min"
                 description="Hardware wallets, seed phrase security, multi-sig setups, and cold storage strategies."
                 icon={Coins}
@@ -75,10 +77,10 @@ export default function LearnPage() {
 
           {/* Product guides */}
           <section id="guides" aria-labelledby="guidesHeading" className="py-12 md:py-16">
-            <h2 id="guidesHeading" className="mb-2 text-2xl md:text-3xl font-semibold">
+            <h2 id="guidesHeading" className="mb-2 text-2xl md:text-3xl font-heading font-semibold">
               Product Guides
             </h2>
-            <p className="mb-6 text-[14px] leading-[1.5] text-muted">
+            <p className="mb-6 text-[14px] leading-[1.5] text-text-ds-tertiary font-body">
               Step-by-step setup guides. Open the editor and configure elements in minutes.
             </p>
 
@@ -99,30 +101,27 @@ export default function LearnPage() {
   );
 }
 
-/* ================= Components ================= */
-
-function LearnHero({ searchTerm, setSearchTerm }: { 
-  searchTerm: string; 
-  setSearchTerm: (term: string) => void; 
+function LearnHero({ searchTerm, setSearchTerm }: {
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
 }) {
   return (
     <section className="border-b border-white/10 bg-card/40">
       <div className="mx-auto max-w-[1480px] px-4 py-12">
-        <h1 className="text-3xl md:text-4xl font-semibold">Learn Web3 & TipJar</h1>
-        <p className="mt-2 max-w-[780px] text-[14px] leading-[1.6] text-muted">
-          Quick answers upfront. Expand for details without leaving the page. 
+        <h1 className="text-3xl md:text-4xl font-heading font-semibold">Learn Web3 & TipJar</h1>
+        <p className="mt-2 max-w-[780px] text-[14px] leading-[1.6] text-text-ds-tertiary font-body">
+          Quick answers upfront. Expand for details without leaving the page.
           No jargon, just what you need to support creators and earn faster.
         </p>
-        
-        {/* Search */}
+
         <div className="mt-6 max-w-md relative">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
-          <input
+          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-ds-tertiary z-10" />
+          <Input
             type="text"
             placeholder="Search topics..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-card border border-white/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gold-400/30"
+            className="pl-10"
           />
         </div>
       </div>
@@ -132,25 +131,23 @@ function LearnHero({ searchTerm, setSearchTerm }: {
 
 function LearnNav({ readTopics }: { readTopics: Set<string> }) {
   const progressCount = readTopics.size;
-  const totalTopics = 5; // Update based on actual topics count
+  const totalTopics = 5;
 
   return (
     <nav className="lg:sticky lg:top-20 space-y-4">
-      {/* Progress */}
       <div className="rounded-lg border border-white/10 bg-card p-3">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium">Reading Progress</span>
-          <span className="text-xs text-muted">{progressCount}/{totalTopics}</span>
+          <span className="text-sm font-heading font-medium">Reading Progress</span>
+          <span className="text-xs text-text-ds-tertiary font-body">{progressCount}/{totalTopics}</span>
         </div>
         <div className="w-full bg-white/10 rounded-full h-2">
-          <div 
+          <div
             className="bg-gold-400 h-2 rounded-full transition-all duration-300"
             style={{ width: `${(progressCount / totalTopics) * 100}%` }}
           />
         </div>
       </div>
 
-      {/* Navigation */}
       <ul className="space-y-1">
         {NAV.map((n) => {
           const Icon = n.icon;
@@ -158,7 +155,7 @@ function LearnNav({ readTopics }: { readTopics: Set<string> }) {
             <li key={n.id}>
               <a
                 href={`#${n.id}`}
-                className="flex items-center gap-3 rounded-[10px] border border-white/10 bg-card px-3 py-2 text-sm hover:bg-white/5 transition-colors"
+                className="flex items-center gap-3 rounded-[10px] border border-white/10 bg-card px-3 py-2 text-sm font-body text-text-ds-secondary hover:bg-white/5 transition-colors"
               >
                 <Icon size={16} className="text-gold-400" />
                 {n.label}
@@ -169,28 +166,31 @@ function LearnNav({ readTopics }: { readTopics: Set<string> }) {
       </ul>
 
       <div className="mt-3">
-        <Link
+        <Button
           href="/"
-          className="inline-flex w-full justify-center items-center gap-2 rounded-[10px] border border-gold-400 px-3 py-2 text-sm font-medium text-gold-400 hover:bg-gold-400/10 transition-colors"
+          variant="outline"
+          size="sm"
+          fullWidth
+          className="gap-2"
         >
           <ArrowUp size={14} className="rotate-180" />
           Back to Home
-        </Link>
+        </Button>
       </div>
     </nav>
   );
 }
 
-function ArticleCard({ 
-  title, 
-  readTime, 
-  description, 
-  icon: Icon 
-}: { 
-  title: string; 
+function ArticleCard({
+  title,
+  readTime,
+  description,
+  icon: Icon
+}: {
+  title: string;
   readTime: string;
   description: string;
-  icon: any;
+  icon: ElementType;
 }) {
   return (
     <article className="rounded-[16px] border border-white/10 bg-card p-4 md:p-6 hover:border-white/20 transition-colors">
@@ -199,21 +199,21 @@ function ArticleCard({
           <Icon size={20} className="text-gold-400" />
         </div>
         <div className="flex-1">
-          <h3 className="text-base font-semibold leading-[1.5] mb-1">{title}</h3>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <h3 className="text-base font-heading font-semibold leading-[1.5] mb-1">{title}</h3>
+          <div className="flex items-center gap-2 text-xs text-text-ds-tertiary font-body">
             <Clock size={12} />
             {readTime} read
           </div>
         </div>
       </div>
-      
-      <p className="text-[13px] leading-[1.6] text-muted mb-4">
+
+      <p className="text-[13px] leading-[1.6] text-text-ds-tertiary mb-4 font-body">
         {description}
       </p>
-      
-      <button className="text-sm text-gold-400 hover:text-gold-200 transition-colors font-medium">
+
+      <Button variant="link" size="sm" className="text-sm">
         Read article →
-      </button>
+      </Button>
     </article>
   );
 }
@@ -224,15 +224,15 @@ function GuideLink({ href, title, readTime }: { href: string; title: string; rea
       href={href}
       className="block rounded-[16px] border border-white/10 bg-card p-4 transition-all hover:-translate-y-[1px] hover:border-white/20"
     >
-      <div className="mb-2 text-base font-semibold leading-[1.5]">{title}</div>
-      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+      <div className="mb-2 text-base font-heading font-semibold leading-[1.5]">{title}</div>
+      <div className="flex items-center gap-2 text-xs text-text-ds-tertiary font-body mb-2">
         <Clock size={12} />
         {readTime} setup
       </div>
-      <div className="text-[13px] leading-[1.6] text-muted mb-3">
+      <div className="text-[13px] leading-[1.6] text-text-ds-tertiary mb-3 font-body">
         Open the editor and configure in a few steps with live preview.
       </div>
-      <div className="inline-flex items-center gap-2 text-sm text-gold-400">
+      <div className="inline-flex items-center gap-2 text-sm text-gold-400 font-body">
         Open guide <ExternalLink size={14} />
       </div>
     </Link>
@@ -241,7 +241,7 @@ function GuideLink({ href, title, readTime }: { href: string; title: string; rea
 
 function BackToTop() {
   const [show, setShow] = useState(false);
-  
+
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > 300);
     onScroll();
@@ -256,23 +256,24 @@ function BackToTop() {
   };
 
   return (
-    <button
+    <Button
+      variant="ghost"
+      size="sm"
       onClick={scrollToTop}
       aria-label="Back to top"
-      className="fixed bottom-4 right-4 z-50 inline-flex h-10 w-10 items-center justify-center rounded-full border border-gold-400/60 bg-black/40 text-gold-400 backdrop-blur transition hover:-translate-y-[1px] hover:bg-black/60"
+      className="fixed bottom-4 right-4 z-50 h-10 w-10 rounded-full border border-gold-400/60 bg-black/40 text-gold-400 backdrop-blur hover:-translate-y-[1px] hover:bg-black/60"
     >
       <ArrowUp size={16} />
-    </button>
+    </Button>
   );
 }
 
-// LearnEssentials Component
-function LearnEssentials({ 
-  searchTerm, 
-  onTopicRead, 
-  readTopics 
-}: { 
-  searchTerm: string; 
+function LearnEssentials({
+  searchTerm,
+  onTopicRead,
+  readTopics
+}: {
+  searchTerm: string;
   onTopicRead: (id: string) => void;
   readTopics: Set<string>;
 }) {
@@ -285,11 +286,11 @@ function LearnEssentials({
       readTime: '3 min',
       bullets: [
         'Stability for tips and payouts',
-        'Fast settlement, global reach', 
+        'Fast settlement, global reach',
         'Works without a bank account',
       ],
       more: (
-        <div className="space-y-2">
+        <div className="space-y-2 font-body">
           <p>
             USDC is a regulated, fully-reserved stablecoin. Funds are redeemable for USD through
             licensed partners. It reduces volatility and enables instant, low-fee transfers.
@@ -310,7 +311,7 @@ function LearnEssentials({
         'Never share seed phrase or private key',
       ],
       more: (
-        <div className="space-y-2">
+        <div className="space-y-2 font-body">
           <p>
             For beginners, start without a wallet. You can receive tips and later withdraw via
             on/off-ramps. When ready, use a reputable wallet and hardware device for larger balances.
@@ -318,7 +319,6 @@ function LearnEssentials({
         </div>
       ),
     },
-    // Add more topics here...
   ];
 
   const filteredTopics = topics.filter(topic =>
@@ -328,23 +328,23 @@ function LearnEssentials({
 
   return (
     <section id="essentials" aria-labelledby="essentialsHeading" className="py-12 md:py-16">
-      <h2 id="essentialsHeading" className="mb-2 text-2xl md:text-3xl font-semibold">
+      <h2 id="essentialsHeading" className="mb-2 text-2xl md:text-3xl font-heading font-semibold">
         Essentials
       </h2>
-      <p className="mb-6 text-[14px] leading-[1.5] text-muted">
+      <p className="mb-6 text-[14px] leading-[1.5] text-text-ds-tertiary font-body">
         Short answers up front. Tap <span className="text-gold-400">More</span> to expand without leaving the page.
       </p>
 
       {filteredTopics.length === 0 ? (
-        <div className="text-center py-8 text-muted">
-          No topics found matching "{searchTerm}"
+        <div className="text-center py-8 text-text-ds-tertiary font-body">
+          No topics found matching &quot;{searchTerm}&quot;
         </div>
       ) : (
         <div className="space-y-4">
           {filteredTopics.map((topic) => (
-            <EssentialItem 
-              key={topic.id} 
-              topic={topic} 
+            <EssentialItem
+              key={topic.id}
+              topic={topic}
               onRead={onTopicRead}
               isRead={readTopics.has(topic.id)}
             />
@@ -355,12 +355,20 @@ function LearnEssentials({
   );
 }
 
-function EssentialItem({ 
-  topic, 
-  onRead, 
-  isRead 
-}: { 
-  topic: any; 
+function EssentialItem({
+  topic,
+  onRead,
+  isRead
+}: {
+  topic: {
+    id: string;
+    title: string;
+    teaser: string;
+    icon: ElementType;
+    readTime: string;
+    bullets: string[];
+    more: React.ReactNode;
+  };
   onRead: (id: string) => void;
   isRead: boolean;
 }) {
@@ -371,7 +379,9 @@ function EssentialItem({
     try {
       const href = `${location.origin}${location.pathname}#${topic.id}`;
       await navigator.clipboard.writeText(href);
-    } catch {}
+    } catch (_: unknown) {
+      // Clipboard API may not be available
+    }
   };
 
   const handleToggle = () => {
@@ -382,8 +392,8 @@ function EssentialItem({
   };
 
   return (
-    <article 
-      id={topic.id} 
+    <article
+      id={topic.id}
       className={`rounded-[16px] border border-white/10 bg-card p-4 md:p-6 transition-colors ${
         isRead ? 'border-gold-400/30' : ''
       }`}
@@ -395,39 +405,43 @@ function EssentialItem({
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <h3 className="text-base font-semibold leading-[1.5]">{topic.title}</h3>
+              <h3 className="text-base font-heading font-semibold leading-[1.5]">{topic.title}</h3>
               {isRead && (
                 <div className="w-2 h-2 rounded-full bg-gold-400" title="Read" />
               )}
             </div>
-            <p className="text-[13px] text-muted-foreground mb-1">{topic.teaser}</p>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <p className="text-[13px] text-text-ds-tertiary mb-1 font-body">{topic.teaser}</p>
+            <div className="flex items-center gap-2 text-xs text-text-ds-tertiary font-body">
               <Clock size={12} />
               {topic.readTime}
             </div>
           </div>
         </div>
-        
+
         <div className="flex shrink-0 items-center gap-2">
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={copyAnchor}
-            className="rounded-[10px] border border-white/10 px-2.5 py-1.5 text-[12px] hover:bg-white/5 transition-colors"
             title="Copy link"
+            className="text-[12px] border border-white/10 hover:bg-white/5"
           >
             Link
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="gold"
+            size="sm"
             onClick={handleToggle}
             aria-expanded={open}
             aria-controls={`${topic.id}-more`}
-            className="rounded-[10px] bg-gold-400 px-3 py-1.5 text-[12px] font-semibold text-teal-900 hover:bg-gold-200 transition-colors"
+            className="text-[12px]"
           >
             {open ? 'Less' : 'More'}
-          </button>
+          </Button>
         </div>
       </header>
 
-      <ul className="mb-2 list-disc pl-5 text-[13px] leading-[1.6]">
+      <ul className="mb-2 list-disc pl-5 text-[13px] leading-[1.6] font-body text-text-ds-secondary">
         {topic.bullets.map((bullet: string, i: number) => (
           <li key={i}>{bullet}</li>
         ))}
@@ -439,7 +453,7 @@ function EssentialItem({
           open ? 'max-h-[480px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className="mt-3 border-t border-white/10 pt-3 text-[13px] leading-[1.6]">
+        <div className="mt-3 border-t border-white/10 pt-3 text-[13px] leading-[1.6] font-body text-text-ds-secondary">
           {topic.more}
         </div>
       </div>

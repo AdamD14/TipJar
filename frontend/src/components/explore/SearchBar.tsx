@@ -2,6 +2,8 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Input from "@/components/ui/forms/Input";
+import Button from "@/components/ui/buttons/Button";
 
 export default function SearchBar() {
   const router = useRouter();
@@ -22,13 +24,13 @@ export default function SearchBar() {
 
   return (
     <form onSubmit={submit} className="flex gap-2">
-      <input
+      <Input
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        placeholder="Szukaj po nazwie lub aliasie"
-        className="flex-1 rounded-lg bg-white/5 border border-white/10 p-3 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-teal-400"
+        placeholder="Search by name or alias"
+        className="flex-1"
       />
-      <button className="px-4 rounded-lg bg-teal-500 text-black font-semibold">Szukaj</button>
+      <Button variant="solid" type="submit">Search</Button>
     </form>
   );
 }

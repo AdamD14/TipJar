@@ -138,7 +138,7 @@ export default function Modal({
               </h2>
               <button
                 onClick={onClose}
-                aria-label="Zamknij"
+                aria-label="Close"
                 className="text-teal-100 hover:text-text-ds-primary transition-colors duration-200 text-xl leading-none p-1"
               >
                 ×
@@ -149,7 +149,7 @@ export default function Modal({
             <div className="flex justify-end mb-2">
               <button
                 onClick={onClose}
-                aria-label="Zamknij"
+                aria-label="Close"
                 className="text-teal-100 hover:text-text-ds-primary transition-colors duration-200 text-xl leading-none p-1"
               >
                 ×
@@ -204,7 +204,7 @@ export default function Modal({
               </h2>
               <button
                 onClick={onClose}
-                aria-label="Zamknij"
+                aria-label="Close"
                 className="text-teal-100 hover:text-text-ds-primary transition-colors duration-200 text-xl leading-none p-1"
               >
                 ×
@@ -215,7 +215,7 @@ export default function Modal({
             <div className="flex justify-end mb-2">
               <button
                 onClick={onClose}
-                aria-label="Zamknij"
+                aria-label="Close"
                 className="text-teal-100 hover:text-text-ds-primary transition-colors duration-200 text-xl leading-none p-1"
               >
                 ×

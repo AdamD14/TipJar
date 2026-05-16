@@ -15,7 +15,7 @@ export default function SocialLinksForm({
   onChange,
 }: {
   value: { [k: string]: string };
-  onChange: (v: any) => void;
+  onChange: (v: Record<string, string>) => void;
 }) {
   const set = (k: string, v: string) => onChange({ ...value, [k]: v });
 

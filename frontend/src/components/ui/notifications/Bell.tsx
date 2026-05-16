@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { BellIcon } from "lucide-react";
 import { useNotifications } from "@/hooks/useNotifications";
 
 export default function Bell({ href = "/fan/notifications" }: { href?: string }) {
@@ -9,9 +10,9 @@ export default function Bell({ href = "/fan/notifications" }: { href?: string })
     <Link
       href={href}
       aria-label={unread > 0 ? `Notifications: ${unread} unread` : "Notifications"}
-      className="relative inline-flex select-none items-center justify-center rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/90 hover:bg-white/10"
+      className="relative inline-flex select-none items-center justify-center rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-text-ds-secondary hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus"
     >
-      <span className="leading-none">🔔</span>
+      <BellIcon size={16} aria-hidden />
       {unread > 0 && (
         <span
           aria-hidden="true"

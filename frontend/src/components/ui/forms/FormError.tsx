@@ -4,7 +4,7 @@ export default function FormError({ message }: { message?: string }) {
   return (
     <p
       role="alert"
-      className="mt-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-200"
+      className="mt-2 rounded-lg border border-error-base/30 bg-error-base/10 px-3 py-2 text-sm text-error-light font-body"
     >
       {message}
     </p>

@@ -1,11 +1,10 @@
 // components/landing/ExploreCreators.tsx
 'use client';
 
-import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
+import Button from '@/components/ui/buttons/Button';
 
-// Przykładowe dane twórców
 const EXAMPLE_CREATORS = [
   {
     category: 'Digital Art',
@@ -89,19 +88,20 @@ export default function ExploreCreators() {
       <div className="mx-auto max-w-[1480px] px-4">
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">Explore creators</h2>
-            <p className="text-gray-400">Featured by category. Scroll or use arrows.</p>
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-text-ds-primary mb-2">Explore creators</h2>
+            <p className="text-text-ds-tertiary font-body">Featured by category. Scroll or use arrows.</p>
           </div>
-          <Link
+          <Button
             href="#"
-            className="hidden md:inline-flex rounded-full border-2 border-gold-400 px-6 py-2 text-gold-400 font-semibold hover:bg-gold-400 hover:text-black transition-all"
+            variant="outline"
+            size="sm"
+            className="hidden md:inline-flex rounded-full border-2 border-gold-400 text-gold-400 font-heading font-semibold hover:bg-gold-400 hover:text-black transition-all"
           >
             Discover all creators
-          </Link>
+          </Button>
         </div>
 
         <div className="relative">
-          {/* Karuzela */}
           <div
             ref={scrollerRef}
             className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
@@ -112,21 +112,26 @@ export default function ExploreCreators() {
             ))}
           </div>
 
-          {/* Strzałki nawigacji */}
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => scrollByView(-1)}
             disabled={atStart}
-            className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/60 text-white rounded-full w-10 h-10 flex items-center justify-center disabled:opacity-30 hover:bg-black/80 transition-all"
+            aria-label="Scroll left"
+            className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/60 text-text-ds-primary rounded-full w-10 h-10 disabled:opacity-30 hover:bg-black/80 transition-all"
           >
             ‹
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => scrollByView(1)}
             disabled={atEnd}
-            className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/60 text-white rounded-full w-10 h-10 flex items-center justify-center disabled:opacity-30 hover:bg-black/80 transition-all"
+            aria-label="Scroll right"
+            className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/60 text-text-ds-primary rounded-full w-10 h-10 disabled:opacity-30 hover:bg-black/80 transition-all"
           >
             ›
-          </button>
+          </Button>
         </div>
       </div>
     </section>
@@ -151,41 +156,49 @@ function CreatorCard({
   goalPercent: number;
 }) {
   return (
-    <article className="min-w-[320px] bg-teal-800 rounded-2xl p-6 border border-gray-700/50">
+    <article className="min-w-[320px] bg-teal-800 rounded-2xl p-6 border border-teal-700/50">
       <div className="flex items-center justify-between mb-6">
-        <span className="px-3 py-1 bg-gray-800 text-gray-300 rounded-full text-sm">{category}</span>
+        <span className="px-3 py-1 bg-teal-900 text-text-ds-tertiary rounded-full text-sm font-body">{category}</span>
         {goalPercent && (
           <div className="flex items-center gap-2">
-            <div className="w-20 h-2 bg-gray-700 rounded-full overflow-hidden">
-              <div 
+            <div className="w-20 h-2 bg-teal-700 rounded-full overflow-hidden">
+              <div
                 className="h-full bg-gold-400 rounded-full"
                 style={{ width: `${goalPercent}%` }}
               />
             </div>
-            <span className="text-gold-400 text-sm font-bold">{goalPercent}%</span>
+            <span className="text-gold-400 text-sm font-heading font-bold">{goalPercent}%</span>
           </div>
         )}
       </div>
 
-      {/* Avatar placeholder */}
       <div className="w-32 h-32 mx-auto mb-4 bg-gold-400 rounded-full flex items-center justify-center">
-        <span className="text-5xl font-bold text-black">{initial}</span>
+        <span className="text-5xl font-heading font-bold text-teal-900">{initial}</span>
       </div>
 
       <div className="text-center mb-4">
-        <h3 className="text-xl font-bold text-white mb-1">{name}</h3>
-        <p className="text-gray-400 text-sm">{handle} · {role}</p>
+        <h3 className="text-xl font-heading font-bold text-text-ds-primary mb-1">{name}</h3>
+        <p className="text-text-ds-tertiary text-sm font-body">{handle} · {role}</p>
       </div>
 
-      <p className="text-gray-300 text-center mb-6 text-sm">{bio}</p>
+      <p className="text-text-ds-secondary text-center mb-6 text-sm font-body">{bio}</p>
 
       <div className="flex gap-3">
-        <button className="flex-1 py-2 px-4 bg-transparent border border-gray-600 text-white rounded-lg hover:bg-gray-700/50 transition-all">
+        <Button
+          variant="outline"
+          size="sm"
+          fullWidth
+          className="flex-1"
+        >
           View profile
-        </button>
-        <button className="py-2 px-6 bg-gold-400 text-black font-bold rounded-lg hover:bg-gold-600 transition-all">
+        </Button>
+        <Button
+          variant="gold"
+          size="sm"
+          className="px-6"
+        >
           Tip
-        </button>
+        </Button>
       </div>
     </article>
   );
