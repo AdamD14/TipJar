@@ -77,7 +77,7 @@ export default function AuthForm() {
       router.replace(target);
       methods.reset();
     } catch (err: unknown) {
-      const { code, msg } = normalize(err as unknown);
+      const { code, msg } = normalize(err);
       if (code === 409) {
         router.push("/login");
       } else {
@@ -131,7 +131,9 @@ export default function AuthForm() {
       </div>
 
       <div className="flex mb-6 overflow-hidden rounded-xl border border-white/[0.05] bg-teal-900/20">
-        <button
+        <Button
+          type="button"
+          variant="ghost"
           className={clsx(
             "flex-1 py-3 font-heading font-semibold text-base transition-all duration-200",
             tab === "FAN"
@@ -139,12 +141,13 @@ export default function AuthForm() {
               : "text-text-ds-secondary hover:bg-teal-500/20",
           )}
           onClick={() => handleTabChange("FAN")}
-          type="button"
           disabled={loading}
         >
           Register as a Fan
-        </button>
-        <button
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
           className={clsx(
             "flex-1 py-3 font-heading font-semibold text-base transition-all duration-200",
             tab === "CREATOR"
@@ -152,11 +155,10 @@ export default function AuthForm() {
               : "text-text-ds-secondary hover:bg-teal-500/20",
           )}
           onClick={() => handleTabChange("CREATOR")}
-          type="button"
           disabled={loading}
         >
           Register as a Creator
-        </button>
+        </Button>
       </div>
 
       <FormProvider {...methods}>
@@ -177,7 +179,7 @@ export default function AuthForm() {
                 id="email"
                 type="email"
                 required
-                className="w-full bg-teal-850 border border-white/[0.05] rounded-lg pl-11 pr-4 py-3 text-text-ds-primary text-base font-body placeholder-text-ds-tertiary focus:ring-2 focus:ring-gold-400 focus:border-gold-400 outline-none transition-all"
+                className="w-full bg-teal-850 border border-white/[0.05] rounded-lg pl-11 pr-4 py-3 text-text-ds-primary text-base font-body placeholder-text-ds-tertiary focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-surface-app focus-visible:ring-offset-2 focus-visible:border-gold-400 outline-none transition-all"
                 placeholder="e.g. john@tipjar.plus"
                 {...methods.register("email")}
                 disabled={loading}
@@ -203,24 +205,26 @@ export default function AuthForm() {
                 id="password"
                 type={showPwd ? "text" : "password"}
                 required
-                className="w-full bg-teal-850 border border-white/[0.05] rounded-lg pl-11 pr-12 py-3 text-text-ds-primary text-base font-body placeholder-text-ds-tertiary focus:ring-2 focus:ring-gold-400 focus:border-gold-400 outline-none transition-all"
-                placeholder="Enter your password"
+          className="w-full bg-teal-850 border border-white/[0.05] rounded-lg pl-11 pr-12 py-3 text-text-ds-primary text-base font-body placeholder-text-ds-tertiary focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-surface-app focus-visible:ring-offset-2 focus-visible:border-gold-400 outline-none transition-all"
+          placeholder="Enter your password"
                 {...methods.register("password")}
                 disabled={loading}
               />
-              <button
-                type="button"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gold-400 hover:text-gold-300 transition-colors"
-                onClick={() => setShowPwd(!showPwd)}
-                aria-label={showPwd ? "Hide password" : "Show password"}
-                disabled={loading}
-              >
-                {showPwd ? (
-                  <EyeOff className="w-5 h-5" />
-                ) : (
-                  <Eye className="w-5 h-5" />
-                )}
-              </button>
+              <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gold-400 hover:text-gold-300 transition-colors"
+            onClick={() => setShowPwd(!showPwd)}
+            aria-label={showPwd ? "Hide password" : "Show password"}
+            disabled={loading}
+          >
+            {showPwd ? (
+              <EyeOff className="w-5 h-5" />
+            ) : (
+              <Eye className="w-5 h-5" />
+            )}
+          </Button>
             </div>
             {methods.formState.errors.password && (
               <p className="text-error-light text-sm mt-1 ml-1 font-body">
@@ -242,24 +246,26 @@ export default function AuthForm() {
                 id="confirmPassword"
                 type={showPwd2 ? "text" : "password"}
                 required
-                className="w-full bg-teal-850 border border-white/[0.05] rounded-lg pl-11 pr-12 py-3 text-text-ds-primary text-base font-body placeholder-text-ds-tertiary focus:ring-2 focus:ring-gold-400 focus:border-gold-400 outline-none transition-all"
-                placeholder="Repeat your password"
+          className="w-full bg-teal-850 border border-white/[0.05] rounded-lg pl-11 pr-12 py-3 text-text-ds-primary text-base font-body placeholder-text-ds-tertiary focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-surface-app focus-visible:ring-offset-2 focus-visible:border-gold-400 outline-none transition-all"
+          placeholder="Repeat your password"
                 {...methods.register("confirmPassword")}
                 disabled={loading}
               />
-              <button
-                type="button"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gold-400 hover:text-gold-300 transition-colors"
-                onClick={() => setShowPwd2(!showPwd2)}
-                aria-label={showPwd2 ? "Hide password" : "Show password"}
-                disabled={loading}
-              >
-                {showPwd2 ? (
-                  <EyeOff className="w-5 h-5" />
-                ) : (
-                  <Eye className="w-5 h-5" />
-                )}
-              </button>
+              <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gold-400 hover:text-gold-300 transition-colors"
+            onClick={() => setShowPwd2(!showPwd2)}
+            aria-label={showPwd2 ? "Hide password" : "Show password"}
+            disabled={loading}
+          >
+            {showPwd2 ? (
+              <EyeOff className="w-5 h-5" />
+            ) : (
+              <Eye className="w-5 h-5" />
+            )}
+          </Button>
             </div>
             {methods.formState.errors.confirmPassword && (
               <p className="text-error-light text-sm mt-1 ml-1 font-body">
@@ -300,8 +306,9 @@ export default function AuthForm() {
       </div>
 
       <div className="flex flex-col gap-3">
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => handleSocialLogin("google")}
           disabled={loading}
           className="flex items-center justify-center gap-3 bg-teal-850 hover:bg-teal-700 transition-all text-text-ds-primary font-heading font-semibold rounded-lg py-3.5 text-base border border-white/[0.05] hover:border-white/[0.10] disabled:opacity-60"
@@ -310,9 +317,10 @@ export default function AuthForm() {
             G
           </div>
           Continue with Google
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => handleSocialLogin("twitch")}
           disabled={loading}
           className="flex items-center justify-center gap-3 bg-purple-300/80 hover:bg-purple-300 transition-all text-text-ds-primary font-heading font-semibold rounded-lg py-3.5 text-base shadow-lg disabled:opacity-60"
@@ -321,25 +329,27 @@ export default function AuthForm() {
             T
           </div>
           Continue with Twitch
-        </button>
+        </Button>
       </div>
 
       <div className="text-center text-xs mt-4 text-text-ds-tertiary font-body">
-        <button
+        <Button
           type="button"
-          className="underline decoration-dotted hover:text-text-ds-secondary transition-colors"
+          variant="link"
+          size="sm"
           onClick={() => showInfoMessage("Terms of Service")}
         >
           Terms of Service
-        </button>
+        </Button>
         {" · "}
-        <button
+        <Button
           type="button"
-          className="underline decoration-dotted hover:text-text-ds-secondary transition-colors"
+          variant="link"
+          size="sm"
           onClick={() => showInfoMessage("Privacy Policy")}
         >
           Privacy Policy
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -187,12 +187,13 @@ export default function SpecializationPicker({
         const isSelected = value.includes(spec.label);
 
         return (
-          <button
-            key={spec.label}
-            type="button"
-            onClick={() => handleClick(spec.label)}
-            className={clsx(
-              "flex items-center gap-3 p-3 rounded-xl border transition-all text-left",
+                <button
+                  key={spec.label}
+                  type="button"
+                  onClick={() => handleClick(spec.label)}
+                  className={clsx(
+                    "flex items-center gap-3 p-3 rounded-xl border transition-all text-left",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app",
               isSelected
                 ? "bg-teal-500/20 border-teal-500/50 text-white"
                 : "bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:border-white/20"

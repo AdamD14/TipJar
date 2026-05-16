@@ -102,7 +102,7 @@ export default function AvatarEditorModal({
             type="button"
             onClick={handleClose}
             disabled={isProcessing}
-            className="text-gray-400 hover:text-white text-xl disabled:opacity-50 disabled:cursor-not-allowed"
+            className="text-gray-400 hover:text-white text-xl disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app"
           >
             ✕
           </button>
@@ -183,7 +183,7 @@ export default function AvatarEditorModal({
                 type="button"
                 onClick={handleConfirm}
                 disabled={!previewUrl || isProcessing}
-                className="w-full py-3 bg-gradient-to-r from-gold-400 to-gold-500 text-teal-900 font-semibold rounded-lg hover:brightness-110 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                className="w-full py-3 bg-gradient-to-r from-gold-400 to-gold-500 text-teal-900 font-heading font-semibold rounded-lg hover:brightness-110 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app"
               >
                 {isProcessing ? "Processing..." : "Save & Continue"}
               </button>
@@ -191,7 +191,7 @@ export default function AvatarEditorModal({
                 type="button"
                 onClick={handleClose}
                 disabled={isProcessing}
-                className="w-full py-3 bg-white/10 text-white font-semibold rounded-lg hover:bg-white/15 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3 bg-white/10 text-white font-heading font-semibold rounded-lg hover:bg-white/15 transition disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app"
               >
                 Cancel
               </button>

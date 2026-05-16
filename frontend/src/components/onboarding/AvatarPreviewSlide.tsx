@@ -44,9 +44,9 @@ const AvatarPreviewSlide: React.FC<AvatarPreviewSlideProps> = ({
     e.target.value = "";
   };
 
-  /**
-   * NOWA LOGIKA CSS - INFINITE LOOP
-   */
+/**
+ * CSS positioning logic — carousel offset
+ */
   let positionClasses = "";
   const baseTransform = "left-1/2 top-1/2 -translate-y-1/2";
 
@@ -87,7 +87,7 @@ const AvatarPreviewSlide: React.FC<AvatarPreviewSlideProps> = ({
         onChange={handleFileChange}
       />
 
-      {/* --- STAN: PUSTY --- */}
+      {/* --- STATE: EMPTY --- */}
       {!slot.isFilled && (
         <div
           className={`flex flex-col items-center text-center p-6 transition-all duration-500 ${
@@ -109,7 +109,7 @@ const AvatarPreviewSlide: React.FC<AvatarPreviewSlideProps> = ({
 
           {isActive && (
             <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <h3 className="text-lg font-bold text-white mb-2 tracking-tight">
+              <h3 className="text-lg font-heading font-bold text-text-ds-primary mb-2 tracking-tight">
                 Add Photo
               </h3>
               <p className="text-xs text-slate-400 font-medium leading-relaxed mb-6">
@@ -123,7 +123,7 @@ const AvatarPreviewSlide: React.FC<AvatarPreviewSlideProps> = ({
                   e.stopPropagation();
                   fileInputRef.current?.click();
                 }}
-                className="py-2.5 px-6 rounded-xl bg-teal-500 hover:bg-teal-400 text-black text-xs font-bold uppercase tracking-wider transition-all shadow-lg hover:shadow-teal-500/20 transform hover:-translate-y-0.5 active:scale-95"
+                className="py-2.5 px-6 rounded-xl bg-teal-500 hover:bg-teal-400 text-black text-xs font-heading font-bold uppercase tracking-wider transition-all shadow-lg hover:shadow-teal-500/20 transform hover:-translate-y-0.5 active:scale-95"
               >
                 Upload
               </button>
@@ -132,7 +132,7 @@ const AvatarPreviewSlide: React.FC<AvatarPreviewSlideProps> = ({
         </div>
       )}
 
-      {/* --- STAN: WYPEŁNIONY (PREVIEW) --- */}
+      {/* --- STATE: FILLED (PREVIEW) --- */}
       {slot.isFilled && (slot.previewUrl || slot.cloudinaryUrl) && (
         <>
           <Image
@@ -146,7 +146,7 @@ const AvatarPreviewSlide: React.FC<AvatarPreviewSlideProps> = ({
         </>
       )}
 
-      {/* --- STAN: UPLOADING --- */}
+      {/* --- STATE: UPLOADING --- */}
       {slot.isUploading && (
         <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center z-30">
           <Loader2 size={40} className="text-teal-400 animate-spin mb-4" />
@@ -156,7 +156,7 @@ const AvatarPreviewSlide: React.FC<AvatarPreviewSlideProps> = ({
               style={{ width: `${slot.uploadProgress}%` }}
             />
           </div>
-          <span className="text-teal-400 text-[10px] font-bold mt-3 tracking-widest uppercase">
+          <span className="text-teal-400 text-[10px] font-heading font-bold mt-3 tracking-widest uppercase">
             Uploading {slot.uploadProgress}%
           </span>
         </div>
@@ -166,13 +166,13 @@ const AvatarPreviewSlide: React.FC<AvatarPreviewSlideProps> = ({
       {slot.error && (
         <div className="absolute inset-0 flex items-center justify-center bg-red-950/80 backdrop-blur-sm z-20 p-4">
           <div className="text-center">
-            <p className="text-red-400 font-bold mb-2">Upload Failed</p>
+            <p className="text-red-400 font-heading font-bold mb-2">Upload Failed</p>
             <p className="text-red-200 text-xs">{slot.error}</p>
           </div>
         </div>
       )}
 
-      {/* --- AKCJE (Edytuj/Usuń) --- */}
+      {/* --- ACTIONS (Edit/Remove) --- */}
       {isActive && slot.isFilled && !slot.isUploading && (
         <div className="absolute top-4 right-4 flex flex-col gap-2 z-30 animate-in fade-in zoom-in duration-300 pointer-events-auto">
           {!slot.error && (
@@ -202,7 +202,7 @@ const AvatarPreviewSlide: React.FC<AvatarPreviewSlideProps> = ({
         </div>
       )}
 
-      {/* --- STATUS: SUKCES --- */}
+      {/* --- STATUS: SUCCESS --- */}
       {slot.cloudinaryUrl && !slot.isUploading && (
         <div className="absolute top-4 left-4 z-20">
           <div className="bg-emerald-500 text-black p-1.5 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.5)] animate-in zoom-in">
@@ -213,7 +213,7 @@ const AvatarPreviewSlide: React.FC<AvatarPreviewSlideProps> = ({
 
       {/* --- SLOT LABEL (ALWAYS VISIBLE) --- */}
       <div className="absolute bottom-5 left-0 right-0 text-center z-10">
-        <span className="inline-block px-4 py-1.5 rounded-full bg-slate-950/60 backdrop-blur-md border border-white/10 text-[10px] font-bold text-slate-300 uppercase tracking-widest shadow-lg">
+        <span className="inline-block px-4 py-1.5 rounded-full bg-slate-950/60 backdrop-blur-md border border-white/10 text-[10px] font-heading font-bold text-slate-300 uppercase tracking-widest shadow-lg">
           {slot.name}
         </span>
       </div>

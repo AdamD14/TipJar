@@ -2,7 +2,7 @@
 import React from "react";
 import clsx from "clsx";
 
-// Definicje ikon i kolorów
+// Social platform icon and color definitions
 export const SOCIAL_PLATFORMS = [
   // Video & Stream
   { id: "youtube", label: "YouTube", color: "#FF0000" },
@@ -354,7 +354,7 @@ export default function SocialConnect({
 
         return (
           <div key={cat.id}>
-            <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 ml-1">
+            <h4 className="text-xs font-heading font-semibold text-gray-400 uppercase tracking-wider mb-3 ml-1">
               {cat.label}
             </h4>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -362,12 +362,13 @@ export default function SocialConnect({
                 const isConnected = connected.includes(p.id);
 
                 return (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => onConnectAction?.(p.id)}
-                    className={clsx(
-                      "flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 group text-left",
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => onConnectAction?.(p.id)}
+                  className={clsx(
+                    "flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 group text-left",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app",
                       isConnected
                         ? "bg-white/10 border-green-500/50 hover:bg-white/15"
                         : "bg-black/20 border-white/5 hover:bg-white/5 hover:border-white/20"
@@ -383,7 +384,7 @@ export default function SocialConnect({
                       <SocialIcon id={p.id} />
                     </div>
                     <div className="flex flex-col min-w-0">
-                      <span className="text-sm font-bold text-gray-200 truncate group-hover:text-white">
+                      <span className="text-sm font-heading font-bold text-gray-200 truncate group-hover:text-white">
                         {p.label}
                       </span>
                       <span className="text-[10px] text-gray-500 truncate">

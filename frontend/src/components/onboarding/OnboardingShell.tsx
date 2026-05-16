@@ -9,7 +9,7 @@ function AnimatedBrand() {
   const letters = ["T", "I", "P", "J", "A", "R", ".", "P", "L", "U", "S"];
 
   return (
-    <span className="text-[13px] md:text-sm font-semibold tracking-[0.20em] uppercase text-text-ds-secondary transition-colors inline-flex cursor-default">
+      <span className="text-[13px] md:text-sm font-heading font-semibold tracking-[0.20em] uppercase text-text-ds-secondary transition-colors inline-flex cursor-default">
       {letters.map((letter, index) => (
         <span
           key={index}

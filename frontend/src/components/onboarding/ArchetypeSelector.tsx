@@ -144,8 +144,9 @@ export default function ArchetypeSelector({
                 colors.hasGlitch && setHoveredGlitch(archetype.id)
               }
               onMouseLeave={() => setHoveredGlitch(null)}
-              className={clsx(
-                "group relative w-full flex items-center gap-4 p-4 rounded-2xl transition-all duration-300",
+          className={clsx(
+            "group relative w-full flex items-center gap-4 p-4 rounded-2xl transition-all duration-300",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app",
                 isSelected && "scale-[1.02]",
               )}
     style={{
@@ -265,7 +266,7 @@ export default function ArchetypeSelector({
               {/* Label */}
               {colors.isGradient && isSelected ? (
                 <span
-                  className="text-left text-base md:text-lg font-semibold leading-tight z-10"
+                  className="text-left text-base md:text-lg font-heading font-semibold leading-tight z-10"
                   style={{
                     background:
                       "linear-gradient(135deg, #F58529 0%, #DD2A7B 50%, #8134AF 100%)",
@@ -278,7 +279,7 @@ export default function ArchetypeSelector({
                 </span>
               ) : (
                 <span
-                  className="text-left text-base md:text-lg font-semibold leading-tight transition-colors z-10 group-hover:text-white"
+                  className="text-left text-base md:text-lg font-heading font-semibold leading-tight transition-colors z-10 group-hover:text-white"
           style={{
             color: isSelected
               ? archetype.id === "knowledge-architect"

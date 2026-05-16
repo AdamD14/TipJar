@@ -265,7 +265,7 @@ export default function ChooseUsernameForm() {
               onChange={handleUsernameChange}
               minLength={3}
               maxLength={24}
-              className="flex-1 bg-teal-850 border border-teal-400/40 rounded-lg px-4 py-3 text-text-ds-primary text-base placeholder-teal-25/50 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all duration-200 disabled:opacity-50 font-body"
+              className="flex-1 bg-teal-850 border border-teal-400/40 rounded-lg px-4 py-3 text-text-ds-primary text-base placeholder-teal-25/50 focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-surface-app focus-visible:ring-offset-2 focus-visible:border-teal-400 outline-none transition-all duration-200 disabled:opacity-50 font-body"
               placeholder="your-handle"
               disabled={busy}
               aria-describedby="username-status username-hint"
@@ -351,7 +351,7 @@ export default function ChooseUsernameForm() {
         <button
           type="submit"
           disabled={busy || available === false || !allRequired}
-          className="w-full bg-gradient-to-r from-teal-500 to-purple-300 text-white font-bold py-3.5 text-lg rounded-lg hover:from-teal-600 hover:to-purple-400 hover:scale-[1.02] transform transition-all duration-200 ease-spring disabled:opacity-60 disabled:pointer-events-none disabled:transform-none shadow-lg relative font-ui"
+          className="w-full bg-gradient-to-r from-teal-500 to-purple-300 text-text-ds-primary font-heading font-bold py-3.5 text-lg rounded-lg hover:from-teal-600 hover:to-purple-400 hover:scale-[1.02] transform transition-all duration-200 ease-spring disabled:opacity-60 disabled:pointer-events-none disabled:transform-none shadow-lg relative font-ui"
           aria-busy={busy}
         >
           {busy ? (

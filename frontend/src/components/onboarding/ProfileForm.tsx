@@ -25,41 +25,41 @@ export default function ProfileForm({ onChange }: Props) {
       aria-describedby={errName || errBio ? "profile-errors" : undefined}
     >
       <label className="block">
-        <span className="mb-1 block text-sm text-muted">Display name</span>
-        <input
-          id={idName}
-          value={displayName}
-          onChange={(e) => {
-            setDisplayName(e.target.value);
-            setErrName(null);
-            push();
-          }}
-          placeholder="Jane Creator"
-          maxLength={60}
-          aria-invalid={!!errName}
-          className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-gold-400"
-        />
+      <span className="mb-1 block text-sm font-body text-text-ds-tertiary">Display name</span>
+      <input
+        id={idName}
+        value={displayName}
+        onChange={(e) => {
+          setDisplayName(e.target.value);
+          setErrName(null);
+          push();
+        }}
+        placeholder="Jane Creator"
+        maxLength={60}
+        aria-invalid={!!errName}
+        className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-text-ds-primary placeholder:text-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-surface-app focus-visible:ring-offset-2 font-body"
+      />
         {errName && <p className="mt-1 text-xs text-red-400">{errName}</p>}
       </label>
 
       <label className="block">
-        <span className="mb-1 block text-sm text-muted">Language</span>
-        <select
-          id={idLang}
-          value={language}
-          onChange={(e) => {
-            setLanguage(e.target.value);
-            push();
-          }}
-          className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-white focus:outline-none focus:ring-2 focus:ring-gold-400"
-        >
+      <span className="mb-1 block text-sm font-body text-text-ds-tertiary">Language</span>
+      <select
+        id={idLang}
+        value={language}
+        onChange={(e) => {
+          setLanguage(e.target.value);
+          push();
+        }}
+        className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-text-ds-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-surface-app focus-visible:ring-offset-2 font-body"
+      >
           <option>English</option>
           <option>Polski</option>
         </select>
       </label>
 
       <label className="block md:col-span-2">
-        <span className="mb-1 block text-sm text-muted">Bio</span>
+        <span className="mb-1 block text-sm font-body text-text-ds-tertiary">Bio</span>
         <textarea
           id={idBio}
           rows={4}
@@ -72,15 +72,15 @@ export default function ProfileForm({ onChange }: Props) {
           placeholder="Tell supporters about yourself…"
           maxLength={280}
           aria-invalid={!!errBio}
-          className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-gold-400"
+          className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-text-ds-primary placeholder:text-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-surface-app focus-visible:ring-offset-2 font-body"
         />
         {errBio && <p className="mt-1 text-xs text-red-400">{errBio}</p>}
         <p id="profile-errors" className="sr-only">
           {errName || errBio}
         </p>
-        <p className="mt-1 text-xs text-muted">
-          Max 60 znaków (nazwa) i 280 (bio). UI zapiszesz później w ustawieniach.
-        </p>
+      <p className="mt-1 text-xs font-body text-text-ds-tertiary">
+        Max 60 chars (name) and 280 (bio). You can update later in settings.
+      </p>
       </label>
     </form>
   );

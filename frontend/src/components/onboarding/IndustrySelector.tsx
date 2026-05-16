@@ -165,7 +165,7 @@ const NICHE_GROUPS = [
     label: "Arts",
     theme: "art",
     icon: Palette,
-    desc: "Creative & Visual", // DODANO
+        desc: "Creative & Visual",
     items: [
       { id: "painting", label: "Painting", icon: PenTool },
       { id: "digital", label: "Digital Art", icon: Monitor },
@@ -181,7 +181,7 @@ const NICHE_GROUPS = [
     label: "Science",
     theme: "science",
     icon: Brain,
-    desc: "Knowledge & Tech", // DODANO
+    desc: "Knowledge & Tech",
     items: [
       { id: "coding", label: "Coding / Dev", icon: Code },
       { id: "ai", label: "AI / Math", icon: Cpu },
@@ -195,7 +195,7 @@ const NICHE_GROUPS = [
     label: "Handmade / Craft",
     theme: "homemade",
     icon: Scissors,
-    desc: "DIY & Creation", // DODANO
+    desc: "DIY & Creation",
     items: [
       { id: "sewing", label: "Tailoring", icon: Shirt },
       { id: "knives", label: "Blacksmithing", icon: Hammer },
@@ -208,7 +208,7 @@ const NICHE_GROUPS = [
     label: "Survival / Build",
     theme: "build",
     icon: Wrench,
-    desc: "Construction & Nature", // DODANO
+    desc: "Construction & Nature",
     items: [
       { id: "construction", label: "Construction", icon: Hammer },
       { id: "bushcraft", label: "Bushcraft", icon: TreeDeciduous },
@@ -222,7 +222,7 @@ const NICHE_GROUPS = [
     label: "Other",
     theme: "other",
     icon: MoreHorizontal,
-    desc: "Define yourself", // DODANO
+    desc: "Define yourself",
     items: [],
   },
 ];
@@ -511,6 +511,7 @@ export default function IndustrySelector({
           }}
           className={clsx(
             "relative w-full p-2 md:p-3 rounded-2xl text-left transition-all duration-300 overflow-hidden group border bg-black/40 backdrop-blur-sm flex items-center gap-3",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app",
             theme.border,
             theme.glow,
             isMainSelected
@@ -518,7 +519,7 @@ export default function IndustrySelector({
               : "hover:bg-white/5 hover:border-white/30"
           )}
         >
-          {/* Ikona lewo */}
+          {/* Icon left */}
           <div
             className={clsx(
               "p-2 rounded-xl transition-colors bg-white/5 shrink-0",
@@ -530,11 +531,11 @@ export default function IndustrySelector({
             <Icon size={24} strokeWidth={1.5} />
           </div>
 
-          {/* Tekst prawo */}
+          {/* Text right */}
           <div className="flex-1 flex flex-col justify-center min-w-0">
             <h3
               className={clsx(
-                "text-lg md:text-xl font-bold tracking-tight transition-colors truncate",
+                "text-lg md:text-xl font-heading font-bold tracking-tight transition-colors truncate",
                 isMainSelected
                   ? "text-white"
                   : "text-gray-200 group-hover:text-white"
@@ -549,7 +550,7 @@ export default function IndustrySelector({
             )}
           </div>
 
-          {/* Znacznik wyboru */}
+          {/* Selection dot */}
           {isMainSelected && (
             <div
               className={clsx(
@@ -573,12 +574,13 @@ export default function IndustrySelector({
             const SubIcon = item.icon;
 
             return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => handleSelect(item.label)}
-                className={clsx(
-                  "flex flex-col items-center justify-center p-2 rounded-xl border transition-all duration-200 text-center gap-1 min-h-[70px]",
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => handleSelect(item.label)}
+                  className={clsx(
+                    "flex flex-col items-center justify-center p-2 rounded-xl border transition-all duration-200 text-center gap-1 min-h-[70px]",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app",
                   isSubSelected
                     ? `bg-white/10 ${theme.border} ring-1 ring-inset ring-white/20`
                     : "bg-black/20 border-white/5 hover:bg-white/5 hover:border-white/20"
@@ -617,7 +619,7 @@ export default function IndustrySelector({
         <button
           type="button"
           onClick={() => setShowNiche(!showNiche)}
-          className="relative z-10 bg-black px-5 py-1.5 flex items-center gap-2 text-xs md:text-sm text-gray-400 hover:text-white hover:border-white/20 uppercase tracking-widest font-bold border border-white/5 rounded-full transition-all cursor-pointer"
+          className="relative z-10 bg-black px-5 py-1.5 flex items-center gap-2 text-xs md:text-sm text-gray-400 hover:text-white hover:border-white/20 uppercase tracking-widest font-heading font-bold border border-white/5 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app"
         >
           More / Niche / Values
           {showNiche ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
@@ -630,12 +632,13 @@ export default function IndustrySelector({
           {filteredNicheGroups.map((group) => {
             if (group.id === "other") {
               return (
-                <button
-                  key={group.id}
-                  type="button"
-                  onClick={() => handleSelect("Other")}
-                  className={clsx(
-                    "col-span-1 h-full min-h-[80px] border border-dashed border-white/10 rounded-2xl flex flex-row items-center justify-start p-3 gap-3 hover:border-white/30 transition-colors group bg-black/20",
+                  <button
+                    key={group.id}
+                    type="button"
+                    onClick={() => handleSelect("Other")}
+                    className={clsx(
+                      "col-span-1 h-full min-h-[80px] border border-dashed border-white/10 rounded-2xl flex flex-row items-center justify-start p-3 gap-3 hover:border-white/30 transition-colors group bg-black/20",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app",
                     value.includes("Other") &&
                       "border-amber-500/50 bg-amber-500/5"
                   )}
@@ -647,7 +650,7 @@ export default function IndustrySelector({
                     />
                   </div>
                   <div className="text-left">
-                    <span className="block text-base font-bold text-gray-300 mb-0 group-hover:text-white">
+                    <span className="block text-base font-heading font-bold text-gray-300 mb-0 group-hover:text-white">
                       Other
                     </span>
                     <span className="text-[10px] text-gray-600 uppercase tracking-wider">

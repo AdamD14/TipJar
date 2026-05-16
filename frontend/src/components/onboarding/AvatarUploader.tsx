@@ -90,7 +90,7 @@ export default function AvatarUploader({
     const filledSlots = slots.filter((s) => s.isFilled);
 
     if (filledSlots.length === 0) {
-      // Nic nie wypełnione – nie wyzwalaj
+          // Nothing filled — do not trigger
       return;
     }
 
@@ -167,8 +167,8 @@ export default function AvatarUploader({
   };
 
   const handleFinalUpload = async () => {
-    console.log(
-      "handleFinalUpload – stan store przed uploadem:",
+      console.log(
+        "handleFinalUpload – store state before upload:",
       useAvatarStore.getState(),
     );
     try {
@@ -192,14 +192,14 @@ export default function AvatarUploader({
     editingSlotId !== null ? `Avatar ${editingSlotId + 1}` : "";
 
   return (
-    <div className="text-white flex flex-col font-sans selection:bg-teal-500/30 overflow-hidden relative">
+    <div className="text-white flex flex-col font-body selection:bg-teal-500/30 overflow-hidden relative">
       <main className="flex-1 flex flex-col items-center justify-center w-full relative z-10 px-4">
         <div className="flex items-center justify-center w-full max-w-5xl relative h-[500px]">
-          <button
-            type="button"
-            onClick={handlePrev}
-            className="hidden md:flex absolute left-4 lg:left-20 z-40 p-3 rounded-full bg-slate-900/50 border border-white/5 text-slate-400 hover:text-white hover:bg-teal-500 transition-all backdrop-blur-sm shadow-lg hover:shadow-teal-500/20 active:scale-95"
-          >
+        <button
+          type="button"
+          onClick={handlePrev}
+          className="hidden md:flex absolute left-4 lg:left-20 z-40 p-3 rounded-full bg-slate-900/50 border border-white/5 text-slate-400 hover:text-white hover:bg-teal-500 transition-all backdrop-blur-sm shadow-lg hover:shadow-teal-500/20 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app"
+        >
             <ChevronLeft size={24} />
           </button>
 
@@ -227,11 +227,11 @@ export default function AvatarUploader({
             })}
           </div>
 
-          <button
-            type="button"
-            onClick={handleNext}
-            className="hidden md:flex absolute right-4 lg:right-20 z-40 p-3 rounded-full bg-slate-900/50 border border-white/5 text-slate-400 hover:text-white hover:bg-teal-500 transition-all backdrop-blur-sm shadow-lg hover:shadow-teal-500/20 active:scale-95"
-          >
+        <button
+          type="button"
+          onClick={handleNext}
+          className="hidden md:flex absolute right-4 lg:right-20 z-40 p-3 rounded-full bg-slate-900/50 border border-white/5 text-slate-400 hover:text-white hover:bg-teal-500 transition-all backdrop-blur-sm shadow-lg hover:shadow-teal-500/20 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app"
+        >
             <ChevronRight size={24} />
           </button>
         </div>
@@ -257,8 +257,8 @@ export default function AvatarUploader({
               handleFinalUpload();
             }}
             disabled={!canSave}
-            className={`
-                    group w-full py-4 rounded-xl font-bold text-lg tracking-wide transition-all duration-300 flex items-center justify-center gap-3 relative overflow-hidden shadow-2xl
+          className={`
+          group w-full py-4 rounded-xl font-heading font-bold text-lg tracking-wide transition-all duration-300 flex items-center justify-center gap-3 relative overflow-hidden shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app
                     ${
                       canSave
                         ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-[0_0_30px_rgba(124,58,237,0.3)] hover:shadow-[0_0_50px_rgba(124,58,237,0.5)] hover:-translate-y-1"

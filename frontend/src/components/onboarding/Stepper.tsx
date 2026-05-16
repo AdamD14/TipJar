@@ -33,7 +33,7 @@ export default function Stepper({ active }: { active: 1 | 2 | 3 | 4 | 5 }) {
               {/* Circle */}
               <div
                 className={clsx(
-                  "w-9 h-9 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold border-2 transition-all duration-500 z-10",
+                  "w-9 h-9 md:w-12 md:h-12 rounded-full flex items-center justify-center font-heading font-bold border-2 transition-all duration-500 z-10",
                   "text-xs md:text-sm",
                   isActive
                     ? "bg-gold-400 border-gold-400 text-teal-900 scale-125 shadow-[0_0_20px_rgba(255,215,0,0.4)]"
@@ -51,7 +51,7 @@ export default function Stepper({ active }: { active: 1 | 2 | 3 | 4 | 5 }) {
                   "absolute top-10 md:top-14 w-32 text-center font-medium tracking-widest uppercase transition-all duration-500",
                   "text-[10px] md:text-sm",
                   isActive
-                    ? "text-white opacity-100 translate-y-0"
+                    ? "text-text-ds-primary opacity-100 translate-y-0"
                     : isDone
                       ? "text-gold-400/60 opacity-70"
                       : "text-teal-600 opacity-0 md:opacity-100"
