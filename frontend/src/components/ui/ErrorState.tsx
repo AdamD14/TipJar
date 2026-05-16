@@ -7,12 +7,12 @@ export default function ErrorState({
 }) {
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-6 text-sm" role="alert">
-      <p className="text-[#DDE0DA]">{message}</p>
+      <p className="text-muted">{message}</p>
       {onRetry && (
         <button
           type="button"
           onClick={onRetry}
-          className="mt-3 rounded-lg border border-white/15 px-3 py-1.5 text-[#DDE0DA] hover:bg-white/10"
+          className="mt-3 rounded-lg border border-white/15 px-3 py-1.5 text-muted hover:bg-white/10"
           aria-label="Retry"
         >
           Try again
