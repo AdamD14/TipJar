@@ -16,7 +16,7 @@ interface TipEntry {
 
 export default function OverlayPage() {
   const { creatorId } = useParams();
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   const [queue, setQueue] = useState<TipEntry[]>([]);
   const [current, setCurrent] = useState<TipEntry | null>(null);
 

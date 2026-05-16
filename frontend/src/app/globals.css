@@ -7,8 +7,9 @@ Spec: design.md
 ================================================================ */
 
 /* ----------------------------------------------------------------
-FONTS (local @font-face — Mukta Malar + IBM Plex Sans)
+FONTS — Mukta Malar + IBM Plex Sans (Google Fonts)
 design.md §3: Mukta Malar (headings, buttons), IBM Plex Sans (body)
+Loaded via next/font/google in layout.tsx → --font-heading-var / --font-body-var
 ---------------------------------------------------------------- */
 
 @font-face {

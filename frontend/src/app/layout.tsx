@@ -15,6 +15,7 @@ const headingFont = Mukta_Malar({
   weight: ["400", "500", "600", "700"],
   variable: "--font-heading-var",
   display: "swap",
+  fallback: ["Arial", "sans-serif"],
 });
 
 const bodyFont = IBM_Plex_Sans({
@@ -22,6 +23,7 @@ const bodyFont = IBM_Plex_Sans({
   weight: ["400", "500", "700"],
   variable: "--font-body-var",
   display: "swap",
+  fallback: ["Helvetica", "Arial", "sans-serif"],
 });
 
 export const metadata: Metadata = {

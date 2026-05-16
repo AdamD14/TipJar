@@ -4,8 +4,8 @@ export const runtime = 'edge';
 
 async function getFont() {
   try {
-    const url = new URL('../../../../public/fonts/Montserrat-SemiBold.ttf', import.meta.url);
-    const res = await fetch(url);
+    const res = await fetch('https://fonts.gstatic.com/s/muktamalar/v16/rnY-xXhC0Xwd8MPXPr8QdPtD2aB2KvOo6o0YqDtUzaQXQ.ttf');
+    if (!res.ok) throw new Error('font fetch failed');
     return await res.arrayBuffer();
   } catch {
     return undefined;
@@ -31,7 +31,7 @@ export async function GET(req: Request) {
           position: 'relative',
           background: '#003737',
           color: 'white',
-          fontFamily: 'Montserrat, Arial',
+          fontFamily: 'Mukta Malar, sans-serif',
         }}
       >
         {cover ? (
@@ -88,7 +88,7 @@ export async function GET(req: Request) {
     {
       width: 1200,
       height: 630,
-      fonts: font ? [{ name: 'Montserrat', data: font, weight: 700, style: 'normal' as const }] : [],
+      fonts: font ? [{ name: 'Mukta Malar', data: font, weight: 700, style: 'normal' as const }] : [],
       headers: { 'Cache-Control': 'public, max-age=3600' },
     }
   );

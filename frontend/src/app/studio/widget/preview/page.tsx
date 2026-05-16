@@ -12,7 +12,7 @@ import { Zap, Sparkles } from 'lucide-react';
 import TipModal from '@/components/payments/TipModal';
 
 export default function WidgetPreview() {
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams();
   
   // Config from URL
   const handle = searchParams.get('handle') || 'alex_streamer';

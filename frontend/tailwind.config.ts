@@ -107,12 +107,12 @@ const config: Config = {
         },
       },
 
-      fontFamily: {
-        heading: ["var(--font-heading-var)", "MuktaMalar", "sans-serif"],
-        body: ["var(--font-body-var)", "IBMPlexSans", "sans-serif"],
-        sans: ["var(--font-heading-var)", "MuktaMalar", "system-ui", "sans-serif"],
-        ui: ["var(--font-body-var)", "IBMPlexSans", "system-ui", "sans-serif"],
-      },
+    fontFamily: {
+      heading: ["var(--font-heading-var)", "sans-serif"],
+      body: ["var(--font-body-var)", "sans-serif"],
+      sans: ["var(--font-heading-var)", "system-ui", "sans-serif"],
+      ui: ["var(--font-body-var)", "system-ui", "sans-serif"],
+    },
 
       borderRadius: {
         sm: "6px",
