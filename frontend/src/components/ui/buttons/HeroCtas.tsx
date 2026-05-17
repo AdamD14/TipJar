@@ -13,18 +13,10 @@ export default function HeroCtas({
 }: Props) {
   return (
     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-      <Button
-        variant="primary"
-        href={primaryHref}
-        size="lg"
-      >
+      <Button variant="primary" href={primaryHref} size="lg">
         Begin as a Creator
       </Button>
-      <Button
-        variant="secondary"
-        href={secondaryHref}
-        size="lg"
-      >
+      <Button variant="secondary" href={secondaryHref} size="lg">
         Explore as a Fan
       </Button>
     </div>
