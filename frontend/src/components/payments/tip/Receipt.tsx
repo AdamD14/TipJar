@@ -22,7 +22,7 @@ export default function Receipt({
       <div className="mt-6 flex flex-wrap gap-3">
         <Button
           href={`/tip/${handle}`}
-          variant="outline"
+          variant="secondary"
           size="sm"
         >
           Tip again

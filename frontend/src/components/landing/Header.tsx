@@ -12,7 +12,6 @@ import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 import { Menu, X, User } from 'lucide-react';
 import Link from 'next/link';
 import clsx from 'clsx';
-import PrimaryCta from '@/components/ui/buttons/PrimaryCta';
 import Button from '@/components/ui/buttons/Button';
 
 type NavItem = {
@@ -131,7 +130,7 @@ export default function Header() {
             {/* Right: Log in + Hamburger (NO Sign up on desktop) */}
             <div className="flex-1 flex justify-end items-center">
               <div className="hidden md:block">
-                <Button variant="glass" href="/login" size="sm" leftIcon={<User size={16} />} data-testid="desktop-login">Log in</Button>
+                <Button variant="glass" href="/login" leftIcon={<User size={16} />} data-testid="desktop-login">Log in</Button>
               </div>
             <Button
             variant="ghost"
@@ -215,9 +214,9 @@ export default function Header() {
                 <Button variant="glass" href="/login" fullWidth leftIcon={<User size={16} />} data-testid="mobile-login">Log in</Button>
             </div>
             <div className="flex-1">
-              <PrimaryCta href="/register" data-testid="mobile-signup" className="w-full h-12">
-                Sign up
-              </PrimaryCta>
+<Button variant="primary" href="/register" data-testid="mobile-signup" fullWidth>
+          Sign up
+        </Button>
             </div>
           </div>
         </div>

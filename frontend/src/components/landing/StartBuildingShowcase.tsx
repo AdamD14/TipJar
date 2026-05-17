@@ -1,247 +1,287 @@
-// components/landing/StartBuildingShowcase.tsx
 'use client';
 
-import { useState } from 'react';
-import QRCode from 'react-qr-code';
+import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Button from '@/components/ui/buttons/Button';
-import Input from '@/components/ui/forms/Input';
 
-type Props = {
-  handle: string;
-  creatorId: string;
-};
+const AVATARS = ['/ja.webp', '/ja2.webp', '/ja3.webp'] as const;
 
-export default function StartBuildingShowcase({ handle, creatorId }: Props) {
-  const profileUrl = `/${handle?.startsWith('@') ? handle : `@${handle || 'demo'}`}`;
+const EXAMPLE_CREATORS = [
+  {
+    category: 'Digital Art',
+    initial: 'E',
+    name: 'Elena Moreau',
+    handle: '@elenart',
+    role: 'Illustrator',
+    bio: 'Creating vibrant worlds with a touch of magic and surrealism.',
+    goalPercent: 68,
+  },
+  {
+    category: 'Music',
+    initial: 'L',
+    name: 'Leo Maxwell',
+    handle: '@leosonix',
+    role: 'Producer',
+    bio: 'Crafting electronic beats that move your soul and feet.',
+    goalPercent: 45,
+  },
+  {
+    category: 'Gaming',
+    initial: 'R',
+    name: 'Riley Chen',
+    handle: '@rileyplays',
+    role: 'Streamer',
+    bio: 'Exploring new worlds and sharing the adventure with you.',
+    goalPercent: 89,
+  },
+  {
+    category: 'Education',
+    initial: 'S',
+    name: 'Sarah Mitchell',
+    handle: '@teachsarah',
+    role: 'Educator',
+    bio: 'Making complex topics simple and fun to learn.',
+    goalPercent: 72,
+  },
+  {
+    category: 'Fitness',
+    initial: 'M',
+    name: 'Marcus Johnson',
+    handle: '@fitmarc',
+    role: 'Coach',
+    bio: 'Your journey to a healthier you starts here.',
+    goalPercent: 55,
+  },
+];
+
+export default function StartBuildingShowcase() {
+  const [avatarIdx, setAvatarIdx] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setAvatarIdx((i) => (i + 1) % AVATARS.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const prevAvatar = useCallback(
+    () => setAvatarIdx((i) => (i - 1 + AVATARS.length) % AVATARS.length),
+    [],
+  );
+  const nextAvatar = useCallback(
+    () => setAvatarIdx((i) => (i + 1) % AVATARS.length),
+    [],
+  );
 
   return (
-    <section id="start" aria-labelledby="startHeading" className="py-12 md:py-16">
-      <div className="mx-auto max-w-[1480px] px-4 text-text-ds-secondary">
-        <h2 id="startHeading" className="mb-2 text-2xl md:text-3xl font-heading font-semibold">
-          Start building / AI Studio
-        </h2>
-        <p className="mb-6 text-[14px] leading-[1.5] text-text-ds-tertiary font-body">
-          Live preview: QR poster, overlay feed, tip widget and modal, presets.
-        </p>
+    <section id="studio" className="relative py-20 md:py-28">
+      <div
+        className="pointer-events-none absolute inset-0 -z-10"
+        aria-hidden
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(900px_450px_at_20%_50%,rgba(255,215,0,0.05)_0%,transparent_55%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(700px_400px_at_80%_40%,rgba(77,25,77,0.06)_0%,transparent_50%)]" />
+      </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {/* QR Poster (A4) */}
-          <Card title="QR Poster (A4)" hint={profileUrl}>
-            <div className="aspect-[210/297] w-full overflow-hidden rounded-[12px] border border-white/10 bg-gradient-to-br from-teal-900 to-teal-950 p-4">
-              <div className="flex h-full w-full flex-col rounded-[10px] border border-white/10 p-3">
-                <div className="mb-2 h-6 w-3/5 rounded bg-white/20" />
-                <div className="mb-4 h-3 w-4/5 rounded bg-white/10" />
-                <div className="mt-auto self-center rounded bg-white p-2">
-                  <QRCode value={profileUrl} size={112} />
-                </div>
-                <div className="mt-2 text-center text-[11px] text-text-ds-tertiary font-body">{profileUrl}</div>
-              </div>
-            </div>
-          </Card>
-
-          {/* Live Overlay */}
-          <Card title="Live Overlay" hint="test feed + QR">
-            <div className="relative aspect-video w-full overflow-hidden rounded-[12px] border border-white/10 bg-teal-950">
-              <iframe
-                title="Overlay Preview"
-                src={`/overlay?creatorId=${encodeURIComponent(creatorId)}&test=true&qr=true`}
-                className="absolute inset-0 h-full w-full rounded-[12px] border-0"
-                allow="clipboard-read; clipboard-write"
-              />
-            </div>
-          </Card>
-
-          {/* Tip Widget */}
-          <Card title="Tip Widget" hint="CTA + mini copy">
-            <TipWidgetPreview />
-          </Card>
-
-          {/* Tip Modal */}
-          <Card title="Tip Modal" hint="quick tip with message">
-            <TipModalDemo />
-          </Card>
-
-          {/* Presets */}
-          <Card title="Presets" hint="Minimal, Streamer Gold, Clean">
-            <div className="grid grid-cols-3 gap-2">
-              <PresetTile label="Minimal" className="from-teal-950 to-teal-900" />
-              <PresetTile label="Gold" className="from-gold-900 to-gold-800 ring-1 ring-gold-400/40" />
-              <PresetTile label="Clean" className="from-teal-950 to-teal-950" />
-            </div>
-          </Card>
-
-          {/* AI Studio */}
-          <Card title="AI Studio" hint="A4 copy + layout">
-            <div className="flex h-[180px] items-center justify-center rounded-[12px] border border-white/10 bg-gradient-to-br from-teal-950 to-teal-900">
-              <div className="rounded-[12px] border border-white/10 bg-black/30 p-3 text-center text-xs text-text-ds-tertiary font-body">
-                "Generate witty headline and poster for {profileUrl}"
-              </div>
-            </div>
-          </Card>
+      <div className="mx-auto max-w-[1600px] px-4 md:px-8">
+        <div className="mb-14 text-center">
+          <h2 className="text-[length:var(--fs-h1)] font-heading font-bold text-text-ds-primary">
+            Start Building
+          </h2>
+          <p className="mt-3 text-lg text-text-ds-tertiary font-body max-w-2xl mx-auto">
+            Your creator profile, your community, your income — all in one place.
+          </p>
         </div>
 
-        <div className="mt-6 flex items-center gap-3">
-          <Button
-            href="#start"
-            variant="gold"
-            size="sm"
-            className="hover:-translate-y-[1px]"
-          >
-            Open AI Studio
-          </Button>
-          <Button
-            href="#"
-            variant="outline"
-            size="sm"
-            className="hover:-translate-y-[1px]"
-          >
-            Read docs
-          </Button>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
+          {/* LEFT — Profile card with avatar carousel */}
+          <div className="flex flex-col items-center lg:items-start">
+            <article className="w-full max-w-md rounded-xl border border-white/10 bg-surface-base/60 backdrop-blur-sm p-8 shadow-1">
+              <div className="relative mb-6 flex items-center gap-5">
+                <div className="relative h-28 w-28 flex-shrink-0 overflow-hidden rounded-xl border-2 border-gold-400/40">
+                  {AVATARS.map((src, i) => (
+                    <Image
+                      key={src}
+                      src={src}
+                      alt=""
+                      width={112}
+                      height={112}
+                      className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
+                        i === avatarIdx ? 'opacity-100' : 'opacity-0'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-xl font-heading font-bold text-text-ds-primary truncate">
+                    Adam Duda
+                  </h3>
+                  <p className="text-sm text-gold-400 font-heading font-semibold">
+                    @AdamDuda
+                  </p>
+                  <p className="mt-1 text-sm text-text-ds-tertiary font-body">
+                    Founder &amp; Creator
+                  </p>
+                </div>
+              </div>
+
+              <p className="mb-6 text-sm leading-relaxed text-text-ds-secondary font-body">
+                Founder of TipJar+ — built together with a team of AI agents.
+                Advocate of freedom, decentralization, and blockchain technology.
+                Web3 &amp; AI pro user.
+              </p>
+
+              <div className="flex items-center gap-2 mb-6">
+                <div className="h-2 flex-1 overflow-hidden rounded-full bg-surface-elevated">
+                  <div
+                    className="h-full rounded-full bg-gold-400 transition-all duration-500"
+                    style={{ width: '68%' }}
+                  />
+                </div>
+                <span className="text-sm font-heading font-bold text-gold-400 tabular-nums">
+                  68%
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex gap-1.5">
+                  {AVATARS.map((_, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => setAvatarIdx(i)}
+                      aria-label={`Avatar ${i + 1}`}
+                      className={`h-2 w-2 rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app ${
+                        i === avatarIdx ? 'bg-gold-400' : 'bg-white/20 hover:bg-white/40'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <div className="flex gap-1">
+                  <button
+                    type="button"
+                    onClick={prevAvatar}
+                    aria-label="Previous avatar"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-text-ds-tertiary hover:bg-white/10 hover:text-text-ds-primary transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app"
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={nextAvatar}
+                    aria-label="Next avatar"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-text-ds-tertiary hover:bg-white/10 hover:text-text-ds-primary transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app"
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <div className="mt-6 flex gap-3">
+              <Button variant="primary" href="/register">
+                Create your profile
+              </Button>
+              <Button variant="ghost" href="/@AdamDuda">
+                View live profile
+              </Button>
+            </div>
+          </div>
+
+          {/* RIGHT — Explore Creators */}
+          <div className="flex flex-col">
+            <div className="mb-6 flex items-center justify-between">
+              <h3 className="text-xl font-heading font-semibold text-text-ds-primary">
+                Explore Creators
+              </h3>
+              <Button variant="link" href="/explore">
+                Discover all
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {EXAMPLE_CREATORS.map((creator) => (
+                <CreatorCard key={creator.handle} {...creator} />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-function Card(props: { title: string; hint?: string; children: React.ReactNode }) {
+function CreatorCard({
+  category,
+  initial,
+  name,
+  handle,
+  role,
+  bio,
+  goalPercent,
+}: {
+  category: string;
+  initial: string;
+  name: string;
+  handle: string;
+  role: string;
+  bio: string;
+  goalPercent: number;
+}) {
   return (
-    <article className="rounded-[16px] border border-white/10 bg-card p-4 md:p-6">
-      <div className="mb-3">
-        <h3 className="text-base font-heading font-semibold leading-[1.5]">{props.title}</h3>
-        {props.hint ? <p className="text-[12px] text-text-ds-tertiary font-body">{props.hint}</p> : null}
-      </div>
-      {props.children}
-    </article>
-  );
-}
-
-function PresetTile({ label, className }: { label: string; className: string }) {
-  return (
-    <div
-      className={`aspect-[4/3] w-full rounded-[10px] bg-gradient-to-br ${className} flex items-end p-2`}
-      aria-label={label}
+    <article
+      className="group rounded-xl border border-white/10 bg-surface-base/60 backdrop-blur-sm p-5
+        transition-all duration-200 ease-standard
+        hover:border-gold-400/40 hover:-translate-y-0.5
+        hover:shadow-[0_0_0_4px_rgba(255,215,0,0.08)_inset]"
     >
-      <span className="rounded-[8px] border border-white/10 bg-black/30 px-2 py-0.5 text-[10px] text-text-ds-secondary font-body">
-        {label}
-      </span>
-    </div>
-  );
-}
-
-function TipWidgetPreview() {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="relative h-[180px] overflow-hidden rounded-[12px] border border-white/10 bg-gradient-to-tr from-teal-900 to-teal-950 p-4">
-      <div className="flex h-full w-full flex-col justify-end">
-        <div className="rounded-[12px] border border-white/15 bg-white/5 p-3">
-          <div className="mb-2 h-3 w-2/3 rounded bg-white/15" />
-          <div className="flex items-center justify-between">
-            <div className="h-3 w-1/3 rounded bg-white/10" />
-            <Button
-              variant="gold"
-              size="sm"
-              onClick={() => setOpen(true)}
-              className="text-xs hover:-translate-y-[1px]"
-            >
-              Tip now
-            </Button>
+      <div className="mb-4 flex items-center justify-between">
+        <span className="rounded-full bg-surface-elevated px-2.5 py-0.5 text-xs text-text-ds-tertiary font-body">
+          {category}
+        </span>
+        {goalPercent > 0 && (
+          <div className="flex items-center gap-2">
+            <div className="h-1.5 w-14 overflow-hidden rounded-full bg-surface-elevated">
+              <div
+                className="h-full rounded-full bg-gold-400 transition-all duration-300"
+                style={{ width: `${goalPercent}%` }}
+              />
+            </div>
+            <span className="text-xs font-heading font-bold text-gold-400 tabular-nums">
+              {goalPercent}%
+            </span>
           </div>
-        </div>
+        )}
       </div>
 
-      {open ? (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 p-3"
-        >
-          <div className="w-full max-w-[360px] rounded-[12px] border border-white/10 bg-card p-4">
-            <div className="mb-2 h-5 w-1/3 rounded bg-white/20" />
-            <div className="mb-3 h-3 w-3/4 rounded bg-white/10" />
-            <Input
-              placeholder="Amount (USDC)"
-              className="mb-2"
-            />
-            <textarea
-              placeholder="Message (optional)"
-              className="mb-3 w-full rounded-[10px] border border-white/10 bg-black/20 px-3 py-2 text-sm font-body text-text-ds-primary placeholder:text-teal-100 focus-visible:outline-none focus-visible:border-gold-400 focus-visible:shadow-[0_0_0_1px_var(--gold-400),0_0_0_4px_rgba(255,215,0,0.25)]"
-              rows={3}
-            />
-            <div className="flex justify-end gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setOpen(false)}
-                className="text-xs hover:bg-white/5"
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="gold"
-                size="sm"
-                onClick={() => setOpen(false)}
-                className="text-xs"
-              >
-                Send tip
-              </Button>
-            </div>
-          </div>
-        </div>
-      ) : null}
-    </div>
-  );
-}
+      <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-gold-400 to-gold-600">
+        <span className="text-2xl font-heading font-bold text-teal-900">
+          {initial}
+        </span>
+      </div>
 
-function TipModalDemo() {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="relative h-[180px] overflow-hidden rounded-[12px] border border-white/10 bg-teal-950 p-4">
-      <div className="flex h-full items-center justify-center">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setOpen(true)}
-          className="border border-white/10 bg-white/5 hover:bg-white/10"
-        >
-          Open demo
+      <div className="mb-2 text-center">
+        <h4 className="text-base font-heading font-semibold text-text-ds-primary">
+          {name}
+        </h4>
+        <p className="text-xs text-text-ds-tertiary font-body">
+          {handle} · {role}
+        </p>
+      </div>
+
+      <p className="mb-4 text-center text-sm text-text-ds-tertiary font-body line-clamp-2">
+        {bio}
+      </p>
+
+      <div className="flex gap-2">
+        <Button variant="secondary" size="sm" fullWidth>
+          View
+        </Button>
+        <Button variant="primary" size="sm" className="px-4">
+          Tip
         </Button>
       </div>
-
-      {open ? (
-        <div role="dialog" aria-modal="true" className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 p-3">
-          <div className="w-full max-w-[360px] rounded-[12px] border border-white/10 bg-card p-4">
-            <div className="mb-2 h-5 w-1/3 rounded bg-white/20" />
-            <div className="mb-3 h-3 w-3/4 rounded bg-white/10" />
-            <Input
-              placeholder="Amount (USDC)"
-              className="mb-2"
-            />
-            <textarea
-              placeholder="Message (optional)"
-              className="mb-3 w-full rounded-[10px] border border-white/10 bg-black/20 px-3 py-2 text-sm font-body text-text-ds-primary placeholder:text-teal-100 focus-visible:outline-none focus-visible:border-gold-400 focus-visible:shadow-[0_0_0_1px_var(--gold-400),0_0_0_4px_rgba(255,215,0,0.25)]"
-              rows={3}
-            />
-            <div className="flex justify-end gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setOpen(false)}
-                className="text-xs hover:bg-white/5"
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="gold"
-                size="sm"
-                onClick={() => setOpen(false)}
-                className="text-xs"
-              >
-                Send tip
-              </Button>
-            </div>
-          </div>
-        </div>
-      ) : null}
-    </div>
+    </article>
   );
 }

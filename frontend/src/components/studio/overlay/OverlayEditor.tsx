@@ -114,7 +114,7 @@ export default function OverlayEditor({ creatorId }: { creatorId: string }) {
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-base font-semibold font-heading text-text-ds-primary">Live Preview</h3>
           <div className="flex gap-2">
-            <Button variant="gold" size="sm" onClick={triggerPreview}>
+            <Button variant="primary" size="sm" onClick={triggerPreview}>
               Trigger test tip
             </Button>
             <Button variant="ghost" size="sm" onClick={() => reset()}>
@@ -207,7 +207,7 @@ export default function OverlayEditor({ creatorId }: { creatorId: string }) {
         <div className="pt-4">
           <Button
             type="submit"
-            variant="solid"
+            variant="tertiary"
             fullWidth
             disabled={pending}
           >

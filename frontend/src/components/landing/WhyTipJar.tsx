@@ -1,24 +1,19 @@
 'use client';
 
-import Image from 'next/image';
 import { CreditCard, ShieldCheck, Globe2, Clock3, DollarSign } from 'lucide-react';
 import Button from '@/components/ui/buttons/Button';
 import React from 'react';
 
 export default function WhyTipJar() {
   return (
-    <section className="relative w-full min-h-screen">
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <Image
-          src="/2.png"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          quality={90}
-          className="object-cover rounded-2xl pointer-events-none select-none"
-        />
-      </div>
+    <section id="why-tipjar" className="relative w-full min-h-screen bg-surface-app">
+      <div
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background:
+            'radial-gradient(ellipse 80% 60% at 20% 40%, rgba(255,215,0,0.06) 0%, transparent 70%), radial-gradient(ellipse 60% 50% at 80% 60%, rgba(139,92,246,0.05) 0%, transparent 70%)',
+        }}
+      />
 
       <div className="relative z-10 w-full min-h-screen py-20 px-4 md:px-8">
         <div className="w-full h-full flex flex-col justify-center gap-10 md:gap-16 lg:gap-20">

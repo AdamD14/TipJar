@@ -24,7 +24,7 @@ export default function AvatarEditorModal({
   previewUrl,
   onConfirmAction,
 }: AvatarEditorModalProps): React.JSX.Element | null {
-  const editorRef = useRef<AvatarEditor | null>(null);
+  const editorRef = useRef<React.ElementRef<typeof AvatarEditor> | null>(null);
   const [scale, setScale] = useState(1.2);
   const [rotation, setRotation] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -60,8 +60,8 @@ export default function AvatarEditorModal({
 
       // Create blob with optimized settings
       const blob = await new Promise<Blob>((resolve, reject) => {
-        canvas.toBlob(
-          (result) => {
+          canvas.toBlob(
+            (result: Blob | null) => {
             if (result) {
               resolve(result);
             } else {
@@ -110,21 +110,20 @@ export default function AvatarEditorModal({
 
         <div className="flex flex-col md:flex-row gap-6">
           <div className="flex-1">
-            <div className="bg-black/30 rounded-lg p-4 flex justify-center min-h-[400px]">
+            <div className="bg-black/30 rounded-lg p-4 flex justify-center min-h-[400px] overflow-hidden">
               {previewUrl ? (
-                <AvatarEditor
-                  ref={editorRef}
-                  image={previewUrl}
-                  width={300}
-                  height={400}
-                  border={20}
-                  borderRadius={0}
-                  color={[0, 0, 0, 0.6]}
-                  scale={scale}
-                  rotate={rotation}
-                  className="rounded-lg"
-                  crossOrigin="anonymous"
-                />
+        <AvatarEditor
+          ref={editorRef}
+          image={previewUrl}
+          width={300}
+          height={400}
+          border={20}
+          borderRadius={0}
+          color={[0, 0, 0, 0.6]}
+          scale={scale}
+          rotate={rotation}
+          crossOrigin="anonymous"
+        />
               ) : (
                 <div className="flex items-center justify-center text-gray-400">
                   No image to edit

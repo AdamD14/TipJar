@@ -1,8 +1,5 @@
-// frontend/src/components/landing/Header.tsx
-// Branding po lewej: stały tekst "TIPJAR.PLUS" (bez logo).
-// Nawigacja: etykiety UPPERCASE + złote podkreślenie (desktop + hamburger).
-// Mobile panel: tło /public/logo.png po prawej, wysokość ≈ 5× wysokości tekstu.
-// Desktop: BEZ przycisku Sign up (usunięty). Mobile: Log in / Sign up obok siebie; Sign up -> /register.
+// Landing header bar — brand left, nav center, login + hamburger right.
+// Mobile panel with logo bg and side-by-side CTA buttons.
 
 "use client";
 
@@ -13,7 +10,6 @@ import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { Menu, X, User } from "lucide-react";
 import Link from "next/link";
 import clsx from "clsx";
-import PrimaryCta from "@/components/ui/buttons/PrimaryCta";
 import Button from "@/components/ui/buttons/Button";
 
 type NavItem = {
@@ -87,7 +83,7 @@ export default function Header() {
 
   const handleAnchorClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
-    href: string
+    href: string,
   ) => {
     if (!href.startsWith("#")) return;
     const target = document.querySelector(href);
@@ -114,13 +110,13 @@ export default function Header() {
           "fixed inset-x-0 top-0 z-50 transition-all duration-300 border-b",
           scrolled
             ? "backdrop-blur-md bg-brand-dark/80 border-cyan-300/20"
-            : "bg-transparent border-transparent"
+            : "bg-transparent border-transparent",
         )}
         aria-label="Primary"
       >
         <nav className="mx-auto w-full px-4 md:px-6" aria-label="Main">
           <div className="flex py-1 items-center justify-between">
-            {/* 1) Lewa: Branding — tekst z animacją */}
+            {/* Left: Branding — animated text */}
             <div className="flex-1 flex items-center justify-start">
               <Link
                 href="/"
@@ -131,7 +127,7 @@ export default function Header() {
               </Link>
             </div>
 
-            {/* 2) Środek: Linki */}
+            {/* Center: Nav links */}
             <div className="flex-shrink-0 flex justify-center">
               <ul className="hidden md:flex items-center gap-6 md:gap-8 text-xs">
                 {NAV_ITEMS.map((item) => (
@@ -148,10 +144,17 @@ export default function Header() {
               </ul>
             </div>
 
-            {/* 3) Prawa: Log in + Hamburger (BEZ Sign up na desktopie) */}
+            {/* Right: Log in + Hamburger (NO Sign up on desktop) */}
             <div className="flex-1 flex justify-end items-center">
               <div className="hidden md:block">
-                <Button variant="glass" href="/login" size="sm" leftIcon={<User size={16} />} data-testid="desktop-login">Log in</Button>
+                <Button
+                  variant="glass"
+                  href="/login"
+                  leftIcon={<User size={16} />}
+                  data-testid="desktop-login"
+                >
+                  Log in
+                </Button>
               </div>
               <button
                 type="button"
@@ -163,7 +166,7 @@ export default function Header() {
                   "md:hidden inline-flex items-center justify-center rounded-md p-2 outline-none ring-offset-2 transition-all",
                   "focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.7)]",
                   "text-text-secondary hover:text-gold-400",
-                  open && "pointer-events-none opacity-0"
+                  open && "pointer-events-none opacity-0",
                 )}
                 data-testid="hamburger"
               >
@@ -185,20 +188,20 @@ export default function Header() {
           "md:hidden fixed inset-0 z-[60] origin-top transition-transform duration-300",
           open
             ? "pointer-events-auto opacity-100 scale-100"
-            : "pointer-events-none opacity-0 scale-95"
+            : "pointer-events-none opacity-0 scale-95",
         )}
         onClick={(e: React.MouseEvent<HTMLDivElement>) => {
           if (e.target === e.currentTarget) setOpen(false);
         }}
       >
-        {/* tło */}
-        <div className="absolute inset-0 bg-brand-dark" aria-hidden />
+        {/* backdrop */}
+        <div className="absolute inset-0 bg-surface-app" aria-hidden />
         <div
           className="absolute inset-0 bg-black/30 backdrop-blur-sm"
           aria-hidden
         />
 
-        {/* LOGO po prawej: podniesione do 85% strony, lepiej widoczne */}
+        {/* LOGO right: positioned for visual balance */}
         <div
           aria-hidden
           className="pointer-events-none absolute right-4 top-[15%] w-60 h-60 opacity-90"
@@ -220,7 +223,7 @@ export default function Header() {
         </button>
 
         <div className="relative mx-auto w-full max-w-7xl px-4 pt-16 sm:pt-20">
-          <ul className="flex flex-col gap-4 border-t border-cyan-300/20 pt-6">
+          <ul className="flex flex-col gap-4 border-t border-teal-300/20 pt-6">
             {NAV_ITEMS.map((item) => (
               <li key={item.label}>
                 <MobileLink
@@ -236,19 +239,28 @@ export default function Header() {
             ))}
           </ul>
 
-          {/* Mobile CTA — zostaje, Sign up -> /register */}
+          {/* Mobile CTA — kept, Sign up -> /register */}
           <div className="mt-6 flex gap-3 border-t border-white/10 pt-6">
             <div className="flex-1">
-                <Button variant="glass" href="/login" fullWidth leftIcon={<User size={16} />} data-testid="mobile-login">Log in</Button>
+              <Button
+                variant="glass"
+                href="/login"
+                fullWidth
+                leftIcon={<User size={16} />}
+                data-testid="mobile-login"
+              >
+                Log in
+              </Button>
             </div>
             <div className="flex-1">
-              <PrimaryCta
+              <Button
+                variant="primary"
                 href="/register"
                 data-testid="mobile-signup"
-                className="w-full h-12"
+                fullWidth
               >
                 Sign up
-              </PrimaryCta>
+              </Button>
             </div>
           </div>
         </div>
@@ -263,9 +275,9 @@ function HeaderLink(
     "data-testid"?: string;
     onAnchorClick: (
       e: React.MouseEvent<HTMLAnchorElement>,
-      href: string
+      href: string,
     ) => void;
-  }>
+  }>,
 ) {
   const { href, onAnchorClick } = props;
   return (
@@ -280,7 +292,7 @@ function HeaderLink(
         "focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.7)] focus-visible:rounded",
         "text-text-secondary hover:text-gold-400",
         "after:absolute after:left-0 after:bottom-[-4px] after:h-[1px] after:w-full after:rounded-full after:bg-gold-400",
-        "after:scale-x-0 hover:after:scale-x-100 focus-visible:after:scale-x-100 after:origin-left after:transition-transform after:duration-200"
+        "after:scale-x-0 hover:after:scale-x-100 focus-visible:after:scale-x-100 after:origin-left after:transition-transform after:duration-200",
       )}
     >
       {props.children}
@@ -293,7 +305,7 @@ function MobileLink(
     href: string;
     onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
     "data-testid"?: string;
-  }>
+  }>,
 ) {
   return (
     <Link
@@ -301,7 +313,7 @@ function MobileLink(
       onClick={props.onClick}
       data-testid={props["data-testid"]}
       className={clsx(
-        "block rounded-md px-3 py-2 transition text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.7)] hover:bg-white/5"
+        "block rounded-md px-3 py-2 transition text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.7)] hover:bg-white/5",
       )}
     >
       <span
@@ -309,7 +321,7 @@ function MobileLink(
           "relative inline-block text-sm font-semibold tracking-[0.16em] uppercase transition-colors",
           "text-text-secondary hover:text-gold-400",
           "after:absolute after:left-0 after:bottom-[-4px] after:h-[1px] after:w-full after:rounded-full after:bg-gold-400",
-          "after:scale-x-0 hover:after:scale-x-100 focus-visible:after:scale-x-100 after:origin-left after:transition-transform after:duration-200"
+          "after:scale-x-0 hover:after:scale-x-100 focus-visible:after:scale-x-100 after:origin-left after:transition-transform after:duration-200",
         )}
       >
         {props.children}

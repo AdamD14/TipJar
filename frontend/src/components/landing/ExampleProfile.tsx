@@ -107,7 +107,7 @@ export default function ExampleProfile({ isOpen, onClose }: ExampleProfileProps)
           {TIP_PRESETS.map((amount) => (
             <Button
               key={amount}
-              variant={tipAmount === amount ? 'gold' : 'ghost'}
+              variant={tipAmount === amount ? 'primary' : 'ghost'}
               fullWidth
               onClick={() => setTipAmount(amount)}
               className={tipAmount !== amount ? 'bg-surface-elevated border border-white/10 hover:bg-teal-700' : ''}
@@ -117,7 +117,7 @@ export default function ExampleProfile({ isOpen, onClose }: ExampleProfileProps)
           ))}
         </div>
 
-        <Button variant="gold" fullWidth size="lg" className="text-lg">
+        <Button variant="primary" fullWidth size="lg" className="text-lg">
           Tip ${tipAmount}.00
           <Image
             src="/assets/logo_usdc_1.png"

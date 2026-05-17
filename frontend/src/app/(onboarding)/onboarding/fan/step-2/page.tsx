@@ -114,7 +114,7 @@ export default function FanOnboardingStep2() {
           onClick={handleFinish}
           disabled={isSubmitting}
           className="w-full max-w-sm py-4 text-lg font-bold shadow-[0_0_20px_rgba(255,215,0,0.1)] hover:shadow-[0_0_30px_rgba(255,215,0,0.2)]"
-          variant="gold"
+          variant="primary"
         >
           {isSubmitting ? <Loader2 className="animate-spin mr-2" /> : "Zakończ"}
         </Button>

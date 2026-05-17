@@ -36,7 +36,7 @@ export default function GoalCard({ g }: { g: Goal }) {
       </div>
 
       <div className="mt-4 flex gap-2">
-        <Button variant="outline" size="sm">
+        <Button variant="secondary" size="sm">
           Edit
         </Button>
         {g.active ? (

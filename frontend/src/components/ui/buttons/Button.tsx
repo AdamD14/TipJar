@@ -4,25 +4,6 @@ import React, { forwardRef } from "react";
 import Link from "next/link";
 import clsx from "clsx";
 
-/**
- * Button — TipJar+ Design System (design.md §2.1)
- *
- * Variants:
- * primary — gold CTA (--gold-400 bg, --teal-900 text — WCAG AAA)
- * secondary — purple outline (--purple-300)
- * ghost — transparent, white text
- * danger — destructive (--error-base)
- * link — text-only, gold underline on hover
- * glass — glassmorphism surface
- *
- * Sizes (8-pt grid):
- * sm — 40px height, 16px padding-x, 14px font, 16px icon, 8px radius
- * md — 48px height, 24px padding-x, 16px font, 20px icon, 8px radius (default)
- * lg — 56px height, 32px padding-x, 18px font, 24px icon, 8px radius
- *
- * Touch target: "sm" uses a pseudo-element to hit 44px minimum.
- */
-
 function ButtonSpinner({ dark }: { dark?: boolean }) {
   return (
     <svg
@@ -54,6 +35,7 @@ function ButtonSpinner({ dark }: { dark?: boolean }) {
 type Variant =
   | "primary"
   | "secondary"
+  | "tertiary"
   | "ghost"
   | "danger"
   | "link"
@@ -76,9 +58,7 @@ type BaseProps = {
 };
 
 export type ButtonProps = BaseProps &
-  React.ButtonHTMLAttributes<HTMLButtonElement> & {
-    href?: never;
-  };
+  React.ButtonHTMLAttributes<HTMLButtonElement> & { href?: never };
 
 type LinkButtonProps = BaseProps &
   React.AnchorHTMLAttributes<HTMLAnchorElement> & {
@@ -87,6 +67,70 @@ type LinkButtonProps = BaseProps &
   };
 
 type Props = ButtonProps | LinkButtonProps;
+
+const GRADIENT_VARIANTS = new Set(["primary", "secondary", "tertiary", "gold"]);
+
+const LEGACY_VARIANT_MAP: Partial<Record<Variant, Variant>> = {
+  gold: "primary",
+  solid: "tertiary",
+  outline: "secondary",
+};
+
+const variantClasses = {
+  primary: clsx(
+    "text-black",
+    "bg-[linear-gradient(180deg,#FFE658_0%,#FFD700_40%,#B38F00_100%)]",
+    "hover:bg-[linear-gradient(180deg,#FFF085_0%,#FFE331_40%,#C19A00_100%)]",
+    "active:bg-[linear-gradient(180deg,#E6C200_0%,#E0B700_38%,#A07600_100%)]",
+    "shadow-[0_10px_24px_rgba(0,0,0,0.35)] ring-1 ring-black/10",
+    "hover:shadow-[0_12px_32px_rgba(0,0,0,0.4)] hover:-translate-y-0.5",
+    "active:translate-y-px active:shadow-[0_6px_16px_rgba(0,0,0,0.3)]",
+    "focus-visible:ring-gold-400/70 focus-visible:ring-offset-purple-300",
+  ),
+  secondary: clsx(
+    "text-white",
+    "bg-[linear-gradient(180deg,#5a2b5a_0%,var(--color-purple-300)_40%,#2b0f2b_100%)]",
+    "hover:bg-[linear-gradient(180deg,#7a347a_0%,var(--color-purple-300)_40%,#3a113a_100%)]",
+    "active:bg-[linear-gradient(180deg,#541a54_0%,#451245_38%,#2b0f2b_100%)]",
+    "shadow-2 ring-1 ring-black/10",
+    "hover:shadow-[0_12px_32px_rgba(0,0,0,0.4)] hover:-translate-y-0.5",
+    "active:translate-y-px active:shadow-[0_6px_16px_rgba(0,0,0,0.3)]",
+    "focus-visible:ring-purple-300/70 focus-visible:ring-offset-teal-900",
+  ),
+  tertiary: clsx(
+    "text-white",
+    "bg-[linear-gradient(180deg,#0d9488_0%,var(--color-teal-400)_40%,#065f46_100%)]",
+    "hover:bg-[linear-gradient(180deg,#14b8a6_0%,var(--color-teal-400)_40%,#047857_100%)]",
+    "active:bg-[linear-gradient(180deg,#0f766e_0%,#0d9488_38%,#064e3b_100%)]",
+    "shadow-2 ring-1 ring-black/10",
+    "hover:shadow-[0_12px_32px_rgba(0,0,0,0.4)] hover:-translate-y-0.5",
+    "active:translate-y-px active:shadow-[0_6px_16px_rgba(0,0,0,0.3)]",
+    "focus-visible:ring-teal-400/70 focus-visible:ring-offset-teal-900",
+  ),
+  ghost: clsx(
+    "bg-transparent text-teal-25",
+    "hover:bg-white/10 hover:-translate-y-0.5",
+    "active:bg-white/15 active:scale-[0.98]",
+  ),
+  danger: clsx(
+    "bg-transparent text-error-base border border-error-base/60",
+    "hover:bg-[rgba(255,82,82,0.1)] hover:-translate-y-0.5",
+    "active:bg-[rgba(255,82,82,0.15)] active:scale-[0.98]",
+  ),
+  link: clsx(
+    "bg-transparent text-gold-400 h-auto px-0 rounded-none",
+    "hover:underline underline-offset-4",
+    "active:opacity-70",
+  ),
+  glass: clsx(
+    "bg-[rgba(0,31,31,0.44)] backdrop-blur-[20px] border border-white/[0.125] text-teal-25",
+    "hover:bg-[rgba(0,31,31,0.6)] hover:-translate-y-0.5",
+    "active:scale-[0.98]",
+  ),
+  gold: "",
+  solid: "",
+  outline: "",
+} satisfies Record<Variant, string>;
 
 const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
   (
@@ -103,96 +147,74 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
     },
     ref,
   ) => {
+    const resolved = LEGACY_VARIANT_MAP[variant] ?? variant;
     const isLink = "href" in rest && !!rest.href;
+    const isGradient = GRADIENT_VARIANTS.has(resolved);
 
     const base = clsx(
-      "inline-flex items-center justify-center gap-2",
+      "group relative inline-flex items-center justify-center gap-2",
       "font-heading font-semibold select-none",
-      "transition-all duration-200",
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app",
+      "transform-gpu will-change-transform",
+      "transition-transform transition-colors duration-150",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app",
       "disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none",
       fullWidth && "w-full",
 
-      /* ── Sizes (8-pt grid) — design.md §2.1 ── */
       {
         "relative h-10 px-4 text-[14px] rounded-[8px] before:absolute before:inset-[-2px] before:content-['']":
           size === "sm",
-        "h-12 px-6 text-base rounded-[8px]": size === "md",
-        "h-14 px-8 text-[18px] rounded-[8px]": size === "lg",
+        "h-12 px-6 text-base rounded-[16px]": size === "md" && isGradient,
+        "h-12 px-6 text-base rounded-[8px]": size === "md" && !isGradient,
+        "h-14 px-8 text-[18px] rounded-[16px]": size === "lg" && isGradient,
+        "h-14 px-8 text-[18px] rounded-[8px]": size === "lg" && !isGradient,
       },
 
-      /* ── Primary — gold bg, teal-900 text (WCAG AAA) — design.md §2.1.2 ── */
-      (variant === "primary" || variant === "gold") && [
-        "bg-gold-400 text-teal-900",
-        "shadow-1",
-        "hover:bg-gold-300 hover:shadow-2 hover:-translate-y-0.5",
-        "active:bg-gold-500 active:scale-[0.98] active:translate-y-0 active:shadow-1",
-      ],
+      variantClasses[resolved],
 
-      /* ── Secondary — purple outline — design.md §2.1.3 ── */
-  (variant === "secondary" || variant === "outline") && [
-    "bg-transparent text-purple-300 border border-purple-300",
-    "hover:bg-[rgba(77,25,77,0.1)] hover:-translate-y-0.5",
-    "active:bg-[rgba(77,25,77,0.15)] active:scale-[0.98] active:translate-y-0",
-  ],
+      isGradient && "isolate",
 
-      /* ── Solid (legacy alias) — teal solid ── */
-      variant === "solid" && [
-        "bg-teal-600 text-white border border-teal-500",
-        "hover:bg-teal-500 hover:-translate-y-0.5",
-        "active:bg-teal-700 active:scale-[0.98]",
-      ],
-
-      /* ── Ghost — transparent, teal-25 text ── */
-      variant === "ghost" && [
-        "bg-transparent text-teal-25",
-        "hover:bg-white/10 hover:-translate-y-0.5",
-        "active:bg-white/15 active:scale-[0.98]",
-      ],
-
-      /* ── Danger — destructive — design.md §2.1.4 ── */
-  variant === "danger" && [
-    "bg-transparent text-error-base border border-error-base/60",
-    "hover:bg-[rgba(255,82,82,0.1)] hover:-translate-y-0.5",
-    "active:bg-[rgba(255,82,82,0.15)] active:scale-[0.98]",
-  ],
-
-      /* ── Link — text only ── */
-      variant === "link" && [
-        "bg-transparent text-gold-400 h-auto px-0 rounded-none",
-        "hover:underline underline-offset-4",
-        "active:opacity-70",
-      ],
-
-      /* ── Glass — glassmorphism ── */
-      variant === "glass" && [
-        "bg-[rgba(0,31,31,0.44)] backdrop-blur-[20px] border border-white/[0.125] text-teal-25",
-        "hover:bg-[rgba(0,31,31,0.6)] hover:-translate-y-0.5",
-        "active:scale-[0.98]",
-      ],
-
-      /* ── Disabled overrides — design.md §2.1.2 ── */
       "disabled:bg-teal-850 disabled:text-teal-200 disabled:border-none disabled:shadow-none disabled:hover:translate-y-0 disabled:hover:bg-teal-850",
 
       className,
     );
 
+    const sheenOverlay =
+      isGradient ? (
+        <>
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0 rounded-[inherit] bg-gradient-to-r from-transparent via-[rgba(210,168,102,0.22)] to-transparent animate-sheen"
+          />
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-[2px] rounded-[inherit] [box-shadow:inset_0_1px_0_rgba(255,255,255,0.70),inset_0_-6px_12px_rgba(0,0,0,0.22)]"
+          />
+        </>
+      ) : null;
+
     const content = (
       <>
+        {sheenOverlay}
         {loading ? (
-          <ButtonSpinner dark={variant === "primary" || variant === "gold"} />
+          <ButtonSpinner dark={resolved === "primary"} />
         ) : (
           leftIcon
         )}
         {children && (
-          <span className={loading ? "opacity-0" : undefined}>{children}</span>
+          <span className={loading ? "opacity-0" : undefined}>
+            {children}
+          </span>
         )}
         {!loading && rightIcon}
       </>
     );
 
     if (isLink) {
-      const { href, prefetch = true, ...linkProps } = rest as LinkButtonProps;
+      const {
+        href,
+        prefetch = true,
+        ...linkProps
+      } = rest as LinkButtonProps;
       return (
         <Link
           href={href}

@@ -121,7 +121,7 @@ function UnifiedLivePreview({ goal }: { goal: Goal }) {
 
       {/* Tip Button */}
       <div className="flex justify-center pt-2">
-        <Button variant="gold" fullWidth className="py-3 text-lg uppercase tracking-[0.2em] shadow-lg shadow-teal-500/20">
+        <Button variant="primary" fullWidth className="py-3 text-lg uppercase tracking-[0.2em] shadow-lg shadow-teal-500/20">
           <Image src="/logo.png" alt="" width={40} height={40} className="w-10 h-10 object-contain" />
           TIP IT
         </Button>

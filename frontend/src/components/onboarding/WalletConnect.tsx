@@ -55,7 +55,7 @@ export default function WalletConnect() {
         <Button
           onClick={onCreate}
           disabled={busy}
-          variant="gold"
+          variant="primary"
           size="sm"
         >
           {busy ? "Processing…" : "Create wallet"}

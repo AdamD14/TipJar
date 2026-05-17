@@ -1,28 +1,32 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import PrimaryCta from '../PrimaryCta';
-import SecondaryCta from '../SecondaryCta';
+import Button from '../Button';
 
 describe('CTAs', () => {
-  it('renders PrimaryCta with default text and route', () => {
-    render(<PrimaryCta href="/onboarding/start" />);
+  it('renders primary Button with default text and route', () => {
+    render(<Button variant="primary" href="/onboarding/start">Begin as a Creator</Button>);
     const link = screen.getByRole('link', { name: 'Begin as a Creator' });
     expect(link).toBeInTheDocument();
     expect(link).toHaveAttribute('href', '/onboarding/start');
   });
 
-  it('renders SecondaryCta with default text and route', () => {
-    render(<SecondaryCta href="/discover" />);
-    const link = screen.getByRole('link', { name: 'Explore Creators' });
+  it('renders secondary Button with default text and route', () => {
+    render(<Button variant="secondary" href="/discover">Explore as a Fan</Button>);
+    const link = screen.getByRole('link', { name: 'Explore as a Fan' });
     expect(link).toBeInTheDocument();
     expect(link).toHaveAttribute('href', '/discover');
   });
 
   it('shows spinner and hides label in loading state', () => {
-    render(<PrimaryCta href="/onboarding/start" isLoading />);
-    // aria-busy applied; label visually hidden via opacity but still in DOM
-    const link = screen.getByRole('link', { name: 'Begin as a Creator' });
+    const { container } = render(<Button variant="primary" href="/onboarding/start" loading>Begin as a Creator</Button>);
+    const links = screen.getAllByRole('link', { name: 'Begin as a Creator' });
+    const link = links[links.length - 1];
     expect(link).toHaveAttribute('aria-busy', 'true');
   });
-});
 
+  it('renders legacy gold variant as primary', () => {
+    render(<Button variant="gold" href="/test">Test</Button>);
+    const link = screen.getByRole('link', { name: 'Test' });
+    expect(link).toBeInTheDocument();
+  });
+});

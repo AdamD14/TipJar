@@ -85,7 +85,7 @@ export default function FanOnboardingStep1() {
           <Button
             onClick={handleNext}
             className="w-full py-6 text-lg font-bold shadow-[0_0_20px_rgba(255,215,0,0.1)] hover:shadow-[0_0_30px_rgba(255,215,0,0.2)]"
-            variant="gold"
+            variant="primary"
           >
             Dalej
           </Button>

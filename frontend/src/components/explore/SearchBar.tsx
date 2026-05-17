@@ -30,7 +30,7 @@ export default function SearchBar() {
         placeholder="Search by name or alias"
         className="flex-1"
       />
-      <Button variant="solid" type="submit">Search</Button>
+      <Button variant="tertiary" type="submit">Search</Button>
     </form>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
-import PrimaryCta from "@/components/ui/buttons/PrimaryCta";
-import SecondaryCta from "@/components/ui/buttons/SecondaryCta";
+import Button from "@/components/ui/buttons/Button";
 
 type Props = {
   primaryHref?: string;
@@ -14,12 +13,20 @@ export default function HeroCtas({
 }: Props) {
   return (
     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-      <PrimaryCta href={primaryHref} className="lg:h-14 lg:px-8 lg:text-lg">
+      <Button
+        variant="primary"
+        href={primaryHref}
+        size="lg"
+      >
         Begin as a Creator
-      </PrimaryCta>
-      <SecondaryCta href={secondaryHref} className="lg:h-14 lg:px-8 lg:text-lg">
+      </Button>
+      <Button
+        variant="secondary"
+        href={secondaryHref}
+        size="lg"
+      >
         Explore as a Fan
-      </SecondaryCta>
+      </Button>
     </div>
   );
 }
