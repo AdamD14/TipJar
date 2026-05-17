@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    optimizePackageImports: ["@headlessui/react", "@heroicons/react", "lucide-react"],
+  },
   images: {
     qualities: [25, 50, 75, 90, 100],
     remotePatterns: [

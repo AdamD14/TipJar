@@ -163,10 +163,8 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
       {
         "relative h-10 px-4 text-[14px] rounded-[8px] before:absolute before:inset-[-2px] before:content-['']":
           size === "sm",
-        "h-12 px-6 text-base rounded-[16px]": size === "md" && isGradient,
-        "h-12 px-6 text-base rounded-[8px]": size === "md" && !isGradient,
-        "h-14 px-8 text-[18px] rounded-[16px]": size === "lg" && isGradient,
-        "h-14 px-8 text-[18px] rounded-[8px]": size === "lg" && !isGradient,
+"h-12 px-6 text-base rounded-[8px]": size === "md",
+      "h-14 px-8 text-[18px] rounded-[8px]": size === "lg",
       },
 
       variantClasses[resolved],
@@ -178,43 +176,18 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
       className,
     );
 
-    const sheenOverlay =
-      isGradient ? (
-        <>
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-0 rounded-[inherit] bg-gradient-to-r from-transparent via-[rgba(210,168,102,0.22)] to-transparent animate-sheen"
-          />
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-[2px] rounded-[inherit] [box-shadow:inset_0_1px_0_rgba(255,255,255,0.70),inset_0_-6px_12px_rgba(0,0,0,0.22)]"
-          />
-        </>
-      ) : null;
-
     const content = (
       <>
-        {sheenOverlay}
-        {loading ? (
-          <ButtonSpinner dark={resolved === "primary"} />
-        ) : (
-          leftIcon
-        )}
+        {loading ? <ButtonSpinner dark={resolved === "primary"} /> : leftIcon}
         {children && (
-          <span className={loading ? "opacity-0" : undefined}>
-            {children}
-          </span>
+          <span className={loading ? "opacity-0" : undefined}>{children}</span>
         )}
         {!loading && rightIcon}
       </>
     );
 
     if (isLink) {
-      const {
-        href,
-        prefetch = true,
-        ...linkProps
-      } = rest as LinkButtonProps;
+      const { href, prefetch = true, ...linkProps } = rest as LinkButtonProps;
       return (
         <Link
           href={href}

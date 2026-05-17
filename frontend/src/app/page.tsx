@@ -11,8 +11,8 @@ import Footer from '@/components/ui/layout/Footer';
 
 export default function Page() {
   return (
-    <main id="main-content">
-      <Header />
+  <main id="main-content">
+  <Header />
 
       <Hero />
 

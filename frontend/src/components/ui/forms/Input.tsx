@@ -16,8 +16,8 @@ import clsx from "clsx";
  * success — border success-base
  * disabled — border teal-700 dashed, opacity 0.4
  *
- * Placeholder: --text-tertiary (teal-100 = #ABE1E1)
- * Text: --text-primary (teal-25 = #E0F2F2)
+ * Placeholder: --text-quaternary (teal-100 = #ABE1E1)
+ * Text: --text-secondary (teal-25 = #E0F2F2)
  */
 
 type InputSize = "standard" | "large";

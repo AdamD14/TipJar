@@ -10,8 +10,8 @@ import clsx from "clsx";
  * - custom scrollbar: track transparent, thumb teal-600, hover teal-500
  *
  * States: same as Input — default | error | success
- * Placeholder: --text-tertiary (teal-100 = #ABE1E1)
- * Text: --text-primary (teal-25 = #E0F2F2)
+ * Placeholder: --text-quaternary (teal-100 = #ABE1E1)
+ * Text: --text-secondary (teal-25 = #E0F2F2)
  */
 
 type TextareaState = "default" | "error" | "success";

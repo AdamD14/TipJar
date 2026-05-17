@@ -70,14 +70,16 @@ e.g. bg-teal-800, text-gold-400, shadow-modal
   --color-surface-modal: #003737;
 
   /* --- Semantic text — design.md §1.2 --- */
-  --color-text-primary: #E0F2F2;
-  --color-text-secondary: #CCF7F4;
-  --color-text-tertiary: #ABE1E1;
+  --color-text-primary: #f2f7f7;
+  --color-text-secondary: #E0F2F2;
+  --color-text-tertiary: #CCF7F4;
+  --color-text-quaternary: #ABE1E1;
 
   /* --- Semantic text-ds (Tailwind v4 compatible aliases) --- */
-  --color-text-ds-primary: #E0F2F2;
-  --color-text-ds-secondary: #CCF7F4;
-  --color-text-ds-tertiary: #ABE1E1;
+  --color-text-ds-primary: #f2f7f7;
+  --color-text-ds-secondary: #E0F2F2;
+  --color-text-ds-tertiary: #CCF7F4;
+  --color-text-ds-quaternary: #ABE1E1;
 
   /* --- Semantic surface (Tailwind v4 aliases) --- */
   --color-surface-app: #001F1F;
@@ -95,8 +97,8 @@ e.g. bg-teal-800, text-gold-400, shadow-modal
   --color-action-secondary-bg: #4D194D;
 
   /* --- Fonts — design.md §3 --- */
-  --font-heading: var(--font-heading-var, "MuktaMalar"), sans-serif;
-  --font-body: var(--font-body-var, "IBMPlexSans"), sans-serif;
+  --font-heading: var(--font-heading-var, var(--font-heading-fallback)), sans-serif;
+  --font-body: var(--font-body-var, var(--font-body-fallback)), sans-serif;
 
   /* --- Font sizes (fluid) — design.md §3 --- */
   --font-size-display: clamp(2.5rem, 4vw + 1.5rem, 4rem);
@@ -216,9 +218,10 @@ and add aliases that can't be expressed in @theme.
   --bg-surface-modal: var(--teal-800);
 
   /* Semantic: text — design.md §1.2 */
-  --text-primary: var(--teal-25);
-  --text-secondary: var(--teal-50);
-  --text-tertiary: var(--teal-100);
+  --text-primary: #f2f7f7;
+  --text-secondary: var(--teal-25);
+  --text-tertiary: var(--teal-50);
+  --text-quaternary: var(--teal-100);
 
   /* Semantic: borders — design.md §1.2 */
   --border-subtle: var(--teal-700);
@@ -230,8 +233,8 @@ and add aliases that can't be expressed in @theme.
   --action-secondary-bg: var(--purple-300);
 
   /* Typography — design.md §3 */
-  --font-heading: "MuktaMalar", sans-serif;
-  --font-body: "IBMPlexSans", sans-serif;
+  --font-heading: var(--font-heading-var, var(--font-heading-fallback)), sans-serif;
+  --font-body: var(--font-body-var, var(--font-body-fallback)), sans-serif;
 
   /* Fluid font sizes — design.md §3 */
   --fs-display: clamp(2.5rem, 4vw + 1.5rem, 4rem);

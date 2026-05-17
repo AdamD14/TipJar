@@ -70,9 +70,10 @@ To są surowe wartości. Nie używaj ich bezpośrednio w komponentach (poza wyj�
 | --bg-surface-base     | var(--teal-800)     | Tła kart, dropdownów, kontenerów                  |
 | --bg-surface-elevated | var(--teal-700)     | Tła elementów :hover, aktywnych wierszy tabel     |
 | --bg-surface-modal    | var(--teal-800)     | Kontenery okien modalnych                         |
-| --text-primary        | var(--teal-25)      | Nagłówki, główne wartości liczbowe                |
-| --text-secondary      | var(--teal-50)      | Tekst paragrafowy, etykiety (odcień 85% bieli)    |
-| --text-tertiary       | var(--teal-100)     | Placeholdery, dane nieaktywne, timestampy         |
+| --text-primary        | #f2f7f7             | Nagłówki, główne wartości liczbowe                |
+| --text-secondary      | var(--teal-25) (#E0F2F2) | Tekst pomocniczy, drugorzędny                    |
+| --text-tertiary       | var(--teal-50) (#CCF7F4) | Etykiety, akapity o niższym priorytecie            |
+| --text-quaternary     | var(--teal-100) (#ABE1E1) | Placeholdery, dane nieaktywne, timestampy        |
 | --border-subtle       | var(--teal-700)     | Obrysy kart, ramki inputów (domyślne)             |
 | --border-focus        | var(--purple-300)   | Pierścień nawigacji klawiaturowej                 |
 | --action-primary-bg   | var(--gold-400)     | Tło głównych przycisków CTA                       |
@@ -220,7 +221,7 @@ padding-bottom: calc(72px + env(safe-area-inset-bottom));
 - Tło: --bg-surface-base
 - Obramowanie: 1px solid --border-subtle
 - Tekst: --text-primary
-- Placeholder: --text-tertiary
+- Placeholder: --text-quaternary
 
 #### 2.2 Stany interakcji (Input)
 
