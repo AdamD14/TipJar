@@ -13,6 +13,7 @@ import { Menu, X, User } from 'lucide-react';
 import Link from 'next/link';
 import clsx from 'clsx';
 import Button from '@/components/ui/buttons/Button';
+import { useAuthStore } from '@/lib/store/authStore';
 
 type NavItem = {
   label: string;
@@ -60,6 +61,7 @@ export default function Header() {
   const scrolled = useScrollPosition(16);
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement | null>(null);
+  const user = useAuthStore((s) => s.user);
 
   useBodyScrollLock(open);
 
@@ -127,11 +129,19 @@ export default function Header() {
               </ul>
             </div>
 
-            {/* Right: Log in + Hamburger (NO Sign up on desktop) */}
-            <div className="flex-1 flex justify-end items-center">
-              <div className="hidden md:block">
-                <Button variant="glass" href="/login" leftIcon={<User size={16} />} data-testid="desktop-login">Log in</Button>
-              </div>
+{/* Right: Log in / Username + Hamburger (NO Sign up on desktop) */}
+          <div className="flex-1 flex justify-end items-center">
+            <div className="hidden md:block">
+              {user ? (
+                <Button variant="glass" href={`/@${user.username}`} className="gap-3 px-5 tracking-wide">
+                  {user.username}
+                </Button>
+              ) : (
+                <Button variant="glass" href="/login" leftIcon={<User size={16} />} className="gap-3 px-5 tracking-wide" data-testid="desktop-login">
+                  Log in
+                </Button>
+              )}
+            </div>
             <Button
             variant="ghost"
             aria-controls="mobile-menu"
