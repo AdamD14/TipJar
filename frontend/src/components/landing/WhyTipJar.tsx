@@ -17,7 +17,7 @@ export default function WhyTipJar() {
         <div className="w-full h-full flex flex-col justify-center gap-10 md:gap-16 lg:gap-20">
 
         <h2 className="text-center font-heading text-2xl lg:text-3xl text-text-ds-quaternary font-semibold">
-          why tipjar+
+          why tipjar+ ?
         </h2>
 
           <div className="w-full">

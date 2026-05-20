@@ -28,7 +28,7 @@ export default function Hero() {
             </span>
           </h1>
 
-          <p className="mt-6 lg:mt-8 text-2xl sm:text-3xl md:text-4xl font-heading font-regular text-text-ds-secondary max-w-2xl">
+          <p className="mt-6 lg:mt-8 text-2xl sm:text-3xl md:text-4xl font-heading font-regular text-text-ds-secondary max-w-5xl">
         Instant micro-payments in USDC for creators:<br />
         podcasters, streamers, YouTubers, digital models,<br />
         musicians, artists, bloggers, coaches,<br />
