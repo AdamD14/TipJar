@@ -310,14 +310,34 @@ To zapewnia przezroczysty odstęp między awatarem a odznaką, niezależnie od t
 
 | Właściwość          | Wartość                              | Uwagi                              |
 |---------------------|--------------------------------------|------------------------------------|
-| Tło                 | --bg-surface-base (--teal-800)       | -                                  |
+| Tło                 | --teal-700 (#004545)                 | Odseparowanie od głębokiego tła    |
 | Padding             | 24px                                 | Zwiększony dla "oddechu" w Dark Mode |
 | Border Radius       | 12px                                 | "Friendly Modern"                  |
-| Border              | 1px solid rgba(255,255,255,0.05)     | Opcjonalnie                        |
-| Cień (spoczynek)    | --shadow-1                           | -                                  |
-| Cień (hover)        | --shadow-2 + 0 0 10px rgba(255,215,0,0.1) | Złota poświata                  |
+| Border              | 1px solid rgba(255,255,255,0.1)      | Ultra-thin semi-transparent border |
+| Inner Shadow        | inset 0 1px 2px rgba(0,0,0,0.2)     | Głębia wewnętrzna                  |
+| Backdrop Filter     | blur(20px)                           | Glassmorphism                      |
+| Cień (spoczynek)    | --shadow-1                           | 0 4px 6px -1px rgba(0,0,0,0.5)    |
+| Cień (hover)        | --shadow-2 + --shadow-gold-glow      | Podwójna warstwa poniżej           |
 | Transform (hover)   | translateY(-6px)                     | -                                  |
-| Animacja            | --ease-standard (200ms)              | -                                  |
+| Animacja            | --ease-premium (300ms)               | cubic-bezier(0.25, 0.8, 0.25, 1)   |
+| Hardware Accel      | translateZ(0)                        | GPU acceleration                   |
+
+#### 1.1a — Podwójny cień hover (double layer)
+
+Warstwa 1 (głębokość): `0 20px 25px -5px rgba(0,0,0,0.6)`
+Warstwa 2 (gold glow): `0 0 10px rgba(252, 194, 1, 0.1)`
+
+#### 1.1b — Pseudo-element glow (::before)
+
+Zastosowany na hover dla efektu premium poświaty:
+- `background: linear-gradient(...)`
+- `filter: blur(10px)`
+- `opacity: 0 → 1` na hover
+- `transition: opacity 300ms --ease-premium`
+
+#### 1.1c — Focus ring (złoty)
+
+`box-shadow: 0 0 0 1px #FFD700, 0 0 0 4px rgba(255, 215, 0, 0.25)`
 
 #### 1.2 Warianty funkcjonalne
 

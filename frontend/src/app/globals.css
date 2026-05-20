@@ -119,6 +119,14 @@ e.g. bg-teal-800, text-gold-400, shadow-modal
   --shadow-toast: 0 8px 24px -4px rgba(0, 0, 0, 0.6);
   --shadow-tooltip: 0 4px 16px rgba(0, 0, 0, 0.5);
 
+  /* --- Card shadows — design.md §3.1 --- */
+  --shadow-card-rest: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  --shadow-card-hover-layer-1: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+  --shadow-card-hover-layer-2: 0 0 10px rgba(252, 194, 1, 0.1);
+  --shadow-card-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 0 10px rgba(252, 194, 1, 0.1);
+  --shadow-card-focus: 0 0 0 1px #FFD700, 0 0 0 4px rgba(255, 215, 0, 0.25);
+  --inner-shadow-card: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+
   /* --- Z-index — design.md §5 --- */
   --z-base: 0;
   --z-elevated: 10;
@@ -133,6 +141,7 @@ e.g. bg-teal-800, text-gold-400, shadow-modal
   --ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
   --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-premium: cubic-bezier(0.25, 0.8, 0.25, 1);
 
   /* --- Border radius --- */
   --radius-sm: 6px;
@@ -459,6 +468,89 @@ UTILITY CLASSES
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: var(--glass-border);
+}
+
+/* ================================================================
+CARD UTILITY CLASSES — design.md §3.1 (updated)
+=============================================================== */
+
+/* Base card surface */
+.card-surface {
+  background-color: var(--teal-700);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow-card-rest);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: box-shadow 300ms var(--ease-premium), transform 300ms var(--ease-premium);
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Inner shadow for depth */
+.card-surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: var(--inner-shadow-card);
+}
+
+/* Card hover state */
+.card-surface:hover,
+.card-surface:focus-within {
+  background-color: var(--teal-600);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-6px);
+}
+
+/* Card glow pseudo-element */
+.card-surface::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  border-radius: 14px;
+  background: linear-gradient(
+    135deg,
+    var(--gold-400) 0%,
+    var(--teal-300) 40%,
+    var(--gold-400) 100%
+  );
+  filter: blur(10px);
+  opacity: 0;
+  transition: opacity 300ms var(--ease-premium);
+  pointer-events: none;
+}
+
+.card-surface:hover::before {
+  opacity: 1;
+}
+
+/* Focus ring for cards */
+.card-surface:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-card-focus);
+}
+
+/* Overlay for contrast stabilization on images */
+.card-overlay-contrast {
+  position: relative;
+}
+
+.card-overlay-contrast::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(18, 18, 18, 0.8);
+  filter: saturate(180%);
+  pointer-events: none;
+  mix-blend-mode: multiply;
 }
 
 /* Safe-area helpers — design.md §6 */
