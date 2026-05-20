@@ -13,6 +13,7 @@ import {
   QrCode,
   Layers,
   TrendingUp,
+  HandHeart,
 } from 'lucide-react';
 import Button from '@/components/ui/buttons/Button';
 
@@ -22,49 +23,23 @@ interface BentoCardProps {
   icon: LucideIcon;
   title: string;
   description: string;
-  accent?: 'gold' | 'purple' | 'teal';
-  span?: string;
 }
 
-const accentStyles = {
-  gold: {
-    iconBg: 'bg-gold-400/10 group-hover:bg-gold-400/20',
-    iconText: 'text-gold-400',
-    border: 'hover:border-gold-400/40',
-    glow: 'hover:shadow-[0_0_0_4px_rgba(255,215,0,0.08)_inset]',
-  },
-  purple: {
-    iconBg: 'bg-purple-300/10 group-hover:bg-purple-300/20',
-    iconText: 'text-purple-300',
-    border: 'hover:border-purple-300/40',
-    glow: 'hover:shadow-[0_0_0_4px_rgba(77,25,77,0.15)_inset]',
-  },
-  teal: {
-    iconBg: 'bg-teal-300/10 group-hover:bg-teal-300/20',
-    iconText: 'text-teal-300',
-    border: 'hover:border-teal-300/40',
-    glow: 'hover:shadow-[0_0_0_4px_rgba(63,181,181,0.10)_inset]',
-  },
-};
-
-function BentoCard({ icon: Icon, title, description, accent = 'gold', span }: BentoCardProps) {
-  const s = accentStyles[accent];
+function BentoCard({ icon: Icon, title, description }: BentoCardProps) {
   return (
     <article
-      className={`group rounded-xl border border-white/10 bg-surface-base/60 backdrop-blur-sm p-6
-        transition-all duration-200 ease-standard
-        ${s.border} ${s.glow}
-        hover:brightness-[1.02]
-        ${span ?? ''}`}
+      className="group rounded-lg border border-border-subtle bg-surface-base p-6 shadow-1
+        transition-all duration-300 ease-standard
+        hover:border-gold-400/60 hover:shadow-2 hover:shadow-gold-glow hover:-translate-y-1.5"
     >
       <div className="flex flex-col gap-4">
         <div
-          className={`flex h-10 w-10 items-center justify-center rounded-lg transition-colors duration-200 ${s.iconBg}`}
+          className="flex h-8 w-8 items-center justify-center rounded bg-gold-400/10 transition-colors duration-300 group-hover:bg-gold-400/20"
         >
-          <Icon size={20} className={s.iconText} />
+          <Icon size={20} className="text-gold-400" />
         </div>
         <div>
-          <h3 className="text-lg font-heading font-semibold text-text-ds-secondary uppercase tracking-wide">
+          <h3 className="text-lg font-heading font-semibold text-text-ds-secondary">
             {title}
           </h3>
           <p className="mt-1.5 text-base leading-relaxed text-text-ds-tertiary font-body">
@@ -82,39 +57,34 @@ const fanSteps: BentoCardProps[] = [
     title: 'Sign Up',
     description:
       'Use email, Google, Twitch, or MetaMask. Registration is optional — you can tip without an account.',
-    accent: 'teal',
-    span: 'md:col-span-1',
   },
   {
     icon: Wallet,
     title: 'Top Up',
     description:
       'Fund your tips — add or buy USDC using crypto or your preferred payment method.',
-    accent: 'gold',
-    span: 'md:col-span-1',
   },
   {
     icon: Compass,
     title: 'Explore',
     description: 'Discover creators sharing knowledge and experiences for the new digital era.',
-    accent: 'purple',
-    span: 'md:col-span-1',
   },
   {
     icon: Heart,
     title: 'Support',
     description:
       'Real people, real value. Send one-time tips or set up recurring support for creators you love.',
-    accent: 'gold',
-    span: 'md:col-span-2',
   },
   {
     icon: Sparkles,
     title: 'Enjoy the Journey',
     description:
       'From streamers and models to musicians, educators, coaches, and influencers — find your community.',
-    accent: 'teal',
-    span: 'md:col-span-1',
+  },
+  {
+    icon: HandHeart,
+    title: 'Contribute',
+    description: 'Contribute to the culture, be part of the style.',
   },
 ];
 
@@ -124,47 +94,35 @@ const creatorSteps: BentoCardProps[] = [
     title: 'Ownership',
     description:
       'Editable avatar, bio, and animated/static cover. No third-party integrations. 100% creator-owned space.',
-    accent: 'gold',
-    span: 'md:col-span-1',
   },
   {
     icon: Share2,
     title: 'Engagement',
     description:
       'Shareable widget (iframe), QR codes, dynamic Open Graph cards, and social links (X, Instagram, YouTube, Discord, Telegram).',
-    accent: 'purple',
-    span: 'md:col-span-2',
   },
   {
     icon: LayoutGrid,
     title: 'Usability',
     description:
       'Clean Web3 UI with a responsive layout, hover effects, micro-animations, and themes; works out of the box, no code needed.',
-    accent: 'teal',
-    span: 'md:col-span-1',
   },
   {
     icon: QrCode,
     title: 'Accessibility',
     description: 'Instant, borderless access via shareable links and QR codes.',
-    accent: 'gold',
-    span: 'md:col-span-1',
   },
   {
     icon: Layers,
     title: 'Flexibility',
     description:
       'One-time tips with presets, fundraising goals with progress bars and deadlines, and monthly subscriptions with customizable tiers.',
-    accent: 'purple',
-    span: 'md:col-span-1',
   },
   {
     icon: TrendingUp,
     title: 'Shareability',
     description:
       'Goal tracking that shows real impact, plus subscriptions and milestones that build loyalty and community.',
-    accent: 'teal',
-    span: 'md:col-span-1',
   },
 ];
 
@@ -172,7 +130,7 @@ export default function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="relative py-20 md:py-28"
+      className="relative w-full min-h-screen"
     >
       <img
         src="/how.webp"
@@ -180,50 +138,88 @@ export default function HowItWorks() {
         className="pointer-events-none absolute inset-0 -z-10 w-full h-full object-cover"
       />
 
-      <div className="mx-auto max-w-[1600px] px-4 md:px-8">
-        <div className="mb-14 text-center">
-          <h2 className="text-[length:var(--fs-h1)] font-heading font-bold text-text-ds-primary">
-            How It Works
+      <div className="relative z-10 w-full min-h-screen py-20 px-4 md:px-8">
+        <div className="w-full h-full flex flex-col justify-center gap-10 md:gap-16 lg:gap-20">
+
+          <h2 className="text-center font-heading text-2xl lg:text-3xl text-text-ds-quaternary font-semibold">
+            how it works ?
           </h2>
-          <p className="mt-3 text-lg text-text-ds-tertiary font-body max-w-2xl mx-auto">
-            Whether you&apos;re supporting creators or building your own presence — TipJar+ makes Web3 simple.
-          </p>
-        </div>
 
-        {/* Fans */}
-        <div className="mb-16">
-          <h3 className="mb-8 flex items-center gap-3 text-xl font-heading font-semibold text-purple-300">
-            <Users size={22} className="text-purple-300" />
-            For Fans
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {fanSteps.map((step) => (
-              <BentoCard key={step.title} {...step} />
-            ))}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 lg:gap-16">
+
+            {/* For Fans */}
+            <div>
+              <h3 className="mb-8 flex items-center gap-3 text-xl font-heading font-semibold text-gold-400">
+                <Users size={22} className="text-gold-400" />
+                For Fans
+              </h3>
+              <div className="grid grid-cols-2 gap-5">
+                {fanSteps.map((step) => (
+                  <BentoCard key={step.title} {...step} />
+                ))}
+              </div>
+              <div className="mt-6">
+                <Button variant="secondary" href="/signup">
+                  Sign up as a Fan
+                </Button>
+              </div>
+            </div>
+
+            {/* For Creators */}
+            <div>
+              <h3 className="mb-8 flex items-center gap-3 text-xl font-heading font-semibold text-gold-400">
+                <Sparkles size={22} className="text-gold-400" />
+                For Creators
+              </h3>
+              <div className="grid grid-cols-2 gap-5">
+                {creatorSteps.map((step) => (
+                  <BentoCard key={step.title} {...step} />
+                ))}
+              </div>
+              <div className="mt-6">
+                <Button variant="primary" href="/register">
+                  Join as a Creator
+                </Button>
+              </div>
+            </div>
+
           </div>
-        </div>
 
-        {/* Creators */}
-        <div className="mb-14">
-          <h3 className="mb-8 flex items-center gap-3 text-xl font-heading font-semibold text-gold-400">
-            <Sparkles size={22} className="text-gold-400" />
-            For Creators
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {creatorSteps.map((step) => (
-              <BentoCard key={step.title} {...step} />
-            ))}
+          {/* Navigation arrows */}
+          <div className="w-full mt-6">
+            <div className="flex items-center justify-between">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                aria-label="Back to top"
+                title="Back to top"
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="h-12 w-12 rounded-full border border-text-ds-tertiary/60 text-text-ds-tertiary hover:brightness-[1.15] hover:bg-white/10"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 19V5" />
+                  <path d="M5 12l7-7 7 7" />
+                </svg>
+              </Button>
+
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                aria-label="Scroll to next section"
+                title="See more"
+                onClick={() => document.getElementById('explore')?.scrollIntoView({ behavior: 'smooth' })}
+                className="h-12 w-12 rounded-full border border-text-ds-tertiary/60 text-text-ds-tertiary hover:brightness-[1.15] hover:bg-white/10"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 5v14" />
+                  <path d="M19 12l-7 7-7-7" />
+                </svg>
+              </Button>
+            </div>
           </div>
-        </div>
 
-        {/* Bottom CTAs */}
-        <div className="flex items-center justify-center gap-4 flex-wrap">
-          <Button variant="secondary" href="/signup">
-            Sign up as a Fan
-          </Button>
-          <Button variant="primary" href="/register">
-            Join as a Creator
-          </Button>
         </div>
       </div>
     </section>
