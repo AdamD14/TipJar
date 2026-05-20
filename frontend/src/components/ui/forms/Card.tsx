@@ -19,8 +19,8 @@ import clsx from "clsx";
  * - background: --teal-600 (#005959)
  * - translateY(-6px)
  * - Double box-shadow: 0 20px 25px -5px rgba(0,0,0,0.6), 0 0 10px rgba(252,194,1,0.1)
- * - Glow pseudo-element (span) with linear-gradient + blur(10px)
- * - transition: 300ms ease-premium (cubic-bezier(0.25, 0.8, 0.25, 1))
+ * - Glow pseudo-element (::before) with linear-gradient + blur(10px)
+ * - transition: 300ms --ease-premium (cubic-bezier(0.25, 0.8, 0.25, 1))
  *
  * Focus:
  * - box-shadow: 0 0 0 1px #FFD700, 0 0 0 4px rgba(255,215,0,0.25)

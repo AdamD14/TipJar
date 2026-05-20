@@ -207,11 +207,11 @@ export default function HowItWorks() {
 
             {/* For Creators */}
             <div className="flex flex-col">
-              <h3 className="mb-8 flex items-center gap-3 text-xl font-heading font-semibold text-purple-300">
-                <Sparkles size={22} className="text-purple-300" />
+              <h3 className="mb-8 flex items-center gap-3 text-xl font-heading font-semibold text-gold-400">
+                <Sparkles size={22} className="text-gold-400" />
                 For Creators
               </h3>
-              <SnakeTimeline steps={creatorSteps} accent="purple" />
+              <SnakeTimeline steps={creatorSteps} accent="gold" />
               <div className="mt-8">
                 <Button variant="primary" href="/register">
                   Join as a Creator
