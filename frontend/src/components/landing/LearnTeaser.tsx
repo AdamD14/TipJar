@@ -1,24 +1,27 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Coins, Shield, Zap, ArrowRight } from 'lucide-react';
-import Button from '@/components/ui/buttons/Button';
+import { Coins, Shield, Zap, ArrowRight } from "lucide-react";
+import Button from "@/components/ui/buttons/Button";
+import Card from "@/components/ui/forms/Card";
 
 const TEASER_TOPICS = [
   {
     icon: Coins,
-    title: 'What is USDC?',
-    teaser: 'Fully-reserved stablecoin issued by Circle. 1 USDC = 1 USD.',
+    title: "What is USDC?",
+    teaser:
+      "Fully-reserved stablecoin issued by Circle. 1 USDC = 1 USD.",
   },
   {
     icon: Shield,
-    title: 'Wallet basics',
-    teaser: 'Self-custody vs custodial — what you need to know to stay safe.',
+    title: "Wallet basics",
+    teaser:
+      "Self-custody vs custodial — what you need to know to stay safe.",
   },
   {
     icon: Zap,
-    title: 'How tipping works',
-    teaser: 'No account needed. Fans pay with card or crypto, creators get USDC.',
+    title: "How tipping works",
+    teaser:
+      "No account needed. Fans pay with card or crypto, creators get USDC.",
   },
 ];
 
@@ -39,7 +42,7 @@ export default function LearnTeaser() {
           id="learn-heading"
           className="mb-2 text-2xl md:text-3xl font-heading font-semibold"
         >
-          Learn about{' '}
+          Learn about{" "}
           <span className="bg-gradient-to-r from-gold-200 via-white to-gold-200 bg-clip-text text-transparent">
             Web3
           </span>
@@ -53,20 +56,19 @@ export default function LearnTeaser() {
           {TEASER_TOPICS.map((topic) => {
             const Icon = topic.icon;
             return (
-              <article
-                key={topic.title}
-                className="group rounded-[16px] border border-white/10 bg-card p-5 transition-all duration-200 hover:border-gold-400/40 hover:-translate-y-0.5 hover:shadow-[0_0_0_4px_rgba(255,215,0,0.06)_inset]"
-              >
-                <div className="mb-3 w-9 h-9 rounded-lg bg-gold-400/10 flex items-center justify-center transition-colors group-hover:bg-gold-400/20">
-                  <Icon size={18} className="text-gold-400" />
+              <Card key={topic.title} interactive variant="elevated" noPadding>
+                <div className="p-5">
+                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-gold-400/10 transition-colors group-hover/card:bg-gold-400/20">
+                    <Icon size={18} className="text-gold-400" />
+                  </div>
+                  <h3 className="mb-1 text-base font-heading font-semibold leading-[1.5]">
+                    {topic.title}
+                  </h3>
+                  <p className="text-[13px] leading-[1.6] text-text-ds-tertiary font-body">
+                    {topic.teaser}
+                  </p>
                 </div>
-                <h3 className="mb-1 text-base font-heading font-semibold leading-[1.5]">
-                  {topic.title}
-                </h3>
-                <p className="text-[13px] leading-[1.6] text-text-ds-tertiary font-body">
-                  {topic.teaser}
-                </p>
-              </article>
+              </Card>
             );
           })}
         </div>

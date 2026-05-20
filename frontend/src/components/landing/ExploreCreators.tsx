@@ -1,46 +1,47 @@
-'use client';
+"use client";
 
-import Button from '@/components/ui/buttons/Button';
+import Button from "@/components/ui/buttons/Button";
+import Card from "@/components/ui/forms/Card";
 
 const EXAMPLE_CREATORS = [
   {
-    category: 'Digital Art',
-    initial: 'E',
-    name: 'Elena Moreau',
-    handle: '@elenart',
-    role: 'Illustrator',
+    category: "Digital Art",
+    initial: "E",
+    name: "Elena Moreau",
+    handle: "@elenart",
+    role: "Illustrator",
     goalPercent: 68,
   },
   {
-    category: 'Music',
-    initial: 'L',
-    name: 'Leo Maxwell',
-    handle: '@leosonix',
-    role: 'Producer',
+    category: "Music",
+    initial: "L",
+    name: "Leo Maxwell",
+    handle: "@leosonix",
+    role: "Producer",
     goalPercent: 45,
   },
   {
-    category: 'Gaming',
-    initial: 'R',
-    name: 'Riley Chen',
-    handle: '@rileyplays',
-    role: 'Streamer',
+    category: "Gaming",
+    initial: "R",
+    name: "Riley Chen",
+    handle: "@rileyplays",
+    role: "Streamer",
     goalPercent: 89,
   },
   {
-    category: 'Education',
-    initial: 'S',
-    name: 'Sarah Mitchell',
-    handle: '@teachsarah',
-    role: 'Educator',
+    category: "Education",
+    initial: "S",
+    name: "Sarah Mitchell",
+    handle: "@teachsarah",
+    role: "Educator",
     goalPercent: 72,
   },
   {
-    category: 'Fitness',
-    initial: 'M',
-    name: 'Marcus Johnson',
-    handle: '@fitmarc',
-    role: 'Coach',
+    category: "Fitness",
+    initial: "M",
+    name: "Marcus Johnson",
+    handle: "@fitmarc",
+    role: "Coach",
     goalPercent: 55,
   },
 ];
@@ -70,7 +71,10 @@ export default function ExploreCreators() {
           </Button>
         </div>
 
-        <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div
+          className="flex gap-5 overflow-x-auto pb-4 scrollbar-hide"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
           {EXAMPLE_CREATORS.map((creator) => (
             <MiniCreatorCard key={creator.handle} {...creator} />
           ))}
@@ -96,31 +100,39 @@ function MiniCreatorCard({
   goalPercent: number;
 }) {
   return (
-    <article
-      className="group min-w-[260px] w-[260px] flex-shrink-0 rounded-xl border border-white/10 bg-surface-base/60 backdrop-blur-sm p-5
-        transition-all duration-200 ease-standard
-        hover:border-gold-400/40 hover:-translate-y-0.5
-        hover:shadow-[0_0_0_4px_rgba(255,215,0,0.08)_inset]"
+    <Card
+      interactive
+      variant="base"
+      noPadding
+      className="min-w-[260px] w-[260px] flex-shrink-0"
     >
-      <div className="mb-4 flex items-center justify-between">
-        <span className="rounded-full bg-surface-elevated px-2.5 py-0.5 text-xs text-text-ds-tertiary font-body">
-          {category}
-        </span>
-        {goalPercent > 0 && (
-          <span className="text-xs font-heading font-bold text-gold-400 tabular-nums">
-            {goalPercent}%
+      <div className="p-5">
+        <div className="mb-4 flex items-center justify-between">
+          <span className="rounded-full bg-surface-elevated px-2.5 py-0.5 text-xs text-text-ds-tertiary font-body">
+            {category}
           </span>
-        )}
-      </div>
+          {goalPercent > 0 && (
+            <span className="text-xs font-heading font-bold text-gold-400 tabular-nums">
+              {goalPercent}%
+            </span>
+          )}
+        </div>
 
-      <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-gold-400 to-gold-600">
-        <span className="text-xl font-heading font-bold text-teal-900">{initial}</span>
-      </div>
+        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-gold-400 to-gold-600">
+          <span className="text-xl font-heading font-bold text-teal-900">
+            {initial}
+          </span>
+        </div>
 
-      <div className="text-center">
-        <h3 className="text-sm font-heading font-semibold text-text-ds-primary">{name}</h3>
-        <p className="text-xs text-text-ds-tertiary font-body">{handle} · {role}</p>
+        <div className="text-center">
+          <h3 className="text-sm font-heading font-semibold text-text-ds-primary">
+            {name}
+          </h3>
+          <p className="text-xs text-text-ds-tertiary font-body">
+            {handle} · {role}
+          </p>
+        </div>
       </div>
-    </article>
+    </Card>
   );
 }
