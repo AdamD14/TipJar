@@ -3,35 +3,6 @@
 import type { ReactNode, HTMLAttributes } from "react";
 import clsx from "clsx";
 
-/**
- * Card — TipJar+ Design System (design.md §3.1)
- *
- * Base:
- * - background: --teal-700 (#004545)
- * - padding: 24px (p-6)
- * - border-radius: 12px (rounded-xl)
- * - border: 1px solid rgba(255,255,255,0.1)
- * - inner-shadow: inset 0 1px 2px rgba(0,0,0,0.2)
- * - backdrop-filter: blur(20px)
- * - shadow (rest): 0 4px 6px -1px rgba(0,0,0,0.5)
- *
- * Hover (when `interactive`):
- * - background: --teal-600 (#005959)
- * - translateY(-6px)
- * - Double box-shadow: 0 20px 25px -5px rgba(0,0,0,0.6), 0 0 10px rgba(252,194,1,0.1)
- * - Glow pseudo-element (::before) with linear-gradient + blur(10px)
- * - transition: 300ms --ease-premium (cubic-bezier(0.25, 0.8, 0.25, 1))
- *
- * Focus:
- * - box-shadow: 0 0 0 1px #FFD700, 0 0 0 4px rgba(255,215,0,0.25)
- *
- * Hardware acceleration: transform: translateZ(0)
- *
- * Variants:
- * base — standard card (teal-700)
- * elevated — teal-600 background (card on card)
- * modal — matches modal surface (teal-800)
- */
 
 type CardVariant = "base" | "elevated" | "modal";
 
