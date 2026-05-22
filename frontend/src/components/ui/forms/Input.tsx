@@ -1,25 +1,6 @@
 import React, { forwardRef } from "react";
 import clsx from "clsx";
 
-/**
- * Input — TipJar+ Design System (design.md §2.2)
- *
- * Heights:
- * standard — 48px (default)
- * large — 56px
- *
- * States:
- * default — bg surface-base, border border-subtle (teal-700)
- * hover — border teal-600
- * focus — border gold-400, glow: 0 0 0 1px gold-400 + 0 0 0 4px rgba(255,215,0,0.25)
- * error — border error-base, glow: 0 0 0 4px rgba(255,82,82,0.25)
- * success — border success-base
- * disabled — border teal-700 dashed, opacity 0.4
- *
- * Placeholder: --text-quaternary (teal-100 = #ABE1E1)
- * Text: --text-secondary (teal-25 = #E0F2F2)
- */
-
 type InputSize = "standard" | "large";
 type InputState = "default" | "error" | "success";
 
@@ -34,8 +15,7 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(
   { className, state, inputSize = "standard", invalid, ...rest },
   ref,
 ) {
-  const resolvedState: InputState =
-    state ?? (invalid ? "error" : "default");
+  const resolvedState: InputState = state ?? (invalid ? "error" : "default");
 
   return (
     <input
@@ -52,9 +32,9 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(
 
         resolvedState === "default" && [
           "border border-teal-700",
-          "hover:border-teal-600",
-          "focus:border-gold-400",
-          "focus:shadow-[0_0_0_1px_var(--gold-400),0_0_0_4px_rgba(255,215,0,0.25)]",
+          "hover:border-teal-450",
+          "focus:border-gold-300",
+          "focus:shadow-[0_0_0_1px_var(--teal-200),0_0_0_4px_rgba(255,215,0,0.25)]",
         ],
 
         resolvedState === "error" && [
