@@ -48,13 +48,12 @@ const EXAMPLE_CREATORS = [
 
 export default function ExploreCreators() {
   return (
-    <section id="explore" className="relative py-20 md:py-28">
-      <div
-        className="pointer-events-none absolute inset-0 -z-10"
-        aria-hidden
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(800px_400px_at_70%_30%,rgba(63,181,181,0.06)_0%,transparent_55%)]" />
-      </div>
+     <section id="explore" className="relative w-full min-h-screen">
+      <img
+        src="/e.webp"
+        alt=""
+        className="pointer-events-none absolute inset-0 -z-10 w-full h-full object-cover"
+      />
 
       <div className="mx-auto max-w-[1600px] px-4 md:px-8">
         <div className="mb-10 flex items-end justify-between gap-4">

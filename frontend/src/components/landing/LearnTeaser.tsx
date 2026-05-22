@@ -27,14 +27,11 @@ const TEASER_TOPICS = [
 
 export default function LearnTeaser() {
   return (
-    <section
-      id="learn"
-      aria-labelledby="learn-heading"
-      className="relative w-full py-20 px-4 md:px-8"
-    >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(255,215,0,0.04),transparent_70%)]"
+    <section id="learn" className="relative w-full min-h-screen">
+      <img
+        src="/e.webp"
+        alt=""
+        className="pointer-events-none absolute inset-0 -z-10 w-full h-full object-cover"
       />
 
       <div className="mx-auto max-w-[1280px]">

@@ -6,7 +6,7 @@ export default function StartBuildingShowcase() {
   return (
     <section id="studio" className="relative w-full min-h-screen">
       <img
-        src="/show.webp"
+        src="/sh.webp"
         alt=""
         className="pointer-events-none absolute inset-0 -z-10 w-full h-full object-cover"
       />
