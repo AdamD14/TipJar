@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Check, ArrowLeft, Share2, Copy } from "lucide-react";
+import { Check, ArrowLeft, Share2, Copy, DollarSign } from "lucide-react";
 import { getPublicProfile } from "@/lib/users";
 import Button from "@/components/ui/buttons/Button";
 import Spinner from "@/components/ui/Spinner";
@@ -31,27 +31,6 @@ type UserProfile = {
     socials: Record<string, string | boolean | null> | null;
   } | null;
 };
-
-/* ── Archetype Badge ── */
-function ArchetypeBadge({
-  label,
-  variant = "archetype",
-}: {
-  label: string;
-  variant?: "archetype" | "specialization";
-}) {
-  return (
-    <span
-      className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.25em] border shadow-xl ${
-        variant === "archetype"
-          ? "bg-teal-900 text-gold-400 border-gold-400/20"
-          : "bg-teal-900 text-teal-300 border-teal-600/20"
-      }`}
-    >
-      {label.replace(/-/g, " ")}
-    </span>
-  );
-}
 
 export default function CreatorProfile() {
   const { username } = useParams<{ username: string }>();
@@ -237,50 +216,56 @@ export default function CreatorProfile() {
             </div>
           </div>
 
-          {/* ── RIGHT COLUMN: Main profile card ── */}
-          <div className="flex-1 w-full lg:pt-16">
-            <section className="relative rounded-[32px] border border-teal-700/30 bg-teal-800 p-8 flex flex-col gap-8 shadow-2xl">
-              {/* Specialization badges — floating on top edge, half in / half out */}
-              {(profile.profile?.archetype || specializations.length > 0) && (
-                <div className="absolute top-0 left-8 -translate-y-1/2 flex gap-2.5 flex-wrap z-10">
-                  {profile.profile?.archetype && (
-                    <ArchetypeBadge
-                      label={profile.profile.archetype}
-                      variant="archetype"
-                    />
-                  )}
-                  {specializations.map((spec) => (
-                    <ArchetypeBadge
-                      key={spec}
-                      label={spec}
-                      variant="specialization"
-                    />
-                  ))}
-                </div>
+      {/* ── RIGHT COLUMN: Main profile card ── */}
+      <div className="flex-1 w-full lg:pt-16">
+        <section className="relative rounded-[32px] border border-[#004545] bg-[#003737] p-8 flex flex-col gap-8 shadow-2xl">
+          {/* Specialization badges — floating on top edge, half in / half out */}
+          {(profile.profile?.archetype || specializations.length > 0) && (
+            <div className="absolute top-0 left-8 -translate-y-1/2 flex gap-2.5 flex-wrap z-10">
+              {profile.profile?.archetype && (
+                <span className="px-4 py-2 rounded-xl bg-[#002121] text-[#FFD700] text-[10px] font-black uppercase tracking-[0.25em] border border-[#FFD700]/20 shadow-xl">
+                  {profile.profile.archetype.replace(/-/g, " ")}
+                </span>
               )}
+              {specializations.map((spec) => (
+                <span key={spec} className="px-4 py-2 rounded-xl bg-[#002121] text-[#3FB5B5] text-[10px] font-black uppercase tracking-[0.25em] border border-[#007373]/20 shadow-xl">
+                  {spec.replace(/-/g, " ")}
+                </span>
+              ))}
+            </div>
+          )}
 
-              {/* GoalBar */}
-              {profile.profile?.goalTarget && (
-                <div className="w-full max-w-xl">
-                  <GoalBar goal={goal} />
-                </div>
-              )}
-
-              {/* Display Name */}
-              <h1 className="text-5xl md:text-6xl lg:text-8xl font-heading font-bold text-white tracking-tighter leading-none">
-                {safeDisplayName}
-              </h1>
-
-              {/* Bio */}
-              <div className="pt-8 border-t border-teal-700/30">
-                <p className="text-xl text-teal-100 leading-relaxed max-w-4xl mb-6">
-                  {hasBio
-                    ? profile.profile?.bio
-                    : "This creator has not added a bio yet."}
-                </p>
+          {/* Goal + TIP IT */}
+          {profile.profile?.goalTarget && (
+            <div className="flex flex-wrap items-center justify-between gap-6 pt-2">
+              <div className="w-full max-w-xl">
+                <GoalBar goal={goal} />
               </div>
-            </section>
+              <Button
+                variant="gold"
+                className="text-xs tracking-[0.2em] uppercase px-10 py-5 h-fit gap-2 min-w-[180px] shadow-2xl shadow-[#FFD700]/10"
+              >
+                <DollarSign size={16} strokeWidth={3} />
+                TIP IT
+              </Button>
+            </div>
+          )}
+
+          {/* Display Name */}
+          <h1 className="text-5xl md:text-6xl lg:text-8xl font-black text-white tracking-tighter leading-none">
+            {safeDisplayName}
+          </h1>
+
+          {/* Bio */}
+          <div className="pt-8 border-t border-[#004545]">
+            <p className="text-xl text-[#ABE1E1] leading-relaxed max-w-4xl mb-10">
+              {hasBio
+                ? profile.profile?.bio
+                : "This creator has not added a bio yet."}
+            </p>
           </div>
+        </section>
+      </div>
         </div>
       </main>
     </div>
