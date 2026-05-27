@@ -133,11 +133,11 @@ export default function Header() {
           <div className="flex-1 flex justify-end items-center">
             <div className="hidden md:block">
               {user ? (
-                <Button variant="glass" href={`/@${user.username}`} className="gap-3 px-5 tracking-wide">
-                  {user.username}
+                <Button variant="ghost" href={`/@${user.username}`} className="gap-3 px-2 tracking-wide">
+                  @{user.username}
                 </Button>
               ) : (
-                <Button variant="glass" href="/login" leftIcon={<User size={16} />} className="gap-3 px-5 tracking-wide" data-testid="desktop-login">
+                <Button variant="tertiary" href="/login" leftIcon={<User size={16} />} className="gap-3 px-5 tracking-wide" data-testid="desktop-login">
                   Log in
                 </Button>
               )}

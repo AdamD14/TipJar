@@ -86,7 +86,7 @@ primary: clsx(
     "focus-visible:ringgold-400/70 focus-visible:ring-offset-purple-300",
   ),
   secondary: clsx(
-    "text-primary text-lg",
+    "text-primary",
     "bg-[linear-gradient(180deg,#5a2b5a_0%,var(--color-purple-300)_40%,#2b0f2b_100%)]",
     "hover:bg-[linear-gradient(180deg,#7a347a_0%,var(--color-purple-300)_40%,#3a113a_100%)]",
     "active:bg-[linear-gradient(180deg,#541a54_0%,#451245_38%,#2b0f2b_100%)]",
@@ -106,7 +106,7 @@ primary: clsx(
     "focus-visible:ring-teal-400/70 focus-visible:ring-offset-teal-900",
   ),
   ghost: clsx(
-    "bg-transparent text-teal-25",
+    "bg-transparent text-teal-25 text-lg",
     "hover:bg-white/10 hover:brightness-[1.15]",
     "active:bg-white/15 active:scale-[0.98]",
   ),
@@ -121,7 +121,7 @@ primary: clsx(
     "active:opacity-70",
   ),
   glass: clsx(
-    "bg-[rgba(0,31,31,0.44)] backdrop-blur-[20px] border border-white/[0.125] text-teal-25",
+    "bg-[rgba(0,31,31,0.44)] backdrop-blur-[20px] border border-white/[0.125] text-teal-25 text-md",
     "hover:bg-[rgba(0,31,31,0.6)] hover:brightness-[1.15]",
     "active:scale-[0.98]",
   ),
@@ -159,10 +159,10 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
       fullWidth && "w-full",
 
       {
-        "relative h-10 px-4 text-semibold rounded-[8px] before:absolute before:inset-[-2px] before:content-['']":
+        "relative h-8 px-4 text-semibold rounded-[8px] before:absolute before:inset-[-2px] before:content-['']":
           size === "sm",
-"h-12 px-4 text-bold rounded-[8px]": size === "md",
-      "h-14 px-6 text-semibold rounded-[8px]": size === "lg",
+"h-10 px-4 text-bold rounded-[8px]": size === "md",
+      "h-12 px-6 text-semibold rounded-[8px]": size === "lg",
       },
 
       variantClasses[resolved],

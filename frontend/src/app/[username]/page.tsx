@@ -9,6 +9,7 @@ import Spinner from "@/components/ui/Spinner";
 import { GoalBar } from "@/components/studio/modal/GoalBar";
 import AvatarCarousel from "@/components/onboarding/AvatarCarousel";
 import Header from "@/components/landing/Header";
+import Navbar from "@/components/ui/layout/Navbar";
 import { useAuthStore } from "@/lib/store/authStore";
 
 // Types
@@ -66,6 +67,9 @@ export default function CreatorProfile() {
   const safeHandle = cleanUsername || "creator";
 
   const user = useAuthStore((state) => state.user);
+  const hydrated = useAuthStore((state) => state._hasHydrated);
+  const isLoggedIn = hydrated && !!user?.username;
+  const isOwnProfile = user?.username?.toLowerCase() === cleanUsername.toLowerCase();
 
   useEffect(() => {
     if (!cleanUsername) return;
@@ -153,14 +157,12 @@ export default function CreatorProfile() {
         </div>
       )}
 
-      {/* ═══ HEADER / NAVBAR — Landing page style ═══ */}
-      {!isPreview && <Header />}
+      {/* ═══ HEADER / NAVBAR ═══ */}
+      {isPreview ? null : isLoggedIn ? <Navbar /> : <Header />}
 
       {/* ═══ MAIN CONTENT ═══ */}
       <main
-        className={`${
-          isPreview ? "pt-20" : "pt-28"
-        } max-w-7xl mx-auto px-6 pb-20`}
+        className={`${isPreview ? "pt-20" : isLoggedIn ? "pt-14" : "pt-28"} max-w-7xl mx-auto px-6 pb-20`}
       >
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* ── LEFT COLUMN: Avatar + Link + Buttons + Stats ── */}
