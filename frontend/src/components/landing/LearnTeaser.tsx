@@ -91,7 +91,7 @@ export default function LearnTeaser() {
   return (
     <section id="learn" className="relative w-full min-h-screen">
       <img
-        src="/e.webp"
+        src="/003.webp"
         alt=""
         className="pointer-events-none absolute inset-0 -z-10 w-full h-full object-cover"
       />

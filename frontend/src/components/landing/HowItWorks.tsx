@@ -179,7 +179,7 @@ export default function HowItWorks() {
   return (
     <section id="how-it-works" className="relative w-full min-h-screen">
       <img
-        src="/how.webp"
+        src="/002.webp"
         alt=""
         className="pointer-events-none absolute inset-0 -z-10 w-full h-full object-cover"
       />

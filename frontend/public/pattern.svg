@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="bgGradC" x1="100%" y1="0%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#001717"/>
+      <stop offset="50%" stop-color="#003737"/>
+      <stop offset="100%" stop-color="#001111"/>
+    </linearGradient>
+
+    <pattern id="clinicalPattern" width="120" height="120" patternUnits="userSpaceOnUse">
+      <rect x="0" y="0" width="120" height="120" fill="none" stroke="#ABE1E1" stroke-width="0.25" opacity="0.08"/>
+      <path d="M 0 60 L 120 60 M 60 0 L 60 120" stroke="#ABE1E1" stroke-width="0.5" opacity="0.15" fill="none"/>
+      
+      <path d="M 55 60 L 55 58 M 65 60 L 65 58 M 60 55 L 58 55 M 60 65 L 58 65" stroke="#CCF7F4" stroke-width="0.75" fill="none" opacity="0.4"/>
+      <path d="M 115 60 L 115 58 M 5 60 L 5 58 M 60 115 L 58 115 M 60 5 L 58 5" stroke="#CCF7F4" stroke-width="0.75" fill="none" opacity="0.3"/>
+
+      <path d="M 15 0 L 15 45 L 45 75 L 120 75" stroke="#E0F2F2" stroke-width="0.75" fill="none" opacity="0.65"/>
+      <path d="M 0 75 L 30 75 L 45 90 L 45 120" stroke="#E0F2F2" stroke-width="0.75" fill="none" opacity="0.65"/>
+      <path d="M 45 0 L 45 15 L 60 30 L 120 30" stroke="#E0F2F2" stroke-width="0.75" fill="none" opacity="0.65"/>
+      <path d="M 0 30 L 15 30 L 15 0" stroke="#E0F2F2" stroke-width="0.75" fill="none" opacity="0.65"/>
+      <path d="M 120 20 L 105 20 L 90 35 L 90 85 L 105 100 L 120 100" stroke="#E0F2F2" stroke-width="0.5" fill="none" opacity="0.4"/>
+      <path d="M 0 20 L 5 20 Q 15 20, 15 35 L 15 45" stroke="#E0F2F2" stroke-width="0.5" fill="none" opacity="0.4"/>
+      <path d="M 0 100 L 5 100 Q 15 100, 15 85 L 15 75" stroke="#E0F2F2" stroke-width="0.5" fill="none" opacity="0.4"/>
+
+      <circle cx="15" cy="45" r="1.5" fill="#CCF7F4" stroke="#001717" stroke-width="0.5"/>
+      <circle cx="45" cy="75" r="1.5" fill="#CCF7F4" stroke="#001717" stroke-width="0.5"/>
+      <circle cx="45" cy="15" r="1.5" fill="#CCF7F4" stroke="#001717" stroke-width="0.5"/>
+      <circle cx="60" cy="30" r="1.5" fill="#CCF7F4" stroke="#001717" stroke-width="0.5"/>
+      <circle cx="90" cy="35" r="1.2" fill="#CCF7F4" stroke="#001717" stroke-width="0.3"/>
+      <circle cx="90" cy="85" r="1.2" fill="#CCF7F4" stroke="#001717" stroke-width="0.3"/>
+
+      <path d="M 2 8 L 2 2 L 8 2" stroke="#E0F2F2" stroke-width="0.75" fill="none" opacity="0.3"/>
+      <path d="M 118 8 L 118 2 L 112 2" stroke="#E0F2F2" stroke-width="0.75" fill="none" opacity="0.3"/>
+      <path d="M 2 112 L 2 118 L 8 118" stroke="#E0F2F2" stroke-width="0.75" fill="none" opacity="0.3"/>
+      <path d="M 118 112 L 118 118 L 112 118" stroke="#E0F2F2" stroke-width="0.75" fill="none" opacity="0.3"/>
+    </pattern>
+  </defs>
+
+  <rect width="100%" height="100%" fill="url(#bgGradC)"/>
+
+  <rect width="100%" height="100%" fill="url(#clinicalPattern)"/>
+</svg>
