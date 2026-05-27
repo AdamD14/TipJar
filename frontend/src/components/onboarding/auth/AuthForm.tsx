@@ -115,7 +115,7 @@ export default function AuthForm() {
   };
 
   return (
-    <div className="w-full max-w-md bg-teal-900/20 backdrop-blur-md border border-white/[0.05] rounded-2xl shadow-2xl p-2">
+    <div className="w-full max-w-md bg-surface-base backdrop-blur-md border border-white/[0.05] rounded-2xl shadow-2xl p-2">
       <div className="flex justify-center mb-6">
         <div className="bg-gradient-to-r from-teal-500 to-purple-500 text-text-ds-primary px-4 py-2 rounded-xl font-heading font-bold text-xl shadow-lg flex items-center gap-3">
           <Image
@@ -200,7 +200,7 @@ export default function AuthForm() {
               Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-400 w-5 h-5 pointer-events-none" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-400 w-5 h-5 pointer-events-none z-20" />
               <input
                 id="password"
                 type={showPwd ? "text" : "password"}
@@ -210,10 +210,9 @@ export default function AuthForm() {
                 {...methods.register("password")}
                 disabled={loading}
               />
-              <Button
+              <button
             type="button"
-            variant="ghost"
-            size="sm"
+            
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gold-400 hover:text-gold-300 transition-colors"
             onClick={() => setShowPwd(!showPwd)}
             aria-label={showPwd ? "Hide password" : "Show password"}
@@ -224,7 +223,7 @@ export default function AuthForm() {
             ) : (
               <Eye className="w-5 h-5" />
             )}
-          </Button>
+          </button>
             </div>
             {methods.formState.errors.password && (
               <p className="text-error-light text-sm mt-1 ml-1 font-body">
@@ -241,7 +240,7 @@ export default function AuthForm() {
               Repeat password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-400 w-5 h-5 pointer-events-none" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-400 w-5 h-5 pointer-events-none z-20" />
               <input
                 id="confirmPassword"
                 type={showPwd2 ? "text" : "password"}
@@ -251,10 +250,9 @@ export default function AuthForm() {
                 {...methods.register("confirmPassword")}
                 disabled={loading}
               />
-              <Button
+              <button
             type="button"
-            variant="ghost"
-            size="sm"
+            
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gold-400 hover:text-gold-300 transition-colors"
             onClick={() => setShowPwd2(!showPwd2)}
             aria-label={showPwd2 ? "Hide password" : "Show password"}
@@ -265,7 +263,7 @@ export default function AuthForm() {
             ) : (
               <Eye className="w-5 h-5" />
             )}
-          </Button>
+          </button>
             </div>
             {methods.formState.errors.confirmPassword && (
               <p className="text-error-light text-sm mt-1 ml-1 font-body">
@@ -305,33 +303,30 @@ export default function AuthForm() {
         <div className="relative bg-teal-900/60 px-4">or</div>
       </div>
 
-      <div className="flex flex-col gap-3">
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={() => handleSocialLogin("google")}
-          disabled={loading}
-          className="flex items-center justify-center gap-3 bg-teal-850 hover:bg-teal-700 transition-all text-text-ds-primary font-heading font-semibold rounded-lg py-3.5 text-base border border-white/[0.05] hover:border-white/[0.10] disabled:opacity-60"
-        >
-          <div className="flex items-center justify-center w-5 h-5 bg-text-ds-primary text-teal-900 rounded-full font-bold text-xs">
-            G
-          </div>
-          Continue with Google
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={() => handleSocialLogin("twitch")}
-          disabled={loading}
-          className="flex items-center justify-center gap-3 bg-purple-300/80 hover:bg-purple-300 transition-all text-text-ds-primary font-heading font-semibold rounded-lg py-3.5 text-base shadow-lg disabled:opacity-60"
-        >
-          <div className="flex items-center justify-center w-5 h-5 bg-text-ds-primary text-purple-300 rounded-sm font-bold text-xs">
-            T
-          </div>
-          Continue with Twitch
-        </Button>
-      </div>
-
+    
+     <div className="flex flex-col gap-3">
+      <Button
+    type="button"
+    variant="ghost"
+    onClick={() => handleSocialLogin("google")}
+    disabled={loading}
+    className="flex items-center justify-center gap-3 bg-teal-850 hover:bg-teal-700 transition-all text-text-ds-primary font-heading font-semibold rounded-lg py-3.5 text-base border border-white/[0.05] hover:border-white/[0.10] disabled:opacity-60"
+    leftIcon={<img src="/g_logo.svg" className="w-5 h-5" alt="Google" />}
+  >
+    Continue with Google
+  </Button>
+  
+  <Button
+    type="button"
+    variant="ghost"
+    onClick={() => handleSocialLogin("twitch")}
+    disabled={loading}
+    className="flex items-center justify-center gap-3 bg-purple-300 hover:bg-purple-200 transition-all text-text-ds-primary font-heading font-semibold rounded-lg py-3.5 text-base border border-white/[0.05] hover:border-white/[0.10] disabled:opacity-60"
+    leftIcon={<img src="/t_logo.svg" className="w-5 h-5" alt="Twitch" />}
+  >
+    Continue with Twitch
+  </Button>
+</div>
       <div className="text-center text-xs mt-4 text-text-ds-tertiary font-body">
         <Button
           type="button"

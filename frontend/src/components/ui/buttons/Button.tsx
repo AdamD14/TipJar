@@ -77,18 +77,16 @@ const LEGACY_VARIANT_MAP: Partial<Record<Variant, Variant>> = {
 };
 
 const variantClasses = {
-  primary: clsx(
-    "text-black",
-    "bg-[linear-gradient(180deg,#FFE658_0%,#FFD700_40%,#B38F00_100%)]",
-    "hover:bg-[linear-gradient(180deg,#FFF085_0%,#FFE331_40%,#C19A00_100%)]",
-    "active:bg-[linear-gradient(180deg,#E6C200_0%,#E0B700_38%,#A07600_100%)]",
-    "shadow-[0_10px_24px_rgba(0,0,0,0.35)] ring-1 ring-black/10",
-    "hover:shadow-[0_12px_32px_rgba(0,0,0,0.4)] hover:brightness-[1.15]",
-    "active:translate-y-px active:shadow-[0_6px_16px_rgba(0,0,0,0.3)]",
-    "focus-visible:ring-gold-400/70 focus-visible:ring-offset-purple-300",
+primary: clsx(
+    "text-teal-900 text-xl", // Ciemny tekst dla kontrastu
+    "bg-[linear-gradient(115deg,#f88008_0%,#f8B000_60%,#ffd700_100%)]", // Trzy kolory pod kątem 225 stopni
+    "shadow-[-1px_1px_1px_#c0660d,1px_-1px_1px_#ff9a13]", // Cienie z generatora
+    "hover:brightness-130", 
+    "active:scale-[0.97] active:translate-y-0.5 active:shadow-[inset_4px_4px_8px_rgba(0,0,0,0.4)]", // Wgłębienie przy kliknięciu (bez bieli)
+    "focus-visible:ringgold-400/70 focus-visible:ring-offset-purple-300",
   ),
   secondary: clsx(
-    "text-white",
+    "text-primary",
     "bg-[linear-gradient(180deg,#5a2b5a_0%,var(--color-purple-300)_40%,#2b0f2b_100%)]",
     "hover:bg-[linear-gradient(180deg,#7a347a_0%,var(--color-purple-300)_40%,#3a113a_100%)]",
     "active:bg-[linear-gradient(180deg,#541a54_0%,#451245_38%,#2b0f2b_100%)]",
