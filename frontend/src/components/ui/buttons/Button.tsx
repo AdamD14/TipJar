@@ -86,7 +86,7 @@ primary: clsx(
     "focus-visible:ringgold-400/70 focus-visible:ring-offset-purple-300",
   ),
   secondary: clsx(
-    "text-primary",
+    "text-primary text-lg",
     "bg-[linear-gradient(180deg,#5a2b5a_0%,var(--color-purple-300)_40%,#2b0f2b_100%)]",
     "hover:bg-[linear-gradient(180deg,#7a347a_0%,var(--color-purple-300)_40%,#3a113a_100%)]",
     "active:bg-[linear-gradient(180deg,#541a54_0%,#451245_38%,#2b0f2b_100%)]",
@@ -134,7 +134,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
   (
     {
       variant = "primary",
-      size = "md",
+      size = "lg",
       fullWidth = false,
       leftIcon,
       rightIcon,
@@ -159,10 +159,10 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
       fullWidth && "w-full",
 
       {
-        "relative h-10 px-4 text-[14px] rounded-[8px] before:absolute before:inset-[-2px] before:content-['']":
+        "relative h-10 px-4 text-semibold rounded-[8px] before:absolute before:inset-[-2px] before:content-['']":
           size === "sm",
-"h-12 px-6 text-base rounded-[8px]": size === "md",
-      "h-14 px-8 text-[18px] rounded-[8px]": size === "lg",
+"h-12 px-4 text-bold rounded-[8px]": size === "md",
+      "h-14 px-6 text-semibold rounded-[8px]": size === "lg",
       },
 
       variantClasses[resolved],

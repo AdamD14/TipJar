@@ -39,13 +39,13 @@ export default function Hero() {
               - simply anyone creating valuable content.
             </p>
 
-            {/* ODSTĘP OD TEKSTU DO BADGE: mt-12 lg:mt-16 */}
-            <div className="mt-12 lg:mt-16 flex flex-wrap items-center gap-3 text-sm lg:text-base text-text-ds-tertiary">
+            {/* RZĄD BADGE 1 (Zmniejszony odstęp od tekstu: mt-10 lg:mt-12) */}
+            <div className="mt-10 lg:mt-12 flex flex-wrap items-center gap-3 text-sm lg:text-base text-text-ds-tertiary">
               <a
                 href="https://circle.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 lg:px-4 lg:py-1.5 ring-1 ring-white/10 hover:ring-white/20 transition-colors"
+                className="inline-flex items-center gap-2 rounded-md bg-teal-25/15 px-3 py-1 lg:px-4 lg:py-1.5 ring-1 ring-teal-50/40 hover:ring-teal-100 transition-colors"
               >
                 <Image
                   src="/circle.webp"
@@ -59,7 +59,7 @@ export default function Hero() {
                 <span className="font-heading font-semibold">circle.com</span>
               </a>
 
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 lg:px-4 lg:py-1.5 ring-1 ring-white/10">
+              <span className="inline-flex items-center gap-2 rounded-md bg-teal-25/15 px-3 py-1 lg:px-4 lg:py-1.5 ring-1 ring-teal-50/40 hover:ring-teal-100 transition-colors">
                 <Image
                   src="/sm.webp"
                   alt="Smart contract"
@@ -72,10 +72,11 @@ export default function Hero() {
               </span>
             </div>
 
+            {/* RZĄD BADGE 2 */}
             <div className="mt-3 flex flex-wrap items-center gap-3 text-sm lg:text-base text-text-ds-tertiary">
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 lg:px-4 lg:py-1.5 ring-1 ring-white/10">
+              <span className="inline-flex items-center gap-2 rounded-md bg-teal-25/15 px-3 py-1 lg:px-4 lg:py-1.5 ring-1 ring-teal-50/40 hover:ring-teal-100 transition-colors">
                 <Image
-                  src="/usdc.webp"
+                  src="/usdc2.webp"
                   alt="USDC"
                   width={16}
                   height={16}
@@ -85,7 +86,7 @@ export default function Hero() {
                 Global USDC payments
               </span>
 
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 lg:px-4 lg:py-1.5 ring-1 ring-white/10">
+              <span className="inline-flex items-center gap-2 rounded-md bg-teal-25/15 px-3 py-1 lg:px-4 lg:py-1.5 ring-1 ring-teal-50/40 hover:ring-teal-100 transition-colors">
                 <Image
                   src="/logo.webp"
                   alt="TipJar"
@@ -99,8 +100,8 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* ODSTĘP OD BADGE DO BUTTONÓW: Dokładnie taki sam (mt-12 lg:mt-16) */}
-          <div className="mt-12 lg:mt-16 flex w-full items-center justify-center gap-3 lg:gap-6">
+          {/* PRZYCISKI (Wycentrowane, odstęp mt-12 lg:mt-16 od dołu badgów zostaje dla oddechu) */}
+          <div className="mt-12 lg:mt-16 flex w-full items-center justify-center gap-3 lg:gap-4">
             <Button variant="primary" size="lg" href="/register?role=CREATOR">
               Begin as a Creator
             </Button>
