@@ -126,7 +126,7 @@ export default function CreatorProfile() {
               </span>
             </div>
             <Link
-              href={`/@${safeHandle}/creator/dashboard`}
+              href={`/@${safeHandle}/creator/creator-deskop`}
               className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-white font-bold text-sm uppercase tracking-wider transition-all"
             >
               <ArrowLeft size={16} />
@@ -242,7 +242,7 @@ export default function CreatorProfile() {
                 <GoalBar goal={goal} />
               </div>
               <Button
-                variant="gold"
+                variant="primary"
                 className="text-xs tracking-[0.2em] uppercase px-10 py-5 h-fit gap-2 min-w-[180px] shadow-2xl shadow-[#FFD700]/10"
               >
                 <DollarSign size={16} strokeWidth={3} />

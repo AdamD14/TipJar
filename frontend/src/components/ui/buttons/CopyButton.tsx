@@ -1,20 +1,43 @@
 "use client";
-import { useState } from 'react';
 
-export default function CopyButton({ value, label = 'Copy', copiedLabel = 'Copied', className = '' }: { value: string; label?: string; copiedLabel?: string; className?: string }) {
+import { useState } from "react";
+import Button from "@/components/ui/buttons/Button";
+
+interface CopyButtonProps {
+  value: string;
+  label?: string;
+  copiedLabel?: string;
+  className?: string;
+}
+
+export default function CopyButton({
+  value,
+  label = "Copy",
+  copiedLabel = "Copied",
+  className = "",
+}: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
+
   const onCopy = async () => {
     try {
       await navigator.clipboard.writeText(value);
       setCopied(true);
       setTimeout(() => setCopied(false), 1200);
-    } catch {}
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
   };
+
   return (
-    <button onClick={onCopy} className={`px-3 py-2 rounded-lg border border-white/15 text-sm ${className}`}
-            aria-live="polite" aria-label={copied ? copiedLabel : label}>
+    <Button
+      variant="glass"
+      size="sm"
+      onClick={onCopy}
+      className={className}
+      aria-live="polite"
+      aria-label={copied ? copiedLabel : label}
+    >
       {copied ? copiedLabel : label}
-    </button>
+    </Button>
   );
 }
-
