@@ -111,25 +111,64 @@ export default function CreatorProfile() {
   };
 
   // Build badge list: archetype + specializations
-  const specializations: string[] = profile.profile?.specializations ?? [];
+  const specializations: string[] = profile.profile?.industry
+    ? profile.profile.industry.split(",").map((s) => s.trim())
+    : [];
 
   return (
     <div className="min-h-screen bg-gradient-main text-white selection:bg-teal-600/30">
       {/* ═══ PREVIEW BANNER ═══ */}
       {isPreview && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-teal-600 via-teal-500 to-teal-600 shadow-lg">
-          <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-              <span className="text-sm font-bold text-white uppercase tracking-widest">
-                🎉 Profile Preview — This is how others see your page!
+        <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-teal-700 via-teal-600 to-teal-700 shadow-lg border-b border-teal-500/20">
+          <div className="max-w-7xl mx-auto px-6 py-2.5 flex flex-wrap gap-4 items-center justify-between">
+            <div className="flex flex-wrap items-center gap-4">
+              <span className="text-sm font-bold text-white tracking-wide">
+                Your profile is live! Share your link
               </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={copyProfileLink}
+                  className="inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg text-white font-semibold text-xs tracking-wider transition-all"
+                >
+                  {copied ? (
+                    <>
+                      <Check size={12} className="text-green-400" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy size={12} />
+                      Copy link
+                    </>
+                  )}
+                </button>
+                <button
+                  onClick={async () => {
+                    if (navigator.share) {
+                      try {
+                        await navigator.share({
+                          title: safeDisplayName,
+                          url: `https://tipjar.plus/@${safeHandle}`,
+                        });
+                      } catch (err) {
+                        copyProfileLink();
+                      }
+                    } else {
+                      copyProfileLink();
+                    }
+                  }}
+                  className="inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg text-white font-semibold text-xs tracking-wider transition-all"
+                >
+                  <Share2 size={12} />
+                  Share
+                </button>
+              </div>
             </div>
             <Link
-              href={`/@${safeHandle}/creator/creator-deskop`}
-              className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-white font-bold text-sm uppercase tracking-wider transition-all"
+              href={`/@${safeHandle}/creator-desktop/desktop`}
+              className="inline-flex items-center gap-1.5 bg-purple-300/40 hover:bg-purple-300/60 px-4 py-2 rounded-lg text-white font-bold text-xs uppercase tracking-wider transition-all border border-purple-300/30"
             >
-              <ArrowLeft size={16} />
+              <ArrowLeft size={14} />
               Back to Studio
             </Link>
           </div>
@@ -160,18 +199,18 @@ export default function CreatorProfile() {
             <div className="mt-4 flex flex-col items-center w-full">
               <button
                 onClick={copyProfileLink}
-                className="text-xs font-bold text-teal-100 hover:text-gold-400 transition-all flex items-center gap-2 group"
+                className="text-sm md:text-base font-bold text-teal-100 hover:text-purple-300 transition-all flex items-center gap-2 group"
               >
                 <span className="text-teal-600 group-hover:text-teal-300 transition-colors">
                   tipjar.plus/
                 </span>
                 <span>@{safeHandle}</span>
                 {copied ? (
-                  <Check size={12} className="text-green-400" />
+                  <Check size={14} className="text-green-400" />
                 ) : (
                   <Copy
-                    size={12}
-                    className="text-teal-600 group-hover:text-gold-400 transition-colors"
+                    size={14}
+                    className="text-teal-600 group-hover:text-purple-300 transition-colors"
                   />
                 )}
               </button>
@@ -179,17 +218,19 @@ export default function CreatorProfile() {
               {/* Action buttons */}
               <div className="w-full grid grid-cols-2 gap-3 mt-6">
                 <Button
-                  variant="glass"
-                  className="text-[10px] tracking-widest uppercase"
+                  variant="secondary"
+                  size="md"
+                  className="text-xs font-bold tracking-widest uppercase shadow-lg shadow-purple-500/10"
                 >
                   Follow
                 </Button>
                 <Button
                   variant="glass"
+                  size="md"
                   onClick={copyProfileLink}
-                  className="text-[10px] tracking-widest uppercase gap-1.5"
+                  className="text-xs font-bold tracking-widest uppercase gap-1.5 border-teal-500/30 bg-teal-950/60 text-white hover:bg-teal-800/80 hover:border-teal-400/50 shadow-lg transition-all"
                 >
-                  <Share2 size={12} />
+                  <Share2 size={14} />
                   Share
                 </Button>
               </div>
@@ -242,8 +283,8 @@ export default function CreatorProfile() {
                 <GoalBar goal={goal} />
               </div>
               <Button
-                variant="primary"
-                className="text-xs tracking-[0.2em] uppercase px-10 py-5 h-fit gap-2 min-w-[180px] shadow-2xl shadow-[#FFD700]/10"
+                variant="secondary"
+                className="text-xs tracking-[0.2em] uppercase px-10 py-5 h-fit gap-2 min-w-[180px] shadow-2xl shadow-purple-500/10"
               >
                 <DollarSign size={16} strokeWidth={3} />
                 TIP IT
