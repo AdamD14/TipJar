@@ -41,8 +41,13 @@ const SOCIAL_LINKS: { label: string; href: string; icon: React.ComponentType<{ s
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/5 bg-surface-app">
-      <div className="mx-auto max-w-[1280px] px-4 py-12 md:py-16">
+    <footer className="relative border-t border-white/5 bg-surface-app/85 backdrop-blur-sm overflow-hidden">
+      <img
+        src="/015.webp"
+        alt=""
+        className="pointer-events-none absolute inset-0 -z-10 w-full max-w-[1920px] aspect-video mx-auto object-cover"
+      />
+      <div className="relative z-10 mx-auto max-w-[1280px] px-4 py-12 md:py-16">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           {/* Brand column */}
           <div>

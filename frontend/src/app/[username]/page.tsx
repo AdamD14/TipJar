@@ -165,11 +165,11 @@ export default function CreatorProfile() {
               </div>
             </div>
             <Link
-              href={`/@${safeHandle}/creator-desktop/desktop`}
+              href={`/${username}/creator-desktop`}
               className="inline-flex items-center gap-1.5 bg-purple-300/40 hover:bg-purple-300/60 px-4 py-2 rounded-lg text-white font-bold text-xs uppercase tracking-wider transition-all border border-purple-300/30"
             >
               <ArrowLeft size={14} />
-              Back to Studio
+              Back to Creator-Desktop
             </Link>
           </div>
         </div>

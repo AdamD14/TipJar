@@ -181,14 +181,19 @@ export default function HowItWorks() {
       <img
         src="/002.webp"
         alt=""
-        className="pointer-events-none absolute inset-0 -z-10 w-full h-full object-cover"
+        className="pointer-events-none absolute inset-0 -z-10 w-full max-w-[1920px] aspect-video mx-auto object-cover"
       />
 
       <div className="relative z-10 w-full min-h-screen py-20 px-4 md:px-8">
         <div className="w-full h-full flex flex-col justify-center gap-10 md:gap-16 lg:gap-20">
-          <h2 className="text-center font-heading text-2xl lg:text-3xl text-text-ds-quaternary font-semibold">
-            how it works ?
-          </h2>
+          <div className="text-center">
+            <h2 className="font-heading font-bold text-4xl sm:text-5xl lg:text-6xl text-text-ds-primary">
+              How It{" "}
+              <span className="bg-gradient-to-r from-gold-200 via-gold-400 to-gold-200 bg-clip-text text-transparent">
+                Works?
+              </span>
+            </h2>
+          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 lg:gap-24">
             {/* For Fans */}
@@ -221,36 +226,32 @@ export default function HowItWorks() {
           </div>
 
           {/* Navigation arrows */}
-          <div className="w-full mt-6 flex items-center justify-between">
-            <Button
+          <div className="w-full mt-12 flex items-center justify-between relative z-20">
+            <button
               type="button"
-              variant="ghost"
-              size="sm"
-              aria-label="Back to top"
-              title="Back to top"
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="h-12 w-12 rounded-full border border-text-ds-tertiary/60 text-text-ds-tertiary hover:brightness-[1.15] hover:bg-white/10"
+              onClick={() => document.getElementById("why")?.scrollIntoView({ behavior: "smooth" })}
+              aria-label="Previous section"
+              title="Previous section"
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-text-ds-tertiary/60 text-text-ds-tertiary hover:brightness-[1.15] hover:bg-white/10 transition-all"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M12 19V5" />
                 <path d="M5 12l7-7 7 7" />
               </svg>
-            </Button>
+            </button>
 
-            <Button
+            <button
               type="button"
-              variant="ghost"
-              size="sm"
+              onClick={() => document.getElementById("studio")?.scrollIntoView({ behavior: "smooth" })}
               aria-label="Scroll to next section"
               title="See more"
-              onClick={() => document.getElementById("explore")?.scrollIntoView({ behavior: "smooth" })}
-              className="h-12 w-12 rounded-full border border-text-ds-tertiary/60 text-text-ds-tertiary hover:brightness-[1.15] hover:bg-white/10"
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-text-ds-tertiary/60 text-text-ds-tertiary hover:brightness-[1.15] hover:bg-white/10 transition-all"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M12 5v14" />
                 <path d="M19 12l-7 7-7-7" />
               </svg>
-            </Button>
+            </button>
           </div>
         </div>
       </div>

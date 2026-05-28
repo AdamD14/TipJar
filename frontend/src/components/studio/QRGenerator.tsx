@@ -54,7 +54,7 @@ export default function QRGenerator() {
         </div>
       </div>
 
-      <Button variant="primary" fullWidth onClick={handleGenerate}>
+      <Button variant="tertiary" fullWidth onClick={handleGenerate}>
         Generate
       </Button>
 

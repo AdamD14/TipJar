@@ -6,8 +6,8 @@ import { useOnboardingStore } from "@/lib/store/onboardingStore";
 import AvatarUploader from "@/components/onboarding/AvatarUploader";
 import Card from "@/components/ui/forms/Card";
 import Button from "@/components/ui/buttons/Button";
-
 import { supabase } from "@/lib/supabase";
+import { Sparkles, User } from "lucide-react";
 
 export default function FanOnboardingStep1() {
   const router = useRouter();
@@ -35,62 +35,88 @@ export default function FanOnboardingStep1() {
 
   const handleNext = () => {
     if (!data.displayName?.trim()) {
-      setError("Podaj swoją nazwę wyświetlaną.");
+      setError("Please enter your display name.");
       return;
     }
     router.push("/onboarding/fan/step-2");
   };
 
   return (
-    <div className="max-w-xl mx-auto w-full space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="space-y-2 text-center">
-        <h1 className="text-3xl font-bold font-header bg-gradient-to-r from-[#FFD700] to-[#f9c513] bg-clip-text text-transparent">
-          Witaj, Fan!
-        </h1>
-        <p className="text-gray-400">
-          Ustaw swój awatar i nazwę, aby twórcy Cię rozpoznali.
-        </p>
-      </div>
-
-      <Card>
-        <div className="p-8 space-y-8">
-          <div className="flex flex-col items-center gap-6">
-            <AvatarUploader
-              onUploadCompleteAction={(urls) => {
-                if (urls[0]) setAvatar(urls[0]);
-              }}
-              maxSlots={1}
-              authToken={sessionData?.token ?? null}
-              userId={sessionData?.userId ?? ""}
-            />
-
-            <div className="w-full space-y-2">
-              <label className="text-sm font-medium text-gray-300">
-                Nazwa wyświetlana
-              </label>
-              <input
-                type="text"
-                value={data.displayName || ""}
-                onChange={(e) => {
-                  setDisplayName(e.target.value);
-                  setError(null);
-                }}
-                className="w-full px-4 py-3 bg-[#0F1E1E] border border-[#004d4d] rounded-lg focus:outline-none focus:border-[#FFD700] text-white placeholder-gray-600 transition-colors"
-                placeholder="Np. Jan Kowalski"
-              />
-              {error && <p className="text-red-400 text-sm">{error}</p>}
-            </div>
+    <div className="min-h-screen bg-gradient-main flex flex-col justify-center items-center px-4 py-12 selection:bg-teal-600/30">
+      <div className="max-w-md w-full space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        
+        {/* Step Indicator Header */}
+        <div className="flex flex-col items-center text-center space-y-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 text-[10px] font-black uppercase tracking-[0.2em] text-teal-400">
+            <Sparkles size={10} className="animate-pulse" />
+            Step 1 of 2
           </div>
-
-          <Button
-            onClick={handleNext}
-            className="w-full py-6 text-lg font-bold shadow-[0_0_20px_rgba(255,215,0,0.1)] hover:shadow-[0_0_30px_rgba(255,215,0,0.2)]"
-            variant="primary"
-          >
-            Dalej
-          </Button>
+          <h1 className="text-4xl font-black font-header bg-gradient-to-r from-teal-100 via-white to-teal-200 bg-clip-text text-transparent tracking-tight leading-tight">
+            Welcome to TipJar
+          </h1>
+          <p className="text-sm text-[#ABE1E1]/70 leading-relaxed max-w-sm">
+            Set up your identity so your favorite creators can recognize and thank you.
+          </p>
         </div>
-      </Card>
+
+        <Card className="border border-[#004545] bg-[#002424]/60 backdrop-blur-xl rounded-3xl shadow-2xl p-6 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-teal-400/30 to-transparent" />
+          
+          <div className="space-y-6">
+            <div className="flex flex-col items-center gap-6">
+              
+              {/* Avatar Upload Container */}
+              <div className="relative group">
+                <AvatarUploader
+                  onUploadCompleteAction={(urls) => {
+                    if (urls[0]) setAvatar(urls[0]);
+                  }}
+                  maxSlots={1}
+                  authToken={sessionData?.token ?? null}
+                  userId={sessionData?.userId ?? ""}
+                />
+              </div>
+
+              {/* Display Name Input */}
+              <div className="w-full space-y-2">
+                <label className="text-xs font-black uppercase tracking-wider text-teal-400">
+                  Your Display Name
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-teal-600">
+                    <User size={16} />
+                  </div>
+                  <input
+                    type="text"
+                    value={data.displayName || ""}
+                    onChange={(e) => {
+                      setDisplayName(e.target.value);
+                      setError(null);
+                    }}
+                    className="w-full pl-10 pr-4 py-3 bg-black/40 border border-teal-500/20 rounded-xl focus:outline-none focus:border-teal-400 text-white placeholder-teal-800/40 text-sm transition-all shadow-inner"
+                    placeholder="e.g., Alex Carter"
+                  />
+                </div>
+                {error && (
+                  <p className="text-red-400 text-xs font-bold mt-1.5 animate-pulse flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                    {error}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Next Button */}
+            <Button
+              onClick={handleNext}
+              className="w-full py-4 text-xs font-black uppercase tracking-widest bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-teal-950 transition-all rounded-xl shadow-lg shadow-teal-500/10 mt-2"
+              variant="primary"
+            >
+              Continue to Interests
+            </Button>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }

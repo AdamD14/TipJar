@@ -19,7 +19,7 @@ export default function ExampleProfile() {
   };
 
   return (
-    <div className="relative bg-surface-modal rounded-3xl p-8 w-full max-w-md border border-gold-400/20">
+    <div className="relative bg-surface-modal rounded-3xl p-8 w-full max-w-md border border-teal-500/20">
       {/* AvatarCarousel */}
       <div className="w-full h-[280px] mb-4">
         <AvatarCarousel
@@ -63,7 +63,7 @@ export default function ExampleProfile() {
           onChange={(e) => setTipAmount(Number(e.target.value))}
           className="w-full h-2 bg-surface-elevated rounded-lg appearance-none cursor-pointer slider"
           style={{
-            background: `linear-gradient(to right, var(--color-gold-400) 0%, var(--color-gold-400) ${tipAmount}%, #374151 ${tipAmount}%, #374151 100%)`
+            background: `linear-gradient(to right, var(--color-teal-300) 0%, var(--color-teal-300) ${tipAmount}%, #374151 ${tipAmount}%, #374151 100%)`
           }}
         />
         <style jsx>{`
@@ -72,14 +72,14 @@ export default function ExampleProfile() {
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            background: var(--color-gold-400);
+            background: var(--color-teal-300);
             cursor: pointer;
           }
           .slider::-moz-range-thumb {
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            background: var(--color-gold-400);
+            background: var(--color-teal-300);
             cursor: pointer;
             border: none;
           }
@@ -90,7 +90,7 @@ export default function ExampleProfile() {
         {TIP_PRESETS.map((amount) => (
           <Button
             key={amount}
-            variant={tipAmount === amount ? 'primary' : 'ghost'}
+            variant={tipAmount === amount ? 'tertiary' : 'ghost'}
             fullWidth
             onClick={() => setTipAmount(amount)}
             className={tipAmount !== amount ? 'bg-surface-elevated border border-white/10 hover:bg-teal-700' : ''}
@@ -100,7 +100,7 @@ export default function ExampleProfile() {
         ))}
       </div>
 
-      <Button variant="primary" fullWidth size="lg" className="text-lg">
+      <Button variant="tertiary" fullWidth size="lg" className="text-lg">
         Tip ${tipAmount}.00
         <Image
           src="/assets/logo_usdc_1.png"

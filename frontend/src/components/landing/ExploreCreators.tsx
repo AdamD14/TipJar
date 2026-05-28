@@ -147,29 +147,20 @@ export default function ExploreCreators() {
       <img
         src="/008.webp"
         alt=""
-        className="pointer-events-none absolute inset-0 -z-10 w-full h-full object-cover"
+        className="pointer-events-none absolute inset-0 -z-10 w-full max-w-[1920px] aspect-video mx-auto object-cover"
       />
 
       <div className="mx-auto max-w-[1600px] px-4 md:px-8 py-20 md:py-28">
-        <div className="mb-8 flex items-end justify-between gap-4">
-          <div>
-            <h2 className="text-[length:var(--fs-h1)] font-heading font-bold text-text-ds-primary">
-              Explore{" "}
-              <span className="bg-gradient-to-r from-gold-200 via-gold-400 to-gold-200 bg-clip-text text-transparent">
-                Creators
-              </span>
-            </h2>
-            <p className="mt-2 text-lg text-text-ds-tertiary font-body">
-              Featured by category. Find your next favorite.
-            </p>
-          </div>
-          <Button
-            variant="link"
-            href="/explore"
-            className="hidden sm:inline-flex shrink-0"
-          >
-            Discover all
-          </Button>
+        <div className="mb-10 text-center flex flex-col items-center justify-center gap-2">
+          <h2 className="font-heading font-bold text-4xl sm:text-5xl lg:text-6xl text-text-ds-primary">
+            Explore{" "}
+            <span className="bg-gradient-to-r from-gold-200 via-gold-400 to-gold-200 bg-clip-text text-transparent">
+              Creators
+            </span>
+          </h2>
+          <p className="text-lg text-text-ds-tertiary font-body">
+            Featured by category. Find your next favorite.
+          </p>
         </div>
 
         <div className="mb-6">
@@ -215,10 +206,40 @@ export default function ExploreCreators() {
         </div>
 
         <div className="flex justify-center">
-          <Button variant="secondary" href="/explore" className="gap-2">
+          <Button variant="ghost" href="/discover" className="gap-2">
             Explore all creators
           </Button>
         </div>
+
+        {/* Navigation arrows */}
+        <div className="w-full mt-12 flex items-center justify-between relative z-20">
+          <button
+            type="button"
+            onClick={() => document.getElementById("studio")?.scrollIntoView({ behavior: "smooth" })}
+            aria-label="Previous section"
+            title="Previous section"
+            className="flex h-12 w-12 items-center justify-center rounded-full border border-text-ds-tertiary/60 text-text-ds-tertiary hover:brightness-[1.15] hover:bg-white/10 transition-all"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 19V5" />
+              <path d="M5 12l7-7 7 7" />
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => document.getElementById("learn")?.scrollIntoView({ behavior: "smooth" })}
+            aria-label="Scroll to next section"
+            title="See more"
+            className="flex h-12 w-12 items-center justify-center rounded-full border border-text-ds-tertiary/60 text-text-ds-tertiary hover:brightness-[1.15] hover:bg-white/10 transition-all"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 5v14" />
+              <path d="M19 12l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+
       </div>
     </section>
   );

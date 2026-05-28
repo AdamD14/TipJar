@@ -70,7 +70,7 @@ export default function AuthForm() {
       const completed = Boolean(response.user.hasCompletedOnboarding);
       const target = hasUsername && completed
         ? nextRole === "FAN"
-          ? `/@${response.user.username}/fan/dashboard`
+          ? `/@${response.user.username}/fan-desktop/explore`
           : `/@${response.user.username}/creator/dashboard`
         : "/choose-username";
 

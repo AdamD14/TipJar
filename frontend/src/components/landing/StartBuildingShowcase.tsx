@@ -30,9 +30,9 @@ function FeatureCard({
 }) {
   return (
     <Card interactive variant="elevated" noPadding className="flex flex-col">
-      <div className="h-[2px] w-full bg-gradient-to-r from-gold-400 to-teal-600 rounded-t-xl" />
+      <div className="h-[2px] w-full bg-gradient-to-r from-teal-400 to-teal-600 rounded-t-xl" />
       <div className="p-5 flex flex-col flex-1">
-        <span className="inline-flex self-start items-center rounded-full border border-gold-400 bg-gold-400/10 px-2.5 py-0.5 text-[11px] font-heading font-semibold text-gold-400 mb-3">
+        <span className="inline-flex self-start items-center rounded-full border border-teal-500/40 bg-teal-500/10 px-2.5 py-0.5 text-[11px] font-heading font-semibold text-teal-300 mb-3">
           {label}
         </span>
         <p className="text-xs text-text-ds-tertiary font-body mb-4">
@@ -54,15 +54,15 @@ export default function StartBuildingShowcase() {
       <img
         src="/027.webp"
         alt=""
-        className="pointer-events-none absolute inset-0 -z-10 w-full h-full object-cover"
+        className="pointer-events-none absolute inset-0 -z-10 w-full max-w-[1920px] aspect-video mx-auto object-cover"
       />
 
       <div className="relative z-10 mx-auto max-w-[1600px] px-4 md:px-8 py-20 md:py-28">
-        <div className="mb-10">
-          <h2 className="text-[length:var(--fs-h1)] font-heading font-bold text-text-ds-primary">
-            Start{" "}
+        <div className="mb-10 text-center">
+          <h2 className="font-heading font-bold text-4xl sm:text-5xl lg:text-6xl text-text-ds-primary">
+            Creator{" "}
             <span className="bg-gradient-to-r from-gold-200 via-gold-400 to-gold-200 bg-clip-text text-transparent">
-              Building
+              Showcase
             </span>
           </h2>
           <p className="mt-2 text-lg text-text-ds-tertiary font-body">
@@ -108,7 +108,7 @@ export default function StartBuildingShowcase() {
                   onSelect={setActiveTip}
                 />
                 <div className="text-center">
-                  <span className="text-2xl font-heading font-bold text-gold-400 tnum">
+                  <span className="text-2xl font-heading font-bold text-teal-300 tnum">
                     ${activeTip}
                   </span>
                   <span className="text-sm text-text-ds-tertiary font-body ml-1">
@@ -120,12 +120,35 @@ export default function StartBuildingShowcase() {
           </div>
         </div>
 
-        <div className="mt-12 flex justify-center">
-          <Button variant="primary" href="/studio" size="lg" className="gap-2">
-            Open Studio
-            <ArrowRight size={18} />
-          </Button>
+        {/* Navigation arrows */}
+        <div className="w-full mt-12 flex items-center justify-between relative z-20">
+          <button
+            type="button"
+            onClick={() => document.getElementById("how")?.scrollIntoView({ behavior: "smooth" })}
+            aria-label="Previous section"
+            title="Previous section"
+            className="flex h-12 w-12 items-center justify-center rounded-full border border-text-ds-tertiary/60 text-text-ds-tertiary hover:brightness-[1.15] hover:bg-white/10 transition-all"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 19V5" />
+              <path d="M5 12l7-7 7 7" />
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => document.getElementById("explore")?.scrollIntoView({ behavior: "smooth" })}
+            aria-label="Scroll to next section"
+            title="See more"
+            className="flex h-12 w-12 items-center justify-center rounded-full border border-text-ds-tertiary/60 text-text-ds-tertiary hover:brightness-[1.15] hover:bg-white/10 transition-all"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 5v14" />
+              <path d="M19 12l-7 7-7-7" />
+            </svg>
+          </button>
         </div>
+
       </div>
     </section>
   );

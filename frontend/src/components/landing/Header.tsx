@@ -137,7 +137,7 @@ export default function Header() {
                   @{user.username}
                 </Button>
               ) : (
-                <Button variant="tertiary" href="/login" leftIcon={<User size={16} />} className="gap-3 px-5 tracking-wide" data-testid="desktop-login">
+                <Button variant="tertiary" href="/login" size="md" leftIcon={<User size={16} />} className="gap-2 px-4 text-lg tracking-wide" data-testid="desktop-login">
                   Log in
                 </Button>
               )}

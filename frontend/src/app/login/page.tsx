@@ -68,7 +68,7 @@ export default function Page() {
         hasUsername && onboardingDone
           ? normalizedRole === "CREATOR"
             ? `/@${user?.username}/creator/dashboard`
-            : `/@${user?.username}/fan/dashboard`
+            : `/@${user?.username}/fan-desktop/explore`
           : "/choose-username";
       const returnTo = params?.get("returnTo");
       if (

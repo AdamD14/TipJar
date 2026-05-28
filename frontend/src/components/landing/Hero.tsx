@@ -12,7 +12,7 @@ export default function Hero() {
       <img
         src="/034.webp"
         alt=""
-        className="pointer-events-none absolute inset-0 -z-10 w-full h-full object-cover"
+        className="pointer-events-none absolute inset-0 -z-10 w-full max-w-[1920px] aspect-video mx-auto object-cover"
       />
       <div className="px-4 md:px-8">
         <div className="relative min-h-screen flex flex-col justify-start pt-16 lg:pt-20">

@@ -93,31 +93,33 @@ export default function LearnTeaser() {
       <img
         src="/003.webp"
         alt=""
-        className="pointer-events-none absolute inset-0 -z-10 w-full h-full object-cover"
+        className="pointer-events-none absolute inset-0 -z-10 w-full max-w-[1920px] aspect-video mx-auto object-cover"
       />
 
       <div className="mx-auto max-w-[1280px] px-4 md:px-8 py-20 md:py-28">
-        <h2
-          id="learn-heading"
-          className="mb-2 text-[length:var(--fs-h1)] font-heading font-bold"
-        >
-          Knowledge{" "}
-          <span className="bg-gradient-to-r from-gold-200 via-white to-gold-200 bg-clip-text text-transparent">
-            Center
-          </span>
-        </h2>
-        <p className="mb-8 max-w-[580px] text-[14px] leading-[1.6] text-text-ds-tertiary font-body">
-          Short answers upfront. No jargon, just what you need to support
-          creators and earn faster.
-        </p>
+        <div className="text-center mb-8 flex flex-col items-center justify-center gap-2">
+          <h2
+            id="learn-heading"
+            className="font-heading font-bold text-4xl sm:text-5xl lg:text-6xl text-text-ds-primary"
+          >
+            Knowledge{" "}
+            <span className="bg-gradient-to-r from-gold-200 via-gold-400 to-gold-200 bg-clip-text text-transparent">
+              Center
+            </span>
+          </h2>
+          <p className="max-w-[580px] text-[14px] leading-[1.6] text-text-ds-tertiary font-body">
+            Short answers upfront. No jargon, just what you need to support
+            creators and earn faster.
+          </p>
+        </div>
 
-        <div className="mb-6 flex flex-wrap gap-2">
+        <div className="mb-6 flex flex-wrap gap-2 justify-center">
           {CATEGORY_PILLS.map((cat) => {
             const active = activeCategory === cat;
             return (
               <Button
                 key={cat}
-                variant={active ? "gold" : "ghost"}
+                variant={active ? "tertiary" : "ghost"}
                 size="sm"
                 onClick={() => setActiveCategory(cat)}
                 aria-pressed={active}
@@ -136,11 +138,11 @@ export default function LearnTeaser() {
             const Icon = topic.icon;
             return (
               <Card key={topic.title} interactive variant="elevated" noPadding>
-                <div className="h-[2px] w-full bg-gradient-to-r from-gold-400 to-teal-600 rounded-t-xl" />
+                <div className="h-[2px] w-full bg-gradient-to-r from-teal-400 to-teal-600 rounded-t-xl" />
                 <div className="p-5">
                   <div className="mb-3 flex items-center justify-between">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gold-400/10 transition-colors group-hover/card:bg-gold-400/20">
-                      <Icon size={18} className="text-gold-400" />
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-teal-500/10 transition-colors group-hover/card:bg-teal-500/20">
+                      <Icon size={18} className="text-teal-300" />
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-text-ds-tertiary font-body">
@@ -214,11 +216,40 @@ export default function LearnTeaser() {
             </Button>
           </form>
 
-          <Button href="/learn" variant="secondary" className="gap-2">
-            Explore all topics
-            <ArrowRight size={16} />
+          <Button href="/learn" variant="ghost" rightIcon={<ArrowRight size={16} />}>
+            Learn more
           </Button>
         </div>
+
+        {/* Navigation arrows */}
+        <div className="w-full mt-12 flex items-center justify-between relative z-20">
+          <button
+            type="button"
+            onClick={() => document.getElementById("explore")?.scrollIntoView({ behavior: "smooth" })}
+            aria-label="Previous section"
+            title="Previous section"
+            className="flex h-12 w-12 items-center justify-center rounded-full border border-text-ds-tertiary/60 text-text-ds-tertiary hover:brightness-[1.15] hover:bg-white/10 transition-all"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 19V5" />
+              <path d="M5 12l7-7 7 7" />
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" })}
+            aria-label="Scroll to bottom"
+            title="Scroll to bottom"
+            className="flex h-12 w-12 items-center justify-center rounded-full border border-text-ds-tertiary/60 text-text-ds-tertiary hover:brightness-[1.15] hover:bg-white/10 transition-all"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 5v14" />
+              <path d="M19 12l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+
       </div>
     </section>
   );
