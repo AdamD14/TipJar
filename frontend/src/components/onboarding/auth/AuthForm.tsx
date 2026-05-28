@@ -71,7 +71,7 @@ export default function AuthForm() {
       const target = hasUsername && completed
         ? nextRole === "FAN"
           ? `/@${response.user.username}/fan-desktop/explore`
-          : `/@${response.user.username}/creator/dashboard`
+          : `/@${response.user.username}/creator-desktop`
         : "/choose-username";
 
       router.replace(target);

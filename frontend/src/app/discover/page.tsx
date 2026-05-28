@@ -23,6 +23,8 @@ import {
   type ExplorerSort,
   topTags,
 } from "@/lib/explorer";
+import { API } from "@/lib/api-routes";
+import { api } from "@/lib/api/http";
 
 export default function PageDiscover() {
   const items: SearchResult[] = [];
@@ -92,25 +94,90 @@ export default function PageDiscover() {
 }
 
 
+type DbCreator = {
+  id: string;
+  username: string | null;
+  displayName: string;
+  avatarUrl: string | null;
+  bio?: string | null;
+};
+
 function Client({ initial }: { initial: SearchResult[] }) {
   const [direct, setDirect] = useState<SearchResult[]>(initial);
   const [q, setQ] = useState("");
+  const [dbResults, setDbResults] = useState<DbCreator[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const suggest = useSuggestions(q);
+
+  useEffect(() => {
+    if (q.trim().length < 2) {
+      setDbResults([]);
+      return;
+    }
+
+    const delayDebounce = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const queryParams = new URLSearchParams({ q }).toString();
+        const { data } = await api.get(`${API.CREATORS}?${queryParams}`);
+        const list: DbCreator[] = Array.isArray(data) ? data : data?.items || [];
+        setDbResults(list);
+      } catch (err) {
+        console.error("Failed to load db search results", err);
+      } finally {
+        setLoading(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounce);
+  }, [q]);
 
   return (
     <section className="space-y-4">
       <SearchBox onResults={(rows) => setDirect(rows)} onQueryChange={setQ} />
       {q && <Suggestions items={suggest} query={q} />}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {direct.map((it) => (
-          <CreatorCard
-            key={it.handle}
-            handle={it.handle}
-            exists={it.exists}
-          />
-        ))}
-      </div>
+      
+      {/* Database Search Results */}
+      {q.trim().length >= 2 && (
+        <div className="space-y-3">
+          <h3 className="text-sm font-heading font-semibold text-text-ds-secondary">
+            {loading ? "Searching database..." : "Database Results"}
+          </h3>
+          {dbResults.length > 0 ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {dbResults.map((creator) => (
+                <CreatorCard
+                  key={creator.id}
+                  name={creator.displayName}
+                  handle={creator.username || creator.id}
+                  avatarUrl={creator.avatarUrl || undefined}
+                  exists={true}
+                  variant="enhanced"
+                />
+              ))}
+            </div>
+          ) : (
+            !loading && <p className="text-sm text-[#BCC1B6]">No registered creators found matching your query.</p>
+          )}
+        </div>
+      )}
+
+      {/* Local Collections / Suggestions Direct results */}
+      {direct.length > 0 && (
+        <div className="space-y-3">
+          <h3 className="text-sm font-heading font-semibold text-text-ds-secondary">Quick Matches</h3>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {direct.map((it) => (
+              <CreatorCard
+                key={it.handle}
+                handle={it.handle}
+                exists={it.exists}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

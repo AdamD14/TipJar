@@ -168,14 +168,14 @@ export class AuthController {
         response.redirect(`${frontendUrl}/onboarding/creator/step-1`);
       } else {
         // Fans should be marked complete by setUsername, but if not, send them to dashboard or fallback
-        const dashboard = `/@${user.username}/fan/dashboard`;
+        const dashboard = `/@${user.username}/fan-desktop/explore`;
         response.redirect(`${frontendUrl}${dashboard}`);
       }
     } else {
       const dashboard =
         user.role === 'CREATOR'
-          ? `/@${user.username}/creator/dashboard`
-          : `/@${user.username}/fan/dashboard`;
+          ? `/@${user.username}/creator-desktop`
+          : `/@${user.username}/fan-desktop/explore`;
       this.logger.log(
         `User ${user.id} has completed onboarding. Redirecting to ${dashboard}`,
       );
@@ -254,14 +254,14 @@ export class AuthController {
         );
         response.redirect(`${frontendUrl}/onboarding/creator/step-1`);
       } else {
-        const dashboard = `/@${user.username}/fan/dashboard`;
+        const dashboard = `/@${user.username}/fan-desktop/explore`;
         response.redirect(`${frontendUrl}${dashboard}`);
       }
     } else {
       const dashboard =
         user.role === 'CREATOR'
-          ? `/@${user.username}/creator/dashboard`
-          : `/@${user.username}/fan/dashboard`;
+          ? `/@${user.username}/creator-desktop`
+          : `/@${user.username}/fan-desktop/explore`;
       this.logger.log(
         `User ${user.id} has completed onboarding. Redirecting to ${dashboard}`,
       );
@@ -333,14 +333,14 @@ export class AuthController {
         response.redirect(`${frontendUrl}/onboarding/creator/step-1`);
       } else {
         // Fans should be marked complete by setUsername, but if not, send them to dashboard or fallback
-        const dashboard = `/@${user.username}/fan/dashboard`;
+        const dashboard = `/@${user.username}/fan-desktop/explore`;
         response.redirect(`${frontendUrl}${dashboard}`);
       }
     } else {
       const dashboard =
         user.role === 'CREATOR'
-          ? `/@${user.username}/creator/dashboard`
-          : `/@${user.username}/fan/dashboard`;
+          ? `/@${user.username}/creator-desktop`
+          : `/@${user.username}/fan-desktop/explore`;
       this.logger.log(
         `User ${user.id} has completed onboarding. Redirecting to ${dashboard}`,
       );

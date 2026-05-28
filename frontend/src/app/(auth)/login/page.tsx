@@ -67,7 +67,7 @@ export default function Page() {
       const fallbackTarget =
         hasUsername && onboardingDone
           ? normalizedRole === "CREATOR"
-            ? `/@${user?.username}/creator/dashboard`
+            ? `/@${user?.username}/creator-desktop`
             : `/@${user?.username}/fan-desktop/explore`
           : "/choose-username";
       const returnTo = params?.get("returnTo");
@@ -194,7 +194,13 @@ export default function Page() {
             disabled={loading}
             className="flex items-center justify-center gap-3 bg-white/20 hover:bg-white/30 transition-all text-white font-semibold rounded-lg py-3 text-sm border border-white/10 hover:border-white/20 disabled:opacity-60"
           >
-            <div className="flex items-center justify-center w-5 h-5 bg-white text-black rounded-full font-bold text-xs">G</div>
+            <Image
+              src="/g_logo.svg"
+              alt="Google logo"
+              width={20}
+              height={20}
+              className="w-5 h-5"
+            />
             Continue with Google
           </button>
           <button
@@ -203,7 +209,13 @@ export default function Page() {
             disabled={loading}
             className="flex items-center justify-center gap-3 bg-purple-600/70 hover:bg-purple-600/90 transition-all text-white font-semibold rounded-lg py-3 text-sm border border-purple-500/30 hover:border-purple-400/50 disabled:opacity-60"
           >
-            <div className="flex items-center justify-center w-5 h-5 bg-white text-purple-600 rounded-sm font-bold text-xs">T</div>
+            <Image
+              src="/t_logo.svg"
+              alt="Twitch logo"
+              width={20}
+              height={20}
+              className="w-5 h-5"
+            />
             Continue with Twitch
           </button>
         </div>

@@ -9,14 +9,8 @@ import { getWallet, getBalance, createWallet } from "@/lib/wallet";
 import {
   Coins,
   History,
-  TrendingUp,
-  Users,
-  CreditCard,
   Link2,
   ArrowDownLeft,
-  ArrowUpRight,
-  RefreshCw,
-  Layers,
   Settings,
   Copy,
   Check,
@@ -37,7 +31,7 @@ interface BalanceInfo {
   currency: string;
 }
 
-export default function CreatorWalletPage() {
+export default function FanWalletPage() {
   const { username } = useParams<{ username: string }>();
   const [wallet, setWallet] = useState<WalletInfo | null>(null);
   const [balance, setBalance] = useState<BalanceInfo | null>(null);
@@ -70,7 +64,6 @@ export default function CreatorWalletPage() {
           setBalance(balanceData);
         } catch (bErr) {
           console.error("Failed to load balance:", bErr);
-          // Set standard zero balance if call fails
           setBalance({ balance: 0, currency: "USDC" });
         }
       } catch (err: any) {
@@ -92,81 +85,33 @@ export default function CreatorWalletPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const subroutes = [
+  // Tailored options for fans
+  const fanOptions = [
     {
-      href: "balance",
-      title: "Unified Balance",
-      desc: "Cross-chain liquidity & multi-chain breakdowns",
-      icon: Coins,
-      color: "text-amber-400"
-    },
-    {
-      href: "transactions",
-      title: "Transactions",
-      desc: "Full onchain deposit, tip and payout ledger",
-      icon: History,
-      color: "text-blue-400"
-    },
-    {
-      href: "payouts",
-      title: "Instant Payouts",
-      desc: "Withdraw funds directly to cards or bank accounts",
-      icon: TrendingUp,
-      color: "text-emerald-400"
-    },
-    {
-      href: "subscriptions",
-      title: "Subscriptions",
-      desc: "Manage periodic recurring fan support revenue",
-      icon: Users,
-      color: "text-purple-400"
-    },
-    {
-      href: "cards",
-      title: "Virtual Cards",
-      desc: "Spend your USDC earnings globally anywhere with Mastercard",
-      icon: CreditCard,
-      color: "text-pink-400"
-    },
-    {
-      href: "connected-wallets",
-      title: "Connected Wallets",
-      desc: "Link external MetaMask, Coinbase or Phantom wallets",
-      icon: Link2,
-      color: "text-indigo-400"
-    },
-    {
-      href: "deposit",
+      href: "deposit", // This can route to creator-desktop's or a dedicated deposit page if desired, or we keep it clean
       title: "Deposit Funds",
-      desc: "Top up your wallet via QR code or credit card",
+      desc: "Top up your USDC balance with a credit card or direct transfer",
       icon: ArrowDownLeft,
       color: "text-teal-400"
     },
     {
-      href: "withdraw",
-      title: "Withdraw",
-      desc: "Send USDC to any external blockchain address",
-      icon: ArrowUpRight,
-      color: "text-orange-400"
+      href: "transactions",
+      title: "Tip & Subscription History",
+      desc: "Review your completed tips, subscriptions, and supportive payments",
+      icon: History,
+      color: "text-blue-400"
     },
     {
-      href: "exchange",
-      title: "Instant Exchange",
-      desc: "Swap between USDC, EURC, and other stablecoins",
-      icon: RefreshCw,
-      color: "text-cyan-400"
-    },
-    {
-      href: "payment-methods",
-      title: "Payment Methods",
-      desc: "Manage cards, bank accounts, and Apple Pay connections",
-      icon: Layers,
-      color: "text-violet-400"
+      href: "connected-wallets",
+      title: "Connected Web3 Wallets",
+      desc: "Connect MetaMask, Coinbase, or Phantom to transfer assets directly",
+      icon: Link2,
+      color: "text-indigo-400"
     },
     {
       href: "settings",
-      title: "Wallet Settings",
-      desc: "Adjust limits, gas abstraction, and auto-settlements",
+      title: "Security & Settings",
+      desc: "Manage spending limits and general wallet credentials",
       icon: Settings,
       color: "text-slate-400"
     }
@@ -177,33 +122,33 @@ export default function CreatorWalletPage() {
       <div className="flex h-[70vh] flex-col items-center justify-center space-y-4">
         <Spinner size="lg" className="text-teal-400" />
         <p className="text-sm font-body text-text-ds-tertiary animate-pulse">
-          {creating ? "Provisioning your secure Circle wallet..." : "Loading secure wallet workspace..."}
+          {creating ? "Provisioning your secure Circle wallet..." : "Retrieving secure wallet..."}
         </p>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 text-white space-y-8 animate-fade-in">
-      {/* Header section */}
+    <div className="mx-auto max-w-5xl px-4 py-8 text-white space-y-8 animate-fade-in">
+      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-gold-400 text-xs font-semibold tracking-wider uppercase mb-1">
             <Sparkles size={14} className="animate-spin-slow" />
-            <span>Secure Blockchain Account</span>
+            <span>Secure Web3 Account</span>
           </div>
           <h1 className="text-4xl font-heading font-extrabold text-text-ds-primary tracking-tight">
-            Creator Wallet
+            My Wallet
           </h1>
           <p className="text-sm text-text-ds-tertiary font-body mt-1">
-            Manage your TipJar+ balances, payouts, subscriptions, and virtual cards.
+            Keep track of your USDC balance, make secure deposits, and inspect supporting history.
           </p>
         </div>
 
         {wallet && (
-          <div className="flex items-center gap-2 text-xs bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded-full self-start font-semibold">
+          <div className="flex items-center gap-2 text-xs bg-teal-500/10 border border-teal-500/20 text-teal-400 px-3 py-1.5 rounded-full self-start font-semibold">
             <ShieldCheck size={14} />
-            <span>Circle Secured (Developer-Controlled)</span>
+            <span>Circle Secured</span>
           </div>
         )}
       </div>
@@ -215,6 +160,7 @@ export default function CreatorWalletPage() {
         </div>
       )}
 
+      {/* Main Wallet Panel */}
       {!wallet ? (
         <Card className="max-w-xl mx-auto text-center py-12 px-6 space-y-6 border-white/[0.05]">
           <div className="mx-auto bg-rose-500/10 p-4 rounded-full w-16 h-16 flex items-center justify-center text-rose-400 border border-rose-500/20 animate-pulse">
@@ -231,7 +177,7 @@ export default function CreatorWalletPage() {
         </Card>
       ) : (
         <div className="grid gap-6 md:grid-cols-3">
-          {/* Balance card */}
+          {/* Fan Balance view */}
           <Card className="md:col-span-2 relative overflow-hidden bg-gradient-to-br from-teal-950/40 to-teal-900/10 border-teal-500/20 shadow-xl flex flex-col justify-between min-h-[180px]">
             <div className="absolute right-4 top-4 opacity-5 pointer-events-none">
               <Coins size={120} className="text-gold-400" />
@@ -249,7 +195,7 @@ export default function CreatorWalletPage() {
             <div className="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-white/[0.05]">
               <div className="space-y-1">
                 <span className="text-[10px] text-text-ds-tertiary uppercase tracking-wider font-heading">
-                  Wallet Address ({wallet.chain})
+                  Deposit / Wallet Address ({wallet.chain})
                 </span>
                 <div className="flex items-center gap-2">
                   <span className="font-mono text-xs text-text-ds-secondary truncate max-w-[200px] sm:max-w-xs">
@@ -264,84 +210,83 @@ export default function CreatorWalletPage() {
                   </button>
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div>
+                {/* Routing deposit to creator-desktop's wallet sub-view or keeping it simple */}
                 <Link
                   href={`/@${username}/creator-desktop/wallet/deposit`}
-                  className="bg-white/10 hover:bg-white/15 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all"
+                  className="bg-gold-400 hover:bg-gold-500 text-black px-4 py-2 rounded-lg text-xs font-bold tracking-wide transition-all block text-center shadow-md shadow-gold-400/10"
                 >
-                  Deposit
-                </Link>
-                <Link
-                  href={`/@${username}/creator-desktop/wallet/withdraw`}
-                  className="bg-teal-500/20 text-teal-400 hover:bg-teal-500/30 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all"
-                >
-                  Withdraw
+                  Deposit Funds
                 </Link>
               </div>
             </div>
           </Card>
 
-          {/* Quick info card */}
+          {/* Quick network details */}
           <Card className="flex flex-col justify-between border-white/[0.05]">
             <div className="space-y-3">
               <h3 className="text-sm font-heading font-semibold text-text-ds-primary uppercase tracking-wider">
-                Network Status
+                Wallet Details
               </h3>
               <div className="space-y-2 text-xs font-body">
                 <div className="flex justify-between border-b border-white/[0.05] pb-2">
-                  <span className="text-text-ds-tertiary">Settle Chain</span>
+                  <span className="text-text-ds-tertiary">Network</span>
                   <span className="text-text-ds-secondary font-semibold">{wallet.chain}</span>
                 </div>
                 <div className="flex justify-between border-b border-white/[0.05] pb-2">
-                  <span className="text-text-ds-tertiary">Gas Mode</span>
+                  <span className="text-text-ds-tertiary">Gas Status</span>
                   <span className="text-teal-400 font-semibold flex items-center gap-1">
                     <ShieldCheck size={12} /> Abstracted
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-text-ds-tertiary">Provider</span>
+                  <span className="text-text-ds-tertiary">Custodian</span>
                   <span className="text-text-ds-secondary font-semibold">Circle Enclave</span>
                 </div>
               </div>
             </div>
             <div className="text-[10px] text-text-ds-tertiary font-body mt-4 leading-relaxed">
-              * Note: Gas fee abstraction is fully enabled. No native blockchain tokens needed to make transactions.
+              * Support creators with single clicks. Tips are settled instantly without gas costs.
             </div>
           </Card>
         </div>
       )}
 
-      {/* Wallet Ecosystem Grid */}
+      {/* Fan Options Navigation grid */}
       {wallet && (
         <div className="space-y-4">
           <h2 className="text-xl font-heading font-bold text-text-ds-primary">
-            Wallet Ecosystem
+            Manage My Funds
           </h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {subroutes.map((sub) => {
-              const Icon = sub.icon;
+          <div className="grid gap-4 sm:grid-cols-2">
+            {fanOptions.map((opt) => {
+              const Icon = opt.icon;
               return (
                 <Link
-                  key={sub.href}
-                  href={`/@${username}/creator-desktop/wallet/${sub.href}`}
+                  key={opt.href}
+                  href={
+                    opt.href === "deposit" || opt.href === "transactions" || opt.href === "settings" || opt.href === "connected-wallets"
+                      ? `/@${username}/creator-desktop/wallet/${opt.href}`
+                      : `/@${username}/fan-desktop/wallet/${opt.href}`
+                  }
                   className="group"
                 >
                   <Card
                     interactive
-                    className="flex flex-col justify-between h-full min-h-[140px] border-white/[0.05] hover:border-teal-500/30 transition-all duration-300"
+                    className="flex flex-col justify-between h-full min-h-[120px] border-white/[0.05] hover:border-teal-500/30 transition-all duration-300"
                   >
                     <div className="flex items-start justify-between">
-                      <div className={`p-2 rounded-lg bg-white/[0.03] border border-white/[0.05] ${sub.color}`}>
+                      <div className={`p-2 rounded-lg bg-white/[0.03] border border-white/[0.05] ${opt.color}`}>
                         <Icon size={20} />
                       </div>
                       <ChevronRight size={16} className="text-text-ds-tertiary group-hover:text-white group-hover:translate-x-1 transition-all" />
                     </div>
                     <div className="mt-4">
                       <h4 className="text-sm font-heading font-bold text-text-ds-primary group-hover:text-gold-400 transition-colors">
-                        {sub.title}
+                        {opt.title}
                       </h4>
                       <p className="text-xs text-text-ds-tertiary font-body mt-1 leading-relaxed">
-                        {sub.desc}
+                        {opt.desc}
                       </p>
                     </div>
                   </Card>

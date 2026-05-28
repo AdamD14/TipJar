@@ -110,7 +110,7 @@ export default function Navbar() {
       {/* ── Column 3: Wallet · Bell · @username ── */}
       <div className="flex items-center gap-1 shrink-0">
         <Link
-          href={`/@${username}/${prefix}/profile/wallet`}
+          href={`/@${username}/${prefix}/wallet`}
           className="p-2 rounded-lg text-text-primary hover:text-text-tertiary hover:bg-surface-elevated/70 transition-colors duration-200"
           aria-label="Wallet"
         >
