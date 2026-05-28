@@ -14,8 +14,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@chainsafe/circle-react-elements": "^0.1.2",
-    "@circle-fin/developer-controlled-wallets": "^10.3.1",
+    "@circle-fin/developer-controlled-wallets": "^10.5.5",
     "@google/genai": "^2.0.1",
     "@headlessui/react": "^2.2.10",
     "@heroicons/react": "^2.2.0",

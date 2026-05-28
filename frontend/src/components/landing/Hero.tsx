@@ -10,7 +10,7 @@ export default function Hero() {
       aria-labelledby="hero-heading"
     >
       <img
-        src="/A02.webp"
+        src="/B01.webp"
         alt=""
         className="pointer-events-none absolute inset-0 -z-10 w-full max-w-[1920px] aspect-video mx-auto object-cover"
       />
@@ -23,7 +23,7 @@ export default function Hero() {
               id="hero-heading"
               className="font-heading font-bold tracking-tight leading-[1.15] text-5xl sm:text-5xl md:text-6xl lg:text-8xl"
             >
-              <span className="block relative before:content-['\00a0\00a0\0009'] before:inline-block bg-gradient-to-r from-gold-200 via-white to-gold-200 bg-clip-text text-transparent">
+              <span className="block relative before:content-['\00a0\00a0\0009'] before:inline-block bg-gradient-to-r from-gold-500 via-gold-200 to-gold-400 bg-clip-text text-transparent">
                 Support creativity
               </span>
               <span className="block mt-1 sm:mt-2 bg-gradient-to-r from-teal-200 via-white to-teal-200 bg-clip-text text-transparent drop-shadow-lg">

@@ -23,7 +23,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1045.0",
     "@aws-sdk/s3-request-presigner": "^3.1045.0",
-    "@circle-fin/developer-controlled-wallets": "^10.3.1",
+    "@circle-fin/developer-controlled-wallets": "^10.5.5",
     "@nestjs-modules/mailer": "^2.3.4",
     "@nestjs/common": "^11.1.19",
     "@nestjs/config": "^4.0.4",

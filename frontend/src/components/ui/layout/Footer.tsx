@@ -43,7 +43,7 @@ export default function Footer() {
   return (
     <footer className="relative border-t border-white/5 bg-surface-app/85 backdrop-blur-sm overflow-hidden">
       <img
-        src="/A13.webp"
+        src="/B20.webp"
         alt=""
         className="pointer-events-none absolute inset-0 -z-10 w-full max-w-[1920px] aspect-video mx-auto object-cover"
       />

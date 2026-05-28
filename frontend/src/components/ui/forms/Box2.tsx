@@ -17,7 +17,7 @@ interface Box2Props extends HTMLAttributes<HTMLDivElement> {
 // 1. TERMOMETRIA OPTYCZNA (Gradienty in oklch z Twoich tokenów TIPJAR+)
 const BG: Record<Box2Variant, string> = {
   // Base: Startuje z głębokiego tealu aplikacji, wygasa w jasnym refleksie
-  base: "bg-[linear-gradient(in_oklch_110deg,var(--color-surface-app),var(--color-teal-300))]",
+  base: "bg-[linear-gradient(in_oklch_115deg,var(--color-teal-850),var(--color-teal-800))]",
   // Premium: Kryształowe, nasycone złoto z ultra-ostrą refrakcją od 97% szerokości
   premium: "bg-[linear-gradient(in_oklch_115deg,#f88008_0%,#f8b000_70%,#ffd700_97%,var(--gold-50)_97%,var(--gold-50)_100%)]",
   // Purple: Głęboka topologia fioletu domknięta białym błyskiem spektralnym
@@ -28,7 +28,7 @@ const BG: Record<Box2Variant, string> = {
 
 // Gradienty dla stanów Hover — realizacja ucieczki nasycenia na osi Z
 const HOVER_BG: Record<Box2Variant, string> = {
-  base: "hover:bg-[linear-gradient(in_oklch_110deg,var(--color-surface-app),var(--color-teal-200))]",
+  base: "hover:bg-[linear-gradient(in_oklch_125deg,var(--color-teal-850),var(--color-teal-800))]",
   premium: "hover:bg-[linear-gradient(in_oklch_115deg,#fa9018_0%,#ffc010_70%,var(--gold-100)_97%,var(--gold-50)_100%)]",
   purple: "hover:bg-[linear-gradient(in_oklch_110deg,var(--color-border-focus)_0%,var(--color-purple-100)_70%,var(--color-text-primary)_97%,var(--color-text-primary)_100%)]",
   modal: "hover:bg-[linear-gradient(in_oklch_115deg,color-mix(in_oklch,var(--teal-700),transparent_50%)_0%,color-mix(in_oklch,var(--teal-500),transparent_50%)_50%,color-mix(in_oklch,var(--teal-300),transparent_50%)_100%)]",
@@ -58,20 +58,20 @@ export function Box2({
             <feOffset dx="-1.4" dy="0" in="SourceGraphic" result="red_layer" />
             <feOffset dx="1.4" dy="0" in="SourceGraphic" result="blue_layer" />
             <feColorMatrix type="matrix" in="red_layer" result="red_only" values="
-              1 0 0 0 0
               0 0 0 0 0
               0 0 0 0 0
-              0 0 0 1 0" />
+              0 0 0 0 0
+              0 0 0 0 0" />
             <feColorMatrix type="matrix" in="SourceGraphic" result="green_only" values="
               0 0 0 0 0
-              0 1 0 0 0
               0 0 0 0 0
-              0 0 0 1 0" />
+              0 0 0 0 0
+              0 0 0 0 0" />
             <feColorMatrix type="matrix" in="blue_layer" result="blue_only" values="
               0 0 0 0 0
               0 0 0 0 0
-              0 0 1 0 0
-              0 0 0 1 0" />
+              0 0 0 0 0
+              0 0 0 0 0" />
             <feBlend mode="screen" in="red_only" in2="green_only" result="rg_mix" />
             <feBlend mode="screen" in="rg_mix" in2="blue_only" />
           </filter>
@@ -83,20 +83,20 @@ export function Box2({
           "group relative overflow-hidden",
           BG[variant],
           "rounded-[20px]",
-          "border border-white/10",
+          "border border-teal-500/20",
           // Warunkowe gilotynowanie rogu za pomocą flagi hasArc
           hasArc && "[clip-path:url(#arc-mask)]",
           
           // Potęgowanie złudzenia mrożonego szkła (Backdrop blur)
           "backdrop-blur-[20px]",
-          variant === "modal" && "backdrop-saturate-[200%] border-white/15",
+          variant === "modal" && "backdrop-saturate-[200%] border-teal300/15",
           
           // Kinematyka i Inercja Masy (Sprężyna typu overshoot na osi Z)
           interactive && [
             "cursor-pointer",
-            "transition-all duration-[350ms] [transition-timing-function:var(--ease-spring)]",
+            "transition-all duration-[250ms] [transition-timing-function:var(--ease-spring)]",
             HOVER_BG[variant],
-            "hover:-translate-y-1.5",
+            "hover:-translate-y-0.5",
             "[box-shadow:var(--inner-shadow-card),var(--shadow-card-rest)]",
             "hover:[box-shadow:var(--inner-shadow-card),var(--shadow-card-hover)]",
             "focus-visible:outline-none focus-visible:[box-shadow:var(--shadow-card-focus)]",

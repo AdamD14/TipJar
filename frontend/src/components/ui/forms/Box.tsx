@@ -16,14 +16,14 @@ interface BoxProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const BG: Record<BoxVariant, string> = {
-  base: "bg-[linear-gradient(in_oklch_110deg,var(--teal-900),var(--teal-300))]",
+  base: "bg-[linear-gradient(in_oklch_130deg,var(--teal-600),var(--teal-700))]",
   premium: "bg-[linear-gradient(in_oklch_110deg,#f88008_0%,#f8b000_60%,#ffd700_95%,var(--gold-50)_100%)]",
   purple:"bg-[linear-gradient(in_oklch_110deg,var(--color-surface-app)_0%,var(--color-border-focus)_70%,var(--color-text-primary)_97%,var(--color-text-primary)_100%)]",
   modal: "bg-[linear-gradient(in_oklch_115deg,var(--teal-800)_0%,var(--teal-600)_50%,var(--teal-500)_100%)]",
 };
 
 const HOVER_BG: Record<BoxVariant, string> = {
-  base: "hover:bg-teal-600",
+  base: "hover:bg-teal-100",
   premium: "hover:bg-gold-600",
   purple: "hover:bg-purple-400",
   modal: "hover:bg-teal-700",
@@ -57,7 +57,7 @@ export function Box({
         BG[variant],
         "relative overflow-hidden",
         "rounded-[20px]",
-        "border border-white/10",
+        "border border-gold-500/10",
         "shadow-[0_4px_6px_-1px_rgba(0,0,0,0.5)]",
         // Klasa wycinająca wskoczy do Tailwinda TYLKO gdy hasArc jest na true
        hasArc && "[clip-path:url(#arc-mask)]",
@@ -74,7 +74,7 @@ export function Box({
           "cursor-pointer",
           "transition-all duration-[350ms] [transition-timing-function:var(--ease-spring)]",
           HOVER_BG[variant],
-          "hover:-translate-y-1.5",
+          "hover:-translate-y-0.5",
           "hover:[box-shadow:inset_0_1px_2px_rgba(0,0,0,0.2),0_20px_25px_-5px_rgba(0,0,0,0.6),0_0_10px_rgba(252,194,1,0.1)]",
           "focus-visible:outline-none",
           "focus-visible:[box-shadow:0_0_0_1px_#FFD700,0_0_0_4px_rgba(255,215,0,0.25)]",
@@ -90,10 +90,10 @@ export function Box({
      >
        {/* Linie tworzące konstelację sieci */}
        <path
-         d="M 10,20 L 35,45 L 75,25 L 95,60 M 35,45 L 50,85 L 75,25 M 50,85 L 85,75 M 10,20 L 50,85"
-         fill="none"
+         d="M 15,25 L 35,55 L 95,75 L 15,10 M 35,95 L 50,85 L 75,25 M 50,85 L 85,75 M 10,20 L 50,85"
+        fill="none"
          stroke="var(--teal-50)"
-         strokeWidth="1"
+         strokeWidth="1.5"
         vectorEffect="non-scaling-stroke"
       />
      {/* Małe węzły (kropki na złączeniach linii) */}
