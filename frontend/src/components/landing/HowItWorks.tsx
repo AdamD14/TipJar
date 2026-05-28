@@ -179,7 +179,7 @@ export default function HowItWorks() {
   return (
     <section id="how-it-works" className="relative w-full min-h-screen">
       <img
-        src="/002.webp"
+        src="/A05.webp"
         alt=""
         className="pointer-events-none absolute inset-0 -z-10 w-full max-w-[1920px] aspect-video mx-auto object-cover"
       />
