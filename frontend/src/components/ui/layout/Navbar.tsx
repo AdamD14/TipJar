@@ -26,7 +26,7 @@ interface NavItem {
 }
 
 const creatorNav: NavItem[] = [
-  { label: "Desktop", icon: Monitor, href: "desktop" },
+  { label: "Desktop", icon: Monitor, href: "" },
   { label: "Studio", icon: Clapperboard, href: "studio" },
   { label: "Add", icon: PlusCircle, href: "add" },
   { label: "Community", icon: Users, href: "community" },
@@ -86,7 +86,7 @@ export default function Navbar() {
       <nav className="flex-1 flex items-center justify-center gap-1 min-w-0">
         {centerItems.map((item) => {
           const Icon = item.icon;
-          const fullHref = `/@${username}/${prefix}/${item.href}`;
+          const fullHref = `/@${username}/${prefix}${item.href ? '/' + item.href : ''}`;
           const active = pathname === fullHref;
 
           return (
@@ -94,10 +94,10 @@ export default function Navbar() {
               key={item.href}
               href={fullHref}
               className={[
-"flex items-center gap-1.5 py-1.5 px-3 rounded-lg text-md font-heading font-medium transition-colors duration-200 whitespace-nowrap",
-          active
-            ? "bg-surface-elevated text-primary"
-            : "text-text-primary/50 hover:text-text-primary hover:bg-surface-elevated/70",
+                "flex items-center gap-1.5 py-1.5 px-3 rounded-lg text-md font-heading font-medium transition-colors duration-200 whitespace-nowrap",
+                active
+                  ? "bg-surface-elevated text-primary"
+                  : "text-text-primary/50 hover:text-text-primary hover:bg-surface-elevated/70",
               ].join(" ")}
             >
               <Icon className="h-4 w-4 shrink-0" />
