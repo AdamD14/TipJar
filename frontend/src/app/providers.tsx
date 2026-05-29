@@ -6,6 +6,7 @@ import type { Chain } from "wagmi/chains";
 import { injected } from "wagmi/connectors";
 import { mainnet } from "wagmi/chains";
 import ToastHost from "@/components/ui/notifications/Toast";
+import { getAppKit } from "@/lib/appKitClient";
 
 export const arcTestnet: Chain = {
   id: 5042002,
@@ -35,8 +36,11 @@ function getQueryClient() {
   return _qc;
 }
 
-// Komponent, który będzie dostarczał kontekst wagmi i react-query do całej aplikacji.
 export function Providers({ children }: { children: React.ReactNode }) {
+  if (typeof window !== "undefined") {
+    getAppKit();
+  }
+
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={getQueryClient()}>

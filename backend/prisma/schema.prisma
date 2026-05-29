@@ -199,12 +199,29 @@ model Payout {
 }
 
 model CircleWallet {
-  id     String @id @default(uuid())
+  id String @id @default(uuid())
   userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  circleWalletId    String @unique
+  circleWalletId String @unique
   mainWalletAddress String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  balance WalletBalance?
+}
+
+model WalletBalance {
+  id String @id @default(uuid())
+
+  circleWalletId String @unique
+  circleWallet CircleWallet @relation(fields: [circleWalletId], references: [id], onDelete: Cascade)
+
+  totalUsdc Decimal @default(0) @db.Decimal(20, 6)
+  rawJson Json?
+
+  circleUpdatedAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

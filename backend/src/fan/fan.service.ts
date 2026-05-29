@@ -34,10 +34,10 @@ export class FanService {
         'Użytkownik nie ma skonfigurowanego portfela Circle.',
       );
     }
-    const balance = await this.circleService.getWalletBalance(
+    const { totalUsdc } = await this.circleService.getWalletBalance(
       userRecord.circleWalletId,
     );
-    return balance;
+    return totalUsdc;
   }
 
   /**

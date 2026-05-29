@@ -55,27 +55,43 @@ export default function CreatorWalletPage() {
         try {
           walletData = await getWallet();
         } catch (err: any) {
-          if (err.response?.status === 404 || err.message?.includes("not found")) {
-            // Auto-provision wallet immediately
+          const status = err.response?.status;
+          if (status === 401) {
+            setError("Session expired. Please log in again.");
+            return;
+          }
+          if (status === 404 || err.message?.includes("not found")) {
             setCreating(true);
-            walletData = await createWallet();
+            try {
+              walletData = await createWallet();
+            } catch (createErr: any) {
+              if (createErr.response?.status === 401) {
+                setError("Session expired. Please log in again.");
+                return;
+              }
+              throw createErr;
+            }
           } else {
             throw err;
           }
         }
         setWallet(walletData);
-        
+
         try {
           const balanceData = await getBalance();
           setBalance(balanceData);
-        } catch (bErr) {
-          console.error("Failed to load balance:", bErr);
-          // Set standard zero balance if call fails
+        } catch (bErr: any) {
+          if (bErr.response?.status === 401) {
+            setError("Session expired. Please log in again.");
+            return;
+          }
           setBalance({ balance: 0, currency: "USDC" });
         }
       } catch (err: any) {
         console.error("Error loading wallet details:", err);
-        setError("Failed to initialize or fetch your secure wallet. Please try again later.");
+        if (!error) {
+          setError("Failed to initialize or fetch your secure wallet. Please try again later.");
+        }
       } finally {
         setLoading(false);
         setCreating(false);

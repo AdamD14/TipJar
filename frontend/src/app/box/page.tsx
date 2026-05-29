@@ -2,7 +2,7 @@ import { Box } from "@/components/ui/forms/Box";
 
 export default function Page() {
   return (
-    <main className="min-h-screen bg-teal-950 p-4">
+    <main className="min-h-screen bg-teal-250 p-4">
       <div className="max-w-5xl w-full space-y-8">
         
         {/* Nagłówek strony testowej */}
@@ -21,7 +21,7 @@ export default function Page() {
           {/* Karta 1: Base (Teal) + Interaktywna */}
           <Box variant="base" interactive>
             <div className="space-y-2 text-white">
-              <span className="text-xs font-mono uppercase tracking-wider text-teal-300">Wariant: Base</span>
+              <span className="text-xs  uppercase tracking-wider text-teal-300">Wariant: Base</span>
               <h2 className="text-xl font-bold">Zoptymalizowana Fala</h2>
               <p className="text-sm text-teal-100/70">
                 Najedź na mnie myszką. Zobaczysz płynne przesunięcie gradientu (hardware acceleration) i uniesienie karty.

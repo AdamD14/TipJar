@@ -14,6 +14,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@circle-fin/adapter-viem-v2": "^1.11.2",
     "@circle-fin/app-kit": "^1.7.0",
     "@circle-fin/developer-controlled-wallets": "^10.5.5",
     "@google/genai": "^2.0.1",

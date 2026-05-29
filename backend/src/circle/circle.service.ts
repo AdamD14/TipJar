@@ -337,10 +337,9 @@ export class CircleService implements OnModuleInit {
 
   async getWalletBalance(
     walletId: string,
-    tokenIdToFilter?: string,
-  ): Promise<number> {
+  ): Promise<{ totalUsdc: number; tokenBalances: Balance[] }> {
     this.logger.debug(
-      `Fetching balance: WalletID ${walletId}, TokenID filter: ${tokenIdToFilter || 'ALL'}`,
+      `Fetching balance: WalletID ${walletId} (all tokens)`,
     );
     try {
       const requestPayload: GetWalletTokenBalanceInput = { id: walletId };
@@ -348,34 +347,13 @@ export class CircleService implements OnModuleInit {
         requestPayload,
       )) as SdkGetBalancesResp;
 
-      const balancesData = response.data;
-      if (
-        !balancesData?.tokenBalances ||
-        balancesData.tokenBalances.length === 0
-      ) {
-        return 0;
-      }
+      const tokenBalances = response.data?.tokenBalances ?? [];
 
-      let targetBalanceEntry: Balance | undefined;
-      if (tokenIdToFilter) {
-        targetBalanceEntry = balancesData.tokenBalances.find(
-          (tb) =>
-            tb.token?.id === tokenIdToFilter ||
-            tb.token?.tokenAddress?.toLowerCase() ===
-            tokenIdToFilter.toLowerCase(),
-        );
-      } else {
-        targetBalanceEntry =
-          balancesData.tokenBalances.find(
-            (tb) => tb.token?.symbol === 'USDC',
-          ) || balancesData.tokenBalances[0];
-      }
+      const totalUsdc = tokenBalances
+        .filter((tb) => tb.token?.symbol === 'USDC')
+        .reduce((sum, tb) => sum + parseFloat(tb.amount || '0'), 0);
 
-      if (!targetBalanceEntry?.amount) {
-        return 0;
-      }
-
-      return parseFloat(targetBalanceEntry.amount);
+      return { totalUsdc, tokenBalances };
     } catch (error) {
       this.handleCircleError(error, 'get balance', walletId);
     }
@@ -501,8 +479,29 @@ export class CircleService implements OnModuleInit {
     if (!user?.circleWalletId) {
       throw new NotFoundException('User has no Circle wallet');
     }
-    const balance = await this.getWalletBalance(user.circleWalletId);
-    return { balance, currency: 'USDC' };
+
+    const { totalUsdc } = await this.getWalletBalance(user.circleWalletId);
+
+    const circleWallet = await this.prisma.circleWallet.findUnique({
+      where: { circleWalletId: user.circleWalletId },
+    });
+
+    if (circleWallet) {
+      await this.prisma.walletBalance.upsert({
+        where: { circleWalletId: circleWallet.id },
+        update: {
+          totalUsdc: totalUsdc,
+          circleUpdatedAt: new Date(),
+        },
+        create: {
+          circleWalletId: circleWallet.id,
+          totalUsdc: totalUsdc,
+          circleUpdatedAt: new Date(),
+        },
+      });
+    }
+
+    return { balance: totalUsdc, currency: 'USDC' };
   }
 
   async getWalletTransactions(userId: string): Promise<TxRow[]> {
@@ -622,6 +621,81 @@ export class CircleService implements OnModuleInit {
 
   async handleWebhook(payload: unknown): Promise<void> {
     this.logger.debug(`Received Circle webhook: ${JSON.stringify(payload)}`);
+
+    type WebhookPayload = {
+      type?: string;
+      eventType?: string;
+      data?: {
+        walletId?: string;
+        transaction?: { walletId?: string };
+      };
+    };
+
+    const p = payload as WebhookPayload;
+    const eventType = p.type || p.eventType || '';
+
+    const walletId =
+      p.data?.walletId || p.data?.transaction?.walletId || null;
+
+    if (
+      !walletId ||
+      ![
+        'transactions.inbound',
+        'transactions.outbound',
+        'transactions.confirmed',
+        'transactions.failed',
+      ].includes(eventType)
+    ) {
+      this.logger.warn(
+        `Unhandled webhook type="${eventType}" walletId="${walletId}"`,
+      );
+      return;
+    }
+
+    this.logger.log(
+      `Webhook "${eventType}" for walletId=${walletId} — refreshing cached balance`,
+    );
+
+    try {
+      const { totalUsdc, tokenBalances } = await this.getWalletBalance(
+        walletId,
+      );
+
+      const circleWallet = await this.prisma.circleWallet.findUnique({
+        where: { circleWalletId: walletId },
+      });
+
+      if (!circleWallet) {
+        this.logger.warn(
+          `No CircleWallet record for walletId=${walletId}, skipping cache update`,
+        );
+        return;
+      }
+
+      await this.prisma.walletBalance.upsert({
+        where: { circleWalletId: circleWallet.id },
+        update: {
+          totalUsdc: totalUsdc,
+          rawJson: tokenBalances as any,
+          circleUpdatedAt: new Date(),
+        },
+        create: {
+          circleWalletId: circleWallet.id,
+          totalUsdc: totalUsdc,
+          rawJson: tokenBalances as any,
+          circleUpdatedAt: new Date(),
+        },
+      });
+
+      this.logger.log(
+        `Cached balance updated for walletId=${walletId}: ${totalUsdc} USDC`,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to refresh balance on webhook for walletId=${walletId}`,
+        (error as Error)?.stack,
+      );
+    }
   }
 
   async listAllWallets(): Promise<AdminWalletRow[]> {

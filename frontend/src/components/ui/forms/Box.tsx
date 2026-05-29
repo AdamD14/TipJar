@@ -16,14 +16,14 @@ interface BoxProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const BG: Record<BoxVariant, string> = {
-  base: "bg-[linear-gradient(in_oklch_130deg,var(--teal-600),var(--teal-700))]",
-  premium: "bg-[linear-gradient(in_oklch_110deg,#f88008_0%,#f8b000_60%,#ffd700_95%,var(--gold-50)_100%)]",
+  base: "bg-[linear-gradient(in_oklch_110deg,var(--teal-200)_10%,var(--teal-300)_40%,var(--teal-200)_100%)]",
+  premium: "bg-[linear-gradient(in_oklch_110deg,#f88008_0%,#f8b000_40%,#ffd700_65%,var(--gold-500)_100%)]",
   purple:"bg-[linear-gradient(in_oklch_110deg,var(--color-surface-app)_0%,var(--color-border-focus)_70%,var(--color-text-primary)_97%,var(--color-text-primary)_100%)]",
   modal: "bg-[linear-gradient(in_oklch_115deg,var(--teal-800)_0%,var(--teal-600)_50%,var(--teal-500)_100%)]",
 };
 
 const HOVER_BG: Record<BoxVariant, string> = {
-  base: "hover:bg-teal-100",
+  base: "hover:bg-teal-400",
   premium: "hover:bg-gold-600",
   purple: "hover:bg-purple-400",
   modal: "hover:bg-teal-700",
@@ -90,16 +90,16 @@ export function Box({
      >
        {/* Linie tworzące konstelację sieci */}
        <path
-         d="M 15,25 L 35,55 L 95,75 L 15,10 M 35,95 L 50,85 L 75,25 M 50,85 L 85,75 M 10,20 L 50,85"
+         d="M 0,80 L 20,50 L 15,75 L 25,85 M 35,65 L 50,55 L 5,35 M 50,85 L 15,75 M 10,70 L 30,85"
         fill="none"
-         stroke="var(--teal-50)"
+         stroke="var(--teal-800)"
          strokeWidth="1.5"
         vectorEffect="non-scaling-stroke"
       />
      {/* Małe węzły (kropki na złączeniach linii) */}
-      <circle cx="35" cy="45" r="1" fill="var(--teal-100)" />
-      <circle cx="75" cy="25" r="1" fill="var(--teal-100)" />
-      <circle cx="50" cy="85" r="1" fill="var(--teal-100)" />
+      <circle cx="35" cy="45" r="1" fill="var(--teal-500)" />
+      <circle cx="75" cy="25" r="1" fill="var(--teal-400)" />
+      <circle cx="50" cy="85" r="1" fill="var(--teal-200)" />
     </svg>
       {children}
       {/* NOWY ŚWIAT: Wektorowa ramka oświetleniowa (Slajd 4) */}
@@ -112,7 +112,7 @@ export function Box({
       <path 
         d={hasArc 
            ? "M 0,0 L 85,0 Q 90,0 93,5 L 100,15 L 100,100 L 0,100 Z" // Ramka dla ściętej karty
-           : "M 0,0 L 100,0 L 100,100 L 0,100 Z"                  // Ramka dla zwykłej karty
+           : "M 50,50 L 100,20 L 100,100 L 10,100 Z"                  // Ramka dla zwykłej karty
          } 
         fill="none" 
          // Podpinamy kolor oświetlenia w zależności od wariantu

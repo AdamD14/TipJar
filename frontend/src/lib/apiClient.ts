@@ -5,9 +5,26 @@ const origin =
   'http://localhost:3001';
 
 export const apiClient = axios.create({
-  baseURL: origin, // tylko ORIGIN
+  baseURL: origin,
   headers: { 'Content-Type': 'application/json' },
-  withCredentials: true, // ciasteczka HttpOnly lecą zawsze
+  withCredentials: true,
+});
+
+apiClient.interceptors.request.use((config) => {
+  if (typeof window !== 'undefined') {
+    try {
+      const raw = sessionStorage.getItem('auth-storage');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        const token: string | null | undefined =
+          parsed?.state?.accessToken;
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+      }
+    } catch {}
+  }
+  return config;
 });
 
 export default apiClient;

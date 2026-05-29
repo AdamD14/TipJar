@@ -1,15 +1,11 @@
 export { default as Sidebar } from './layout/Sidebar';
-export { default as HeaderBar } from './layout/HeaderBar';
 export { default as Page } from './layout/Page';
 export { default as Footer } from './layout/Footer';
 export { default as SkipLink } from './layout/SkipLink';
 export { default as VisuallyHidden } from './layout/VisuallyHidden';
 export { default as Section } from './layout/Section';
-export { default as UserHeader } from './layout/UserHeader';
 export { default as UserName } from './layout/UserName';
-export { default as PublicHeader } from './layout/PublicHeader';
 export { default as Skeleton } from './layout/Skeleton';
-export { default as SidebarNav } from './layout/SidebarNav';
 export { default as Modal } from './Modal';
 export { default as Tooltip } from './Tooltip';
 export { default as Popover } from './Popover';
