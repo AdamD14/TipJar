@@ -210,10 +210,10 @@ export class CircleService implements OnModuleInit {
           'Konfiguracja Wallet Set ID jest niekompletna.',
         );
       }
-      const defaultBlockchain = this.configService.get<string>(
-        'DEFAULT_BLOCKCHAIN',
-        'MATIC-AMOY',
-      ) as Blockchain;
+  const defaultBlockchain = this.configService.get<string>(
+      'DEFAULT_BLOCKCHAIN',
+      'ARC-TESTNET',
+    ) as Blockchain;
 
       const createWalletsPayload: CreateWalletsInput = {
         idempotencyKey: randomUUID(),
@@ -482,7 +482,7 @@ export class CircleService implements OnModuleInit {
     }
     const chain = this.configService.get<string>(
       'DEFAULT_BLOCKCHAIN',
-      'MATIC-AMOY',
+      'ARC-TESTNET',
     );
     return {
       walletId: user.circleWalletId,
@@ -606,7 +606,7 @@ export class CircleService implements OnModuleInit {
       'https://api.circle.com/v1/cctp/transfers',
       {
         idempotencyKey,
-        source: { walletId: user.circleWalletId, chain: 'POLYGON' },
+        source: { walletId: user.circleWalletId, chain: this.getDefaultBlockchain() },
         destination: { address: toAddress, chain: toChain },
         amount: { amount: amount.toFixed(2), currency: 'USD' },
       },
@@ -640,11 +640,52 @@ export class CircleService implements OnModuleInit {
   getDefaultBlockchain(): Blockchain {
     return this.configService.get<string>(
       'DEFAULT_BLOCKCHAIN',
-      'MATIC-AMOY',
+      'ARC-TESTNET',
     ) as Blockchain;
   }
 
   getUsdcTokenId(): string {
     return this.configService.get<string>('USDC_TOKEN_ID', 'USDC');
+  }
+
+  getArcConfig(): {
+    rpcUrl: string;
+    chainId: number;
+    cctpDomain: number;
+    usdcContract: string;
+    gasStationContract: string;
+    gatewayContract: string;
+    paymasterContract: string;
+  } {
+    return {
+      rpcUrl: this.configService.get<string>(
+        'ARC_TESTNET_RPC_URL',
+        'https://rpc.testnet.arc.network',
+      ),
+      chainId: parseInt(
+        this.configService.get<string>('ARC_TESTNET_CHAIN_ID', '5042002'),
+        10,
+      ),
+      cctpDomain: parseInt(
+        this.configService.get<string>('ARC_CCTP_DOMAIN', '26'),
+        10,
+      ),
+      usdcContract: this.configService.get<string>(
+        'ARC_USDC_CONTRACT',
+        '0x3600000000000000000000000000000000000000',
+      ),
+      gasStationContract: this.configService.get<string>(
+        'ARC_GAS_STATION_CONTRACT',
+        '0x7ceA357B5AC039F8F9e378a1f03Aa5005C0a25',
+      ),
+      gatewayContract: this.configService.get<string>(
+        'ARC_GATEWAY_CONTRACT',
+        '0x0077777d7EBA4688BDeF3E311b846F25870A19B9',
+      ),
+      paymasterContract: this.configService.get<string>(
+        'ARC_PAYMASTER_CONTRACT',
+        '0x31BE08D380A21fc740883c0BC434FcFc88740b58',
+      ),
+    };
   }
 }

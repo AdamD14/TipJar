@@ -45,7 +45,7 @@ export class PayoutsService {
     try {
       const blockchain = this.configService.get<string>(
         'DEFAULT_BLOCKCHAIN',
-        'MATIC-AMOY',
+        'ARC-TESTNET',
       );
       const tokenId = this.configService.get<string>('USDC_TOKEN_ID', 'USDC');
       const res = await this.circleService.initiateWithdrawal(

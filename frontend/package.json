@@ -14,6 +14,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@circle-fin/app-kit": "^1.7.0",
     "@circle-fin/developer-controlled-wallets": "^10.5.5",
     "@google/genai": "^2.0.1",
     "@headlessui/react": "^2.2.10",
