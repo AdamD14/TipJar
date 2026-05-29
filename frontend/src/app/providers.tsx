@@ -1,12 +1,13 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { WagmiProvider, createConfig, http, defineChain } from "wagmi";
+import { WagmiProvider, createConfig, http } from "wagmi";
+import type { Chain } from "wagmi/chains";
 import { injected } from "wagmi/connectors";
 import { mainnet } from "wagmi/chains";
 import ToastHost from "@/components/ui/notifications/Toast";
 
-export const arcTestnet = defineChain({
+export const arcTestnet: Chain = {
   id: 5042002,
   name: "Arc Testnet",
   nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
@@ -16,7 +17,8 @@ export const arcTestnet = defineChain({
   blockExplorers: {
     default: { name: "Arc Testnet Explorer", url: "https://explorer.testnet.arc.network" },
   },
-});
+  testnet: true,
+};
 
 export const config = createConfig({
   chains: [arcTestnet, mainnet],

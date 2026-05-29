@@ -3,6 +3,9 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ["@headlessui/react", "@heroicons/react", "lucide-react"],
   },
+  turbopack: {
+    root: "/home/tipjar/TipJar/frontend",
+  },
   images: {
     qualities: [25, 50, 75, 90, 100],
     remotePatterns: [
