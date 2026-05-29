@@ -179,18 +179,18 @@ export default function HowItWorks() {
   return (
     <section id="how-it-works" className="relative w-full min-h-screen">
       <img
-        src="/B03.webp"
+        src="/B19.webp"
         alt=""
-        className="pointer-events-none absolute inset-0 -z-10 w-full max-w-[1920px] aspect-video mx-auto object-cover"
+        className="pointer-events-none absolute inset-0 -z-10 w-full h-full mx-auto object-cover"
       />
 
       <div className="relative z-10 w-full min-h-screen py-20 px-4 md:px-8">
         <div className="w-full h-full flex flex-col justify-center gap-10 md:gap-16 lg:gap-20">
           <div className="text-center">
             <h2 className="font-heading font-bold text-4xl sm:text-5xl lg:text-6xl text-text-ds-primary">
-              How It{" "}
+              How it{" "}
               <span className="bg-gradient-to-r from-gold-200 via-gold-400 to-gold-200 bg-clip-text text-transparent">
-                Works?
+                works?
               </span>
             </h2>
           </div>
@@ -198,11 +198,11 @@ export default function HowItWorks() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 lg:gap-24">
             {/* For Fans */}
             <div className="flex flex-col">
-              <h3 className="mb-8 flex items-center gap-3 text-xl font-heading font-semibold text-gold-400">
-                <Users size={22} className="text-gold-400" />
+              <h3 className="mb-8 flex items-center gap-3 text-xl font-heading font-semibold text-purple-500">
+                <Users size={22} className="text-purple-500" />
                 For Fans
               </h3>
-              <SnakeTimeline steps={fanSteps} accent="gold" />
+              <SnakeTimeline steps={fanSteps} accent="purple" />
               <div className="mt-8">
                 <Button variant="secondary" href="/signup">
                   Sign up as a Fan

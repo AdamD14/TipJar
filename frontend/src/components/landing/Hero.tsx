@@ -10,28 +10,28 @@ export default function Hero() {
       aria-labelledby="hero-heading"
     >
       <img
-        src="/B01.webp"
+        src="/B25.webp"
         alt=""
-        className="pointer-events-none absolute inset-0 -z-10 w-full max-w-[1920px] aspect-video mx-auto object-cover"
+        className="pointer-events-none absolute inset-0 -z-10 w-full h-full mx-auto object-cover"
       />
       <div className="px-4 md:px-8">
-        <div className="relative min-h-screen flex flex-col justify-start pt-16 lg:pt-20">
+        <div className="relative min-h-screen flex flex-col justify-start pt-20 lg:pt-26">
           
           {/* KONTENER DLA TEKSTU I BADGE (Limit 1280px) */}
           <div className="max-w-7xl w-full flex flex-col items-start">
             <h1
               id="hero-heading"
-              className="font-heading font-bold tracking-tight leading-[1.15] text-5xl sm:text-5xl md:text-6xl lg:text-8xl"
+              className="--font-size-display: clamp(2.5rem, 4vw + 1.5rem, 4rem); font-heading font-bold leading-[1.1] text-4xl sm:text-5xl md:text-6xl lg:text-7xl"
             >
               <span className="block relative before:content-['\00a0\00a0\0009'] before:inline-block bg-gradient-to-r from-gold-500 via-gold-200 to-gold-400 bg-clip-text text-transparent">
-                Support creativity
+                Unleash creativity,
               </span>
               <span className="block mt-1 sm:mt-2 bg-gradient-to-r from-teal-200 via-white to-teal-200 bg-clip-text text-transparent drop-shadow-lg">
-                Get paid instantly
+                get paid instantly.
               </span>
             </h1>
 
-            <p className="mt-6 lg:mt-8 text-2xl sm:text-3xl md:text-4xl font-heading font-regular text-text-ds-secondary max-w-5xl">
+            <p className="mt-6 lg:mt-8 text-xl sm:text-2xl md:text-3xl font-heading font-regular --text-primary max-w-5xl">
               Instant micro-payments in USDC for creators:<br />
               podcasters, streamers, YouTubers, digital models,<br />
               musicians, artists, bloggers, coaches,<br />

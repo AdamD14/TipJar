@@ -8,9 +8,9 @@ export default function WhyTipJar() {
   return (
     <section id="why-tipjar" className="relative w-full min-h-screen">
       <img
-        src="/B10.webp"
+        src="/B06.webp"
         alt=""
-        className="pointer-events-none absolute inset-0 -z-10 w-full max-w-[1920px] aspect-video mx-auto object-cover"
+        className="pointer-events-none absolute inset-0 -z-10 w-full h-full mx-auto object-cover"
       />
 
       <div className="relative z-10 w-full min-h-screen py-20 px-4 md:px-8">
@@ -20,7 +20,7 @@ export default function WhyTipJar() {
             <h2 className="font-heading font-bold text-4xl sm:text-5xl lg:text-6xl text-text-ds-primary">
               Why{" "}
               <span className="bg-gradient-to-r from-gold-200 via-gold-400 to-gold-200 bg-clip-text text-transparent">
-                TipJar+?
+                tipjar+?
               </span>
             </h2>
           </div>

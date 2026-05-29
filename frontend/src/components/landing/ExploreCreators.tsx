@@ -145,9 +145,9 @@ export default function ExploreCreators() {
   return (
     <section id="explore" className="relative w-full min-h-screen">
       <img
-        src="/B11.webp"
+        src="/B03.webp"
         alt=""
-        className="pointer-events-none absolute inset-0 -z-10 w-full max-w-[1920px] aspect-video mx-auto object-cover"
+        className="pointer-events-none absolute inset-0 -z-10 w-full h-full mx-auto object-cover"
       />
 
       <div className="mx-auto max-w-[1600px] px-4 md:px-8 py-20 md:py-28">
@@ -155,12 +155,10 @@ export default function ExploreCreators() {
           <h2 className="font-heading font-bold text-4xl sm:text-5xl lg:text-6xl text-text-ds-primary">
             Explore{" "}
             <span className="bg-gradient-to-r from-gold-200 via-gold-400 to-gold-200 bg-clip-text text-transparent">
-              Creators
+              creators
             </span>
           </h2>
-          <p className="text-lg text-text-ds-tertiary font-body">
-            Featured by category. Find your next favorite.
-          </p>
+          
         </div>
 
         <div className="mb-6">
@@ -206,7 +204,7 @@ export default function ExploreCreators() {
         </div>
 
         <div className="flex justify-center">
-          <Button variant="ghost" href="/discover" className="gap-2">
+          <Button variant="tertiary" href="/discover" className="gap-2">
             Explore all creators
           </Button>
         </div>

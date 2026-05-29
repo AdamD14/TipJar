@@ -43,18 +43,18 @@ export default function Footer() {
   return (
     <footer className="relative border-t border-white/5 bg-surface-app/85 backdrop-blur-sm overflow-hidden">
       <img
-        src="/B20.webp"
+        src="/B30.webp"
         alt=""
-        className="pointer-events-none absolute inset-0 -z-10 w-full max-w-[1920px] aspect-video mx-auto object-cover"
+        className="pointer-events-none absolute inset-0 -z-10 w-full h-full mx-auto object-cover"
       />
-      <div className="relative z-10 mx-auto max-w-[1280px] px-4 py-12 md:py-16">
+      <div className="relative z-10 mx-auto  px-4 py-12 md:py-16">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           {/* Brand column */}
           <div>
             <Link href="/" className="inline-flex items-center gap-2" aria-label="tipjar.plus — homepage">
               <Image
                 src="/logo.png"
-                alt=""
+                alt="TipJar+ logo"
                 width={32}
                 height={32}
                 className="opacity-80"
@@ -63,7 +63,7 @@ export default function Footer() {
                 TIPJAR.PLUS
               </span>
             </Link>
-            <p className="mt-4 max-w-[280px] text-[13px] leading-[1.6] text-text-ds-tertiary font-body">
+            <p className="mt-4 text-[13px] leading-[1.6] text-text-ds-tertiary font-body">
               Support your favorite creators in USDC. Fast, borderless, and
               transparent — powered by Circle.
             </p>

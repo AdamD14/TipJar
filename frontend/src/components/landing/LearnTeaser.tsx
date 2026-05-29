@@ -91,12 +91,12 @@ export default function LearnTeaser() {
   return (
     <section id="learn" className="relative w-full min-h-screen">
       <img
-        src="/B05.webp"
+        src="/B28.webp"
         alt=""
-        className="pointer-events-none absolute inset-0 -z-10 w-full max-w-[1920px] aspect-video mx-auto object-cover"
+        className="pointer-events-none absolute inset-0 -z-10 w-full h-full mx-auto object-cover"
       />
-
-      <div className="mx-auto max-w-[1280px] px-4 md:px-8 py-20 md:py-28">
+7
+      <div className="mx-auto px-4 md:px-8 py-20 md:py-28">
         <div className="text-center mb-8 flex flex-col items-center justify-center gap-2">
           <h2
             id="learn-heading"
@@ -104,13 +104,10 @@ export default function LearnTeaser() {
           >
             Knowledge{" "}
             <span className="bg-gradient-to-r from-gold-200 via-gold-400 to-gold-200 bg-clip-text text-transparent">
-              Center
+              center
             </span>
           </h2>
-          <p className="max-w-[580px] text-[14px] leading-[1.6] text-text-ds-tertiary font-body">
-            Short answers upfront. No jargon, just what you need to support
-            creators and earn faster.
-          </p>
+          
         </div>
 
         <div className="mb-6 flex flex-wrap gap-2 justify-center">
