@@ -17,9 +17,11 @@ import { ValidatedUser } from '../auth/auth.service';
 import { UserRole } from '@prisma/client';
 import { TransactionState } from '@circle-fin/developer-controlled-wallets';
 
-import { CctpTransferDto } from './dto/cctp-transfer.dto';
 import { CreateHostedDepositDto } from './dto/create-hosted-deposit.dto';
+import { GatewayDepositDto } from './dto/gateway-deposit.dto';
+import { GatewayTransferDto } from './dto/gateway-transfer.dto';
 import { WithdrawDto } from './dto/withdraw.dto';
+import { AddDelegateDto, RemoveDelegateDto } from './dto/gateway-delegate.dto';
 
 type WalletInfo = { walletId: string; address: string; chain: string };
 type WalletCreated = { walletId: string; address: string };
@@ -29,7 +31,10 @@ type WithdrawalResult = {
   status: TransactionState;
   txHash?: string;
 };
-type CctpResult = { transferId: string };
+type GatewayBalanceResult = { balance: string; currency: string; domainBalances: { domain: number; depositor: string; balance: string }[] };
+type GatewayDepositResult = { approveTxId: string; depositTxId: string };
+type GatewayTransferResult = { burnSignTxId: string; mintTxId: string };
+type DelegateResult = { txId: string };
 type WebhookAck = { received: true };
 type AdminWalletRow = {
   id: string;
@@ -121,20 +126,69 @@ export class CircleController {
     );
   }
 
-  @Post('cctp/transfer')
+  @Post('gateway/deposit')
   @UseGuards(AuthGuard('jwt'))
-  async cctpTransfer(
+  async gatewayDeposit(
     @Req() req: Request,
-    @Body() body: CctpTransferDto,
-  ): Promise<CctpResult> {
+    @Body() body: GatewayDepositDto,
+  ): Promise<GatewayDepositResult> {
     const user = req.user as ValidatedUser;
-    const amountNum = parseFloat(body.amount);
-    return this.circleService.initiateCctpTransfer(
+    return this.circleService.initiateGatewayDeposit(
       user.id,
-      amountNum,
-      body.toChain,
-      body.toAddress,
+      body.amount,
     );
+  }
+
+  @Post('gateway/transfer')
+  @UseGuards(AuthGuard('jwt'))
+  async gatewayTransfer(
+    @Req() req: Request,
+    @Body() body: GatewayTransferDto,
+  ): Promise<GatewayTransferResult> {
+    const user = req.user as ValidatedUser;
+    return this.circleService.initiateGatewayTransfer(
+      user.id,
+      body.amount,
+      body.destinationDomain,
+      body.recipientAddress,
+    );
+  }
+
+  @Get('gateway/balance')
+  @UseGuards(AuthGuard('jwt'))
+  async gatewayBalance(@Req() req: Request): Promise<GatewayBalanceResult> {
+    const user = req.user as ValidatedUser;
+    return this.circleService.getGatewayUnifiedBalance(user.id);
+  }
+
+  @Post('gateway/add-delegate')
+  @UseGuards(AuthGuard('jwt'))
+  async addDelegate(
+    @Req() req: Request,
+    @Body() body: AddDelegateDto,
+  ): Promise<DelegateResult> {
+    const user = req.user as ValidatedUser;
+    const { address } = await this.circleService.getWalletForUser(user.id);
+    const txId = await this.circleService.addGatewayDelegate(
+      address,
+      body.delegateAddress,
+    );
+    return { txId };
+  }
+
+  @Post('gateway/remove-delegate')
+  @UseGuards(AuthGuard('jwt'))
+  async removeDelegate(
+    @Req() req: Request,
+    @Body() body: RemoveDelegateDto,
+  ): Promise<DelegateResult> {
+    const user = req.user as ValidatedUser;
+    const { address } = await this.circleService.getWalletForUser(user.id);
+    const txId = await this.circleService.removeGatewayDelegate(
+      address,
+      body.delegateAddress,
+    );
+    return { txId };
   }
 
   @Post('webhook')

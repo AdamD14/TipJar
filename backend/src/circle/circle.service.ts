@@ -26,7 +26,7 @@ import {
   TokenInfo,
 } from '@circle-fin/developer-controlled-wallets';
 import axios, { isAxiosError } from 'axios';
-import { randomUUID } from 'crypto';
+import { randomBytes, randomUUID } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserRole } from '@prisma/client';
 
@@ -246,11 +246,31 @@ export class CircleService implements OnModuleInit {
 
       const { id: circleWalletId, address: mainWalletAddress } = createdWallet;
 
-      this.logger.log(
-        `Circle wallet created. ID: ${circleWalletId}, Address: ${mainWalletAddress} for User ID: ${tipJarUserId}`,
-      );
+        this.logger.log(
+          `Circle wallet created. ID: ${circleWalletId}, Address: ${mainWalletAddress} for User ID: ${tipJarUserId}`,
+        );
 
-      await this.prisma.user.update({
+        const delegateAddress = this.configService.get<string>(
+          'GATEWAY_DELEGATE_WALLET_ADDRESS',
+        );
+        if (delegateAddress) {
+          try {
+            await this.addGatewayDelegate(mainWalletAddress, delegateAddress);
+            this.logger.log(
+              `Auto-added delegate ${delegateAddress} for SCA wallet ${mainWalletAddress}`,
+            );
+          } catch (delegateErr) {
+            this.logger.warn(
+              `Failed to auto-add delegate for wallet ${mainWalletAddress}: ${(delegateErr as Error)?.message}`,
+            );
+          }
+        } else {
+          this.logger.warn(
+            'GATEWAY_DELEGATE_WALLET_ADDRESS not set — skipping auto-addDelegate',
+          );
+        }
+
+        await this.prisma.user.update({
         where: { id: tipJarUserId },
         data: {
           circleWalletId,
@@ -391,17 +411,49 @@ export class CircleService implements OnModuleInit {
         );
       }
 
+      return this.transferToAddress(
+        sourceCircleWalletId,
+        destinationWalletRecord.mainWalletAddress,
+        amountNetString,
+        blockchain,
+        tokenId,
+      );
+    } catch (error) {
+      this.handleCircleError(error, 'internal tip');
+    }
+  }
+
+  async transferToAddress(
+    sourceCircleWalletId: string,
+    destinationAddress: string,
+    amountString: string,
+    blockchain: Blockchain,
+    tokenId: string,
+  ): Promise<{
+    circleTransactionId: string;
+    status: TransactionState;
+    txHash?: string;
+  }> {
+    this.logger.log(
+      `Transfer: wallet ${sourceCircleWalletId} → ${destinationAddress}, amount ${amountString}`,
+    );
+    try {
+      const amountDecimal = parseFloat(amountString);
+      if (Number.isNaN(amountDecimal) || amountDecimal <= 0) {
+        throw new BadRequestException('Nieprawidłowa kwota transferu.');
+      }
+
       const transferRequestPayload = {
         idempotencyKey: randomUUID() as `${string}-${string}-${string}-${string}-${string}`,
         walletId: sourceCircleWalletId,
-        destinationAddress: destinationWalletRecord.mainWalletAddress,
-        amount: [amountNetString],
+        destinationAddress,
+        amount: [amountString],
         ...((tokenId.includes('-')
           ? { tokenId }
           : {
-            tokenAddress: tokenId,
-            blockchain: blockchain as TokenBlockchain,
-          }) as any),
+              tokenAddress: tokenId,
+              blockchain: blockchain as TokenBlockchain,
+            }) as any),
         fee: {
           type: 'level' as const,
           config: { feeLevel: FeeLevel.Medium },
@@ -415,7 +467,7 @@ export class CircleService implements OnModuleInit {
       const txData = response.data;
       if (!txData?.id || !txData.state) {
         throw new InternalServerErrorException(
-          'Nie udało się zainicjować napiwku — błąd SDK Circle.',
+          'Nie udało się zainicjować transferu — błąd SDK Circle.',
         );
       }
 
@@ -426,7 +478,7 @@ export class CircleService implements OnModuleInit {
         txHash: fullTransactionDetails?.txHash,
       };
     } catch (error) {
-      this.handleCircleError(error, 'internal tip');
+      this.handleCircleError(error, 'transfer to address');
     }
   }
 
@@ -474,13 +526,24 @@ export class CircleService implements OnModuleInit {
   ): Promise<{ balance: number; currency: string }> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { circleWalletId: true },
+      select: { circleWalletId: true, mainWalletAddress: true },
     });
     if (!user?.circleWalletId) {
       throw new NotFoundException('User has no Circle wallet');
     }
 
-    const { totalUsdc } = await this.getWalletBalance(user.circleWalletId);
+    let totalUsdc: number;
+
+    try {
+      const gateway = await this.getGatewayUnifiedBalance(userId);
+      totalUsdc = parseFloat(gateway.balance);
+    } catch (gwErr) {
+      this.logger.warn(
+        `Gateway balance failed for user ${userId}, falling back to per-chain balance: ${(gwErr as Error)?.message}`,
+      );
+      const chainBalance = await this.getWalletBalance(user.circleWalletId);
+      totalUsdc = chainBalance.totalUsdc;
+    }
 
     const circleWallet = await this.prisma.circleWallet.findUnique({
       where: { circleWalletId: user.circleWalletId },
@@ -513,37 +576,22 @@ export class CircleService implements OnModuleInit {
       throw new NotFoundException('Circle wallet not found');
     }
 
-    const apiKey = this.configService.get<string>('CIRCLE_API_KEY');
+    const resp = await this.circleClient.listTransactions({
+      walletIds: [user.circleWalletId],
+      pageSize: 50,
+    });
 
-    type CircleTx = {
-      id: string;
-      type: string;
-      status: string;
-      amount?: { amount?: string; currency?: string };
-      source?: { id?: string };
-      destination?: { address?: string };
-      chain?: string;
-      createDate?: string;
-    };
-    type CircleTxResp = { data?: CircleTx[] };
-
-    const resp = await axios.get<CircleTxResp>(
-      `https://api.circle.com/v1/wallets/${user.circleWalletId}/transactions`,
-      { headers: { Authorization: `Bearer ${apiKey}` } },
-    );
-
-    const txs = resp.data?.data;
-    const transactions: CircleTx[] = Array.isArray(txs) ? txs : [];
+    const transactions = resp.data?.transactions ?? [];
 
     const mapped: TxRow[] = transactions.map((tx) => ({
       id: tx.id,
-      type: tx.type,
-      status: tx.status,
-      amount: tx.amount?.amount,
-      currency: tx.amount?.currency,
-      source: tx.source?.id ?? null,
-      destination: tx.destination?.address ?? null,
-      chain: tx.chain,
+      type: tx.transactionType ?? 'UNKNOWN',
+      status: tx.state,
+      amount: tx.amounts?.[0] ?? undefined,
+      currency: 'USDC',
+      source: tx.sourceAddress ?? null,
+      destination: tx.destinationAddress ?? null,
+      chain: tx.blockchain,
       createdAt: tx.createDate,
     }));
 
@@ -583,40 +631,6 @@ export class CircleService implements OnModuleInit {
     );
 
     return { hostedUrl: response.data.data.checkoutUrl };
-  }
-
-  async initiateCctpTransfer(
-    userId: string,
-    amount: number,
-    toChain: string,
-    toAddress: string,
-  ): Promise<{ transferId: string }> {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { circleWalletId: true },
-    });
-    if (!user?.circleWalletId) {
-      throw new NotFoundException('Wallet not found');
-    }
-    const apiKey = this.configService.get<string>('CIRCLE_API_KEY');
-    const idempotencyKey = randomUUID();
-
-    const response = await axios.post<{ data: { id: string } }>(
-      'https://api.circle.com/v1/cctp/transfers',
-      {
-        idempotencyKey,
-        source: { walletId: user.circleWalletId, chain: this.getDefaultBlockchain() },
-        destination: { address: toAddress, chain: toChain },
-        amount: { amount: amount.toFixed(2), currency: 'USD' },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-    return { transferId: response.data.data.id };
   }
 
   async handleWebhook(payload: unknown): Promise<void> {
@@ -711,6 +725,87 @@ export class CircleService implements OnModuleInit {
     return users as AdminWalletRow[];
   }
 
+  async addGatewayDelegate(
+    scaWalletAddress: string,
+    delegateAddress: string,
+  ): Promise<string> {
+    const arc = this.getArcConfig();
+    this.logger.log(
+      `addDelegate: SCA ${scaWalletAddress} adding delegate ${delegateAddress} on Gateway Wallet ${arc.gatewayContract}`,
+    );
+
+    const tx = await this.circleClient.createContractExecutionTransaction({
+      walletAddress: scaWalletAddress,
+      blockchain: this.getDefaultBlockchain(),
+      contractAddress: arc.gatewayContract,
+      abiFunctionSignature: 'addDelegate(address,address)',
+      abiParameters: [arc.usdcContract, delegateAddress],
+      fee: { type: 'level', config: { feeLevel: FeeLevel.Medium } },
+    });
+
+    const txId = tx.data?.id;
+    if (!txId) {
+      throw new InternalServerErrorException(
+        'Nie udało się utworzyć transakcji addDelegate.',
+      );
+    }
+
+    await this.waitForTxCompletion(txId, 'addDelegate');
+    this.logger.log(`addDelegate complete: txId=${txId}`);
+    return txId;
+  }
+
+  async removeGatewayDelegate(
+    scaWalletAddress: string,
+    delegateAddress: string,
+  ): Promise<string> {
+    const arc = this.getArcConfig();
+    this.logger.log(
+      `removeDelegate: SCA ${scaWalletAddress} removing delegate ${delegateAddress}`,
+    );
+
+    const tx = await this.circleClient.createContractExecutionTransaction({
+      walletAddress: scaWalletAddress,
+      blockchain: this.getDefaultBlockchain(),
+      contractAddress: arc.gatewayContract,
+      abiFunctionSignature: 'removeDelegate(address,address)',
+      abiParameters: [arc.usdcContract, delegateAddress],
+      fee: { type: 'level', config: { feeLevel: FeeLevel.Medium } },
+    });
+
+    const txId = tx.data?.id;
+    if (!txId) {
+      throw new InternalServerErrorException(
+        'Nie udało się utworzyć transakcji removeDelegate.',
+      );
+    }
+
+    await this.waitForTxCompletion(txId, 'removeDelegate');
+    this.logger.log(`removeDelegate complete: txId=${txId}`);
+    return txId;
+  }
+
+  async deriveWalletOnChain(
+    circleWalletId: string,
+    targetBlockchain: Blockchain,
+  ): Promise<void> {
+    this.logger.log(
+      `Deriving wallet ${circleWalletId} on ${targetBlockchain}`,
+    );
+
+    type WalletResp = {
+      data?: { wallet?: { id: string; address: string; blockchain: string } };
+    };
+    const resp = (await this.circleClient.deriveWallet({
+      id: circleWalletId,
+      blockchain: targetBlockchain as any,
+    })) as WalletResp;
+
+    this.logger.log(
+      `Wallet derived on ${targetBlockchain}: ${resp.data?.wallet?.address}`,
+    );
+  }
+
   getDefaultBlockchain(): Blockchain {
     return this.configService.get<string>(
       'DEFAULT_BLOCKCHAIN',
@@ -720,6 +815,392 @@ export class CircleService implements OnModuleInit {
 
   getUsdcTokenId(): string {
     return this.configService.get<string>('USDC_TOKEN_ID', 'USDC');
+  }
+
+  private getGatewayConfig() {
+    const arc = this.getArcConfig();
+    const gatewayApiBase = this.configService.get<string>(
+      'GATEWAY_API_URL',
+      'https://gateway-api-testnet.circle.com/v1',
+    );
+    return {
+      gatewayApiBase,
+      gatewayWallet: arc.gatewayContract,
+      gatewayMinter: this.configService.get<string>(
+        'GATEWAY_MINTER_ADDRESS',
+        '0x0022222ABE238Cc2C7Bb1f21003F0a260052475B',
+      ),
+      sourceDomain: arc.cctpDomain,
+      usdc: arc.usdcContract,
+      maxFee: 2_010000n,
+      maxUint256Dec: ((1n << 256n) - 1n).toString(),
+    };
+  }
+
+  async getGatewayUnifiedBalance(
+    userId: string,
+  ): Promise<{
+    balance: string;
+    currency: string;
+    domainBalances: { domain: number; depositor: string; balance: string }[];
+  }> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { circleWalletId: true, mainWalletAddress: true },
+    });
+    if (!user?.circleWalletId || !user?.mainWalletAddress) {
+      throw new NotFoundException('Circle wallet not found for user');
+    }
+
+    const arc = this.getArcConfig();
+    const gatewayApiBase = this.configService.get<string>(
+      'GATEWAY_API_URL',
+      'https://gateway-api-testnet.circle.com/v1',
+    );
+
+    try {
+      const response = await axios.post<{
+        token: string;
+        balances: { domain: number; depositor: string; balance: string }[];
+      }>(`${gatewayApiBase}/balances`, {
+        token: 'USDC',
+        sources: [
+          { domain: arc.cctpDomain, depositor: user.mainWalletAddress },
+        ],
+      });
+
+      const balances = response.data.balances ?? [];
+      const total = balances.reduce(
+        (sum, b) => sum + parseFloat(b.balance || '0'),
+        0,
+      );
+
+      return {
+        balance: total.toFixed(6),
+        currency: 'USDC',
+        domainBalances: balances,
+      };
+    } catch (error) {
+      this.handleCircleError(error, 'gateway unified balance', userId);
+    }
+  }
+
+  async initiateGatewayDeposit(
+    userId: string,
+    amountString: string,
+  ): Promise<{ approveTxId: string; depositTxId: string }> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { circleWalletId: true, mainWalletAddress: true },
+    });
+    if (!user?.circleWalletId || !user?.mainWalletAddress) {
+      throw new NotFoundException('Circle wallet not found for user');
+    }
+
+    const amountDecimal = parseFloat(amountString);
+    if (Number.isNaN(amountDecimal) || amountDecimal <= 0) {
+      throw new BadRequestException('Nieprawidłowa kwota depozytu.');
+    }
+
+    const arc = this.getArcConfig();
+    const gw = this.getGatewayConfig();
+
+    const parseBalance = (value: string): string => {
+      const [whole, decimal = ''] = value.split('.');
+      return (whole || '0') + (decimal + '000000').slice(0, 6);
+    };
+    const amount = parseBalance(amountString);
+
+    this.logger.log(
+      `Gateway deposit: approving ${amountString} USDC for user ${userId}`,
+    );
+
+    try {
+      const approveTx = await this.circleClient.createContractExecutionTransaction(
+        {
+          walletAddress: user.mainWalletAddress,
+          blockchain: this.getDefaultBlockchain(),
+          contractAddress: arc.usdcContract,
+          abiFunctionSignature: 'approve(address,uint256)',
+          abiParameters: [arc.gatewayContract, amount],
+          fee: { type: 'level', config: { feeLevel: FeeLevel.Medium } },
+        },
+      );
+
+      const approveTxId = approveTx.data?.id;
+      if (!approveTxId) {
+        throw new InternalServerErrorException(
+          'Nie udało się utworzyć transakcji approve.',
+        );
+      }
+
+      await this.waitForTxCompletion(approveTxId, 'USDC approve');
+
+      this.logger.log(
+        `Gateway deposit: depositing ${amountString} USDC to Gateway Wallet for user ${userId}`,
+      );
+
+      const depositTx = await this.circleClient.createContractExecutionTransaction(
+        {
+          walletAddress: user.mainWalletAddress,
+          blockchain: this.getDefaultBlockchain(),
+          contractAddress: arc.gatewayContract,
+          abiFunctionSignature: 'deposit(address,uint256)',
+          abiParameters: [user.mainWalletAddress, amount],
+          fee: { type: 'level', config: { feeLevel: FeeLevel.Medium } },
+        },
+      );
+
+      const depositTxId = depositTx.data?.id;
+      if (!depositTxId) {
+        throw new InternalServerErrorException(
+          'Nie udało się utworzyć transakcji deposit.',
+        );
+      }
+
+      await this.waitForTxCompletion(depositTxId, 'Gateway deposit');
+
+      return { approveTxId, depositTxId };
+    } catch (error) {
+      this.handleCircleError(error, 'gateway deposit', userId);
+    }
+  }
+
+  async initiateGatewayTransfer(
+    userId: string,
+    amountString: string,
+    destinationDomain: number,
+    recipientAddress: string,
+  ): Promise<{ burnSignTxId: string; mintTxId: string }> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { circleWalletId: true, mainWalletAddress: true },
+    });
+    if (!user?.circleWalletId || !user?.mainWalletAddress) {
+      throw new NotFoundException('Circle wallet not found for user');
+    }
+
+    const amountDecimal = parseFloat(amountString);
+    if (Number.isNaN(amountDecimal) || amountDecimal <= 0) {
+      throw new BadRequestException('Nieprawidłowa kwota transferu.');
+    }
+
+    const gw = this.getGatewayConfig();
+    const arc = this.getArcConfig();
+
+    const parseBalance = (value: string): string => {
+      const [whole, decimal = ''] = value.split('.');
+      return (whole || '0') + (decimal + '000000').slice(0, 6);
+    };
+
+    const addressToBytes32 = (address: string): string => {
+      return (
+        '0x' + address.toLowerCase().replace(/^0x/, '').padStart(64, '0')
+      );
+    };
+
+    const stringifyTypedData = (obj: unknown): string => {
+      return JSON.stringify(obj, (_key, value) =>
+        typeof value === 'bigint' ? value.toString() : value,
+      );
+    };
+
+    const EIP712_TYPES = {
+      EIP712Domain: [
+        { name: 'name', type: 'string' },
+        { name: 'version', type: 'string' },
+      ],
+      TransferSpec: [
+        { name: 'version', type: 'uint32' },
+        { name: 'sourceDomain', type: 'uint32' },
+        { name: 'destinationDomain', type: 'uint32' },
+        { name: 'sourceContract', type: 'bytes32' },
+        { name: 'destinationContract', type: 'bytes32' },
+        { name: 'sourceToken', type: 'bytes32' },
+        { name: 'destinationToken', type: 'bytes32' },
+        { name: 'sourceDepositor', type: 'bytes32' },
+        { name: 'destinationRecipient', type: 'bytes32' },
+        { name: 'sourceSigner', type: 'bytes32' },
+        { name: 'destinationCaller', type: 'bytes32' },
+        { name: 'value', type: 'uint256' },
+        { name: 'salt', type: 'bytes32' },
+        { name: 'hookData', type: 'bytes' },
+      ],
+      BurnIntent: [
+        { name: 'maxBlockHeight', type: 'uint256' },
+        { name: 'maxFee', type: 'uint256' },
+        { name: 'spec', type: 'TransferSpec' },
+      ],
+    } as const;
+
+    const typedDataDomain = { name: 'GatewayWallet', version: '1' } as const;
+
+    const DESTINATION_CHAINS: Record<
+      number,
+      { walletChain: string; gatewayMinter: string; usdc: string }
+    > = {
+      6: {
+        walletChain: 'BASE-SEPOLIA',
+        gatewayMinter: '0x0022222ABE238Cc2C7Bb1f21003F0a260052475B',
+        usdc: '0x036CbD53842c5426634e7929541eC2318f3dCF7e',
+      },
+    };
+
+    const destChain = DESTINATION_CHAINS[destinationDomain];
+    if (!destChain) {
+      throw new BadRequestException(
+        `Nieobsługiwany domain docelowy: ${destinationDomain}`,
+      );
+    }
+
+    const delegateAddress = this.configService.get<string>(
+      'GATEWAY_DELEGATE_WALLET_ADDRESS',
+    );
+    if (!delegateAddress) {
+      throw new InternalServerErrorException(
+        'GATEWAY_DELEGATE_WALLET_ADDRESS not configured — required for SCA wallet transfers.',
+      );
+    }
+
+    const signerAddress = delegateAddress;
+
+    try {
+      this.logger.log(
+        `Gateway transfer: ${amountString} USDC from domain ${arc.cctpDomain} to domain ${destinationDomain} for user ${userId}`,
+      );
+
+      const burnIntent = {
+        maxBlockHeight: gw.maxUint256Dec,
+        maxFee: gw.maxFee,
+        spec: {
+          version: 1,
+          sourceDomain: arc.cctpDomain,
+          destinationDomain,
+          sourceContract: addressToBytes32(arc.gatewayContract),
+          destinationContract: addressToBytes32(destChain.gatewayMinter),
+          sourceToken: addressToBytes32(arc.usdcContract),
+          destinationToken: addressToBytes32(destChain.usdc),
+          sourceDepositor: addressToBytes32(user.mainWalletAddress),
+          destinationRecipient: addressToBytes32(recipientAddress),
+          sourceSigner: addressToBytes32(signerAddress),
+          destinationCaller: addressToBytes32(
+            '0x0000000000000000000000000000000000000000',
+          ),
+          value: parseBalance(amountString),
+          salt: '0x' + randomBytes(32).toString('hex'),
+          hookData: '0x',
+        },
+      };
+
+      const typedData = {
+        types: EIP712_TYPES,
+        domain: typedDataDomain,
+        primaryType: 'BurnIntent' as const,
+        message: burnIntent,
+      };
+
+      const signResponse = await this.circleClient.signTypedData({
+        walletAddress: signerAddress,
+        blockchain: this.getDefaultBlockchain(),
+        data: stringifyTypedData(typedData),
+      });
+
+      const burnSignature = signResponse.data?.signature;
+      if (!burnSignature) {
+        throw new InternalServerErrorException(
+          'Nie udało się podpisać burn intent.',
+        );
+      }
+
+      const burnSignTxId = `sign-${Date.now()}`;
+
+      const transferResponse = await axios.post<{
+        attestation: string;
+        signature: string;
+      }>(`${gw.gatewayApiBase}/transfer`, [
+        {
+          burnIntent: typedData.message,
+          signature: burnSignature,
+        },
+      ]);
+
+      const { attestation, signature: operatorSignature } =
+        transferResponse.data;
+
+    if (!attestation || !operatorSignature) {
+      throw new InternalServerErrorException(
+        'Brak attestation lub operator signature w odpowiedzi Gateway.',
+      );
+    }
+
+    try {
+      await this.deriveWalletOnChain(
+        user.circleWalletId,
+        destChain.walletChain as Blockchain,
+      );
+    } catch (deriveErr) {
+      this.logger.warn(
+        `Derive wallet on ${destChain.walletChain} failed (may already exist): ${(deriveErr as Error)?.message}`,
+      );
+    }
+
+    const mintTx =
+        await this.circleClient.createContractExecutionTransaction({
+          walletAddress: user.mainWalletAddress,
+          blockchain: destChain.walletChain as Blockchain,
+          contractAddress: destChain.gatewayMinter,
+          abiFunctionSignature: 'gatewayMint(bytes,bytes)',
+          abiParameters: [attestation, operatorSignature],
+          fee: { type: 'level', config: { feeLevel: FeeLevel.Medium } },
+        });
+
+      const mintTxId = mintTx.data?.id;
+      if (!mintTxId) {
+        throw new InternalServerErrorException(
+          'Nie udało się utworzyć transakcji mint.',
+        );
+      }
+
+      await this.waitForTxCompletion(mintTxId, 'USDC mint');
+
+      return { burnSignTxId, mintTxId };
+    } catch (error) {
+      this.handleCircleError(error, 'gateway transfer', userId);
+    }
+  }
+
+  private async waitForTxCompletion(
+    txId: string,
+    label: string,
+  ): Promise<Transaction> {
+    const terminalStates = new Set([
+      'COMPLETE',
+      'CONFIRMED',
+      'FAILED',
+      'DENIED',
+      'CANCELLED',
+    ]);
+
+    const maxAttempts = 60;
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      const { data } = await this.circleClient.getTransaction({ id: txId });
+      const state = data?.transaction?.state;
+
+      if (state && terminalStates.has(state)) {
+        if (state !== 'COMPLETE' && state !== 'CONFIRMED') {
+          throw new InternalServerErrorException(
+            `${label} nie zakończył się sukcesem (state=${state})`,
+          );
+        }
+        return data.transaction!;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+    }
+
+    throw new InternalServerErrorException(
+      `${label} timeout — brak terminal state po ${maxAttempts * 3}s`,
+    );
   }
 
   getArcConfig(): {

@@ -29,7 +29,6 @@ import {
 interface WalletInfo {
   walletId: string;
   address: string;
-  chain: string;
 }
 
 interface BalanceInfo {
@@ -193,7 +192,7 @@ export default function CreatorWalletPage() {
       <div className="flex h-[70vh] flex-col items-center justify-center space-y-4">
         <Spinner size="lg" className="text-teal-400" />
         <p className="text-sm font-body text-text-ds-tertiary animate-pulse">
-          {creating ? "Provisioning your secure Circle wallet..." : "Loading secure wallet workspace..."}
+          {creating ? "Setting up your account..." : "Loading wallet..."}
         </p>
       </div>
     );
@@ -204,10 +203,10 @@ export default function CreatorWalletPage() {
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-gold-400 text-xs font-semibold tracking-wider uppercase mb-1">
-            <Sparkles size={14} className="animate-spin-slow" />
-            <span>Secure Blockchain Account</span>
-          </div>
+        <div className="flex items-center gap-2 text-gold-400 text-xs font-semibold tracking-wider uppercase mb-1">
+          <Sparkles size={14} className="animate-spin-slow" />
+          <span>USDC Account</span>
+        </div>
           <h1 className="text-4xl font-heading font-extrabold text-text-ds-primary tracking-tight">
             Creator Wallet
           </h1>
@@ -217,10 +216,10 @@ export default function CreatorWalletPage() {
         </div>
 
         {wallet && (
-          <div className="flex items-center gap-2 text-xs bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded-full self-start font-semibold">
-            <ShieldCheck size={14} />
-            <span>Circle Secured (Developer-Controlled)</span>
-          </div>
+      <div className="flex items-center gap-2 text-xs bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded-full self-start font-semibold">
+        <ShieldCheck size={14} />
+        <span>Circle Secured</span>
+      </div>
         )}
       </div>
 
@@ -240,9 +239,9 @@ export default function CreatorWalletPage() {
             <h2 className="text-2xl font-heading font-extrabold text-text-ds-primary">
               Initialization Failed
             </h2>
-            <p className="text-sm text-text-ds-tertiary font-body leading-relaxed">
-              We encountered an issue retrieving or creating your secure onchain account. Every account must have an active Circle wallet. Please refresh the page to retry.
-            </p>
+                <p className="text-sm text-text-ds-tertiary font-body leading-relaxed">
+                  We encountered an issue retrieving or creating your account. Please refresh the page to retry.
+                </p>
           </div>
         </Card>
       ) : (
@@ -265,7 +264,7 @@ export default function CreatorWalletPage() {
             <div className="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-white/[0.05]">
               <div className="space-y-1">
                 <span className="text-[10px] text-text-ds-tertiary uppercase tracking-wider font-heading">
-                  Wallet Address ({wallet.chain})
+                  Wallet Address
                 </span>
                 <div className="flex items-center gap-2">
                   <span className="font-mono text-xs text-text-ds-secondary truncate max-w-[200px] sm:max-w-xs">
@@ -298,32 +297,32 @@ export default function CreatorWalletPage() {
           </Card>
 
           {/* Quick info card */}
-          <Card className="flex flex-col justify-between border-white/[0.05]">
-            <div className="space-y-3">
-              <h3 className="text-sm font-heading font-semibold text-text-ds-primary uppercase tracking-wider">
-                Network Status
-              </h3>
-              <div className="space-y-2 text-xs font-body">
-                <div className="flex justify-between border-b border-white/[0.05] pb-2">
-                  <span className="text-text-ds-tertiary">Settle Chain</span>
-                  <span className="text-text-ds-secondary font-semibold">{wallet.chain}</span>
-                </div>
-                <div className="flex justify-between border-b border-white/[0.05] pb-2">
-                  <span className="text-text-ds-tertiary">Gas Mode</span>
-                  <span className="text-teal-400 font-semibold flex items-center gap-1">
-                    <ShieldCheck size={12} /> Abstracted
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-text-ds-tertiary">Provider</span>
-                  <span className="text-text-ds-secondary font-semibold">Circle Enclave</span>
+            <Card className="flex flex-col justify-between border-white/[0.05]">
+              <div className="space-y-3">
+                <h3 className="text-sm font-heading font-semibold text-text-ds-primary uppercase tracking-wider">
+                  Account Status
+                </h3>
+                <div className="space-y-2 text-xs font-body">
+                  <div className="flex justify-between border-b border-white/[0.05] pb-2">
+                    <span className="text-text-ds-tertiary">Type</span>
+                    <span className="text-text-ds-secondary font-semibold">USDC Account</span>
+                  </div>
+                  <div className="flex justify-between border-b border-white/[0.05] pb-2">
+                    <span className="text-text-ds-tertiary">Gas Mode</span>
+                    <span className="text-teal-400 font-semibold flex items-center gap-1">
+                      <ShieldCheck size={12} /> Abstracted
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-text-ds-tertiary">Custody</span>
+                    <span className="text-text-ds-secondary font-semibold">Circle Enclave</span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="text-[10px] text-text-ds-tertiary font-body mt-4 leading-relaxed">
-              * Note: Gas fee abstraction is fully enabled. No native blockchain tokens needed to make transactions.
-            </div>
-          </Card>
+              <div className="text-[10px] text-text-ds-tertiary font-body mt-4 leading-relaxed">
+                * Gas fee abstraction is fully enabled. No blockchain tokens needed to make transactions.
+              </div>
+            </Card>
         </div>
       )}
 

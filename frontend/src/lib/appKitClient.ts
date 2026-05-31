@@ -12,12 +12,12 @@ let _kit: AppKit | undefined;
 export function getAppKit(): AppKit {
   if (!_kit) {
     _kit = new AppKit({
-      developerFee: {
-        getFee: async () => {
-          return 0n;
-        },
-        getFeeRecipient: () => FEE_WALLET,
+    developerFee: {
+      getFee: async (_to: string, _token: string, amount: bigint) => {
+        return (amount * BigInt(FEE_BPS)) / 10_000n;
       },
+      getFeeRecipient: () => FEE_WALLET,
+    },
       disableErrorReporting: true,
     });
   }

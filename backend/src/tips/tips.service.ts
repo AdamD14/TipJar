@@ -27,6 +27,8 @@ export class TipsService {
     private readonly config: ConfigService,
   ) {}
 
+  private readonly FEE_BPS = 250;
+
   async processNewTip(params: ProcessTipParams): Promise<Tip> {
     const {
       amount,
@@ -37,20 +39,31 @@ export class TipsService {
       paymentGatewayToken,
     } = params;
 
+    const amountDecimal = new Prisma.Decimal(amount);
+    const feeBps = this.FEE_BPS;
+    const platformFeeAmount = amountDecimal
+      .mul(feeBps)
+      .div(10000)
+      .toDecimalPlaces(6, Prisma.Decimal.ROUND_DOWN);
+    const netAmountForCreator = amountDecimal
+      .sub(platformFeeAmount)
+      .toDecimalPlaces(6, Prisma.Decimal.ROUND_DOWN);
+
     const tip = await this.prisma.tip.create({
       data: {
-        amount: new Prisma.Decimal(amount),
+        amount: amountDecimal,
         creatorId,
         fanId,
         message,
         isAnonymous: isAnonymous ?? false,
         status: TipStatus.PENDING,
+        platformFeeAmount,
+        netAmountForCreator,
       },
     });
 
     try {
       if (fanId) {
-        // Internal USDC tip between registered users
         const creator = await this.usersService.findOneById(creatorId);
         const fan = await this.usersService.findOneById(fanId);
         if (!creator || !fan) {
@@ -69,10 +82,38 @@ export class TipsService {
         const transfer = await this.circleService.initiateInternalTipTransfer(
           fan.circleWalletId,
           creator.circleWalletId,
-          amount,
+          netAmountForCreator.toString(),
           blockchain,
           tokenId,
         );
+
+        await this.prisma.tip.update({
+          where: { id: tip.id },
+          data: {
+            circleTransferId: transfer.circleTransactionId,
+            blockchainTransactionHash: transfer.txHash ?? null,
+          },
+        });
+
+        const feeWalletAddress = this.config.get<string>('FEE_WALLET_ADDRESS');
+        if (
+          feeWalletAddress &&
+          platformFeeAmount.greaterThan(0)
+        ) {
+          try {
+            await this.circleService.transferToAddress(
+              fan.circleWalletId,
+              feeWalletAddress,
+              platformFeeAmount.toString(),
+              blockchain,
+              tokenId,
+            );
+          } catch (feeErr) {
+            this.logger.warn(
+              `Platform fee transfer failed for tip ${tip.id}: ${(feeErr as Error).message}`,
+            );
+          }
+        }
       }
       const chargeId = randomUUID();
       return await this.prisma.tip.update({

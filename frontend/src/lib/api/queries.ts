@@ -83,8 +83,8 @@ export function useCreatorSubscriptions(params?: {
 
 export function useTip() {
   return useMutation({
-    mutationFn: async (payload: { creatorId: string; amount: number; message?: string }) => 
-      (await api.post(`/creators/${payload.creatorId}/tips`, payload)).data,
+    mutationFn: async (payload: { creatorId: string; amount: number; message?: string }) =>
+      (await api.post(EP.tips, { ...payload, amount: String(payload.amount) })).data,
   });
 }
 

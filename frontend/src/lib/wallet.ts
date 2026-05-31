@@ -1,11 +1,32 @@
 import { api } from "./api/http";
 import { API } from "./api-routes";
 
-export type CctpDto = {
-  destinationChain: string;
-  destinationAddress: string;
+export type GatewayDepositDto = {
   amount: string;
 };
+
+export type GatewayTransferDto = {
+  amount: string;
+  destinationDomain: number;
+  recipientAddress: string;
+};
+
+export type GatewayBalanceResult = {
+  balance: string;
+  currency: string;
+  domainBalances: { domain: number; depositor: string; balance: string }[];
+};
+
+export type GatewayDepositResult = {
+  approveTxId: string;
+  depositTxId: string;
+};
+
+export type GatewayTransferResult = {
+  burnSignTxId: string;
+  mintTxId: string;
+};
+
 export async function createWallet() {
   const { data } = await api.post(API.CIRCLE.WALLET_CREATE);
   return data;
@@ -30,7 +51,23 @@ export async function withdraw(amount: string) {
   const { data } = await api.post(API.CIRCLE.WITHDRAW, { amount });
   return data;
 }
-export async function cctpTransfer(dto: CctpDto) {
-  const { data } = await api.post(API.CIRCLE.CCTP_TRANSFER, dto);
+export async function gatewayDeposit(dto: GatewayDepositDto) {
+  const { data } = await api.post<GatewayDepositResult>(
+    API.CIRCLE.GATEWAY_DEPOSIT,
+    dto,
+  );
+  return data;
+}
+export async function gatewayTransfer(dto: GatewayTransferDto) {
+  const { data } = await api.post<GatewayTransferResult>(
+    API.CIRCLE.GATEWAY_TRANSFER,
+    dto,
+  );
+  return data;
+}
+export async function gatewayBalance() {
+  const { data } = await api.get<GatewayBalanceResult>(
+    API.CIRCLE.GATEWAY_BALANCE,
+  );
   return data;
 }
