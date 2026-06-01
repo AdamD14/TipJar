@@ -7,4 +7,3 @@ import { RemindersService } from './reminders.service';
   providers: [RemindersService],
 })
 export class RemindersModule {}
-

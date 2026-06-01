@@ -48,4 +48,3 @@ export class RemindersService {
     if (count > 0) this.logger.log(`Sent ${count} onboarding nudges`);
   }
 }
-

@@ -13,4 +13,3 @@ export class FanOnboardingStep2Dto {
   @IsString()
   avatarUrl?: string;
 }
-

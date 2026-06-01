@@ -15,6 +15,7 @@ import {
   initiateDeveloperControlledWalletsClient,
   CircleDeveloperControlledWalletsClient,
   CreateWalletsInput,
+  CreateTransferTransactionInput,
   FeeLevel,
   Blockchain,
   TokenBlockchain,
@@ -35,10 +36,6 @@ import { UserRole } from '@prisma/client';
    ———————————————————————— */
 type SdkCreateWalletsResp = {
   data?: { wallets?: Array<{ id: string; address: string }> };
-};
-
-type SdkCreateTxResp = {
-  data: { id: string; state: TransactionState };
 };
 
 type SdkGetTxResp = {
@@ -76,7 +73,7 @@ export class CircleService implements OnModuleInit {
   constructor(
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
-  ) { }
+  ) {}
 
   onModuleInit(): void {
     const apiKey = this.configService.get<string>('CIRCLE_API_KEY');
@@ -142,8 +139,9 @@ export class CircleService implements OnModuleInit {
       errorMessage = error.message;
     }
 
-    const logMessage = `Circle API Error (${context}) for User ${userId ?? 'N/A'
-      } (Code: ${String(errorCode)}): ${errorMessage}`;
+    const logMessage = `Circle API Error (${context}) for User ${
+      userId ?? 'N/A'
+    } (Code: ${String(errorCode)}): ${errorMessage}`;
     this.logger.error(logMessage, (error as Error)?.stack);
 
     if (errorCode === 152021) {
@@ -173,14 +171,14 @@ export class CircleService implements OnModuleInit {
         isCircleSetupComplete: boolean;
       };
 
-      const existingUserRecord = (await this.prisma.user.findUnique({
+      const existingUserRecord = await this.prisma.user.findUnique({
         where: { id: tipJarUserId },
         select: {
           circleWalletId: true,
           mainWalletAddress: true,
           isCircleSetupComplete: true,
         },
-      })) as UserRecord | null;
+      });
 
       if (!existingUserRecord) {
         throw new NotFoundException(
@@ -210,10 +208,10 @@ export class CircleService implements OnModuleInit {
           'Konfiguracja Wallet Set ID jest niekompletna.',
         );
       }
-  const defaultBlockchain = this.configService.get<string>(
-      'DEFAULT_BLOCKCHAIN',
-      'ARC-TESTNET',
-    ) as Blockchain;
+      const defaultBlockchain = this.configService.get<string>(
+        'DEFAULT_BLOCKCHAIN',
+        'ARC-TESTNET',
+      ) as Blockchain;
 
       const createWalletsPayload: CreateWalletsInput = {
         idempotencyKey: randomUUID(),
@@ -246,31 +244,39 @@ export class CircleService implements OnModuleInit {
 
       const { id: circleWalletId, address: mainWalletAddress } = createdWallet;
 
-        this.logger.log(
-          `Circle wallet created. ID: ${circleWalletId}, Address: ${mainWalletAddress} for User ID: ${tipJarUserId}`,
-        );
+      this.logger.log(
+        `Circle wallet created. ID: ${circleWalletId}, Address: ${mainWalletAddress} for User ID: ${tipJarUserId}`,
+      );
 
-        const delegateAddress = this.configService.get<string>(
-          'GATEWAY_DELEGATE_WALLET_ADDRESS',
-        );
-        if (delegateAddress) {
-          try {
-            await this.addGatewayDelegate(mainWalletAddress, delegateAddress);
-            this.logger.log(
-              `Auto-added delegate ${delegateAddress} for SCA wallet ${mainWalletAddress}`,
-            );
-          } catch (delegateErr) {
-            this.logger.warn(
-              `Failed to auto-add delegate for wallet ${mainWalletAddress}: ${(delegateErr as Error)?.message}`,
-            );
-          }
-        } else {
+      const delegateAddress = this.configService.get<string>(
+        'GATEWAY_DELEGATE_WALLET_ADDRESS',
+      );
+      if (delegateAddress) {
+        try {
+          await this.addGatewayDelegate(mainWalletAddress, delegateAddress);
+          this.logger.log(
+            `Auto-added delegate ${delegateAddress} for SCA wallet ${mainWalletAddress}`,
+          );
+        } catch (delegateErr) {
           this.logger.warn(
-            'GATEWAY_DELEGATE_WALLET_ADDRESS not set — skipping auto-addDelegate',
+            `Failed to auto-add delegate for wallet ${mainWalletAddress}: ${(delegateErr as Error)?.message}`,
           );
         }
+      } else {
+        this.logger.warn(
+          'GATEWAY_DELEGATE_WALLET_ADDRESS not set — skipping auto-addDelegate',
+        );
+      }
 
-        await this.prisma.user.update({
+      await this.prisma.circleWallet.create({
+        data: {
+          userId: tipJarUserId,
+          circleWalletId,
+          mainWalletAddress,
+        },
+      });
+
+      await this.prisma.user.update({
         where: { id: tipJarUserId },
         data: {
           circleWalletId,
@@ -301,10 +307,10 @@ export class CircleService implements OnModuleInit {
     );
     try {
       type UserWallet = { circleWalletId: string | null };
-      const user = (await this.prisma.user.findUnique({
+      const user = await this.prisma.user.findUnique({
         where: { id: tipJarUserId },
         select: { circleWalletId: true },
-      })) as UserWallet | null;
+      });
       if (!user?.circleWalletId) {
         throw new NotFoundException(
           `Portfel Circle dla użytkownika ${tipJarUserId} nie znaleziony.`,
@@ -316,26 +322,26 @@ export class CircleService implements OnModuleInit {
         throw new BadRequestException('Nieprawidłowa kwota wypłaty.');
       }
 
-      const transferRequestPayload = {
-        idempotencyKey: randomUUID() as `${string}-${string}-${string}-${string}-${string}`,
-        walletId: sourceWalletId,
-        destinationAddress: destinationAddressString,
-        amount: [amountString],
-        ...((tokenId.includes('-')
-          ? { tokenId }
-          : {
+    const transferRequestPayload: CreateTransferTransactionInput = {
+      idempotencyKey: randomUUID(),
+      walletId: sourceWalletId,
+      destinationAddress: destinationAddressString,
+      amount: [amountString],
+      ...(this.isCircleTokenUuid(tokenId)
+        ? { tokenId }
+        : {
             tokenAddress: tokenId,
             blockchain: blockchain as TokenBlockchain,
-          }) as any),
-        fee: {
-          type: 'level' as const,
-          config: { feeLevel: FeeLevel.Medium },
-        },
-      };
+          }),
+      fee: {
+        type: 'level' as const,
+        config: { feeLevel: FeeLevel.Medium },
+      },
+    } as CreateTransferTransactionInput;
 
-      const response = (await this.circleClient.createTransaction(
-        transferRequestPayload,
-      )) as SdkCreateTxResp;
+    const response = (await this.circleClient.createTransaction(
+      transferRequestPayload,
+    )) as any;
 
       const txData = response.data;
       if (!txData?.id || !txData.state) {
@@ -358,9 +364,7 @@ export class CircleService implements OnModuleInit {
   async getWalletBalance(
     walletId: string,
   ): Promise<{ totalUsdc: number; tokenBalances: Balance[] }> {
-    this.logger.debug(
-      `Fetching balance: WalletID ${walletId} (all tokens)`,
-    );
+    this.logger.debug(`Fetching balance: WalletID ${walletId} (all tokens)`);
     try {
       const requestPayload: GetWalletTokenBalanceInput = { id: walletId };
       const response = (await this.circleClient.getWalletTokenBalance(
@@ -400,10 +404,10 @@ export class CircleService implements OnModuleInit {
       }
 
       type WalletRecord = { mainWalletAddress: string | null };
-      const destinationWalletRecord = (await this.prisma.user.findFirst({
+      const destinationWalletRecord = await this.prisma.user.findFirst({
         where: { circleWalletId: destinationCircleWalletId },
         select: { mainWalletAddress: true },
-      })) as WalletRecord | null;
+      });
 
       if (!destinationWalletRecord?.mainWalletAddress) {
         throw new NotFoundException(
@@ -443,26 +447,26 @@ export class CircleService implements OnModuleInit {
         throw new BadRequestException('Nieprawidłowa kwota transferu.');
       }
 
-      const transferRequestPayload = {
-        idempotencyKey: randomUUID() as `${string}-${string}-${string}-${string}-${string}`,
-        walletId: sourceCircleWalletId,
-        destinationAddress,
-        amount: [amountString],
-        ...((tokenId.includes('-')
-          ? { tokenId }
-          : {
-              tokenAddress: tokenId,
-              blockchain: blockchain as TokenBlockchain,
-            }) as any),
-        fee: {
-          type: 'level' as const,
-          config: { feeLevel: FeeLevel.Medium },
-        },
-      };
+    const transferRequestPayload: CreateTransferTransactionInput = {
+      idempotencyKey: randomUUID(),
+      walletId: sourceCircleWalletId,
+      destinationAddress,
+      amount: [amountString],
+      ...(this.isCircleTokenUuid(tokenId)
+        ? { tokenId }
+        : {
+            tokenAddress: tokenId,
+            blockchain: blockchain as TokenBlockchain,
+          }),
+      fee: {
+        type: 'level' as const,
+        config: { feeLevel: FeeLevel.Medium },
+      },
+    } as CreateTransferTransactionInput;
 
-      const response = (await this.circleClient.createTransaction(
-        transferRequestPayload,
-      )) as SdkCreateTxResp;
+    const response = (await this.circleClient.createTransaction(
+      transferRequestPayload,
+    )) as any;
 
       const txData = response.data;
       if (!txData?.id || !txData.state) {
@@ -524,45 +528,39 @@ export class CircleService implements OnModuleInit {
   async getWalletBalanceForUser(
     userId: string,
   ): Promise<{ balance: number; currency: string }> {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { circleWalletId: true, mainWalletAddress: true },
+    const circleWallet = await this.prisma.circleWallet.findUnique({
+      where: { userId },
+      include: { balance: true },
     });
-    if (!user?.circleWalletId) {
+    if (!circleWallet) {
       throw new NotFoundException('User has no Circle wallet');
     }
 
-    let totalUsdc: number;
-
-    try {
-      const gateway = await this.getGatewayUnifiedBalance(userId);
-      totalUsdc = parseFloat(gateway.balance);
-    } catch (gwErr) {
-      this.logger.warn(
-        `Gateway balance failed for user ${userId}, falling back to per-chain balance: ${(gwErr as Error)?.message}`,
-      );
-      const chainBalance = await this.getWalletBalance(user.circleWalletId);
-      totalUsdc = chainBalance.totalUsdc;
+    if (circleWallet.balance) {
+      return {
+        balance: parseFloat(circleWallet.balance.totalUsdc.toString()),
+        currency: 'USDC',
+      };
     }
 
-    const circleWallet = await this.prisma.circleWallet.findUnique({
-      where: { circleWalletId: user.circleWalletId },
+    const { totalUsdc, tokenBalances } = await this.getWalletBalance(
+      circleWallet.circleWalletId,
+    );
+
+    await this.prisma.walletBalance.upsert({
+      where: { circleWalletId: circleWallet.id },
+      update: {
+        totalUsdc,
+        rawJson: tokenBalances as any,
+        circleUpdatedAt: new Date(),
+      },
+      create: {
+        circleWalletId: circleWallet.id,
+        totalUsdc,
+        rawJson: tokenBalances as any,
+        circleUpdatedAt: new Date(),
+      },
     });
-
-    if (circleWallet) {
-      await this.prisma.walletBalance.upsert({
-        where: { circleWalletId: circleWallet.id },
-        update: {
-          totalUsdc: totalUsdc,
-          circleUpdatedAt: new Date(),
-        },
-        create: {
-          circleWalletId: circleWallet.id,
-          totalUsdc: totalUsdc,
-          circleUpdatedAt: new Date(),
-        },
-      });
-    }
 
     return { balance: totalUsdc, currency: 'USDC' };
   }
@@ -636,55 +634,84 @@ export class CircleService implements OnModuleInit {
   async handleWebhook(payload: unknown): Promise<void> {
     this.logger.debug(`Received Circle webhook: ${JSON.stringify(payload)}`);
 
-    type WebhookPayload = {
-      type?: string;
-      eventType?: string;
-      data?: {
-        walletId?: string;
-        transaction?: { walletId?: string };
-      };
+    type CircleWebhookNotification = {
+      id: string;
+      walletId: string;
+      blockchain: string;
+      tokenId: string;
+      amounts: string[];
+      state: string;
+      transactionType: string;
+      operation: string;
+      destinationAddress?: string;
+      sourceAddress?: string;
+      txHash?: string;
+      networkFee?: string;
+      userId?: string;
+      createDate?: string;
     };
 
-    const p = payload as WebhookPayload;
-    const eventType = p.type || p.eventType || '';
+    type CircleWebhookPayload = {
+      notificationType: string;
+      notification: CircleWebhookNotification;
+      subscriptionId: string;
+      notificationId: string;
+      timestamp: string;
+      version: number;
+    };
 
-    const walletId =
-      p.data?.walletId || p.data?.transaction?.walletId || null;
+    const p = payload as CircleWebhookPayload;
+    const notificationType = p.notificationType || '';
+    const notification = p.notification;
 
-    if (
-      !walletId ||
-      ![
-        'transactions.inbound',
-        'transactions.outbound',
-        'transactions.confirmed',
-        'transactions.failed',
-      ].includes(eventType)
-    ) {
+    if (!notification?.walletId) {
       this.logger.warn(
-        `Unhandled webhook type="${eventType}" walletId="${walletId}"`,
+        `Webhook missing notification.walletId — notificationType="${notificationType}"`,
+      );
+      return;
+    }
+
+    const walletId = notification.walletId;
+    const state = notification.state || '';
+    const HANDLED_TYPES = new Set([
+      'transactions.inbound',
+      'transactions.outbound',
+      'transactions.confirmed',
+      'transactions.complete',
+      'transactions.cancelled',
+      'transactions.failed',
+    ]);
+
+    if (!HANDLED_TYPES.has(notificationType)) {
+      this.logger.warn(
+        `Unhandled webhook notificationType="${notificationType}" walletId="${walletId}"`,
       );
       return;
     }
 
     this.logger.log(
-      `Webhook "${eventType}" for walletId=${walletId} — refreshing cached balance`,
+      `Webhook "${notificationType}" state="${state}" for walletId=${walletId} — refreshing cached balance`,
     );
 
-    try {
-      const { totalUsdc, tokenBalances } = await this.getWalletBalance(
-        walletId,
+    if (state === 'FAILED' || state === 'CANCELLED' || state === 'DENIED') {
+      this.logger.warn(
+        `Transaction ${notification.id} on wallet ${walletId} reached terminal failure state: ${state}`,
       );
+    }
 
+    try {
       const circleWallet = await this.prisma.circleWallet.findUnique({
         where: { circleWalletId: walletId },
       });
-
       if (!circleWallet) {
         this.logger.warn(
           `No CircleWallet record for walletId=${walletId}, skipping cache update`,
         );
         return;
       }
+
+      const { totalUsdc, tokenBalances } =
+        await this.getWalletBalance(walletId);
 
       await this.prisma.walletBalance.upsert({
         where: { circleWalletId: circleWallet.id },
@@ -722,7 +749,7 @@ export class CircleService implements OnModuleInit {
         mainWalletAddress: true,
       },
     });
-    return users as AdminWalletRow[];
+    return users;
   }
 
   async addGatewayDelegate(
@@ -789,9 +816,7 @@ export class CircleService implements OnModuleInit {
     circleWalletId: string,
     targetBlockchain: Blockchain,
   ): Promise<void> {
-    this.logger.log(
-      `Deriving wallet ${circleWalletId} on ${targetBlockchain}`,
-    );
+    this.logger.log(`Deriving wallet ${circleWalletId} on ${targetBlockchain}`);
 
     type WalletResp = {
       data?: { wallet?: { id: string; address: string; blockchain: string } };
@@ -813,8 +838,59 @@ export class CircleService implements OnModuleInit {
     ) as Blockchain;
   }
 
+  private static readonly CHAIN_TOKEN_IDS: Record<
+    number,
+    string | undefined
+  > = {
+    5042002: undefined,
+    84532: undefined,
+    421614: undefined,
+    80001: undefined,
+    97: undefined,
+    8453: undefined,
+    42161: undefined,
+    137: undefined,
+    56: undefined,
+  };
+
+  private static readonly CHAIN_TOKEN_ENV: Record<number, string | undefined> = {
+    5042002: 'USDC_TOKEN_ID_ARC',
+    84532: 'USDC_TOKEN_ID_BASE_SEPOLIA',
+    421614: 'USDC_TOKEN_ID_ARB_SEPOLIA',
+    80001: 'USDC_TOKEN_ID_POLYGON_AMOY',
+    97: 'USDC_TOKEN_ID_BNB_TESTNET',
+    8453: 'USDC_TOKEN_ID_BASE',
+    42161: 'USDC_TOKEN_ID_ARB',
+    137: 'USDC_TOKEN_ID_POLYGON',
+    56: 'USDC_TOKEN_ID_BNB',
+  };
+
+  getTokenIdForChain(chainId?: number): string {
+    const id = chainId ?? this.getArcConfig().chainId;
+    const envKey = CircleService.CHAIN_TOKEN_ENV[id];
+    const fallback =
+      id === 5042002
+        ? this.configService.get<string>('USDC_TOKEN_ID', 'USDC')
+        : undefined;
+    const tokenId = envKey
+      ? (this.configService.get<string>(envKey!, fallback as string) as string)
+      : fallback;
+
+    if (!tokenId) {
+      this.logger.warn(
+        `No USDC token ID configured for chain ${id} (env: ${envKey}). Using 'USDC' — will fail on non-Arc chains.`,
+      );
+      return 'USDC';
+    }
+    return tokenId;
+  }
+
+  isCircleTokenUuid(tokenId: string): boolean {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}/i.test(tokenId);
+  }
+
   getUsdcTokenId(): string {
-    return this.configService.get<string>('USDC_TOKEN_ID', 'USDC');
+    return this.getTokenIdForChain();
   }
 
   private getGatewayConfig() {
@@ -837,53 +913,7 @@ export class CircleService implements OnModuleInit {
     };
   }
 
-  async getGatewayUnifiedBalance(
-    userId: string,
-  ): Promise<{
-    balance: string;
-    currency: string;
-    domainBalances: { domain: number; depositor: string; balance: string }[];
-  }> {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { circleWalletId: true, mainWalletAddress: true },
-    });
-    if (!user?.circleWalletId || !user?.mainWalletAddress) {
-      throw new NotFoundException('Circle wallet not found for user');
-    }
 
-    const arc = this.getArcConfig();
-    const gatewayApiBase = this.configService.get<string>(
-      'GATEWAY_API_URL',
-      'https://gateway-api-testnet.circle.com/v1',
-    );
-
-    try {
-      const response = await axios.post<{
-        token: string;
-        balances: { domain: number; depositor: string; balance: string }[];
-      }>(`${gatewayApiBase}/balances`, {
-        token: 'USDC',
-        sources: [
-          { domain: arc.cctpDomain, depositor: user.mainWalletAddress },
-        ],
-      });
-
-      const balances = response.data.balances ?? [];
-      const total = balances.reduce(
-        (sum, b) => sum + parseFloat(b.balance || '0'),
-        0,
-      );
-
-      return {
-        balance: total.toFixed(6),
-        currency: 'USDC',
-        domainBalances: balances,
-      };
-    } catch (error) {
-      this.handleCircleError(error, 'gateway unified balance', userId);
-    }
-  }
 
   async initiateGatewayDeposit(
     userId: string,
@@ -916,16 +946,15 @@ export class CircleService implements OnModuleInit {
     );
 
     try {
-      const approveTx = await this.circleClient.createContractExecutionTransaction(
-        {
+      const approveTx =
+        await this.circleClient.createContractExecutionTransaction({
           walletAddress: user.mainWalletAddress,
           blockchain: this.getDefaultBlockchain(),
           contractAddress: arc.usdcContract,
           abiFunctionSignature: 'approve(address,uint256)',
           abiParameters: [arc.gatewayContract, amount],
           fee: { type: 'level', config: { feeLevel: FeeLevel.Medium } },
-        },
-      );
+        });
 
       const approveTxId = approveTx.data?.id;
       if (!approveTxId) {
@@ -940,16 +969,15 @@ export class CircleService implements OnModuleInit {
         `Gateway deposit: depositing ${amountString} USDC to Gateway Wallet for user ${userId}`,
       );
 
-      const depositTx = await this.circleClient.createContractExecutionTransaction(
-        {
+      const depositTx =
+        await this.circleClient.createContractExecutionTransaction({
           walletAddress: user.mainWalletAddress,
           blockchain: this.getDefaultBlockchain(),
           contractAddress: arc.gatewayContract,
           abiFunctionSignature: 'deposit(address,uint256)',
           abiParameters: [user.mainWalletAddress, amount],
           fee: { type: 'level', config: { feeLevel: FeeLevel.Medium } },
-        },
-      );
+        });
 
       const depositTxId = depositTx.data?.id;
       if (!depositTxId) {
@@ -994,9 +1022,7 @@ export class CircleService implements OnModuleInit {
     };
 
     const addressToBytes32 = (address: string): string => {
-      return (
-        '0x' + address.toLowerCase().replace(/^0x/, '').padStart(64, '0')
-      );
+      return '0x' + address.toLowerCase().replace(/^0x/, '').padStart(64, '0');
     };
 
     const stringifyTypedData = (obj: unknown): string => {
@@ -1127,32 +1153,33 @@ export class CircleService implements OnModuleInit {
       const { attestation, signature: operatorSignature } =
         transferResponse.data;
 
-    if (!attestation || !operatorSignature) {
-      throw new InternalServerErrorException(
-        'Brak attestation lub operator signature w odpowiedzi Gateway.',
-      );
-    }
+      if (!attestation || !operatorSignature) {
+        throw new InternalServerErrorException(
+          'Brak attestation lub operator signature w odpowiedzi Gateway.',
+        );
+      }
 
-    try {
-      await this.deriveWalletOnChain(
-        user.circleWalletId,
-        destChain.walletChain as Blockchain,
-      );
-    } catch (deriveErr) {
-      this.logger.warn(
-        `Derive wallet on ${destChain.walletChain} failed (may already exist): ${(deriveErr as Error)?.message}`,
-      );
-    }
+      try {
+        await this.deriveWalletOnChain(
+          user.circleWalletId,
+          destChain.walletChain as Blockchain,
+        );
+      } catch (deriveErr) {
+        this.logger.warn(
+          `Derive wallet on ${destChain.walletChain} failed (may already exist): ${(deriveErr as Error)?.message}`,
+        );
+      }
 
-    const mintTx =
-        await this.circleClient.createContractExecutionTransaction({
+      const mintTx = await this.circleClient.createContractExecutionTransaction(
+        {
           walletAddress: user.mainWalletAddress,
-          blockchain: destChain.walletChain as Blockchain,
+          blockchain: destChain.walletChain,
           contractAddress: destChain.gatewayMinter,
           abiFunctionSignature: 'gatewayMint(bytes,bytes)',
           abiParameters: [attestation, operatorSignature],
           fee: { type: 'level', config: { feeLevel: FeeLevel.Medium } },
-        });
+        },
+      );
 
       const mintTxId = mintTx.data?.id;
       if (!mintTxId) {

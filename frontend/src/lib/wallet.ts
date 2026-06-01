@@ -11,12 +11,6 @@ export type GatewayTransferDto = {
   recipientAddress: string;
 };
 
-export type GatewayBalanceResult = {
-  balance: string;
-  currency: string;
-  domainBalances: { domain: number; depositor: string; balance: string }[];
-};
-
 export type GatewayDepositResult = {
   approveTxId: string;
   depositTxId: string;
@@ -65,9 +59,4 @@ export async function gatewayTransfer(dto: GatewayTransferDto) {
   );
   return data;
 }
-export async function gatewayBalance() {
-  const { data } = await api.get<GatewayBalanceResult>(
-    API.CIRCLE.GATEWAY_BALANCE,
-  );
-  return data;
-}
+

@@ -32,7 +32,7 @@ export const API = {
     WITHDRAW: "/api/v1/circle/withdraw",
     GATEWAY_DEPOSIT: "/api/v1/circle/gateway/deposit",
     GATEWAY_TRANSFER: "/api/v1/circle/gateway/transfer",
-    GATEWAY_BALANCE: "/api/v1/circle/gateway/balance",
+
     WEBHOOK: "/api/v1/circle/webhook",
     ADMIN_WALLETS: "/api/v1/circle/admin/circle/wallets",
   },

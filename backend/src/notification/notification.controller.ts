@@ -37,7 +37,7 @@ export class NotificationController {
   @ApiOkResponse({ description: 'Lista powiadomień' })
   async list(@Req() req: RequestWithUser): Promise<NotificationRow[]> {
     const rows = await this.notifications.getUserNotifications(req.user.id);
-    return rows as unknown as NotificationRow[];
+    return rows;
   }
 
   @Post('read-all')
@@ -63,6 +63,6 @@ export class NotificationController {
       userId: req.user.id,
       message: body.message,
     });
-    return row as unknown as NotificationRow;
+    return row;
   }
 }

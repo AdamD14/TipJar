@@ -47,7 +47,7 @@ export class PayoutsService {
         'DEFAULT_BLOCKCHAIN',
         'ARC-TESTNET',
       );
-      const tokenId = this.configService.get<string>('USDC_TOKEN_ID', 'USDC');
+      const tokenId = this.circleService.getTokenIdForChain();
       const res = await this.circleService.initiateWithdrawal(
         creatorId,
         destinationAddress,

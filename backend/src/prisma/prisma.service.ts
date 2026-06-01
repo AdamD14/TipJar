@@ -21,7 +21,7 @@ export class PrismaService
     const connectionString = process.env.DATABASE_URL;
     const pool = new Pool({ connectionString });
     const adapter = new PrismaPg(pool);
-    
+
     super({ adapter });
   }
 

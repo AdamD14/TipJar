@@ -31,7 +31,7 @@ type WithdrawalResult = {
   status: TransactionState;
   txHash?: string;
 };
-type GatewayBalanceResult = { balance: string; currency: string; domainBalances: { domain: number; depositor: string; balance: string }[] };
+
 type GatewayDepositResult = { approveTxId: string; depositTxId: string };
 type GatewayTransferResult = { burnSignTxId: string; mintTxId: string };
 type DelegateResult = { txId: string };
@@ -116,7 +116,7 @@ export class CircleController {
   ): Promise<WithdrawalResult> {
     const user = req.user as ValidatedUser;
     const blockchain = this.circleService.getDefaultBlockchain();
-    const tokenId = this.circleService.getUsdcTokenId();
+    const tokenId = this.circleService.getTokenIdForChain();
     return this.circleService.initiateWithdrawal(
       user.id,
       body.toAddress,
@@ -133,10 +133,7 @@ export class CircleController {
     @Body() body: GatewayDepositDto,
   ): Promise<GatewayDepositResult> {
     const user = req.user as ValidatedUser;
-    return this.circleService.initiateGatewayDeposit(
-      user.id,
-      body.amount,
-    );
+    return this.circleService.initiateGatewayDeposit(user.id, body.amount);
   }
 
   @Post('gateway/transfer')
@@ -154,12 +151,7 @@ export class CircleController {
     );
   }
 
-  @Get('gateway/balance')
-  @UseGuards(AuthGuard('jwt'))
-  async gatewayBalance(@Req() req: Request): Promise<GatewayBalanceResult> {
-    const user = req.user as ValidatedUser;
-    return this.circleService.getGatewayUnifiedBalance(user.id);
-  }
+
 
   @Post('gateway/add-delegate')
   @UseGuards(AuthGuard('jwt'))
@@ -192,14 +184,19 @@ export class CircleController {
   }
 
   @Post('webhook')
-  async webhook(@Body() payload: any, @Req() req: Request): Promise<WebhookAck> {
+  async webhook(
+    @Body() payload: any,
+    @Req() req: Request,
+  ): Promise<WebhookAck> {
     const headers: any = (req as any).headers || {};
-    const sig = headers['circle-signature'] || headers['x-circle-signature'] || null;
-    const type = payload?.type || payload?.eventType || payload?.data?.type || 'unknown';
-    const externalId = payload?.id || payload?.data?.id || payload?.eventId || null;
+    const sig =
+      headers['circle-signature'] || headers['x-circle-signature'] || null;
+    const notificationType = payload?.notificationType || 'unknown';
+    const externalId =
+      payload?.notificationId || payload?.notification?.id || null;
     const ev = await this.webhookEvents.recordReceived({
       externalId,
-      type,
+      type: notificationType,
       signature: sig,
       rawJson: payload,
     });

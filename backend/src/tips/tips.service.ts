@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Prisma, Tip, TipStatus } from '@prisma/client';
 import { Blockchain } from '@circle-fin/developer-controlled-wallets';
@@ -75,10 +79,7 @@ export class TipsService {
         const blockchain = this.config.get<string>(
           'DEFAULT_BLOCKCHAIN',
         ) as Blockchain;
-        const tokenId = this.config.get<string>('USDC_TOKEN_ID');
-        if (!tokenId) {
-          throw new Error('USDC token ID not configured');
-        }
+        const tokenId = this.circleService.getTokenIdForChain();
         const transfer = await this.circleService.initiateInternalTipTransfer(
           fan.circleWalletId,
           creator.circleWalletId,
@@ -96,10 +97,7 @@ export class TipsService {
         });
 
         const feeWalletAddress = this.config.get<string>('FEE_WALLET_ADDRESS');
-        if (
-          feeWalletAddress &&
-          platformFeeAmount.greaterThan(0)
-        ) {
+        if (feeWalletAddress && platformFeeAmount.greaterThan(0)) {
           try {
             await this.circleService.transferToAddress(
               fan.circleWalletId,
@@ -116,7 +114,7 @@ export class TipsService {
         }
       }
       const chargeId = randomUUID();
-      return await this.prisma.tip.update({
+      const completed = await this.prisma.tip.update({
         where: { id: tip.id },
         data: {
           status: TipStatus.COMPLETED,
@@ -124,6 +122,21 @@ export class TipsService {
           processedAt: new Date(),
         },
       });
+
+      if (fanId) {
+      this.circleService.getWalletBalanceForUser(fanId).catch((err) => {
+        this.logger.warn(
+          `Balance cache refresh failed for fan ${fanId}: ${(err as Error).message}`,
+        );
+      });
+    }
+    this.circleService.getWalletBalanceForUser(creatorId).catch((err) => {
+      this.logger.warn(
+        `Balance cache refresh failed for creator ${creatorId}: ${(err as Error).message}`,
+      );
+    });
+
+      return completed;
     } catch (error) {
       await this.prisma.tip.update({
         where: { id: tip.id },
@@ -135,7 +148,9 @@ export class TipsService {
         `Failed to process tip ${tip.id}: ${(error as Error).message}`,
         (error as Error).stack,
       );
-      throw new InternalServerErrorException('Nie udało się przetworzyć napiwku.');
+      throw new InternalServerErrorException(
+        'Nie udało się przetworzyć napiwku.',
+      );
     }
   }
 }
