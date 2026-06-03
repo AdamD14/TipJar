@@ -1,19 +1,31 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Check, ArrowLeft, Share2, Copy, DollarSign } from "lucide-react";
+import { Check, ArrowLeft, Share2, Copy, Send } from "lucide-react";
+import clsx from "clsx";
 import { getPublicProfile } from "@/lib/users";
+import { me } from "@/lib/auth";
 import Button from "@/components/ui/buttons/Button";
 import Spinner from "@/components/ui/Spinner";
-import { GoalBar } from "@/components/studio/modal/GoalBar";
 import AvatarCarousel from "@/components/onboarding/AvatarCarousel";
 import Header from "@/components/landing/Header";
 import Navbar from "@/components/ui/layout/Navbar";
 import { useAuthStore } from "@/lib/store/authStore";
+import { useGoalProgress, useTip } from "@/lib/api/queries";
+import { GoalBar } from "@/components/studio/modal/GoalBar";
+import { AmountSlider } from "@/components/payments/tip/AmountSlider";
+import { useToast } from "@/components/ui/notifications/Toast";
+import { isValidUsdc, parseAmount } from "@/lib/currency";
+import { track } from "@/lib/analytics/track";
+import { normalize } from "@/lib/api/errors";
+import FanWall from "@/components/payments/FanWall";
 
-// Types
+const TIP_PRESETS = [1, 2, 5, 10, 20];
+const MAX_MESSAGE = 80;
+
 type UserProfile = {
+  id: string;
   displayName: string;
   username: string | null;
   avatarUrl: string | null;
@@ -50,10 +62,11 @@ export default function CreatorProfile() {
   const isLoggedIn = hydrated && !!user?.username;
   const isOwnProfile = user?.username?.toLowerCase() === cleanUsername.toLowerCase();
 
+  const { data: goalProgress } = useGoalProgress(cleanUsername);
+
   useEffect(() => {
     if (!cleanUsername) return;
 
-    // Guard: don't try to load profiles for asset filenames
     if (/\.(png|svg|ico|jpg|jpeg|gif|webp)$/i.test(cleanUsername)) {
       setLoading(false);
       setError("Not a user");
@@ -74,6 +87,24 @@ export default function CreatorProfile() {
 
     fetchProfile();
   }, [cleanUsername]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    if (user?.username) return;
+    me()
+      .then((fetched) => {
+        if (fetched) {
+          useAuthStore.getState().setUser({
+            ...fetched,
+            email: fetched.email ?? undefined,
+            username: fetched.username ?? undefined,
+            avatarUrl: fetched.avatarUrl ?? undefined,
+            role: fetched.role === "CREATOR" ? "CREATOR" : "FAN",
+          });
+        }
+      })
+      .catch(() => {});
+  }, [hydrated, user?.username]);
 
   const copyProfileLink = () => {
     navigator.clipboard.writeText(`https://tipjar.plus/@${safeHandle}`);
@@ -102,11 +133,13 @@ export default function CreatorProfile() {
 
   const safeDisplayName = profile.displayName || profile.username || "Creator";
   const hasBio = Boolean(profile.profile?.bio?.trim());
+  const creatorId = profile.id || cleanUsername;
+  const liveCurrent = goalProgress ? Number(goalProgress.totalReceived) : 0;
 
   const goal = {
     title: profile.profile?.goalLabel || "Goal",
     target: profile.profile?.goalTarget || 500,
-    current: 0,
+    current: liveCurrent,
     deadline: profile.profile?.goalDeadline || "",
   };
 
@@ -235,27 +268,30 @@ export default function CreatorProfile() {
                 </Button>
               </div>
 
-              {/* Stats */}
-              <div className="grid grid-cols-2 w-full gap-4 mt-6 pt-6 border-t border-teal-700/30 text-center">
-                  <div>
-                  <p className="text-xl font-bold text-white leading-none">
-                    0
-                  </p>
-                  <p className="text-[8px] uppercase tracking-widest text-teal-400 mt-1 font-bold">
-                    Followers
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xl font-bold text-white leading-none">
-                    0
-                  </p>
-                  <p className="text-[8px] uppercase tracking-widest text-teal-400 mt-1 font-bold">
-                    Supporters
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+      {/* Stats */}
+      <div className="grid grid-cols-2 w-full gap-4 mt-6 pt-6 border-t border-teal-700/30 text-center">
+        <div>
+          <p className="text-xl font-bold text-white leading-none">
+            0
+          </p>
+          <p className="text-[8px] uppercase tracking-widest text-teal-400 mt-1 font-bold">
+            Followers
+          </p>
+        </div>
+        <div>
+          <p className="text-xl font-bold text-white leading-none">
+            {goalProgress?.tipCount ?? 0}
+          </p>
+          <p className="text-[8px] uppercase tracking-widest text-teal-400 mt-1 font-bold">
+            Supporters
+          </p>
+        </div>
+      </div>
+
+      {/* FanWall — recent tips */}
+      <FanWall creatorId={creatorId} className="w-full mt-6 pt-6 border-t border-teal-700/30" />
+    </div>
+  </div>
 
       {/* ── RIGHT COLUMN: Main profile card ── */}
       <div className="flex-1 w-full lg:pt-16">
@@ -276,21 +312,15 @@ export default function CreatorProfile() {
             </div>
           )}
 
-          {/* Goal + TIP IT */}
-          {profile.profile?.goalTarget && (
-            <div className="flex flex-wrap items-center justify-between gap-6 pt-2">
-              <div className="w-full max-w-xl">
-                <GoalBar goal={goal} />
-              </div>
-              <Button
-                variant="secondary"
-                className="text-xs tracking-[0.2em] uppercase px-10 py-5 h-fit gap-2 min-w-[180px] shadow-2xl shadow-purple-500/10"
-              >
-                <DollarSign size={16} strokeWidth={3} />
-                TIP IT
-              </Button>
-            </div>
+  {/* Goal + Tip Panel */}
+      {profile.profile?.goalTarget && (
+        <div className="pt-2 max-w-xl flex flex-col gap-4">
+          <GoalBar goal={goal} />
+          {!isOwnProfile && profile.role !== "FAN" && (
+            <TipPanel creatorId={creatorId} />
           )}
+        </div>
+      )}
 
           {/* Display Name */}
           <h1 className="text-5xl md:text-6xl lg:text-8xl font-black text-white tracking-tighter leading-none">
@@ -308,7 +338,123 @@ export default function CreatorProfile() {
         </section>
       </div>
         </div>
-      </main>
+  </main>
+  </div>
+  );
+}
+
+function TipPanel({ creatorId }: { creatorId: string }) {
+  const [amount, setAmount] = useState(5);
+  const [message, setMessage] = useState("");
+  const [tipError, setTipError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+
+  const { mutateAsync, isPending } = useTip();
+  const toast = useToast();
+  const user = useAuthStore((s) => s.user);
+  const hydrated = useAuthStore((s) => s._hasHydrated);
+  const isLoggedIn = hydrated && !!user;
+  const valid = isValidUsdc(amount);
+
+  const handlePreset = useCallback((p: number) => {
+    setAmount(p);
+    setTipError(null);
+    setSuccess(false);
+  }, []);
+
+  const submit = useCallback(async () => {
+    setTipError(null);
+    if (!valid) {
+      setTipError("Amount must be between 0.5 and 10,000 USDC.");
+      return;
+    }
+    if (!isLoggedIn) {
+      setTipError("Log in to send a tip.");
+      return;
+    }
+    if (!message.trim()) {
+      setTipError("Add a message for the creator.");
+      return;
+    }
+    try {
+      await mutateAsync({ creatorId, amount, message: message.trim() });
+      toast.push({ type: "success", text: `Thank you! ${amount} USDC sent.` });
+      track("tip_success", { creatorId, amount });
+      setSuccess(true);
+      setMessage("");
+      setTimeout(() => setSuccess(false), 4000);
+    } catch (e: unknown) {
+      const { msg } = normalize(e);
+      setTipError(msg || "Failed to process tip.");
+      toast.push({ type: "error", text: "Failed to process tip." });
+    }
+  }, [valid, isLoggedIn, creatorId, amount, message, mutateAsync, toast]);
+
+  return (
+    <div className="bg-gradient-to-br from-teal-900 to-teal-800 border border-teal-500/20 rounded-xl p-6 shadow-2 backdrop-blur-md space-y-4">
+      <div className="flex gap-2 flex-wrap">
+        {TIP_PRESETS.map((p) => (
+          <button
+            key={p}
+            type="button"
+            onClick={() => handlePreset(p)}
+            className={clsx(
+              "w-12 h-12 rounded-lg font-heading font-bold text-sm tracking-wider transition-all",
+              amount === p
+                ? "bg-gradient-to-r from-gold-400 to-gold-300 text-teal-900 shadow-md"
+                : "bg-white/5 text-white/70 border border-white/10 hover:bg-white/10 hover:border-white/20",
+            )}
+          >
+            {p}
+          </button>
+        ))}
+      </div>
+
+      <AmountSlider value={amount} min={1} max={100} onChange={(v) => { setAmount(v); setTipError(null); setSuccess(false); }} />
+
+      <div>
+        <input
+          type="text"
+          maxLength={MAX_MESSAGE}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Your message (required)"
+          className="w-full h-10 px-4 rounded-[6px] font-body text-base bg-teal-800 text-teal-25 placeholder:text-teal-100 border border-teal-700 hover:border-teal-450 focus:border-gold-300 focus:shadow-[0_0_0_1px_var(--teal-200),0_0_0_4px_rgba(255,215,0,0.25)] outline-none transition-all duration-200"
+        />
+        <p className="text-right text-[10px] text-teal-500/30 mt-1 tnum">
+          {message.length}/{MAX_MESSAGE}
+        </p>
+      </div>
+
+      {tipError && <p className="text-red-300 text-sm">{tipError}</p>}
+      {success && (
+        <div className="rounded-lg bg-green-500/10 border border-green-500/20 p-3 text-sm text-green-300">
+          Tip sent successfully!
+        </div>
+      )}
+
+      <Button
+        onClick={submit}
+        disabled={isPending || !valid || !message.trim()}
+        variant="primary"
+        fullWidth
+        loading={isPending}
+        size="md"
+        className="gap-2"
+      >
+        {isPending ? "Sending..." : (
+          <>
+            <Send size={16} />
+            Send {valid ? `${amount.toFixed(2)} USDC` : ""}
+          </>
+        )}
+      </Button>
+
+      {!isLoggedIn && (
+        <p className="text-center text-xs text-teal-500/40">
+          Log in to send a tip
+        </p>
+      )}
     </div>
   );
 }

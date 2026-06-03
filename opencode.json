@@ -4,6 +4,12 @@
     "circle": {
       "type": "remote",
       "url": "https://api.circle.com/v1/codegen/mcp"
+    },
+    "hookdeck gateway": {
+      "type": "local",
+      "command": [
+        "hookdeck"
+      ]
     }
   }
 }

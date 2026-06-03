@@ -1,0 +1,154 @@
+# KOMPLETNA STRUKTURA DOKUMENTACJI TIPJAR+
+
+## SPIS TREŚCI (LISTA PLIKÓW)
+
+**1. Analizy i badania**
+* Analiza Fazy 1 Cyklu Strategicznego.pdf
+* Walidacja Hipotez i Projektowanie Testów.pdf
+* Zarządzanie Ryzykiem w Cyklu Projektowym.pdf
+* Egzekucja i Skalowanie Pętli Wzrostu.pdf
+* Faza 5: Kontrola i Decyzje Projektowe.pdf
+* Audyt i Optymalizacja Cyklu Strategicznego (End-to-End).pdf
+* Strategia Infiltracji Nisz Web3.pdf
+* Mobilne Aplikacje Web3: Przewodnik Projektowania.pdf
+* Dok 6 Projektowanie i Walidacja Systemu Hipotez.pdf
+* Dok 9 Optymalizacja Metryk Web3 dla Twórców.pdf
+* # Analiza mechanizmów user retention dla TipJar-.pdf
+
+**2. Dokumentacja techniczna / Kod**
+* Next Plan Wdrożenia TipJar+.pdf
+* Tipjar.plus: Vercel, AWS, Route 53.pdf
+* Aktualizacja i Rozbudowa Poradnika Circle.pdf
+* Fundament .pdf
+* // types/overlay.pdf
+* Architektura Agenta dla TipJar+.pdf
+* Cyfrowy_Model_Logiczny_Systemu_TipJar.pdf
+* Ultraszczegowa_Logiczna_Mapa_Systemu_TipJar_w_Formacie_JSON.pdf
+* Implementation of TipFlow for TipJar-.pdf
+* poradnik gemini.pdf
+* Rejestracji Twórców-poradnik.pdf
+* Architektura Web 2.5: Supabase, Cloudinary, Storj.pdf
+* Edytor Nakładki dla Twórcy- -dashboard-overlay.pdf
+* Wysokiej jakości prompty dla GPT-5 – przewodnik.pdf
+
+**3. Realizacja i Widoki**
+* Panel Twórcy: Szczegółowa Specyfikacja Projektowa
+* TipJar+ Landing Page
+* Crestor Studio – projekt interfejsu z nakładkami, widgetami i asystentem AI.pdf
+* Rozbijam Publiczny Profil Twórcy .pdf
+* Rozkład interfejsu profilu twórcy.pdf
+* Projekt systemu ikon TipJar+.pdf
+* Projekt stron błędów i komunikatów.pdf
+* Projekt Modalu Płatności z Obsługą Web3.pdf
+* TipJar+ System Design_ Tablica Treści i Onboarding KYC.pdf
+* Tablica Wsparcia dashboard fan account.pdf
+* Projekt Systemu Subskrypcji NFT.pdf
+* NFT Proof of Support_ Projekt Wizualny.pdf
+* Plan- TipWidget z pełną personalizacją--.pdf
+* Ocena stylistyczna – trzy kierunki.pdf
+
+**4. Ogólne opisy projektu / Wizje**
+* Określenie kamieni milowych TipJar.docx
+* Podsumowanie Projektu TipJar+.pdf
+* Ultrakompleksowy Playbook Strategiczny Kampanii TipJar+ (2025–2030).pdf
+* Tożsamość marki TipJar+ jako protokołu Web3.pdf
+* TipJar _Ownership_Infrastructure.pdf
+* TipJar _Creator_Studio_Strategic_Deep_Dive.pdf
+* Strategia Skalowania TipJar+ Web3.pdf
+* Cześć ziom.pdf
+* TipJar – Platforma Mikropłatności Web3 dla Twórców Treści.pdf
+
+**5. Dokumentacja zarządcza / Etapy**
+* Kluczowe Przepływy Użytkownika – Atomizacja, Schematy, Checklista-.pdf
+* 30dniowy harmonogram o3.pdf
+* Raport GTM v1.pdf
+* JSON_Rozkad_Zada_Web3.pdf
+* Plan Rozbudowy Modułów Systemu.pdf
+* Mi – od wysokopoziomowej wizji po codzienną egzekucję.pdf
+
+**6. Archiwum / Nieaktualne**
+* TipJar_Backend_FULL_FINAL (1).pdf
+* Trzy Etapy Projektowania i Wdrożenia.pdf
+* Mapa_Logiczna_Systemu_TipJar_(JSON)-1.pdf
+* TipJar+ – Kompleksowy Plan Architektury i Realizacji Projektu_.pdf
+* Pods.pdf
+* Architektura Agenta dla TipJar+.pdf
+* Rozkład interfejsu profilu twórcy.pdf
+* Plan Rozbudowy Modułów Systemu.pdf
+
+---
+
+## OPISY DOKUMENTÓW W FOLDERACH
+
+### 1. Analizy i badania
+
+* **Analiza Fazy 1 Cyklu Strategicznego.pdf**: Definiuje proces inżynierii strategicznej oparty na Myśleniu z Pierwszych Zasad i algorytmie Opportunity Score.
+* **Walidacja Hipotez i Projektowanie Testów.pdf**: Przedstawia toolkit operacyjny do systematycznego redukowania entropii informacyjnej poprzez testy rynkowe i pretotyping.
+* **Zarządzanie Ryzykiem w Cyklu Projektowym.pdf**: Framework budowania antykruchości systemu zamiast stosowania statycznych rejestrów ryzyk, wykorzystujący probabilistykę bayesowską.
+* **Egzekucja i Skalowanie Pętli Wzrostu.pdf**: Dekonstruuje proces skalowania, zastępując liniowe lejki sprzedaży dynamicznymi Pętlami Wzrostu (Growth Loops).
+* **Faza 5: Kontrola i Decyzje Projektowe.pdf**: Mechanizm zamykający pętlę strategii poprzez uczenie się w podwójnej pętli i dynamiczne zarządzanie portfelem projektów.
+* **Audyt i Optymalizacja Cyklu Strategicznego (End-to-End).pdf**: Diagnozuje punkty styku między fazami w celu uniknięcia utraty sygnału decyzyjnego; zawiera metryki zdrowia systemu.
+* **Strategia Infiltracji Nisz Web3.pdf**: Agresywny protokół destabilizacji platform Web2 poprzez inżynierię społeczną i lewarowanie braku zaufania użytkowników.
+* **Mobilne Aplikacje Web3: Przewodnik Projektowania.pdf**: Raport strategiczny określający kluczowe cechy sukcesu mobilnych aplikacji dApp, w tym uproszczony onboarding.
+* **Dok 6 Projektowanie i Walidacja Systemu Hipotez.pdf**: Metodologia walidacji założeń produktowych wykorzystująca statystykę Bayesowską i koncepcję "Krzywej Prawdy".
+* **Dok 9 Optymalizacja Metryk Web3 dla Twórców.pdf**: 21-dniowy plan wdrożenia systemu analitycznego; definiuje wskaźnik QVAW jako główną metrykę zdrowia protokołu.
+* **# Analiza mechanizmów user retention dla TipJar-.pdf**: Studium strategii zatrzymania użytkownika oparte na efektach sieciowych i gamifikacji Web3 w celu osiągnięcia masowej skali.
+
+### 2. Dokumentacja techniczna / Kod
+
+* **Next Plan Wdrożenia TipJar+.pdf**: Raport wykonawczy definiujący architekturę opartą na React 19 i Next.js 15 oraz metodologii Feature-Sliced Design (FSD).
+* **Tipjar.plus: Vercel, AWS, Route 53.pdf**: Analiza architektury hybrydowej łączącej Vercel (frontend) oraz usługi backendowe i zarządzanie domeną w AWS.
+* **Aktualizacja i Rozbudowa Poradnika Circle.pdf**: Specyfikacja integracji Circle Stack (Programmable Wallets, Gas Station) w środowisku NestJS z naciskiem na bezpieczeństwo webhooks.
+* **Fundament .pdf**: Zbiór schematów akcji użytkownika i logiki backendowej przedstawiony w formacie JSON; precyzuje techniczne punkty wejścia i wyjścia.
+* **// types/overlay.pdf**: Dokumentacja techniczna zawierająca definicje typów TypeScript dla modułu nakładki oraz implementację API generatora treści AI.
+* **Architektura Agenta dla TipJar+.pdf**: Blueprint platformy w paradygmacie Web 2.5, łączący UX tradycyjnych aplikacji z suwerennością standardu ERC-4337.
+* **Cyfrowy_Model_Logiczny_Systemu_TipJar.pdf**: Kompleksowa mapa logiczna platformy w formacie JSON, odwzorowująca przepływy informacji dla wszystkich ról w systemie.
+* **Ultraszczegowa_Logiczna_Mapa_Systemu_TipJar_w_Formacie_JSON.pdf**: Rozszerzona wersja modelu logicznego o unikalne węzły dla funkcji DAO, asystenta głosowego i trwałego zapisu danych.
+* **Implementation of TipFlow for TipJar-.pdf**: Specyfikacja smart kontraktów Solidity obsługujących on-chainowy podział prowizji oraz transakcje typu gasless.
+* **poradnik gemini.pdf**: Techniczny przewodnik wdrożeniowy MVP obejmujący strukturę monorepo, konfigurację CI/CD oraz zarządzanie certyfikatami SSL/TLS.
+* **Rejestracji Twórców-poradnik.pdf**: Instrukcja implementacji uwierzytelniania społecznościowego i Web3 wraz z automatyzacją tworzenia portfeli Circle DCW.
+* **Architektura Web 2.5: Supabase, Cloudinary, Storj.pdf**: Ewaluacja stosu technologicznego; uzasadnia wybór Supabase i Storj jako fundamentów wydajnej i zgodnej z prawem infrastruktury.
+* **Edytor Nakładki dla Twórcy- -dashboard-overlay.pdf**: Specyfikacja techniczna modułu konfiguracji wizualnej alertów live, wykorzystująca Zustand do zarządzania stanem.
+* **Wysokiej jakości prompty dla GPT-5 – przewodnik.pdf**: Zaawansowany podręcznik inżynierii promptów zoptymalizowany pod najnowsze modele LLM w celu wsparcia procesów operacyjnych.
+
+### 3. Realizacja i Widoki
+
+* **Panel Twórcy: Szczegółowa Specyfikacja Projektowa**: Kompleksowy opis „centrum dowodzenia” twórcy, definiujący widoki analityczne, zarządzanie społecznością i subskrypcje NFT.
+* **TipJar+ Landing Page**: Gotowa struktura strony głównej w HTML/Tailwind; zawiera sekcję „How it works” oraz formularze rejestracyjne zgodne z brandingiem.
+* **Crestor Studio – projekt interfejsu z nakładkami, widgetami i asystentem AI.pdf**: Projekt edytora dla twórców z systemem zakładek, podglądem na żywo i wsparciem AI w konfiguracji.
+* **Rozbijam Publiczny Profil Twórcy .pdf**: Dekompozycja widoku profilu fana na elementy atomowe wraz z checklistą komponentów takich jak Goal Widget i Modal płatności.
+* **Rozkład interfejsu profilu twórcy.pdf**: Propozycja modularnego rozkładu elementów na profilu twórcy, priorytetyzująca efektywność operacyjną i funkcje AI.
+* **Projekt systemu ikon TipJar+.pdf**: Specyfikacja ikonografii opartej na stylu linearnym (1.5px), zapewniająca wizualną spójność i wysoką jakość interfejsu.
+* **Projekt stron błędów i komunikatów.pdf**: Strategia UX dla stanów błędu (404, 500), transformująca techniczne porażki w pozytywne momenty kontaktu z marką.
+* **Projekt Modalu Płatności z Obsługą Web3.pdf**: Holistyczna specyfikacja hybrydowego modalu płatności obsługującego karty, kryptowaluty oraz salda wewnętrzne.
+* **TipJar+ System Design_ Tablica Treści i Onboarding KYC.pdf**: Projekt immersyjnego feedu (Bento Grid) oraz progresywnego systemu weryfikacji tożsamości (KYC).
+* **Tablica Wsparcia dashboard fan account.pdf**: Pełna specyfikacja centralnego hubu fana, wykorzystująca mechanizmy Growth Loop i karty aktywności.
+* **Projekt Systemu Subskrypcji NFT.pdf**: Architektura subskrypcji on-chain oparta na standardzie EIP-5643, zarządzająca uprawnieniami poprzez dynamiczne metadane.
+* **NFT Proof of Support_ Projekt Wizualny.pdf**: Specyfikacja niezbywalnych tokenów (SBT) generowanych proceduralnie po donacji jako trwały dowód wsparcia.
+* **Plan- TipWidget z pełną personalizacją--.pdf**: Specyfikacja osadzalnego przycisku do integracji na zewnętrznych witrynach przy użyciu ShadowDOM i komunikacji postMessage.
+* **Ocena stylistyczna – trzy kierunki.pdf**: Analiza porównawcza wariantów wizualnych marki, wyznaczająca docelowy kierunek dla luksusowego designu platformy.
+
+### 4. Ogólne opisy projektu / Wizje
+
+* **Określenie kamieni milowych TipJar.docx**: Harmonogram rozwoju platformy od MVP do pełnego wdrożenia, skupiony na partnerstwie z firmą Circle.
+* **Podsumowanie Projektu TipJar+.pdf**: Synteza modelu biznesowego i wizji strategicznej, z naciskiem na transakcje gasless i abstrakcję technologii blockchain.
+* **Ultrakompleksowy Playbook Strategiczny Kampanii TipJar+ (2025–2030).pdf**: Długoterminowy rdzeń strategiczny kampanii marketingowej, łączący wizję z operacyjną egzekucją.
+* **Tożsamość marki TipJar+ jako protokołu Web3.pdf**: Manifest marki definiujący jej tożsamość jako punkt Schellingowy dla zdecentralizowanej społeczności.
+* **TipJar _Ownership_Infrastructure.pdf**: Prezentacja projektu jako warstwy finansowej dla ekonomii własności, promującej suwerenność twórców.
+* **TipJar _Creator_Studio_Strategic_Deep_Dive.pdf**: Analiza fundamentów ekosystemu twórcy i roadmapa rozwoju narzędzi monetyzacji i wzrostu.
+* **Strategia Skalowania TipJar+ Web3.pdf**: Raport dotyczący kierunków rozwoju, takich jak tokenizacja dochodów (RWA) i integracja SocialFi.
+* **Cześć ziom.pdf**: Centralny MASTER PORADNIK konsolidujący wiedzę o produkcie, technologii i procesach dla całego zespołu.
+* **TipJar – Platforma Mikropłatności Web3 dla Twórców Treści.pdf**: Dokument koncepcyjny wyjaśniający zalety USDC i eliminację barier technicznych w mikropłatnościach.
+
+### 5. Dokumentacja zarządcza / Etapy
+
+* **Kluczowe Przepływy Użytkownika – Atomizacja, Schematy, Checklista-.pdf**: Szczegółowa analiza procesów onboardingu i transakcji rozbita na atomy funkcjonalne wraz z listami kontrolnymi.
+* **30dniowy harmonogram o3.pdf**: Operacyjny plan działań przedpremierowych, wykorzystujący orkiestrację wielu modeli AI do automatyzacji marketingu.
+* **Raport GTM v1.pdf**: Podsumowanie strategii Go-To-Market, zawierające mapy zależności i harmonogramy działań wokół premiery produktu.
+* **JSON_Rozkad_Zada_Web3.pdf**: Techniczny backlog zadań w formacie JSON, łączący model logiczny systemu z konkretnymi biletami deweloperskimi.
+* **Plan Rozbudowy Modułów Systemu.pdf**: Strategia ekspansji poza fazę MVP, uwzględniająca zaawansowane mechanizmy SocialFi i analitykę AI.
+* **Mi – od wysokopoziomowej wizji po codzienną egzekucję.pdf**: Zaawansowany przewodnik operacyjny opisujący prowadzenie projektu poprzez agentyczne workflowy AI.
+
+### 6. Archiwum / Nieaktualne
+
+* **Archiwum**: Zawiera pliki placeholder, nadmiarowe kopie dokumentów oraz materiały dotyczące innych projektów (np. Vibea), które nie stanowią części docelowej specyfikacji TipJar+.

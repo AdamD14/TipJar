@@ -11,6 +11,20 @@ import { UsersService } from '../users/users.service';
 import { CircleService } from '../circle/circle.service';
 import { randomUUID } from 'crypto';
 
+export interface PublicTipRow {
+  id: string;
+  amount: string;
+  message: string | null;
+  isAnonymous: boolean;
+  createdAt: string;
+  fan: {
+    id: string;
+    username: string | null;
+    displayName: string | null;
+    avatarUrl: string | null;
+  } | null;
+}
+
 export interface ProcessTipParams {
   amount: string;
   creatorId: string;
@@ -32,6 +46,81 @@ export class TipsService {
   ) {}
 
   private readonly FEE_BPS = 250;
+
+  async getPublicTipsForCreator(
+    creatorId: string,
+    page = 1,
+    limit = 20,
+  ): Promise<{ tips: Array<PublicTipRow>; total: number }> {
+    const skip = (page - 1) * limit;
+    const where = {
+      creatorId,
+      status: TipStatus.COMPLETED,
+    };
+
+    const [rows, total] = await Promise.all([
+      this.prisma.tip.findMany({
+        where,
+        select: {
+          id: true,
+          amount: true,
+          message: true,
+          isAnonymous: true,
+          createdAt: true,
+          fan: {
+            select: {
+              id: true,
+              username: true,
+              displayName: true,
+              avatarUrl: true,
+            },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.tip.count({ where }),
+    ]);
+
+    const tips = rows.map((r) => ({
+      id: r.id,
+      amount: r.amount.toString(),
+      message: r.message,
+      isAnonymous: r.isAnonymous,
+      createdAt: r.createdAt.toISOString(),
+      fan: r.isAnonymous
+        ? null
+        : r.fan
+          ? {
+              id: r.fan.id,
+              username: r.fan.username,
+              displayName: r.fan.displayName,
+              avatarUrl: r.fan.avatarUrl,
+            }
+          : null,
+    }));
+
+    return { tips, total };
+  }
+
+  async getGoalProgressForCreator(
+    creatorId: string,
+  ): Promise<{ totalReceived: string; tipCount: number }> {
+    const result = await this.prisma.tip.aggregate({
+      _sum: { amount: true },
+      _count: true,
+      where: {
+        creatorId,
+        status: TipStatus.COMPLETED,
+      },
+    });
+
+    return {
+      totalReceived: (result._sum.amount ?? new Prisma.Decimal(0)).toString(),
+      tipCount: result._count,
+    };
+  }
 
   async processNewTip(params: ProcessTipParams): Promise<Tip> {
     const {
@@ -83,7 +172,7 @@ export class TipsService {
         const transfer = await this.circleService.initiateInternalTipTransfer(
           fan.circleWalletId,
           creator.circleWalletId,
-          netAmountForCreator.toString(),
+          amountDecimal.toString(),
           blockchain,
           tokenId,
         );
@@ -100,7 +189,7 @@ export class TipsService {
         if (feeWalletAddress && platformFeeAmount.greaterThan(0)) {
           try {
             await this.circleService.transferToAddress(
-              fan.circleWalletId,
+              creator.circleWalletId,
               feeWalletAddress,
               platformFeeAmount.toString(),
               blockchain,

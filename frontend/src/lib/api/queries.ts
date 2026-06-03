@@ -88,3 +88,37 @@ export function useTip() {
   });
 }
 
+export interface PublicTip {
+  id: string;
+  amount: string;
+  message: string | null;
+  isAnonymous: boolean;
+  createdAt: string;
+  fan: {
+    id: string;
+    username: string | null;
+    displayName: string | null;
+    avatarUrl: string | null;
+  } | null;
+}
+
+export function usePublicTips(creatorId: string, page = 1, limit = 20) {
+  return useQuery({
+    queryKey: ['public-tips', creatorId, page, limit],
+    queryFn: async (): Promise<{ tips: PublicTip[]; total: number }> =>
+      (await api.get(EP.publicTips(creatorId), { params: { page, limit } })).data,
+    retry: 1,
+    staleTime: 30_000,
+  });
+}
+
+export function useGoalProgress(creatorId: string) {
+  return useQuery({
+    queryKey: ['goal-progress', creatorId],
+    queryFn: async (): Promise<{ totalReceived: string; tipCount: number }> =>
+      (await api.get(EP.goalProgress(creatorId))).data,
+    retry: 1,
+    staleTime: 30_000,
+  });
+}
+

@@ -1,7 +1,10 @@
 import {
   Controller,
   Post,
+  Get,
   Body,
+  Param,
+  Query,
   UseGuards,
   Req,
   Logger,
@@ -9,7 +12,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { TipsService } from './tips.service';
+import { PublicTipRow, TipsService } from './tips.service';
 import { CreateTipDto, CreateGuestTipDto } from './dto/create-tip.dto';
 import { Request } from 'express';
 import { ValidatedUser } from '../auth/auth.service';
@@ -20,6 +23,24 @@ export class TipsController {
   private readonly logger = new Logger(TipsController.name);
 
   constructor(private readonly tipsService: TipsService) {}
+
+  @Get('public/:creatorId')
+  async getPublicTips(
+    @Param('creatorId') creatorId: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ): Promise<{ tips: Array<PublicTipRow>; total: number }> {
+    const p = Math.max(1, parseInt(page ?? '1', 10) || 1);
+    const l = Math.min(50, Math.max(1, parseInt(limit ?? '20', 10) || 20));
+    return this.tipsService.getPublicTipsForCreator(creatorId, p, l);
+  }
+
+  @Get('goal/:creatorId')
+  async getGoalProgress(
+    @Param('creatorId') creatorId: string,
+  ): Promise<{ totalReceived: string; tipCount: number }> {
+    return this.tipsService.getGoalProgressForCreator(creatorId);
+  }
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
