@@ -155,13 +155,12 @@ e.g. bg-teal-800, text-gold-400, shadow-modal
   --animate-slide-down: slide-down 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-slide-up: slide-up 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-shimmer: shimmer 1.5s linear infinite;
---animate-sheen: sheen 6s ease-in-out infinite;
---animate-dash: dash 1.5s ease-in-out infinite;
---animate-spin-slow: spin 2s linear infinite;
---animate-toast-desktop: toast-slide-desktop 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
---animate-toast-mobile: toast-slide-mobile 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
---animate-pulse-breath: pulse-breath 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-
+  --animate-sheen: sheen 6s ease-in-out infinite;
+  --animate-dash: dash 1.5s ease-in-out infinite;
+  --animate-spin-slow: spin 2s linear infinite;
+  --animate-toast-desktop: toast-slide-desktop 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  --animate-toast-mobile: toast-slide-mobile 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  --animate-pulse-breath: pulse-breath 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 
   /* --- Breakpoints — design.md §6 --- */
   --breakpoint-xs: 320px;
@@ -169,6 +168,79 @@ e.g. bg-teal-800, text-gold-400, shadow-modal
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
+
+  /* ================================================================
+  BLOKI 1–10 — NOWE TOKENY W @theme
+  =============================================================== */
+
+  /* --- Blok 1: Oświetlenie i cieniowanie --- */
+  --elevation-z-0: 0px;
+  --elevation-z-1: 4px;
+  --elevation-z-2: 8px;
+  --elevation-z-3: 16px;
+  --elevation-z-4: 32px;
+  --elevation-z-5: 64px;
+  --light-dir-x: 0.707;
+  --light-dir-y: -0.707;
+  --light-dir-z: 0.5;
+  --ambient-intensity: 0.25;
+  --shadow-chameleon: 0 16px 32px color-mix(in oklch, var(--teal-800) 70%, #000);
+  --glow-emissive: 0 0 20px 4px var(--gold-400);
+  --shadow-type: classic;
+
+  /* --- Blok 2: Materiał i efekty szklane --- */
+  --glass-saturate: 200%;
+  --squish-scale: 0.94;
+  --squish-3d-translate: -6px;
+  --noise-intensity: 0.05;
+
+  /* --- Blok 3: Adaptacja środowiskowa --- */
+  --ambient-lux: 50;
+  --environmental-theme: neutral;
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+
+  /* --- Blok 4: Animacje i interakcje --- */
+  --shadow-hover-target: var(--shadow-card-hover);
+  --shadow-transition-duration: 0.3s;
+  --double-wrapper-offset: 1px;
+  --double-wrapper-blur: 25px;
+  --double-wrapper-color: rgba(0, 40, 40, 0.85);
+  --touch-prediction-scale: 0.98;
+  --touch-prediction-duration: 0.1s;
+
+  /* --- Blok 5: Wydajność i rendering sprzętowy --- */
+  --webgpu-supported: 0;
+  --houdini-supported: 0;
+  --gpu-fallback-blur: 20px;
+
+  /* --- Blok 6: Typografia i układ przestrzenny --- */
+  --container-query-breakpoint-xs: 320px;
+  --container-query-breakpoint-sm: 640px;
+  --container-query-breakpoint-md: 768px;
+  --container-query-breakpoint-lg: 1024px;
+  --container-query-breakpoint-xl: 1280px;
+
+  /* --- Blok 7: Iluzje percepcyjne --- */
+  --illusion-bg: var(--teal-800);
+  --illusion-opacity: 0.6;
+
+  /* --- Blok 8: Generative UI --- */
+  --genui-transition-duration: 0.3s;
+  --genui-elevation-default: var(--elevation-z-2);
+
+  /* --- Blok 9: Kolory i przestrzenie barw --- */
+  --color-deep-turquoise: #006747;
+  --color-deep-turquoise-oklch: oklch(0.45 0.12 185);
+  --black-safe: var(--teal-900);
+  --shadow-chameleon-alt: 0 25px 50px -12px color-mix(in oklch, var(--teal-800) 60%, transparent);
+
+  /* --- Blok 10: Maskowanie i geometria --- */
+  --arc-cut-size: 15px;
+  --arc-cut-coord: 0.85;
+  --arc-curve: 0.93;
 }
 
 /* ================================================================
@@ -280,6 +352,87 @@ and add aliases that can't be expressed in @theme.
   --z-modal: 1000;
   --z-tooltip: 1500;
   --z-toast: 9999;
+
+  /* ================================================================
+  BLOKI 1–10 — NOWE ZMIENNE W :root
+  (niektóre już były na końcu – poniżej wszystkie, bez powtórzeń)
+  =============================================================== */
+
+  /* --- Tokeny głębi Z (elevation) dla Shadow Maestro --- */
+  --elevation-z-0: 0px;
+  --elevation-z-1: 4px;
+  --elevation-z-2: 8px;
+  --elevation-z-3: 16px;
+  --elevation-z-4: 32px;
+  --elevation-z-5: 64px;
+
+  /* --- Wirtualne źródło światła 3D --- */
+  --light-dir-x: 0.707;
+  --light-dir-y: -0.707;
+  --light-dir-z: 0.5;
+
+  /* --- Natężenie światła otoczenia (aktualizowane przez JS) --- */
+  --ambient-intensity: 0.25;
+
+  /* --- Chameleon shadow (cień jako zagęszczenie pigmentu) --- */
+  --shadow-chameleon: 0 16px 32px color-mix(in oklch, var(--teal-800) 70%, #000);
+
+  /* --- Emisyjna poświata (zamiast cienia dla dark mode / niskie luksy) --- */
+  --glow-emissive: 0 0 20px 4px var(--gold-400);
+  --shadow-type: classic;
+
+  /* --- Blok 2: Liquid Glass, Squishy UI, Texture --- */
+  --glass-saturate: 200%;
+  --squish-scale: 0.94;
+  --squish-3d-translate: -6px;
+  --noise-intensity: 0.05;
+
+  /* --- Blok 3: Adaptacja środowiskowa --- */
+  --ambient-lux: 50;
+  --environmental-theme: neutral;
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+
+  /* --- Blok 4: Animacje i interakcje --- */
+  --shadow-hover-target: var(--shadow-card-hover);
+  --shadow-transition-duration: 0.3s;
+  --double-wrapper-offset: 1px;
+  --double-wrapper-blur: 25px;
+  --double-wrapper-color: rgba(0, 40, 40, 0.85);
+  --touch-prediction-scale: 0.98;
+  --touch-prediction-duration: 0.1s;
+
+  /* --- Blok 5: Wydajność i rendering sprzętowy --- */
+  --webgpu-supported: 0;
+  --houdini-supported: 0;
+  --gpu-fallback-blur: 20px;
+
+  /* --- Blok 6: Typografia i układ przestrzenny --- */
+  --container-query-breakpoint-xs: 320px;
+  --container-query-breakpoint-sm: 640px;
+  --container-query-breakpoint-md: 768px;
+  --container-query-breakpoint-lg: 1024px;
+  --container-query-breakpoint-xl: 1280px;
+
+  /* --- Blok 7: Iluzje percepcyjne --- */
+  --illusion-bg: var(--teal-800);
+  --illusion-opacity: 0.6;
+
+  /* --- Blok 8: Generative UI --- */
+  --genui-transition-duration: 0.3s;
+  --genui-elevation-default: var(--elevation-z-2);
+
+  /* --- Blok 9: Kolory i przestrzenie barw --- */
+  --color-deep-turquoise: #006747;
+  --color-deep-turquoise-oklch: oklch(0.45 0.12 185);
+  --black-safe: var(--teal-900);
+
+  /* --- Blok 10: Maskowanie i geometria --- */
+  --arc-cut-size: 15px;
+  --arc-cut-coord: 0.85;
+  --arc-curve: 0.93;
 }
 
 /* ================================================================
@@ -396,6 +549,20 @@ KEYFRAMES
   35% { transform: translateX(140%); opacity: 1; }
   45% { opacity: 0; }
   100% { transform: translateX(140%); opacity: 0; }
+}
+
+/* Nowa keyframe dla Generative UI (Blok 8) */
+@keyframes genui-fade-scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -565,4 +732,434 @@ CARD UTILITY CLASSES — design.md §3.1 (updated)
 }
 .safe-bottom-sm {
   padding-bottom: calc(64px + env(safe-area-inset-bottom));
+}
+
+/* ================================================================
+BLOKI 1–10 — NOWE KLASY @utility I REGUŁY GLOBALNE
+================================================================ */
+
+/* ----- Blok 1: Oświetlenie i cieniowanie ----- */
+.elevation-z-0 { --elevation-z: var(--elevation-z-0); }
+.elevation-z-1 { --elevation-z: var(--elevation-z-1); }
+.elevation-z-2 { --elevation-z: var(--elevation-z-2); }
+.elevation-z-3 { --elevation-z: var(--elevation-z-3); }
+.elevation-z-4 { --elevation-z: var(--elevation-z-4); }
+.elevation-z-5 { --elevation-z: var(--elevation-z-5); }
+
+.shadow-maestro {
+  box-shadow:
+    calc(var(--elevation-z) * var(--light-dir-x))
+    calc(var(--elevation-z) * var(--light-dir-y))
+    calc(var(--elevation-z) * 0.2)
+    color-mix(in oklch, var(--bg-surface, var(--teal-800)) 70%, #000),
+    0 0 calc(var(--elevation-z) * 0.8)
+    color-mix(in oklch, var(--bg-surface, var(--teal-800)) 85%, #000, var(--ambient-intensity));
+}
+
+.emissive-glow {
+  box-shadow: none;
+  filter: drop-shadow(var(--glow-emissive));
+}
+
+/* Luminance step-up – dark mode */
+[data-theme="dark"] {
+  --bg-z-0: oklch(0.12 0.02 260);
+  --bg-z-1: oklch(0.18 0.03 260);
+  --bg-z-2: oklch(0.24 0.04 260);
+  --bg-z-3: oklch(0.30 0.05 260);
+}
+
+.surface-z-0 { background: var(--bg-z-0); }
+.surface-z-1 { background: var(--bg-z-1); }
+.surface-z-2 { background: var(--bg-z-2); }
+.surface-z-3 { background: var(--bg-z-3); }
+
+/* Haptyczny rezonans – fallback deklaratywny */
+.haptic-glow {
+  transition: filter 0.1s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+.haptic-glow:hover {
+  filter: drop-shadow(0 0 12px var(--gold-400));
+  transform: scale(0.98);
+}
+
+/* ----- Blok 2: Materiał i efekty szklane ----- */
+.glass-liquid {
+  background: var(--glass-overlay);
+  backdrop-filter: blur(var(--glass-blur, 20px)) saturate(var(--glass-saturate));
+  border: var(--glass-border);
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.border-gold-subtle {
+  border: 1px solid color-mix(in oklch, var(--gold-400), transparent 80%);
+}
+.border-purple-subtle {
+  border: 1px solid color-mix(in oklch, var(--purple-300), transparent 70%);
+}
+
+.squishy {
+  transition: transform 0.15s var(--ease-spring);
+  transform: scale(1);
+}
+.squishy:active {
+  transform: scale(var(--squish-scale));
+}
+.squishy-3d {
+  transition: transform 0.12s cubic-bezier(0.20, 0.90, 0.40, 1.10);
+}
+.squishy-3d:active {
+  transform: translateZ(var(--squish-3d-translate)) scale(var(--squish-scale));
+}
+
+.gpu-layer {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  isolation: isolate;
+}
+
+.texture-paper {
+  background-image: paint(procedural-noise);
+}
+.texture-chrome {
+  background: linear-gradient(135deg, #e0e0e0 0%, #b0b0b0 50%, #f0f0f0 100%);
+  background-blend-mode: overlay;
+}
+
+/* ----- Blok 3: Adaptacja środowiskowa i biometryczna ----- */
+.safe-bottom {
+  padding-bottom: calc(72px + var(--safe-area-bottom));
+}
+.safe-bottom-sm {
+  padding-bottom: calc(64px + var(--safe-area-bottom));
+}
+.safe-top {
+  padding-top: calc(16px + var(--safe-area-top));
+}
+.safe-left {
+  padding-left: calc(16px + var(--safe-area-left));
+}
+.safe-right {
+  padding-right: calc(16px + var(--safe-area-right));
+}
+
+.adapt-contrast {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+[data-environmental-theme="emissive-dark"] {
+  --text-primary: #CCF7F4;
+  --bg-surface-base: #001F1F;
+  --glow-intensity: 0.8;
+  --shadow-type: glow;
+}
+
+[data-environmental-theme="sunlight-high-contrast"] {
+  --text-primary: #ffffff;
+  --bg-surface-base: #000000;
+  --contrast-boost: 1.2;
+  --shadow-type: classic;
+}
+
+/* ----- Blok 4: Animacje i interakcje ----- */
+.shadow-transition {
+  position: relative;
+  transition: box-shadow var(--shadow-transition-duration) var(--ease-spring);
+}
+.shadow-transition::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--shadow-hover-target);
+  opacity: 0;
+  transition: opacity var(--shadow-transition-duration) var(--ease-spring);
+  pointer-events: none;
+  will-change: opacity;
+}
+.shadow-transition:hover::after {
+  opacity: 1;
+}
+
+.double-wrapper-outer {
+  position: relative;
+  filter: drop-shadow(0 var(--double-wrapper-offset) var(--double-wrapper-blur) var(--double-wrapper-color));
+}
+.double-wrapper-inner {
+  overflow: hidden;
+  background: inherit;
+}
+@layer utilities {
+  .mask-corner {
+    clip-path: polygon(0 15px, 15px 0, 100% 0, 100% 100%, 0 100%);
+  }
+
+  .group-hover-blur-siblings {
+    transition: all 0.3s ease;
+  }
+  .group:hover .group-hover-blur-siblings:not(:hover) {
+    opacity: 0.5;
+    filter: blur(2px);
+    transform: scale(0.98);
+  }
+
+  .touch-predict {
+    transition: transform var(--touch-prediction-duration) cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    transform: scale(1);
+  }
+  .touch-predict:hover {
+    transform: scale(var(--touch-prediction-scale));
+  }
+  .touch-predict:active {
+    transform: scale(0.94);
+  }
+}
+
+@layer utilities {
+  .halo-pulse {
+    position: relative;
+
+    &:focus-within::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: inherit;
+      background: radial-gradient(circle at center, var(--purple-300), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      z-index: -1;
+    }
+
+    &:focus-within::before {
+      opacity: 0.6;
+      animation: pulse-breath 2s infinite;
+    }
+  }
+}
+
+/* ----- Blok 5: Wydajność i rendering sprzętowy ----- */
+.util-gpu-composited {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  contain: layout paint style;
+}
+
+.util-webgpu-enabled {
+  /* fallback when webgpu selector is not supported */
+  @supports not (selector(:has(webgpu))) {
+    backdrop-filter: blur(var(--gpu-fallback-blur));
+  }
+}
+
+.util-force-120fps {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  contain: strict;
+  isolation: isolate;
+}
+
+.util-optimize-animation {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Wsparcie dla volumetric-shadow (opcjonalna klasa) */
+.card-volumetric {
+  --volumetric-depth: 16px;
+  --volumetric-color: color-mix(in oklch, var(--teal-800) 70%, black);
+  --volumetric-blur: 24px;
+  --volumetric-intensity: 0.8;
+  background-image: paint(volumetric-shadow);
+}
+
+/* ----- Blok 6: Typografia i układ przestrzenny ----- */
+.text-balance {
+  text-wrap: balance;
+}
+
+.field-sizing-content {
+  field-sizing: content;
+}
+
+/* Logical properties – pełny zestaw */
+.ps-0 { padding-inline-start: 0px; }
+.ps-1 { padding-inline-start: 0.25rem; }
+.ps-2 { padding-inline-start: 0.5rem; }
+.ps-3 { padding-inline-start: 0.75rem; }
+.ps-4 { padding-inline-start: 1rem; }
+.ps-5 { padding-inline-start: 1.25rem; }
+.ps-6 { padding-inline-start: 1.5rem; }
+.ps-8 { padding-inline-start: 2rem; }
+.ps-10 { padding-inline-start: 2.5rem; }
+
+.pe-0 { padding-inline-end: 0px; }
+.pe-1 { padding-inline-end: 0.25rem; }
+.pe-2 { padding-inline-end: 0.5rem; }
+.pe-3 { padding-inline-end: 0.75rem; }
+.pe-4 { padding-inline-end: 1rem; }
+.pe-5 { padding-inline-end: 1.25rem; }
+.pe-6 { padding-inline-end: 1.5rem; }
+.pe-8 { padding-inline-end: 2rem; }
+.pe-10 { padding-inline-end: 2.5rem; }
+
+.ms-0 { margin-inline-start: 0px; }
+.ms-1 { margin-inline-start: 0.25rem; }
+.ms-2 { margin-inline-start: 0.5rem; }
+.ms-3 { margin-inline-start: 0.75rem; }
+.ms-4 { margin-inline-start: 1rem; }
+.ms-5 { margin-inline-start: 1.25rem; }
+.ms-6 { margin-inline-start: 1.5rem; }
+.ms-8 { margin-inline-start: 2rem; }
+.ms-10 { margin-inline-start: 2.5rem; }
+
+.me-0 { margin-inline-end: 0px; }
+.me-1 { margin-inline-end: 0.25rem; }
+.me-2 { margin-inline-end: 0.5rem; }
+.me-3 { margin-inline-end: 0.75rem; }
+.me-4 { margin-inline-end: 1rem; }
+.me-5 { margin-inline-end: 1.25rem; }
+.me-6 { margin-inline-end: 1.5rem; }
+.me-8 { margin-inline-end: 2rem; }
+.me-10 { margin-inline-end: 2.5rem; }
+
+.mbs-0 { margin-block-start: 0px; }
+.mbs-1 { margin-block-start: 0.25rem; }
+.mbs-2 { margin-block-start: 0.5rem; }
+.mbs-3 { margin-block-start: 0.75rem; }
+.mbs-4 { margin-block-start: 1rem; }
+.mbs-5 { margin-block-start: 1.25rem; }
+.mbs-6 { margin-block-start: 1.5rem; }
+.mbs-8 { margin-block-start: 2rem; }
+
+.mbe-0 { margin-block-end: 0px; }
+.mbe-1 { margin-block-end: 0.25rem; }
+.mbe-2 { margin-block-end: 0.5rem; }
+.mbe-3 { margin-block-end: 0.75rem; }
+.mbe-4 { margin-block-end: 1rem; }
+.mbe-5 { margin-block-end: 1.25rem; }
+.mbe-6 { margin-block-end: 1.5rem; }
+.mbe-8 { margin-block-end: 2rem; }
+
+.pbs-0 { padding-block-start: 0px; }
+.pbs-1 { padding-block-start: 0.25rem; }
+.pbs-2 { padding-block-start: 0.5rem; }
+.pbs-3 { padding-block-start: 0.75rem; }
+.pbs-4 { padding-block-start: 1rem; }
+.pbs-5 { padding-block-start: 1.25rem; }
+.pbs-6 { padding-block-start: 1.5rem; }
+.pbs-8 { padding-block-start: 2rem; }
+
+.pbe-0 { padding-block-end: 0px; }
+.pbe-1 { padding-block-end: 0.25rem; }
+.pbe-2 { padding-block-end: 0.5rem; }
+.pbe-3 { padding-block-end: 0.75rem; }
+.pbe-4 { padding-block-end: 1rem; }
+.pbe-5 { padding-block-end: 1.25rem; }
+.pbe-6 { padding-block-end: 1.5rem; }
+.pbe-8 { padding-block-end: 2rem; }
+
+/* ----- Blok 7: Iluzje percepcyjne i wzorce wizualne ----- */
+.illusion-container {
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.illusion-type-v {
+  transition: filter 0.3s ease;
+}
+[data-environmental-theme="emissive-dark"] .illusion-type-v {
+  filter: hue-rotate(180deg);
+}
+
+/* ----- Blok 8: Generative UI i architektura agentowa ----- */
+.genui-agent-component {
+  --elevation-z: var(--genui-elevation-default);
+  box-shadow: var(--shadow-maestro);
+  transition: box-shadow var(--genui-transition-duration) var(--ease-premium),
+              transform var(--genui-transition-duration) var(--ease-spring);
+  transform: translateZ(0);
+  will-change: transform, box-shadow;
+}
+
+.genui-agent-component-elevated {
+  --elevation-z: var(--elevation-z-4);
+  transform: translateY(-2px);
+}
+
+.genui-double-wrapper-outer {
+  position: relative;
+  filter: drop-shadow(0 1px 25px rgba(0, 40, 40, 0.85));
+}
+
+.genui-double-wrapper-inner {
+  clip-path: polygon(0 15px, 15px 0, 100% 0, 100% 100%, 0 100%);
+  overflow: hidden;
+  background: var(--glass-overlay);
+  backdrop-filter: blur(var(--glass-blur, 20px)) saturate(var(--glass-saturate, 200%));
+  border: var(--glass-border);
+}
+
+.u-genui-enter {
+  animation: genui-fade-scale-in 0.3s var(--ease-spring) both;
+}
+
+/* ----- Blok 9: Kolory i przestrzenie barw ----- */
+.u-bg-deep-turquoise {
+  background-color: var(--color-deep-turquoise);
+}
+
+.u-shadow-chameleon {
+  box-shadow: var(--shadow-chameleon);
+}
+
+.u-shadow-card-chameleon {
+  box-shadow:
+    0 4px 6px -1px color-mix(in oklch, var(--teal-800) 60%, transparent),
+    0 2px 4px -1px color-mix(in oklch, var(--teal-800) 70%, transparent);
+}
+
+.u-text-black-safe {
+  color: var(--black-safe);
+}
+.u-bg-black-safe {
+  background-color: var(--black-safe);
+}
+
+.u-bezold-trigger {
+  transition: filter 0.2s ease;
+}
+.u-bezold-trigger:hover {
+  filter: hue-rotate(5deg) saturate(1.05);
+}
+
+/* Globalny zakaz czystej czerni (opcjonalnie odkomentować) */
+/*
+.text-black { color: var(--black-safe) !important; }
+.bg-black { background-color: var(--black-safe) !important; }
+*/
+
+/* ----- Blok 10: Techniki maskowania i geometrii ----- */
+.u-arc-mask {
+  clip-path: url(#arc-mask);
+}
+
+/* Double wrapper już zdefiniowany w Bloku 4, tutaj tylko dodatkowe */
+.u-svg-crisp {
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  shape-rendering: crispEdges;
+}
+
+.u-svg-sharp {
+  vector-effect: non-scaling-stroke;
+  shape-rendering: geometricPrecision;
 }
