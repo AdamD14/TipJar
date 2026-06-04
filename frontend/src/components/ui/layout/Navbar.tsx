@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "@/lib/store/authStore";
 import Button from "@/components/ui/buttons/Button";
+import { UsdcBalance } from "./UsdcBalance";
 
 type Role = "CREATOR" | "FAN";
 
@@ -109,6 +110,9 @@ export default function Navbar() {
 
       {/* ── Column 3: Wallet · Bell · @username ── */}
       <div className="flex items-center gap-1 shrink-0">
+        {/* Balance USDC */}
+        <UsdcBalance />
+
         <Link
           href={`/@${username}/${prefix}/wallet`}
           className="p-2 rounded-lg text-text-primary hover:text-text-tertiary hover:bg-surface-elevated/70 transition-colors duration-200"

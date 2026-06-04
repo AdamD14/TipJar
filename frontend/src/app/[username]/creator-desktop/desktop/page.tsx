@@ -1,3 +1,35 @@
-export default function Page() {
-  return <div className="pt-14" />;
+import { CreatorPulse } from "@/components/creator-desktop/creator-pulse";
+import { QuickActions } from "@/components/creator-desktop/quick-actions";
+import { LiveActivity } from "@/components/creator-desktop/live-activity";
+import { ActiveGoals } from "@/components/creator-desktop/active-goals";
+import { RecentSupport } from "@/components/creator-desktop/recent-support";
+import { FanwallPreview } from "@/components/creator-desktop/fanwall-preview";
+import { Recommendations } from "@/components/creator-desktop/recommendations";
+import { GrowthSnapshot } from "@/components/creator-desktop/growth-snapshot";
+import { NotificationsPreview } from "@/components/creator-desktop/notifications-preview";
+
+export default function DesktopPage() {
+  return (
+    <div className="space-y-6 pb-10">
+      <CreatorPulse />
+      <QuickActions />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <LiveActivity />
+        <ActiveGoals />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <RecentSupport />
+        <FanwallPreview />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Recommendations />
+        <GrowthSnapshot />
+      </div>
+
+      <NotificationsPreview />
+    </div>
+  );
 }

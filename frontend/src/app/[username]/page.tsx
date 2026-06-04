@@ -418,7 +418,7 @@ function TipPanel({ creatorId }: { creatorId: string }) {
           maxLength={MAX_MESSAGE}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Your message (required)"
+          placeholder="Your message (optional)"
           className="w-full h-10 px-4 rounded-[6px] font-body text-base bg-teal-800 text-teal-25 placeholder:text-teal-100 border border-teal-700 hover:border-teal-450 focus:border-gold-300 focus:shadow-[0_0_0_1px_var(--teal-200),0_0_0_4px_rgba(255,215,0,0.25)] outline-none transition-all duration-200"
         />
         <p className="text-right text-[10px] text-teal-500/30 mt-1 tnum">
@@ -435,7 +435,7 @@ function TipPanel({ creatorId }: { creatorId: string }) {
 
       <Button
         onClick={submit}
-        disabled={isPending || !valid || !message.trim()}
+        disabled={isPending || !valid}
         variant="primary"
         fullWidth
         loading={isPending}

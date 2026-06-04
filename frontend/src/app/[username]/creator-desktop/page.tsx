@@ -3,19 +3,52 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuthStore } from "@/lib/store/authStore";
-import apiClient from "@/lib/apiClient";
 import { me } from "@/lib/auth";
+import { Monitor, Clapperboard, Users, TrendingUp, Wallet, ArrowUpRight } from "lucide-react";
 
 interface DashboardData {
   username?: string;
   displayName?: string;
   avatarUrl?: string;
-  profile?: {
-    goalLabel?: string;
-    goalTarget?: number;
-    bio?: string;
-  };
 }
+
+const sections = [
+  {
+    label: "Desktop",
+    desc: "Your command center — pulse, activity, goals, all in one place.",
+    icon: Monitor,
+    href: "desktop",
+    span: "md:col-span-2",
+  },
+  {
+    label: "Studio",
+    desc: "Customize your page, overlays, alerts, and monetization.",
+    icon: Clapperboard,
+    href: "studio",
+    span: "md:col-span-1",
+  },
+  {
+    label: "Community",
+    desc: "Messages, supporters, events — nurture your people.",
+    icon: Users,
+    href: "community",
+    span: "md:col-span-1",
+  },
+  {
+    label: "Growth",
+    desc: "Earnings, traffic, conversions & AI-powered insights.",
+    icon: TrendingUp,
+    href: "growth",
+    span: "md:col-span-2",
+  },
+  {
+    label: "Wallet",
+    desc: "Balances, payouts, cards, and connected wallets.",
+    icon: Wallet,
+    href: "wallet",
+    span: "md:col-span-2 md:col-start-2",
+  },
+];
 
 export default function CreatorDashboard() {
   const { username } = useParams<{ username: string }>();
@@ -25,7 +58,6 @@ export default function CreatorDashboard() {
   const user = useAuthStore((state) => state.user);
   const hasHydrated = useAuthStore((state) => state._hasHydrated);
 
-  // Check if this is the current user's dashboard
   const decodedUsername = decodeURIComponent(username || "");
   const cleanUsername = decodedUsername.startsWith("@")
     ? decodedUsername.slice(1)
@@ -34,11 +66,9 @@ export default function CreatorDashboard() {
   const isOwner = user?.username === cleanUsername;
 
   useEffect(() => {
-    // Wait for store to load from session storage
     if (!hasHydrated) return;
 
     if (!user) {
-      // User is not in store. Try to fetch from API (e.g. if redirected from Social Login)
       me()
         .then((fetchedUser) => {
           if (fetchedUser) {
@@ -60,26 +90,19 @@ export default function CreatorDashboard() {
     }
 
     if (!isOwner) {
-      // Not the owner, redirect to public profile
       router.replace(`/@${cleanUsername}`);
       return;
     }
 
-    const fetchData = async () => {
-      try {
-        const res = await apiClient.get("/api/v1/creator/onboarding/status");
-        setData(res.data);
-      } catch (error) {
-        console.error("Failed to fetch dashboard data", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+    const timer = setTimeout(() => {
+      setData({ displayName: user.displayName, username: cleanUsername });
+      setLoading(false);
+    }, 400);
+    return () => clearTimeout(timer);
   }, [hasHydrated, user, isOwner, cleanUsername, router]);
 
   if (!isOwner) {
-    return null; // Will redirect
+    return null;
   }
 
   if (loading) {
@@ -90,84 +113,52 @@ export default function CreatorDashboard() {
     );
   }
 
+  const prefix = `/@${cleanUsername}/creator-desktop`;
+
   return (
-    <div className="min-h-screen bg-gradient-main text-white">
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold">
-              Welcome, {data?.displayName || cleanUsername}!
-            </h1>
-            <p className="text-gray-400 mt-1">
-              Manage your creator profile and earnings
-            </p>
-          </div>
-          <Link
-            href={`/@${cleanUsername}`}
-            className="px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
-          >
-            View Public Profile
-          </Link>
+    <div className="min-h-screen bg-gradient-main">
+      <div className="max-w-5xl mx-auto px-4 py-14 md:py-24">
+        {/* ── Header ── */}
+        <div className="text-center mb-14 md:mb-20">
+          <h1 className="font-heading font-bold text-h1 text-text-primary tracking-tight">
+            Welcome back{data?.displayName ? `, ${data.displayName}` : ""}
+          </h1>
+          <p className="mt-3 font-body text-lg text-text-tertiary">
+            What would you like to work on today?
+          </p>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <h3 className="text-sm text-gray-400 uppercase tracking-wider">
-              Total Earnings
-            </h3>
-            <p className="text-3xl font-bold mt-2 text-teal-400">$0.00</p>
-          </div>
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <h3 className="text-sm text-gray-400 uppercase tracking-wider">
-              Tips This Month
-            </h3>
-            <p className="text-3xl font-bold mt-2">0</p>
-          </div>
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <h3 className="text-sm text-gray-400 uppercase tracking-wider">
-              Subscribers
-            </h3>
-            <p className="text-3xl font-bold mt-2">0</p>
-          </div>
-        </div>
+        {/* ── Bento Grid ── */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          {sections.map((section) => {
+            const Icon = section.icon;
+            return (
+              <Link
+                key={section.href}
+                href={`${prefix}/${section.href}`}
+                className={`card-surface group relative flex flex-col items-center text-center gap-4 min-h-[220px] ${section.span}`}
+              >
+                <div className="mt-2 w-16 h-16 rounded-xl bg-teal-700 flex items-center justify-center group-hover:bg-gold-400 transition-colors duration-300">
+                  <Icon className="w-8 h-8 text-gold-400 group-hover:text-teal-900 transition-colors duration-300" />
+                </div>
 
-        {/* Goal Progress */}
-        {data?.profile?.goalLabel && (
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6 mb-8">
-            <h3 className="text-lg font-semibold mb-4">Current Goal</h3>
-            <p className="text-gray-400">{data.profile.goalLabel}</p>
-            <div className="mt-4 h-2 bg-white/10 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-yellow-400 to-yellow-600"
-                style={{ width: "0%" }}
-              />
-            </div>
-            <p className="text-sm text-gray-500 mt-2">
-              $0 / ${data.profile.goalTarget || 100}
-            </p>
-          </div>
-        )}
+                <h3 className="font-heading font-semibold text-xl text-text-primary">
+                  {section.label}
+                </h3>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Link
-            href={`/@${cleanUsername}/creator/profile`}
-            className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-colors"
-          >
-            <h3 className="text-lg font-semibold">Edit Profile</h3>
-            <p className="text-gray-400 mt-1">
-              Update your bio, avatar, and social links
-            </p>
-          </Link>
-          <Link
-            href={`/@${cleanUsername}/creator/withdrawals`}
-            className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-colors"
-          >
-            <h3 className="text-lg font-semibold">Withdrawals</h3>
-            <p className="text-gray-400 mt-1">Manage your USDC withdrawals</p>
-          </Link>
+                <p className="font-body text-sm text-text-tertiary leading-relaxed px-2">
+                  {section.desc}
+                </p>
+
+                <div className="mt-auto mb-2 flex items-center gap-1 text-gold-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="font-heading font-semibold text-xs uppercase tracking-widest">
+                    Open
+                  </span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </div>

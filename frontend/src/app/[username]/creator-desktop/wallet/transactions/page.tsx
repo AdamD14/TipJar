@@ -105,12 +105,12 @@ export default function TransactionsPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {filteredTxs.map((tx) => {
-              const amountVal = parseFloat(tx.amount || "0");
-              const isIncoming = amountVal >= 0;
-              const senderLabel = isIncoming
-                ? tx.source || "Incoming Deposit"
-                : tx.destination || "Outgoing Withdrawal";
+          {filteredTxs.map((tx) => {
+            const amountVal = parseFloat(tx.amount || "0");
+            const isIncoming = tx.type?.toUpperCase() === "INBOUND";
+            const senderLabel = isIncoming
+              ? tx.source || "Incoming Deposit"
+              : tx.destination || "Outgoing Withdrawal";
               const formattedDate = tx.createdAt ? new Date(tx.createdAt).toLocaleString() : "Recently";
 
               return (
@@ -129,7 +129,7 @@ export default function TransactionsPage() {
 
                   <div className="text-right">
                     <span className={`text-sm font-semibold block tnum ${isIncoming ? "text-green-400" : "text-red-400"}`}>
-                      {isIncoming ? "+" : ""}{amountVal.toFixed(2)} {tx.currency || "USDC"}
+                      {isIncoming ? "+" : "-"}{amountVal.toFixed(2)} {tx.currency || "USDC"}
                     </span>
                     <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] uppercase font-bold ${
                       tx.status === "COMPLETE" || tx.status === "success" 

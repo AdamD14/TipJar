@@ -9,6 +9,7 @@ import { Blockchain } from '@circle-fin/developer-controlled-wallets';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
 import { CircleService } from '../circle/circle.service';
+import { NotificationService } from '../notification/notification.service';
 import { randomUUID } from 'crypto';
 
 export interface PublicTipRow {
@@ -42,6 +43,7 @@ export class TipsService {
     private readonly prisma: PrismaService,
     private readonly usersService: UsersService,
     private readonly circleService: CircleService,
+    private readonly notificationService: NotificationService,
     private readonly config: ConfigService,
   ) {}
 
@@ -219,11 +221,37 @@ export class TipsService {
         );
       });
     }
-    this.circleService.getWalletBalanceForUser(creatorId).catch((err) => {
-      this.logger.warn(
-        `Balance cache refresh failed for creator ${creatorId}: ${(err as Error).message}`,
-      );
-    });
+      this.circleService.getWalletBalanceForUser(creatorId).catch((err) => {
+        this.logger.warn(
+          `Balance cache refresh failed for creator ${creatorId}: ${(err as Error).message}`,
+        );
+      });
+
+      const fanName = fanId
+        ? (await this.usersService.findOneById(fanId))?.displayName ?? 'Someone'
+        : 'Someone';
+      const creatorName =
+        (await this.usersService.findOneById(creatorId))?.displayName ?? 'a creator';
+
+      this.notificationService
+        .create({
+          userId: creatorId,
+          message: `You received a ${amount} USDC tip from ${fanName}`,
+        })
+        .catch((err) =>
+          this.logger.warn(`Creator notification failed: ${(err as Error).message}`),
+        );
+
+      if (fanId) {
+        this.notificationService
+          .create({
+            userId: fanId,
+            message: `You sent a ${amount} USDC tip to ${creatorName}`,
+          })
+          .catch((err) =>
+            this.logger.warn(`Fan notification failed: ${(err as Error).message}`),
+          );
+      }
 
       return completed;
     } catch (error) {

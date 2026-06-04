@@ -5,6 +5,7 @@ import { Mukta_Malar, IBM_Plex_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import { cn } from "@/lib/utils";
 import { Providers } from "./providers";
+import { NotificationsProvider } from "@/components/NotificationsProvider";
 
 const headingFont = Mukta_Malar({
   subsets: ["latin"],
@@ -60,7 +61,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           bodyFontFallback.variable,
         )}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          <NotificationsProvider>{children}</NotificationsProvider>
+        </Providers>
       </body>
     </html>
   );

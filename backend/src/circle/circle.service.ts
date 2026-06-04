@@ -29,7 +29,9 @@ import {
 import axios, { isAxiosError } from 'axios';
 import { randomBytes, randomUUID } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserRole } from '@prisma/client';
+import { Prisma, UserRole } from '@prisma/client';
+import { Inject, OnModuleDestroy } from '@nestjs/common';
+import { RedisClientType } from 'redis';
 
 /* ————————————————————————
    Lokalne typy odpowiedzi (bez any)
@@ -44,6 +46,10 @@ type SdkGetTxResp = {
 
 type SdkGetBalancesResp = {
   data?: { tokenBalances?: Balance[] };
+};
+
+type SdkCreateTxResp = {
+  data?: { transaction?: Transaction };
 };
 
 export type TxRow = {
@@ -66,13 +72,14 @@ export type AdminWalletRow = {
 };
 
 @Injectable()
-export class CircleService implements OnModuleInit {
+export class CircleService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(CircleService.name);
   public circleClient!: CircleDeveloperControlledWalletsClient;
 
   constructor(
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
+    @Inject('REDIS_CLIENT') private readonly redis: RedisClientType,
   ) {}
 
   onModuleInit(): void {
@@ -107,6 +114,10 @@ export class CircleService implements OnModuleInit {
       );
       throw new InternalServerErrorException(message);
     }
+  }
+
+  async onModuleDestroy(): Promise<void> {
+    await this.redis.quit();
   }
 
   private handleCircleError(
@@ -339,14 +350,14 @@ export class CircleService implements OnModuleInit {
       },
     } as CreateTransferTransactionInput;
 
-    const response = (await this.circleClient.createTransaction(
-      transferRequestPayload,
-    )) as any;
+const response = (await this.circleClient.createTransaction(
+  transferRequestPayload,
+)) as SdkCreateTxResp;
 
-      const txData = response.data;
-      if (!txData?.id || !txData.state) {
-        throw new InternalServerErrorException(
-          'Nie udało się zainicjować wypłaty — błąd SDK.',
+const txData = response.data?.transaction;
+if (!txData?.id || !txData.state) {
+  throw new InternalServerErrorException(
+    'Nie udało się zainicjować wypłaty — błąd SDK.',
         );
       }
 
@@ -464,14 +475,14 @@ export class CircleService implements OnModuleInit {
       },
     } as CreateTransferTransactionInput;
 
-    const response = (await this.circleClient.createTransaction(
-      transferRequestPayload,
-    )) as any;
+const response = (await this.circleClient.createTransaction(
+  transferRequestPayload,
+)) as SdkCreateTxResp;
 
-      const txData = response.data;
-      if (!txData?.id || !txData.state) {
-        throw new InternalServerErrorException(
-          'Nie udało się zainicjować transferu — błąd SDK Circle.',
+const txData = response.data?.transaction;
+if (!txData?.id || !txData.state) {
+  throw new InternalServerErrorException(
+    'Nie udało się zainicjować transferu — błąd SDK Circle.',
         );
       }
 
@@ -551,13 +562,13 @@ export class CircleService implements OnModuleInit {
       where: { circleWalletId: circleWallet.id },
       update: {
         totalUsdc,
-        rawJson: tokenBalances as any,
+        rawJson: tokenBalances as unknown as Prisma.InputJsonValue,
         circleUpdatedAt: new Date(),
       },
       create: {
         circleWalletId: circleWallet.id,
         totalUsdc,
-        rawJson: tokenBalances as any,
+        rawJson: tokenBalances as unknown as Prisma.InputJsonValue,
         circleUpdatedAt: new Date(),
       },
     });
@@ -703,12 +714,12 @@ export class CircleService implements OnModuleInit {
       const circleWallet = await this.prisma.circleWallet.findUnique({
         where: { circleWalletId: walletId },
       });
-      if (!circleWallet) {
-        this.logger.warn(
-          `No CircleWallet record for walletId=${walletId}, skipping cache update`,
-        );
-        return;
-      }
+        if (!circleWallet) {
+          this.logger.warn(
+            `No CircleWallet record for walletId=${walletId} — skipping cache update`,
+          );
+          return;
+        }
 
       const { totalUsdc, tokenBalances } =
         await this.getWalletBalance(walletId);
@@ -717,13 +728,13 @@ export class CircleService implements OnModuleInit {
         where: { circleWalletId: circleWallet.id },
         update: {
           totalUsdc: totalUsdc,
-          rawJson: tokenBalances as any,
+          rawJson: tokenBalances as unknown as Prisma.InputJsonValue,
           circleUpdatedAt: new Date(),
         },
         create: {
           circleWalletId: circleWallet.id,
           totalUsdc: totalUsdc,
-          rawJson: tokenBalances as any,
+          rawJson: tokenBalances as unknown as Prisma.InputJsonValue,
           circleUpdatedAt: new Date(),
         },
       });
@@ -731,6 +742,39 @@ export class CircleService implements OnModuleInit {
       this.logger.log(
         `Cached balance updated for walletId=${walletId}: ${totalUsdc} USDC`,
       );
+
+      // Redis Pub/Sub dla SSE - real-time balance updates
+      const userId = await this.getUserIdByWalletId(walletId);
+      if (userId) {
+        await this.redis.publish(
+          `balance:${userId}`,
+          JSON.stringify({ balance: totalUsdc, currency: 'USDC' })
+        );
+
+        // Powiadomienia dla nowych transakcji inbound
+        if (notificationType === 'transactions.inbound' && state === 'COMPLETE') {
+          const amount = notification.amounts?.[0] || '0';
+          
+          await this.prisma.notification.create({
+            data: {
+              userId,
+              title: 'Nowy Napiwek!',
+              message: `Otrzymałeś ${amount} USDC`,
+              type: 'success',
+            },
+          });
+          
+          await this.redis.publish(
+            `notifications:${userId}`,
+            JSON.stringify({
+              title: 'Nowy Napiwek!',
+              message: `Otrzymałeś ${amount} USDC`,
+              type: 'success',
+              timestamp: new Date().toISOString(),
+            })
+          );
+        }
+      }
     } catch (error) {
       this.logger.error(
         `Failed to refresh balance on webhook for walletId=${walletId}`,
@@ -1269,5 +1313,13 @@ export class CircleService implements OnModuleInit {
         '0x31BE08D380A21fc740883c0BC434FcFc88740b58',
       ),
     };
+  }
+
+  private async getUserIdByWalletId(walletId: string): Promise<string | null> {
+    const circleWallet = await this.prisma.circleWallet.findUnique({
+      where: { circleWalletId: walletId },
+      select: { userId: true },
+    });
+    return circleWallet?.userId || null;
   }
 }
