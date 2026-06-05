@@ -205,55 +205,16 @@ export class TipsService {
         }
       }
       const chargeId = randomUUID();
-      const completed = await this.prisma.tip.update({
-        where: { id: tip.id },
-        data: {
-          status: TipStatus.COMPLETED,
-          paymentGatewayChargeId: chargeId,
-          processedAt: new Date(),
-        },
-      });
+        const completed = await this.prisma.tip.update({
+          where: { id: tip.id },
+          data: {
+            status: TipStatus.COMPLETED,
+            paymentGatewayChargeId: chargeId,
+            processedAt: new Date(),
+          },
+        });
 
-      if (fanId) {
-      this.circleService.getWalletBalanceForUser(fanId).catch((err) => {
-        this.logger.warn(
-          `Balance cache refresh failed for fan ${fanId}: ${(err as Error).message}`,
-        );
-      });
-    }
-      this.circleService.getWalletBalanceForUser(creatorId).catch((err) => {
-        this.logger.warn(
-          `Balance cache refresh failed for creator ${creatorId}: ${(err as Error).message}`,
-        );
-      });
-
-      const fanName = fanId
-        ? (await this.usersService.findOneById(fanId))?.displayName ?? 'Someone'
-        : 'Someone';
-      const creatorName =
-        (await this.usersService.findOneById(creatorId))?.displayName ?? 'a creator';
-
-      this.notificationService
-        .create({
-          userId: creatorId,
-          message: `You received a ${amount} USDC tip from ${fanName}`,
-        })
-        .catch((err) =>
-          this.logger.warn(`Creator notification failed: ${(err as Error).message}`),
-        );
-
-      if (fanId) {
-        this.notificationService
-          .create({
-            userId: fanId,
-            message: `You sent a ${amount} USDC tip to ${creatorName}`,
-          })
-          .catch((err) =>
-            this.logger.warn(`Fan notification failed: ${(err as Error).message}`),
-          );
-      }
-
-      return completed;
+        return completed;
     } catch (error) {
       await this.prisma.tip.update({
         where: { id: tip.id },

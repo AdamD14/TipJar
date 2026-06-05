@@ -384,9 +384,12 @@ if (!txData?.id || !txData.state) {
 
       const tokenBalances = response.data?.tokenBalances ?? [];
 
-      const totalUsdc = tokenBalances
-        .filter((tb) => tb.token?.symbol === 'USDC')
-        .reduce((sum, tb) => sum + parseFloat(tb.amount || '0'), 0);
+      const usdcEntry = tokenBalances.find(
+        (tb) => tb.token?.symbol === 'USDC',
+      );
+      const totalUsdc = usdcEntry
+        ? parseFloat(usdcEntry.amount || '0')
+        : 0;
 
       return { totalUsdc, tokenBalances };
     } catch (error) {
@@ -751,28 +754,48 @@ if (!txData?.id || !txData.state) {
           JSON.stringify({ balance: totalUsdc, currency: 'USDC' })
         );
 
-        // Powiadomienia dla nowych transakcji inbound
-        if (notificationType === 'transactions.inbound' && state === 'COMPLETE') {
+        if (state === 'COMPLETE') {
           const amount = notification.amounts?.[0] || '0';
-          
-        await this.prisma.notification.create({
-          data: {
-            userId,
-            title: 'New Tip!',
-            message: `You received ${amount} USDC`,
-            type: 'success',
-          },
-        });
+          let title = '';
+          let message = '';
+          let notifType = 'info';
 
-        await this.redis.publish(
-          `notifications:${userId}`,
-          JSON.stringify({
-            title: 'New Tip!',
-            message: `You received ${amount} USDC`,
-            type: 'success',
-            timestamp: new Date().toISOString(),
-          })
-        );
+          if (notificationType === 'transactions.inbound') {
+            const sender = notification.sourceAddress
+              ? await this.prisma.user.findFirst({
+                  where: { mainWalletAddress: notification.sourceAddress },
+                  select: { displayName: true },
+                })
+              : null;
+            const senderLabel = sender?.displayName
+              ? `@${sender.displayName}`
+              : null;
+            title = 'New Tip!';
+            message = senderLabel
+              ? `You received ${amount} USDC from ${senderLabel}`
+              : `You received ${amount} USDC`;
+            notifType = 'success';
+          } else if (notificationType === 'transactions.outbound') {
+            title = 'Transfer Sent';
+            message = `You sent ${amount} USDC`;
+            notifType = 'info';
+          }
+
+          if (title) {
+            await this.prisma.notification.create({
+              data: { userId, title, message, type: notifType },
+            });
+
+            await this.redis.publish(
+              `notifications:${userId}`,
+              JSON.stringify({
+                title,
+                message,
+                type: notifType,
+                timestamp: new Date().toISOString(),
+              })
+            );
+          }
         }
       }
     } catch (error) {

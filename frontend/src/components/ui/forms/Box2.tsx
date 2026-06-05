@@ -6,7 +6,7 @@ import clsx from "clsx";
 type Box2Variant = "base" | "premium" | "purple" | "modal";
 
 interface Box2Props extends HTMLAttributes<HTMLDivElement> {
-  children: ReactNode;
+  children?: ReactNode;
   interactive?: boolean;
   variant?: Box2Variant;
   noPadding?: boolean;
@@ -67,9 +67,9 @@ export function Box2({
               in="red_layer"
               result="red_only"
               values="
-              1 0 0 0 0
               0 0 0 0 0
               0 0 0 0 0
+              0 0 1 0 0
               0 0 0 1 0"
             />
 
@@ -80,9 +80,9 @@ export function Box2({
               result="green_only"
               values="
               0 0 0 0 0
-              0 1 0 0 0
-              0 0 0 0 0
-              0 0 0 1 0"
+              0 2 0 0 0
+              0 0 1 0 0
+              0 2 0 1 0"
             />
 
             {/* Izolacja kanału niebieskiego (B) */}

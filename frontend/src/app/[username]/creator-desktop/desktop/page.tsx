@@ -10,16 +10,16 @@ import { NotificationsPreview } from "@/components/creator-desktop/notifications
 
 export default function DesktopPage() {
   return (
-    <div className="space-y-6 pb-10">
+    <div className="space-y-8 px-2 py-8 display:grid pb-2 grid lg:grid-cols-2 gap-2">
       <CreatorPulse />
       <QuickActions />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
         <LiveActivity />
         <ActiveGoals />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-4 lg:grid-cols-2 gap-6">
         <RecentSupport />
         <FanwallPreview />
       </div>
