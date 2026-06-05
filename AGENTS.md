@@ -14,7 +14,7 @@ Zakaz budowania frontendu i backendu bez polecenia, uzywania lint i test.
 ## Language convention
 
 - **Conversation with the user is in Polish** — the agent responds in Polish.
-- **Everything else stays in English**: code, code comments, user-facing UI text, commit messages, PR descriptions, documentation.
+- **Everything else stays in English**: code,  user-facing UI text, commit messages.
 
 ## Agent rules
 

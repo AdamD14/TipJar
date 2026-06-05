@@ -15,7 +15,7 @@ export class NotificationsController {
     const user = req.user as ValidatedUser;
     const userId = user.id;
 
-    res.setHeader('Content-Type', 'text漆黑-event-stream');
+    res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection' , 'keep-alive');
 

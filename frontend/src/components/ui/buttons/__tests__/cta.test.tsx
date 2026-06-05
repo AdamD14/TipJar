@@ -24,9 +24,21 @@ describe('CTAs', () => {
     expect(link).toHaveAttribute('aria-busy', 'true');
   });
 
-  it('renders legacy gold variant as primary', () => {
-    render(<Button variant="gold" href="/test">Test</Button>);
-    const link = screen.getByRole('link', { name: 'Test' });
-    expect(link).toBeInTheDocument();
+  const ctaVariants = ['cta-gold-01', 'cta-gold-02', 'cta-gold-03', 'cta-gold-04'] as const;
+
+  ctaVariants.forEach((v) => {
+    it(`renders ${v} with cta-gold base class`, () => {
+      const { container } = render(<Button variant={v}>Tip Creator</Button>);
+      const btn = container.querySelector('button');
+      expect(btn?.className).toContain('cta-gold');
+      expect(btn?.className).toContain(v);
+    });
+
+    it(`renders ${v} as link when href provided`, () => {
+      render(<Button variant={v} href="/tip">Tip Creator</Button>);
+      const link = screen.getByRole('link', { name: 'Tip Creator' });
+      expect(link).toBeInTheDocument();
+      expect(link).toHaveAttribute('href', '/tip');
+    });
   });
 });

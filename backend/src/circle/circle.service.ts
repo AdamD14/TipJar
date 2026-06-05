@@ -755,24 +755,24 @@ if (!txData?.id || !txData.state) {
         if (notificationType === 'transactions.inbound' && state === 'COMPLETE') {
           const amount = notification.amounts?.[0] || '0';
           
-          await this.prisma.notification.create({
-            data: {
-              userId,
-              title: 'Nowy Napiwek!',
-              message: `Otrzymałeś ${amount} USDC`,
-              type: 'success',
-            },
-          });
-          
-          await this.redis.publish(
-            `notifications:${userId}`,
-            JSON.stringify({
-              title: 'Nowy Napiwek!',
-              message: `Otrzymałeś ${amount} USDC`,
-              type: 'success',
-              timestamp: new Date().toISOString(),
-            })
-          );
+        await this.prisma.notification.create({
+          data: {
+            userId,
+            title: 'New Tip!',
+            message: `You received ${amount} USDC`,
+            type: 'success',
+          },
+        });
+
+        await this.redis.publish(
+          `notifications:${userId}`,
+          JSON.stringify({
+            title: 'New Tip!',
+            message: `You received ${amount} USDC`,
+            type: 'success',
+            timestamp: new Date().toISOString(),
+          })
+        );
         }
       }
     } catch (error) {

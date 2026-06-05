@@ -681,29 +681,6 @@ CARD UTILITY CLASSES — design.md §3.1 (updated)
   transform: translateY(-6px);
 }
 
-/* Card glow pseudo-element */
-.card-surface::before {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  z-index: -1;
-  border-radius: 14px;
-  background: linear-gradient(
-    135deg,
-    var(--gold-400) 0%,
-    var(--teal-300) 40%,
-    var(--gold-400) 100%
-  );
-  filter: blur(10px);
-  opacity: 0;
-  transition: opacity 300ms var(--ease-premium);
-  pointer-events: none;
-}
-
-.card-surface:hover::before {
-  opacity: 1;
-}
-
 /* Focus ring for cards */
 .card-surface:focus-visible {
   outline: none;
@@ -1151,6 +1128,224 @@ BLOKI 1–10 — NOWE KLASY @utility I REGUŁY GLOBALNE
 .u-arc-mask {
   clip-path: url(#arc-mask);
 }
+
+/* ================================================================
+CTA GOLD BUTTON CLASSES — 4 variants from orange_button.md
+Inline oklch values → semantic token references
+============================================================== */
+
+/* Shared CTA gold base */
+.cta-gold {
+  position: relative;
+  cursor: pointer;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: filter 0.2s ease, background 0.25s ease-in-out, transform 0.1s ease;
+  overflow: hidden;
+}
+
+.cta-gold:hover {
+  filter: brightness(1.1);
+}
+
+.cta-gold:active {
+  transform: perspective(1000px) rotateX(var(--cta-rot-x, 0deg)) rotateY(var(--cta-rot-y, 0deg)) scale(0.975) translateY(2px);
+}
+
+/* Metallic border (::before) — shared across all CTA variants */
+.cta-gold::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(in oklch 125deg,
+    oklch(0.95 0.15 85) 0%,
+    oklch(0.80 0.15 70) 40%,
+    oklch(0.98 0.10 90) 85%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+  transition: background 0.25s ease-in-out;
+}
+
+.cta-gold:hover::before {
+  background: linear-gradient(in oklch 125deg,
+    oklch(0.999 0.03 95) 0%,
+    oklch(0.85 0.15 72) 40%,
+    oklch(0.98 0.10 90) 85%
+  );
+}
+
+/* Engraved text shadow — shared */
+.cta-gold-text {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  z-index: 2;
+  text-align: center;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.8), 0px 1px 0px rgba(255, 255, 255, 0.15);
+}
+
+/* --- CTA-GOLD-01: Convex 1:3 (Sign Up) --- */
+.cta-gold-01 {
+  background: linear-gradient(in oklch 122deg, oklch(0.711 0.177 54.5) 0%, oklch(0.840 0.172 84.1) 40%, oklch(0.852 0.189 95.8) 90%);
+  border-radius: var(--radius-md);
+  box-shadow:
+    0 -2px 6px rgba(255, 255, 255, 0.18),
+    0 3px 6px rgba(60, 25, 5, 0.5),
+    0 16px 48px rgba(60, 25, 5, 0.6),
+    0 20px 60px rgba(180, 120, 20, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.35),
+    inset 0 8px 20px -8px rgba(255, 255, 240, 0.15),
+    inset 0 -1px 0px rgba(180, 80, 10, 0.65),
+    inset 0 -8px 16px rgba(0, 0, 0, 0.3);
+  --cta-rot-x: 2deg;
+  --cta-rot-y: -2deg;
+  transform: perspective(1000px) rotateX(var(--cta-rot-x)) rotateY(var(--cta-rot-y));
+}
+
+/* Wet gloss highlight */
+.cta-gold-01::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.12) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cta-gold-01 .cta-gold-text {
+  background-image: linear-gradient(in oklch 125deg, oklch(0.2856 0.0472 201.54) 0%, oklch(0.2696 0.0425 207.64) 50%, oklch(0.2843 0.0446 206.86) 100%);
+}
+
+/* --- CTA-GOLD-02: Convex 1:4 (Begin as a Creator) --- */
+.cta-gold-02 {
+  background: linear-gradient(in oklch 144deg, oklch(0.711 0.177 54.5) 0%, oklch(0.840 0.172 84.1) 45%, oklch(0.852 0.189 95.8) 95%);
+  border-radius: var(--radius-md);
+  box-shadow:
+    0 -1px 3px rgba(255, 255, 255, 0.07),
+    0 2px 4px rgba(0, 15, 15, 0.5),
+    0 12px 40px rgba(0, 15, 15, 0.65),
+    inset 0 1px 2px rgba(255, 255, 255, 0.06),
+    inset 0 -6px 12px rgba(0, 0, 0, 0.35);
+  --cta-rot-x: 3deg;
+  --cta-rot-y: -3deg;
+  transform: perspective(1000px) rotateX(var(--cta-rot-x)) rotateY(var(--cta-rot-y));
+}
+
+.cta-gold-02::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cta-gold-02 .cta-gold-text {
+  background-image: linear-gradient(in oklch 125deg, oklch(0.2236 0.0313 243.98) 0%, oklch(0.2257 0.0337 211.87) 50%, oklch(0.2543 0.0385 218.28) 100%);
+  letter-spacing: -0.025em;
+  word-spacing: -0.05em;
+}
+
+/* --- CTA-GOLD-03: Convex 1:4 reverse (Join as a Creator) --- */
+.cta-gold-03 {
+  background: linear-gradient(in oklch 315deg, oklch(0.852 0.189 95.8) 0%, oklch(0.840 0.172 84.1) 50%, oklch(0.954 0.202 108.8) 100%);
+  border-radius: var(--radius-md);
+  box-shadow:
+    0 -1px 3px rgba(255, 255, 220, 0.25),
+    0 2px 4px rgba(80, 40, 5, 0.5),
+    0 12px 40px rgba(80, 40, 5, 0.6),
+    inset 0 1px 2px rgba(255, 255, 220, 0.3),
+    inset 0 -6px 12px rgba(60, 25, 0, 0.4);
+  --cta-rot-x: 3deg;
+  --cta-rot-y: -3deg;
+  transform: perspective(1000px) rotateX(var(--cta-rot-x)) rotateY(var(--cta-rot-y));
+}
+
+.cta-gold-03::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 250, 200, 0.2) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cta-gold-03 .cta-gold-text {
+  background-image: linear-gradient(in oklch 245deg, oklch(0.2543 0.0385 218.28) 0%, oklch(0.2655 0.04 217.12) 50%, oklch(0.2236 0.0313 243.98) 100%);
+  letter-spacing: -0.025em;
+  word-spacing: -0.05em;
+}
+
+/* --- CTA-GOLD-04: Arched 1:3 (Tip It $) --- */
+.cta-gold-04 {
+  background: linear-gradient(in oklch 110deg, oklch(0.711 0.177 54.5) 0%, oklch(0.840 0.172 84.1) 55%, oklch(0.954 0.202 108.8) 100%);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 -1px 3px rgba(255, 255, 200, 0.2),
+    0 2px 6px rgba(50, 25, 0, 0.55),
+    0 16px 48px rgba(50, 25, 0, 0.7),
+    inset 0 1px 2px rgba(255, 255, 200, 0.2),
+    inset 0 -8px 18px rgba(40, 18, 0, 0.45);
+  --cta-rot-x: 2deg;
+  --cta-rot-y: -2deg;
+  transform: perspective(1000px) rotateX(var(--cta-rot-x)) rotateY(var(--cta-rot-y));
+  overflow: visible;
+}
+
+/* 3D glass edge reflections on all 4 sides */
+.cta-gold-04::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: transparent;
+  box-shadow:
+    inset 0 3px 4px -2px rgba(255, 255, 220, 0.25),
+    inset 0 -3px 4px -2px rgba(255, 255, 220, 0.12),
+    inset 3px 0 4px -2px rgba(255, 255, 220, 0.18),
+    inset -3px 0 4px -2px rgba(255, 255, 220, 0.12);
+  z-index: 1;
+}
+
+.cta-gold-04 .cta-gold-text {
+  background-image: linear-gradient(in oklch 125deg, oklch(0.2101 0.0318 264.66) 0%, oklch(0.2307 0.0326 240.91) 50%, oklch(0.3047 0.0489 203.4) 100%);
+}
+
+/* CTA SVG tech pattern overlay */
+.cta-gold svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 1;
+  pointer-events: none;
+  transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+.cta-gold:hover svg {
+  filter: brightness(1.1);
+}
+
+.cta-gold-01 svg { opacity: 0.4; }
+.cta-gold-02 svg { opacity: 0.3; }
+.cta-gold-03 svg { opacity: 0.3; }
+.cta-gold-04 svg { opacity: 0.4; }
 
 /* Double wrapper już zdefiniowany w Bloku 4, tutaj tylko dodatkowe */
 .u-svg-crisp {
