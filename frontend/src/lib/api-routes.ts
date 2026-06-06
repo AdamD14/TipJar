@@ -10,6 +10,7 @@ export const API = {
     VERIFY: "/api/v1/auth/verify-email/:token",
     REFRESH: "/api/v1/auth/refresh-token",
     LOGOUT: "/api/v1/auth/logout",
+    TOKEN: "/api/v1/auth/token",
   },
   USERS: {
     USERNAME_CHECK: "/api/v1/users/username-check",

@@ -4,31 +4,77 @@ import { useEffect, useCallback, useRef } from 'react';
 import { useNotificationStore } from '@/lib/store/notificationStore';
 import { useAuthStore } from '@/lib/store/authStore';
 
+const BACKEND_ORIGIN =
+  (process.env.NEXT_PUBLIC_BACKEND_ORIGIN ?? 'http://localhost:3001').replace(
+    /\/+$/,
+    '',
+  );
+
+/**
+ * Returns the JWT access token.
+ *
+ * Priority:
+ *  1. authStore in-memory value (set after email/password login)
+ *  2. sessionStorage persisted value (survives page refresh for classic login)
+ *
+ * For OAuth users the token lives only in the HttpOnly cookie and is
+ * NOT accessible from JS — in that case the SSE request is sent without
+ * a Bearer header and the backend validates via the cookie extractor
+ * in JwtStrategy (cookieExtractor runs before fromAuthHeaderAsBearerToken).
+ */
+function getAuthToken(): string {
+  // 1. In-memory store (fastest, always up to date)
+  const storeToken = useAuthStore.getState().accessToken;
+  if (storeToken) return storeToken;
+
+  // 2. Persisted sessionStorage (classic login after page refresh)
+  if (typeof window !== 'undefined') {
+    try {
+      const raw = sessionStorage.getItem('auth-storage');
+      if (raw) {
+        const parsed = JSON.parse(raw) as { state?: { accessToken?: string } };
+        return parsed?.state?.accessToken || '';
+      }
+    } catch {
+      // ignore parse errors
+    }
+  }
+  return '';
+}
+
 export function useNotificationsLive() {
   const addNotification = useNotificationStore((s) => s.addNotification);
   const hasHydrated = useAuthStore((s) => s._hasHydrated);
   const abortRef = useRef<AbortController | null>(null);
 
   const connect = useCallback(() => {
+    // Wait for Zustand to rehydrate from sessionStorage before trying
     if (!hasHydrated) return;
 
     const token = getAuthToken();
-    if (!token) return;
 
-    const origin =
-      process.env.NEXT_PUBLIC_BACKEND_ORIGIN?.replace(/\/+$/, '') ||
-      'http://localhost:3001';
-
+    // Abort any previous connection
+    abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
 
-    fetch(`${origin}/api/v1/circle/notifications/stream`, {
-      headers: { Authorization: `Bearer ${token}` },
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    // When no token is present (OAuth users) the HttpOnly cookie is sent
+    // automatically by the browser thanks to `credentials: 'include'`.
+
+    fetch(`${BACKEND_ORIGIN}/api/v1/circle/notifications/stream`, {
+      headers,
+      credentials: 'include',
       signal: controller.signal,
     })
       .then(async (response) => {
         if (!response.ok) {
-          console.warn(`[useNotificationsLive] SSE ${response.status} — retrying in 5s`);
+          console.warn(
+            `[useNotificationsLive] SSE ${response.status} — retrying in 5s`,
+          );
           setTimeout(connect, 5000);
           return;
         }
@@ -46,7 +92,9 @@ export function useNotificationsLive() {
         while (true) {
           const { done, value } = await reader.read();
           if (done) {
-            console.log('[useNotificationsLive] SSE stream ended — reconnecting in 3s');
+            console.log(
+              '[useNotificationsLive] SSE stream ended — reconnecting in 3s',
+            );
             setTimeout(connect, 3000);
             break;
           }
@@ -58,14 +106,25 @@ export function useNotificationsLive() {
           for (const line of lines) {
             if (line.startsWith('data: ')) {
               try {
-                const notif = JSON.parse(line.slice(6));
-                console.log('[useNotificationsLive] notification received:', notif);
+                const notif = JSON.parse(line.slice(6)) as {
+                  title?: string;
+                  message: string;
+                  type?: string;
+                };
+                console.log(
+                  '[useNotificationsLive] notification received:',
+                  notif,
+                );
                 addNotification({
                   title: notif.title || '',
                   message: notif.message,
-                  type: (notif.type as 'info' | 'success' | 'warning' | 'error') || 'info',
+                  type:
+                    (notif.type as 'info' | 'success' | 'warning' | 'error') ||
+                    'info',
                 });
-              } catch {}
+              } catch {
+                // ignore malformed SSE lines
+              }
             }
           }
         }
@@ -84,16 +143,4 @@ export function useNotificationsLive() {
       abortRef.current?.abort();
     };
   }, [connect]);
-}
-
-function getAuthToken(): string {
-  if (typeof window === 'undefined') return '';
-  try {
-    const raw = sessionStorage.getItem('auth-storage');
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      return parsed?.state?.accessToken || '';
-    }
-  } catch {}
-  return '';
 }

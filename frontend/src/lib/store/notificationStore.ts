@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { API } from '@/lib/api-routes';
+import { useAuthStore } from '@/lib/store/authStore';
 
 export interface Notification {
   id: string;
@@ -19,18 +20,40 @@ interface NotificationState {
   markAllRead: () => Promise<void>;
   addNotification: (n: Omit<Notification, 'id' | 'read' | 'time'>) => void;
   loadHistory: () => Promise<void>;
+  resetLoaded: () => void;
 }
 
+const BACKEND_ORIGIN =
+  (process.env.NEXT_PUBLIC_BACKEND_ORIGIN ?? 'http://localhost:3001').replace(
+    /\/+$/,
+    '',
+  );
+
+/**
+ * Returns the JWT access token from authStore (in-memory) first,
+ * then falls back to sessionStorage for page-refresh scenarios.
+ */
 function getAuthToken(): string {
-  if (typeof window === 'undefined') return '';
-  try {
-    const raw = sessionStorage.getItem('auth-storage');
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      return parsed?.state?.accessToken || '';
+  const storeToken = useAuthStore.getState().accessToken;
+  if (storeToken) return storeToken;
+
+  if (typeof window !== 'undefined') {
+    try {
+      const raw = sessionStorage.getItem('auth-storage');
+      if (raw) {
+        const parsed = JSON.parse(raw) as { state?: { accessToken?: string } };
+        return parsed?.state?.accessToken || '';
+      }
+    } catch {
+      // ignore
     }
-  } catch {}
+  }
   return '';
+}
+
+function buildHeaders(): Record<string, string> {
+  const token = getAuthToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
 export const useNotificationStore = create<NotificationState>((set, get) => ({
@@ -39,6 +62,8 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
   loaded: false,
 
   setDrawerOpen: (open) => set({ isDrawerOpen: open }),
+
+  resetLoaded: () => set({ loaded: false }),
 
   markAsRead: (id) =>
     set((state) => ({
@@ -51,17 +76,15 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     set((state) => ({
       notifications: state.notifications.map((n) => ({ ...n, read: true })),
     }));
-    const token = getAuthToken();
-    if (!token) return;
     try {
-      const origin =
-        process.env.NEXT_PUBLIC_BACKEND_ORIGIN?.replace(/\/+$/, '') ||
-        'http://localhost:3001';
-      await fetch(`${origin}${API.NOTIFICATIONS}/read-all`, {
+      await fetch(`${BACKEND_ORIGIN}${API.NOTIFICATIONS}/read-all`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: buildHeaders(),
+        credentials: 'include',
       });
-    } catch {}
+    } catch {
+      // best-effort
+    }
   },
 
   addNotification: (n) =>
@@ -73,21 +96,20 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     })),
 
   loadHistory: async () => {
+    // Guard: skip if already loaded — but allow reload after resetLoaded()
     if (get().loaded) return;
-    const token = getAuthToken();
-    if (!token) {
-      set({ loaded: false });
-      return;
-    }
 
     try {
-      const origin =
-        process.env.NEXT_PUBLIC_BACKEND_ORIGIN?.replace(/\/+$/, '') ||
-        'http://localhost:3001';
-      const res = await fetch(`${origin}${API.NOTIFICATIONS}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await fetch(`${BACKEND_ORIGIN}${API.NOTIFICATIONS}`, {
+        headers: buildHeaders(),
+        credentials: 'include',
       });
-      if (!res.ok) return;
+      if (!res.ok) {
+        // Don't set loaded=true on auth failure so retry is possible
+        if (res.status === 401) return;
+        set({ loaded: true });
+        return;
+      }
       const rows: Array<{
         id: string;
         title: string;
@@ -108,7 +130,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
 
       set({ notifications, loaded: true });
     } catch {
-      set({ loaded: true });
+      // Network error — don't mark as loaded, allow retry
     }
   },
 }));
