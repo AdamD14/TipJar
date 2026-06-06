@@ -2,16 +2,15 @@ import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import { CircleService } from './circle.service';
-import { Inject } from '@nestjs/common';
-import { RedisClientType } from 'redis';
 import { ValidatedUser } from '../auth/auth.service';
+import { RedisSubscriberService } from '../shared/redis/redis-subscriber.service';
 
 @Controller('circle/balance')
 @UseGuards(AuthGuard('jwt'))
 export class CircleBalanceController {
   constructor(
     private readonly circleService: CircleService,
-    @Inject('REDIS_SUB_CLIENT') private readonly redis: RedisClientType,
+    private readonly redisSubscriber: RedisSubscriberService,
   ) {}
 
   @Get('stream')
@@ -20,9 +19,10 @@ export class CircleBalanceController {
     const userId = user.id;
 
     res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders();
 
     try {
       const balance = await this.circleService.getWalletBalanceForUser(userId);
@@ -36,10 +36,10 @@ export class CircleBalanceController {
       res.write(`data: ${message}\n\n`);
     };
 
-    await this.redis.subscribe(channel, listener);
+    await this.redisSubscriber.subscribe(channel, listener);
 
     req.socket.on('close', async () => {
-      await this.redis.unsubscribe(channel, listener);
+      await this.redisSubscriber.unsubscribe(channel, listener);
       res.end();
     });
   }

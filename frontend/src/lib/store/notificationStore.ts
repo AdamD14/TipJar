@@ -75,7 +75,10 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
   loadHistory: async () => {
     if (get().loaded) return;
     const token = getAuthToken();
-    if (!token) return;
+    if (!token) {
+      set({ loaded: false });
+      return;
+    }
 
     try {
       const origin =

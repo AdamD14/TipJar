@@ -1,6 +1,7 @@
 import { Module, Global } from '@nestjs/common';
 import { createClient } from 'redis';
 import { ConfigService } from '@nestjs/config';
+import { RedisSubscriberService } from './redis-subscriber.service';
 
 @Global()
 @Module({
@@ -27,7 +28,8 @@ import { ConfigService } from '@nestjs/config';
       },
       inject: [ConfigService],
     },
+    RedisSubscriberService,
   ],
-  exports: ['REDIS_CLIENT', 'REDIS_SUB_CLIENT'],
+  exports: ['REDIS_CLIENT', 'REDIS_SUB_CLIENT', RedisSubscriberService],
 })
 export class RedisModule {}

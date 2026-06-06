@@ -2,29 +2,18 @@
 
 import { useEffect, useCallback, useRef } from 'react';
 import { useNotificationStore } from '@/lib/store/notificationStore';
-
-function getAuthToken(): string {
-  if (typeof window === 'undefined') return '';
-  try {
-    const raw = sessionStorage.getItem('auth-storage');
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      return parsed?.state?.accessToken || '';
-    }
-  } catch {}
-  return '';
-}
+import { useAuthStore } from '@/lib/store/authStore';
 
 export function useNotificationsLive() {
   const addNotification = useNotificationStore((s) => s.addNotification);
+  const hasHydrated = useAuthStore((s) => s._hasHydrated);
   const abortRef = useRef<AbortController | null>(null);
 
   const connect = useCallback(() => {
+    if (!hasHydrated) return;
+
     const token = getAuthToken();
-    if (!token) {
-      setTimeout(connect, 5000);
-      return;
-    }
+    if (!token) return;
 
     const origin =
       process.env.NEXT_PUBLIC_BACKEND_ORIGIN?.replace(/\/+$/, '') ||
@@ -87,7 +76,7 @@ export function useNotificationsLive() {
           setTimeout(connect, 5000);
         }
       });
-  }, [addNotification]);
+  }, [addNotification, hasHydrated]);
 
   useEffect(() => {
     connect();
@@ -95,4 +84,16 @@ export function useNotificationsLive() {
       abortRef.current?.abort();
     };
   }, [connect]);
+}
+
+function getAuthToken(): string {
+  if (typeof window === 'undefined') return '';
+  try {
+    const raw = sessionStorage.getItem('auth-storage');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return parsed?.state?.accessToken || '';
+    }
+  } catch {}
+  return '';
 }

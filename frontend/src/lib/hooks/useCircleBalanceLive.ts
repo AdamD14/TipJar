@@ -4,6 +4,7 @@ import { useEffect, useCallback, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api/http';
 import { API } from '@/lib/api-routes';
+import { useAuthStore } from '@/lib/store/authStore';
 
 function getAuthToken(): string {
   if (typeof window === 'undefined') return '';
@@ -19,6 +20,7 @@ function getAuthToken(): string {
 
 export function useCircleBalanceLive() {
   const queryClient = useQueryClient();
+  const hasHydrated = useAuthStore((s) => s._hasHydrated);
   const abortRef = useRef<AbortController | null>(null);
 
   const { data, isLoading, error } = useQuery({
@@ -31,11 +33,10 @@ export function useCircleBalanceLive() {
   });
 
   const connect = useCallback(() => {
+    if (!hasHydrated) return;
+
     const token = getAuthToken();
-    if (!token) {
-      setTimeout(connect, 5000);
-      return;
-    }
+    if (!token) return;
 
     const origin =
       process.env.NEXT_PUBLIC_BACKEND_ORIGIN?.replace(/\/+$/, '') ||
@@ -94,7 +95,7 @@ export function useCircleBalanceLive() {
           setTimeout(connect, 5000);
         }
       });
-  }, [queryClient]);
+  }, [queryClient, hasHydrated]);
 
   useEffect(() => {
     connect();
