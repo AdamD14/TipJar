@@ -5,10 +5,10 @@ import { Inject } from '@nestjs/common';
 import { RedisClientType } from 'redis';
 import { ValidatedUser } from '../auth/auth.service';
 
-@Controller('notifications')
+@Controller('circle/notifications')
 @UseGuards(AuthGuard('jwt'))
 export class NotificationsController {
-  constructor(@Inject('REDIS_CLIENT') private readonly redis: RedisClientType) {}
+  constructor(@Inject('REDIS_SUB_CLIENT') private readonly redis: RedisClientType) {}
 
   @Get('stream')
   async notificationsStream(@Req() req: Request, @Res() res: Response) {

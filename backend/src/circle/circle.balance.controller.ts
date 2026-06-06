@@ -11,7 +11,7 @@ import { ValidatedUser } from '../auth/auth.service';
 export class CircleBalanceController {
   constructor(
     private readonly circleService: CircleService,
-    @Inject('REDIS_CLIENT') private readonly redis: RedisClientType,
+    @Inject('REDIS_SUB_CLIENT') private readonly redis: RedisClientType,
   ) {}
 
   @Get('stream')

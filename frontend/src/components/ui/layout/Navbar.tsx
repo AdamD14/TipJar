@@ -15,6 +15,7 @@ import {
   Bell,
 } from "lucide-react";
 import { useAuthStore } from "@/lib/store/authStore";
+import { useNotificationStore } from "@/lib/store/notificationStore";
 import Button from "@/components/ui/buttons/Button";
 import { UsdcBalance } from "./UsdcBalance";
 
@@ -45,6 +46,7 @@ export default function Navbar() {
   const params = useParams<{ username: string }>();
   const user = useAuthStore((s) => s.user);
   const hydrated = useAuthStore((s) => s._hasHydrated);
+  const unreadCount = useNotificationStore((s) => s.notifications.filter((n) => !n.read).length);
 
   if (!hydrated || !user?.username) return null;
 
@@ -123,10 +125,13 @@ export default function Navbar() {
 
         <Link
           href={`/@${username}/${prefix}/notifications`}
-          className="p-2 rounded-lg text-text-primary hover:text-text-tertiary hover:bg-surface-elevated/70 transition-colors duration-200"
+          className="relative p-2 rounded-lg text-text-primary hover:text-text-tertiary hover:bg-surface-elevated/70 transition-colors duration-200"
           aria-label="Notifications"
         >
           <Bell className="h-5 w-5" />
+          {unreadCount > 0 && (
+            <span className="absolute top-0.5 right-0.5 w-2.5 h-2.5 bg-teal-400 rounded-full border-2 border-[#002020]" />
+          )}
         </Link>
 
         <Button variant="ghost" href={`/@${username}`} className="gap-3 px-2 tracking-wide">

@@ -746,58 +746,61 @@ if (!txData?.id || !txData.state) {
         `Cached balance updated for walletId=${walletId}: ${totalUsdc} USDC`,
       );
 
-      // Redis Pub/Sub dla SSE - real-time balance updates
-      const userId = await this.getUserIdByWalletId(walletId);
-      if (userId) {
-        await this.redis.publish(
-          `balance:${userId}`,
-          JSON.stringify({ balance: totalUsdc, currency: 'USDC' })
-        );
+  // Redis Pub/Sub dla SSE - real-time balance updates
+  const userId = await this.getUserIdByWalletId(walletId);
+  this.logger.debug(`Webhook: userId lookup for walletId=${walletId} → userId=${userId}`);
+  if (userId) {
+    await this.redis.publish(
+      `balance:${userId}`,
+      JSON.stringify({ balance: totalUsdc, currency: 'USDC' })
+    );
 
-        if (state === 'COMPLETE') {
-          const amount = notification.amounts?.[0] || '0';
-          let title = '';
-          let message = '';
-          let notifType = 'info';
+    if (state === 'COMPLETE') {
+      const amount = notification.amounts?.[0] || '0';
+      let title = '';
+      let message = '';
+      let notifType = 'info';
 
-          if (notificationType === 'transactions.inbound') {
-            const sender = notification.sourceAddress
-              ? await this.prisma.user.findFirst({
-                  where: { mainWalletAddress: notification.sourceAddress },
-                  select: { displayName: true },
-                })
-              : null;
-            const senderLabel = sender?.displayName
-              ? `@${sender.displayName}`
-              : null;
-            title = 'New Tip!';
-            message = senderLabel
-              ? `You received ${amount} USDC from ${senderLabel}`
-              : `You received ${amount} USDC`;
-            notifType = 'success';
-          } else if (notificationType === 'transactions.outbound') {
-            title = 'Transfer Sent';
-            message = `You sent ${amount} USDC`;
-            notifType = 'info';
-          }
-
-          if (title) {
-            await this.prisma.notification.create({
-              data: { userId, title, message, type: notifType },
-            });
-
-            await this.redis.publish(
-              `notifications:${userId}`,
-              JSON.stringify({
-                title,
-                message,
-                type: notifType,
-                timestamp: new Date().toISOString(),
-              })
-            );
-          }
-        }
+      if (notificationType === 'transactions.inbound') {
+        const sender = notification.sourceAddress
+          ? await this.prisma.user.findFirst({
+              where: { mainWalletAddress: notification.sourceAddress },
+              select: { displayName: true },
+            })
+          : null;
+        const senderLabel = sender?.displayName
+          ? `@${sender.displayName}`
+          : null;
+        title = 'New Tip!';
+        message = senderLabel
+          ? `You received ${amount} USDC from ${senderLabel}`
+          : `You received ${amount} USDC`;
+        notifType = 'success';
+      } else if (notificationType === 'transactions.outbound') {
+        title = 'Transfer Sent';
+        message = `You sent ${amount} USDC`;
+        notifType = 'info';
       }
+
+      if (title) {
+        this.logger.log(`Webhook: creating notification for userId=${userId} — ${title}: ${message}`);
+        await this.prisma.notification.create({
+          data: { userId, title, message, type: notifType },
+        });
+
+        this.logger.log(`Webhook: publishing to notifications:${userId}`);
+        await this.redis.publish(
+          `notifications:${userId}`,
+          JSON.stringify({
+            title,
+            message,
+            type: notifType,
+            timestamp: new Date().toISOString(),
+          })
+        );
+      }
+    }
+  }
     } catch (error) {
       this.logger.error(
         `Failed to refresh balance on webhook for walletId=${walletId}`,

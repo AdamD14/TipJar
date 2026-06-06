@@ -343,7 +343,7 @@ export default function CreatorWalletPage() {
                 >
                   <Card
                     interactive
-                    className="flex flex-col justify-between h-full min-h-[140px] border-white/[0.05] hover:border-teal-500/30 transition-all duration-300"
+                    className="flex flex-col justify-between h-full min-h-[140px] border-white/[0.05]  transition-all duration-300"
                   >
                     <div className="flex items-start justify-between">
                       <div className={`p-2 rounded-lg bg-white/[0.03] border border-white/[0.05] ${sub.color}`}>

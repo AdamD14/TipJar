@@ -72,7 +72,7 @@ export default function Card({
           className="pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-300 [transition-timing-function:cubic-bezier(0.25,0.8,0.25,1)] group-hover:opacity-100 peer-hover:opacity-100"
           style={{
             background:
-              "linear-gradient(135deg, #FFD700 0%, #3FB5B5 40%, #FFD700 100%)",
+              "linear-gradient(135deg, #023D3F 0%, #3FB5B5 40%, #063035 100%)",
             filter: "blur(10px)",
             margin: "-2px",
             borderRadius: "14px",

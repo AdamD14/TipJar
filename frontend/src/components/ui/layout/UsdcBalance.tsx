@@ -16,7 +16,7 @@ export function UsdcBalance() {
   if (error) {
     return (
       <div className="px-3 py-1.5">
-        <span className="text-xs text-rose-400">Błąd</span>
+        <span className="text-xs text-rose-400">Error</span>
       </div>
     );
   }

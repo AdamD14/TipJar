@@ -14,7 +14,7 @@ interface Box2Props extends HTMLAttributes<HTMLDivElement> {
   hasArc?: boolean;
 }
 
-// 1. TERMOMETRIA OPTYCZNA (Gradienty in oklch z Twoich tokenów TIPJAR+)
+// 1. TERMOMETRIA OPTYCZNA 
 const BG: Record<Box2Variant, string> = {
   base: "bg-[linear-gradient(in_oklch_115deg,var(--color-teal-850),var(--color-teal-800))]",
   premium:

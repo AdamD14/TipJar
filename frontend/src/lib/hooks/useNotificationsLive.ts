@@ -21,7 +21,10 @@ export function useNotificationsLive() {
 
   const connect = useCallback(() => {
     const token = getAuthToken();
-    if (!token) return;
+    if (!token) {
+      setTimeout(connect, 5000);
+      return;
+    }
 
     const origin =
       process.env.NEXT_PUBLIC_BACKEND_ORIGIN?.replace(/\/+$/, '') ||
@@ -30,19 +33,34 @@ export function useNotificationsLive() {
     const controller = new AbortController();
     abortRef.current = controller;
 
-    fetch(`${origin}/api/v1/notifications/stream`, {
+    fetch(`${origin}/api/v1/circle/notifications/stream`, {
       headers: { Authorization: `Bearer ${token}` },
       signal: controller.signal,
     })
       .then(async (response) => {
-        if (!response.ok || !response.body) return;
+        if (!response.ok) {
+          console.warn(`[useNotificationsLive] SSE ${response.status} — retrying in 5s`);
+          setTimeout(connect, 5000);
+          return;
+        }
+        if (!response.body) {
+          console.warn('[useNotificationsLive] No body — retrying in 5s');
+          setTimeout(connect, 5000);
+          return;
+        }
+
+        console.log('[useNotificationsLive] SSE connected');
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let buffer = '';
 
         while (true) {
           const { done, value } = await reader.read();
-          if (done) break;
+          if (done) {
+            console.log('[useNotificationsLive] SSE stream ended — reconnecting in 3s');
+            setTimeout(connect, 3000);
+            break;
+          }
 
           buffer += decoder.decode(value, { stream: true });
           const lines = buffer.split('\n');
@@ -52,6 +70,7 @@ export function useNotificationsLive() {
             if (line.startsWith('data: ')) {
               try {
                 const notif = JSON.parse(line.slice(6));
+                console.log('[useNotificationsLive] notification received:', notif);
                 addNotification({
                   title: notif.title || '',
                   message: notif.message,
@@ -64,7 +83,8 @@ export function useNotificationsLive() {
       })
       .catch(() => {
         if (!controller.signal.aborted) {
-          setTimeout(connect, 3000);
+          console.warn('[useNotificationsLive] SSE error — retrying in 5s');
+          setTimeout(connect, 5000);
         }
       });
   }, [addNotification]);

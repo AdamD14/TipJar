@@ -16,13 +16,17 @@ type RequestWithUser = ExpressRequest & { user: ValidatedUser };
 type NotificationRow = {
   id: string;
   userId: string;
+  title: string;
   message: string;
+  type: string;
   read: boolean;
   createdAt: Date;
 };
 
 class CreateNotificationDto {
+  title!: string;
   message!: string;
+  type!: string;
 }
 
 @ApiTags('Notifications')
@@ -61,7 +65,9 @@ export class NotificationController {
   ): Promise<NotificationRow> {
     const row = await this.notifications.create({
       userId: req.user.id,
+      title: body.title,
       message: body.message,
+      type: body.type,
     });
     return row;
   }

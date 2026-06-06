@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useCallback, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api/http';
@@ -30,7 +32,10 @@ export function useCircleBalanceLive() {
 
   const connect = useCallback(() => {
     const token = getAuthToken();
-    if (!token) return;
+    if (!token) {
+      setTimeout(connect, 5000);
+      return;
+    }
 
     const origin =
       process.env.NEXT_PUBLIC_BACKEND_ORIGIN?.replace(/\/+$/, '') ||
@@ -44,14 +49,29 @@ export function useCircleBalanceLive() {
       signal: controller.signal,
     })
       .then(async (response) => {
-        if (!response.ok || !response.body) return;
+        if (!response.ok) {
+          console.warn(`[useCircleBalanceLive] SSE ${response.status} — retrying in 5s`);
+          setTimeout(connect, 5000);
+          return;
+        }
+        if (!response.body) {
+          console.warn('[useCircleBalanceLive] No body — retrying in 5s');
+          setTimeout(connect, 5000);
+          return;
+        }
+
+        console.log('[useCircleBalanceLive] SSE connected');
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let buffer = '';
 
         while (true) {
           const { done, value } = await reader.read();
-          if (done) break;
+          if (done) {
+            console.log('[useCircleBalanceLive] SSE stream ended — reconnecting in 3s');
+            setTimeout(connect, 3000);
+            break;
+          }
 
           buffer += decoder.decode(value, { stream: true });
           const lines = buffer.split('\n');
@@ -61,6 +81,7 @@ export function useCircleBalanceLive() {
             if (line.startsWith('data: ')) {
               try {
                 const balance = JSON.parse(line.slice(6));
+                console.log('[useCircleBalanceLive] balance update:', balance);
                 queryClient.setQueryData(['circle-balance'], balance);
               } catch {}
             }
@@ -69,7 +90,8 @@ export function useCircleBalanceLive() {
       })
       .catch(() => {
         if (!controller.signal.aborted) {
-          setTimeout(connect, 3000);
+          console.warn('[useCircleBalanceLive] SSE error — retrying in 5s');
+          setTimeout(connect, 5000);
         }
       });
   }, [queryClient]);
