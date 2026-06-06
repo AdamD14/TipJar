@@ -42,105 +42,132 @@ function getAuthToken(): string {
   return '';
 }
 
+/**
+ * Attempts to refresh the access token using the HttpOnly refresh_token cookie.
+ * On success, updates authStore with the new token.
+ * Returns true if refresh succeeded, false otherwise.
+ */
+async function tryRefreshToken(): Promise<boolean> {
+  try {
+    const res = await fetch(`${BACKEND_ORIGIN}/api/v1/auth/refresh-token`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+    if (!res.ok) return false;
+    const body = (await res.json()) as { accessToken?: string };
+    if (body.accessToken) {
+      useAuthStore.getState().setAccessToken(body.accessToken);
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
 export function useNotificationsLive() {
   const addNotification = useNotificationStore((s) => s.addNotification);
   const hasHydrated = useAuthStore((s) => s._hasHydrated);
+  const accessToken = useAuthStore((s) => s.accessToken);
   const abortRef = useRef<AbortController | null>(null);
 
-  const connect = useCallback(() => {
-    // Wait for Zustand to rehydrate from sessionStorage before trying
-    if (!hasHydrated) return;
+  const connect = useCallback(
+    (signal: AbortSignal) => {
+      const token = getAuthToken();
 
-    const token = getAuthToken();
+      // Not authenticated — don't connect, don't retry, don't spam console
+      if (!token) return;
 
-    // Abort any previous connection
-    abortRef.current?.abort();
-    const controller = new AbortController();
-    abortRef.current = controller;
+      const headers: Record<string, string> = {
+        Authorization: `Bearer ${token}`,
+      };
 
-    const headers: Record<string, string> = {};
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-    // When no token is present (OAuth users) the HttpOnly cookie is sent
-    // automatically by the browser thanks to `credentials: 'include'`.
-
-    fetch(`${BACKEND_ORIGIN}/api/v1/circle/notifications/stream`, {
-      headers,
-      credentials: 'include',
-      signal: controller.signal,
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          console.warn(
-            `[useNotificationsLive] SSE ${response.status} — retrying in 5s`,
-          );
-          setTimeout(connect, 5000);
-          return;
-        }
-        if (!response.body) {
-          console.warn('[useNotificationsLive] No body — retrying in 5s');
-          setTimeout(connect, 5000);
-          return;
-        }
-
-        console.log('[useNotificationsLive] SSE connected');
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) {
-            console.log(
-              '[useNotificationsLive] SSE stream ended — reconnecting in 3s',
-            );
-            setTimeout(connect, 3000);
-            break;
+      fetch(`${BACKEND_ORIGIN}/api/v1/circle/notifications/stream`, {
+        headers,
+        credentials: 'include',
+        signal,
+      })
+        .then(async (response) => {
+          if (!response.ok) {
+            if (response.status === 401) {
+              // Token expired — try to refresh, then reconnect
+              console.warn('[useNotificationsLive] SSE 401 — attempting token refresh');
+              const refreshed = await tryRefreshToken();
+              if (refreshed && !signal.aborted) {
+                setTimeout(() => connect(signal), 1000);
+              }
+              // If refresh failed the user is logged out — stop silently
+              return;
+            }
+            console.warn(`[useNotificationsLive] SSE ${response.status} — retrying in 5s`);
+            if (!signal.aborted) setTimeout(() => connect(signal), 5000);
+            return;
+          }
+          if (!response.body) {
+            console.warn('[useNotificationsLive] No body — retrying in 5s');
+            if (!signal.aborted) setTimeout(() => connect(signal), 5000);
+            return;
           }
 
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n');
-          buffer = lines.pop() || '';
+          console.log('[useNotificationsLive] SSE connected');
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
 
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              try {
-                const notif = JSON.parse(line.slice(6)) as {
-                  title?: string;
-                  message: string;
-                  type?: string;
-                };
-                console.log(
-                  '[useNotificationsLive] notification received:',
-                  notif,
-                );
-                addNotification({
-                  title: notif.title || '',
-                  message: notif.message,
-                  type:
-                    (notif.type as 'info' | 'success' | 'warning' | 'error') ||
-                    'info',
-                });
-              } catch {
-                // ignore malformed SSE lines
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) {
+              console.log('[useNotificationsLive] SSE stream ended — reconnecting in 3s');
+              if (!signal.aborted) setTimeout(() => connect(signal), 3000);
+              break;
+            }
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
+
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                try {
+                  const notif = JSON.parse(line.slice(6)) as {
+                    title?: string;
+                    message: string;
+                    type?: string;
+                  };
+                  console.log('[useNotificationsLive] notification received:', notif);
+                  addNotification({
+                    title: notif.title || '',
+                    message: notif.message,
+                    type: (notif.type as 'info' | 'success' | 'warning' | 'error') || 'info',
+                  });
+                } catch {
+                  // ignore malformed SSE lines
+                }
               }
             }
           }
-        }
-      })
-      .catch(() => {
-        if (!controller.signal.aborted) {
-          console.warn('[useNotificationsLive] SSE error — retrying in 5s');
-          setTimeout(connect, 5000);
-        }
-      });
-  }, [addNotification, hasHydrated]);
+        })
+        .catch(() => {
+          if (!signal.aborted) {
+            console.warn('[useNotificationsLive] SSE error — retrying in 5s');
+            setTimeout(() => connect(signal), 5000);
+          }
+        });
+    },
+    [addNotification],
+  );
 
   useEffect(() => {
-    connect();
+    // Wait for hydration; skip entirely if not authenticated
+    if (!hasHydrated) return;
+    if (!accessToken) return;
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+    connect(controller.signal);
+
     return () => {
-      abortRef.current?.abort();
+      controller.abort();
     };
-  }, [connect]);
+  }, [connect, hasHydrated, accessToken]);
 }
