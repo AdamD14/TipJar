@@ -186,7 +186,7 @@ export default function Header() {
           aria-hidden
           className="pointer-events-none absolute right-4 top-[15%] w-60 h-60 opacity-90"
           style={{
-            backgroundImage: "url('/logo.png')",
+            backgroundImage: "url('/logo.svg')",
             backgroundSize: 'contain',
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center',

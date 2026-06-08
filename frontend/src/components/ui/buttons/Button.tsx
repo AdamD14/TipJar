@@ -59,43 +59,26 @@ type Props = ButtonProps | LinkButtonProps;
 
 const GRADIENT_VARIANTS = new Set(["primary", "secondary", "tertiary", "cta-gold-01", "cta-gold-02", "cta-gold-03", "cta-gold-04"]);
 
-// KINEMATYKA OKLCH (Redystrybucja pigmentu z Twoich nowych slajdów)
+
 const variantClasses: Record<Variant, string> = {
   primary: clsx(
     "text-teal-800 ",
-    // Ucieczka od marchewki: startujemy z luksusowego, ciemnego bursztynu (#cc5500)
    "bg-[linear-gradient(in_oklch_115deg,#ff8f00_0%,#ffd700_25%,#ffe100_96%,var(--gold-50)_100%)]",
-  // ANATOMIA TRÓJWYMIARU: 
-   // 1. inset 0 1px -> jasna niteczka światła na górnej krawędzi
-   // 2. inset 0 -2px -> Twoja "druga linia" (ostry, fizyczny ciemny rant na dole)+   // 3. inset 0 -5px -> miękkie cieniowanie bryły od dołu
-   // 4. na końcu klasyczny, lekki cień zewnętrzny, żeby przycisk "wisiał" nad tłem
    "shadow-[inset_0_1px_0px_rgba(255,255,255,0.45),inset_0_-3px_1px_rgba(120,35,0,0.5),inset_0_-5px_8px_rgba(120,35,0,0.25),0_4px_12px_rgba(0,0,0,0.3)]",
-  // Przeorganizowanie jasności na hover, żeby zachować głębię rantu
     "hover:brightness-[1.1] ",
     "focus-visible:ring-gold-400/70",
   ),secondary: clsx(
     "text-white font-bold tracking-tight",
-    // Przestrzeń OKLCH eliminuje siwiznę na przejściu ciemny fiolet -> jasny fiolet
-    "bg-[linear-gradient(in_oklch_110deg,var(--color-purple-500)_0%,var(--color-purple-300)_50%,var(--color-purple-100)_100%)]",
-    
-    // ANATOMIA WTOPIONEGO SZKŁA (Organic Głębia):
-    // 1. inset 0 1px -> cieniutka niteczka fioletowo-różowego światła na górze (pasuje do bazy)
-    // 2. inset 0 4px 10px -> wewnętrzny cień (Ambient Occlusion) dający mięsistą głębię w środku
-    // 3. inset 0 -3px 1px -> głęboki, fioletowo-czarny fizyczny rant na dole (zamiast brązu)
-    // 4. Na końcu REALNY, głęboki cień zewnętrzny z domieszką czerni tealu, wtapiający bryłę w tło
-    "shadow-[inset_0_1px_0px_rgba(232,121,249,0.4),inset_0_4px_10px_rgba(0,0,0,0.25),inset_0_-3px_1px_rgba(43,15,43,0.7),inset_0_-5px_8px_rgba(0,0,0,0.3),0_4px_14px_rgba(0,15,15,0.5)]",
-    
-    "hover:brightness-[1.1]",
-    "focus-visible:ring-purple-300/70",
-
-    // Harmonia systemu: sprężynujący tekst 1.05x na hover (taki sam jak w primary)
-    "[&>span]:transition-transform [&>span]:duration-[300ms] [&>span]:[transition-timing-function:var(--ease-spring)]",
+     "bg-[linear-gradient(in_oklch_110deg,var(--color-purple-500)_0%,var(--color-purple-300)_50%,var(--color-purple-100)_100%)]",
+     "shadow-[inset_0_1px_0px_rgba(232,121,249,0.4),inset_0_4px_10px_rgba(0,0,0,0.25),inset_0_-3px_1px_rgba(43,15,43,0.7),inset_0_-5px_8px_rgba(0,0,0,0.3),0_4px_14px_rgba(0,15,15,0.5)]",
+     "hover:brightness-[1.1]",
+     "focus-visible:ring-purple-300/70",
+     "[&>span]:transition-transform [&>span]:duration-[300ms] [&>span]:[transition-timing-function:var(--ease-spring)]",
     
   ),
   
   tertiary: clsx(
     "text-white",
-    // Przestrzeń OKLCH dla czystego, głębokiego tealu
     "bg-[linear-gradient(in_oklch_110deg,var(--color-teal-800)_0%,var(--color-teal-500)_50%,var(--color-teal-300)_100%)]",
     "hover:brightness-[1.15]",
     "focus-visible:ring-teal-400/70",
@@ -113,7 +96,6 @@ const variantClasses: Record<Variant, string> = {
     "hover:underline underline-offset-4",
   ),
   glass: clsx(
-    // Klasyczna struktura Liquid Glass z Twojego systemu
     "bg-[rgba(0,31,31,0.44)] backdrop-blur-[20px] border border-white/[0.125] text-teal-25",
     "hover:bg-[rgba(0,31,31,0.6)] hover:border-white/20",
   ),

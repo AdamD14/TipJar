@@ -4,16 +4,15 @@ export default function Page() {
 
 return (
     <div className="flex min-h-screen items-center justify-center gap-4 p-6">
-      {/* Karta 1: Domyślna, reaguje na najaz myszką */}
+      {/* Karta 1: */}
       <Box2 
         variant="base" 
         interactive 
         className="w-[480px] h-[240px]" 
       />
-      {/* Karta 2: Wymuszony stan hover (dzięki nowej właściwości forceHover) */}
+      {/* Karta 2: */}
       <Box2 
         variant="base" 
-        hasArc
         className="w-[480px] h-[240px]" 
       
       />

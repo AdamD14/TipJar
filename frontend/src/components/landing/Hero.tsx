@@ -102,7 +102,7 @@ export default function Hero() {
 
           {/* PRZYCISKI (Wycentrowane, odstęp mt-12 lg:mt-16 od dołu badgów zostaje dla oddechu) */}
           <div className="mt-12 lg:mt-16 flex w-full items-center justify-center gap-3 lg:gap-4">
-            <Button variant="primary" size="lg" href="/register?role=CREATOR">
+            <Button variant="cta-gold-03" size="lg" href="/register?role=CREATOR">
               Begin as a Creator
             </Button>
             <Button variant="secondary" size="lg" href="/register?role=FAN" className="px-9">
