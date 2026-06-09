@@ -12,7 +12,8 @@ return (
       />
       {/* Karta 2: */}
       <Box2 
-        variant="base" 
+        variant="premium" 
+        interactive
         className="w-[480px] h-[240px]" 
       
       />

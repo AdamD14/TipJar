@@ -18,7 +18,7 @@ interface Box2Props extends HTMLAttributes<HTMLDivElement> {
 const BG: Record<Box2Variant, string> = {
   base: "bg-[linear-gradient(in_oklch_115deg,var(--color-teal-850),var(--color-teal-800))]",
   premium:
-    "bg-[linear-gradient(in_oklch_115deg,#f88008_0%,#f8b000_70%,#ffd700_97%,var(--gold-50)_97%,var(--gold-50)_100%)]",
+    "bg-[linear-gradient(in_oklch_115deg,#003134_0%,#005959_30%,#00272D_57%,#00353B_100%)]",
   purple:
     "bg-[linear-gradient(in_oklch_110deg,var(--color-surface-app)_0%,var(--color-border-focus)_70%,var(--color-text-primary)_97%,var(--color-text-primary)_100%)]",
   modal:
@@ -29,7 +29,7 @@ const BG: Record<Box2Variant, string> = {
 const HOVER_BG: Record<Box2Variant, string> = {
   base: "hover:bg-[linear-gradient(in_oklch_125deg,var(--color-teal-850),var(--color-teal-800))]",
   premium:
-    "hover:bg-[linear-gradient(in_oklch_115deg,#fa9018_0%,#ffc010_70%,var(--gold-100)_97%,var(--gold-50)_100%)]",
+    "hover:bg-[linear-gradient(in_oklch_115deg,#003737_0%,#005959_70%,var(--teal-500)_100%)]",
   purple:
     "hover:bg-[linear-gradient(in_oklch_110deg,var(--color-border-focus)_0%,var(--color-purple-100)_70%,var(--color-text-primary)_97%,var(--color-text-primary)_100%)]",
   modal:
