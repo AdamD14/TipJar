@@ -1359,3 +1359,232 @@ Inline oklch values → semantic token references
   vector-effect: non-scaling-stroke;
   shape-rendering: geometricPrecision;
 }
+
+.cta-btn {
+  position: relative;
+  height: 48px;
+  padding-left: 24px;
+  padding-right: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  user-select: none;
+  transition: filter 0.2s ease, background 0.25s ease-in-out, transform 0.1s ease;
+}
+
+.cta-btn:hover {
+  filter: brightness(1.1);
+}
+
+.cta-btn:hover .cta-btn-svg {
+  filter: brightness(1.1);
+}
+
+.cta-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(in oklch 125deg,
+    oklch(0.95 0.15 85) 0%,
+    oklch(0.80 0.15 70) 40%,
+    oklch(0.98 0.10 90) 85%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+  transition: background 0.25s ease-in-out;
+}
+
+.cta-btn:hover::before {
+  background: linear-gradient(in oklch 125deg,
+    oklch(0.999 0.03 95) 0%,
+    oklch(0.85 0.15 72) 40%,
+    oklch(0.98 0.10 90) 85%
+  );
+}
+
+.cta-btn-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 1;
+  pointer-events: none;
+  transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+.cta-btn-text {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 20px;
+  z-index: 2;
+  text-align: center;
+  white-space: nowrap;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.8), 0px 1px 0px rgba(255, 255, 255, 0.15);
+}
+
+.cta-btn-primary {
+  width: 144px;
+  background: linear-gradient(in oklch 122deg, oklch(0.711 0.177 54.5) 0%, oklch(0.840 0.172 84.1) 40%, oklch(0.852 0.189 95.8) 90%);
+  border-radius: 4px;
+  box-shadow: 
+    0 -1px 2px rgba(255, 255, 255, 0.15),
+    0 1px 2px rgba(60, 25, 5, 0.4),
+    0 5px 16px rgba(60, 25, 5, 0.5),
+    0 7px 20px rgba(180, 120, 20, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    inset 0 3px 7px -3px rgba(255, 255, 240, 0.15),
+    inset 0 -1px 0px rgba(180, 80, 10, 0.6),
+    inset 0 -3px 5px rgba(0, 0, 0, 0.25);
+  transform: perspective(1000px) rotateX(2deg) rotateY(-2deg);
+}
+
+.cta-btn-primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.12) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cta-btn-primary .cta-btn-svg {
+  opacity: 0.4;
+}
+
+.cta-btn-primary .cta-btn-text {
+  background-image: linear-gradient(in oklch 125deg, oklch(0.2856 0.0472 201.54) 0%, oklch(0.2696 0.0425 207.64) 50%, oklch(0.2843 0.0446 206.86) 100%);
+}
+
+.cta-btn-primary:active {
+  transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) scale(0.975) translateY(1px) !important;
+}
+
+.cta-btn-secondary {
+  width: 192px;
+  background: linear-gradient(in oklch 144deg, oklch(0.711 0.177 54.5) 0%, oklch(0.840 0.172 84.1) 45%, oklch(0.852 0.189 95.8) 95%);
+  border-radius: 4px;
+  box-shadow: 
+    0 -1px 1px rgba(255, 255, 255, 0.07),
+    0 1px 1px rgba(0, 15, 15, 0.4),
+    0 4px 13px rgba(0, 15, 15, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.06),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+  transform: perspective(1000px) rotateX(3deg) rotateY(-3deg);
+}
+
+.cta-btn-secondary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cta-btn-secondary .cta-btn-svg {
+  opacity: 0.3;
+}
+
+.cta-btn-secondary .cta-btn-text {
+  background-image: linear-gradient(in oklch 125deg, oklch(0.2236 0.0313 243.98) 0%, oklch(0.2257 0.0337 211.87) 50%, oklch(0.2543 0.0385 218.28) 100%);
+  letter-spacing: -0.025em;
+  word-spacing: -0.05em;
+}
+
+.cta-btn-secondary:active {
+  transform: perspective(1000px) rotateX(3deg) rotateY(-3deg) scale(0.975) translateY(1px) !important;
+}
+
+.cta-btn-tertiary {
+  width: 192px;
+  background: linear-gradient(in oklch 315deg, oklch(0.852 0.189 95.8) 0%, oklch(0.840 0.172 84.1) 50%, oklch(0.954 0.202 108.8) 100%);
+  border-radius: 4px;
+  box-shadow:
+    0 -1px 1px rgba(255, 255, 220, 0.25),
+    0 1px 1px rgba(80, 40, 5, 0.4),
+    0 4px 13px rgba(80, 40, 5, 0.5),
+    inset 0 1px 1px rgba(255, 255, 220, 0.3),
+    inset 0 -2px 4px rgba(60, 25, 0, 0.4);
+  transform: perspective(1000px) rotateX(3deg) rotateY(-3deg);
+}
+
+.cta-btn-tertiary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 250, 200, 0.2) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cta-btn-tertiary .cta-btn-svg {
+  opacity: 0.3;
+}
+
+.cta-btn-tertiary .cta-btn-text {
+  background-image: linear-gradient(in oklch 245deg, oklch(0.2543 0.0385 218.28) 0%, oklch(0.2655 0.04 217.12) 50%, oklch(0.2236 0.0313 243.98) 100%);
+  letter-spacing: -0.025em;
+  word-spacing: -0.05em;
+}
+
+.cta-btn-tertiary:active {
+  transform: perspective(1000px) rotateX(3deg) rotateY(-3deg) scale(0.975) translateY(1px) !important;
+}
+
+.cta-btn-quaternary {
+  width: 144px;
+  background: linear-gradient(in oklch 110deg, oklch(0.711 0.177 54.5) 0%, oklch(0.840 0.172 84.1) 55%, oklch(0.954 0.202 108.8) 100%);
+  border-radius: 6px;
+  box-shadow: 
+    0 -1px 1px rgba(255, 255, 200, 0.2),
+    0 1px 2px rgba(50, 25, 0, 0.55),
+    0 5px 16px rgba(50, 25, 0, 0.7),
+    inset 0 1px 1px rgba(255, 255, 200, 0.2),
+    inset 0 -3px 6px rgba(40, 18, 0, 0.45);
+  transform: perspective(1000px) rotateX(2deg) rotateY(-2deg);
+}
+
+.cta-btn-quaternary::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: transparent;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 220, 0.25),
+    inset 0 -1px 1px rgba(255, 255, 220, 0.12),
+    inset 1px 0 1px rgba(255, 255, 220, 0.18),
+    inset -1px 0 1px rgba(255, 255, 220, 0.12);
+  z-index: 1;
+}
+
+.cta-btn-quaternary .cta-btn-svg {
+  opacity: 0.4;
+}
+
+.cta-btn-quaternary .cta-btn-text {
+  background-image: linear-gradient(in oklch 125deg, oklch(0.2101 0.0318 264.66) 0%, oklch(0.2307 0.0326 240.91) 50%, oklch(0.3047 0.0489 203.4) 100%);
+}
+
+.cta-btn-quaternary:active {
+  transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) scale(0.975) translateY(1px) !important;
+}
