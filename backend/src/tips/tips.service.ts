@@ -157,7 +157,7 @@ export class TipsService {
       },
     });
 
-    try {
+      try {
       if (fanId) {
         const creator = await this.usersService.findOneById(creatorId);
         const fan = await this.usersService.findOneById(fanId);
@@ -186,23 +186,6 @@ export class TipsService {
             blockchainTransactionHash: transfer.txHash ?? null,
           },
         });
-
-        const feeWalletAddress = this.config.get<string>('FEE_WALLET_ADDRESS');
-        if (feeWalletAddress && platformFeeAmount.greaterThan(0)) {
-          try {
-            await this.circleService.transferToAddress(
-              creator.circleWalletId,
-              feeWalletAddress,
-              platformFeeAmount.toString(),
-              blockchain,
-              tokenId,
-            );
-          } catch (feeErr) {
-            this.logger.warn(
-              `Platform fee transfer failed for tip ${tip.id}: ${(feeErr as Error).message}`,
-            );
-          }
-        }
       }
       const chargeId = randomUUID();
         const completed = await this.prisma.tip.update({

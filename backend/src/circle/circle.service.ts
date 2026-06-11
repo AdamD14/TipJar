@@ -49,7 +49,7 @@ type SdkGetBalancesResp = {
 };
 
 type SdkCreateTxResp = {
-  data?: { transaction?: Transaction };
+  data?: { id: string; state: TransactionState };
 };
 
 export type TxRow = {
@@ -354,10 +354,10 @@ const response = (await this.circleClient.createTransaction(
   transferRequestPayload,
 )) as SdkCreateTxResp;
 
-const txData = response.data?.transaction;
-if (!txData?.id || !txData.state) {
-  throw new InternalServerErrorException(
-    'Nie udało się zainicjować wypłaty — błąd SDK.',
+  const txData = response.data;
+      if (!txData?.id || !txData.state) {
+        throw new InternalServerErrorException(
+          'Failed to initiate withdrawal — SDK error.',
         );
       }
 
@@ -478,22 +478,21 @@ if (!txData?.id || !txData.state) {
       },
     } as CreateTransferTransactionInput;
 
-const response = (await this.circleClient.createTransaction(
-  transferRequestPayload,
-)) as SdkCreateTxResp;
+    const response = (await this.circleClient.createTransaction(
+      transferRequestPayload,
+    )) as SdkCreateTxResp;
 
-const txData = response.data?.transaction;
-if (!txData?.id || !txData.state) {
-  throw new InternalServerErrorException(
-    'Nie udało się zainicjować transferu — błąd SDK Circle.',
+  const txData = response.data;
+      if (!txData?.id || !txData.state) {
+        throw new InternalServerErrorException(
+          `Transfer initiated but SDK response missing transaction data. Response: ${JSON.stringify(response?.data)}`,
         );
       }
 
-      const fullTransactionDetails = await this.getTransactionStatus(txData.id);
       return {
         circleTransactionId: txData.id,
         status: txData.state,
-        txHash: fullTransactionDetails?.txHash,
+        txHash: undefined,
       };
     } catch (error) {
       this.handleCircleError(error, 'transfer to address');
@@ -755,32 +754,87 @@ if (!txData?.id || !txData.state) {
       JSON.stringify({ balance: totalUsdc, currency: 'USDC' })
     );
 
-    if (state === 'COMPLETE') {
-      const amount = notification.amounts?.[0] || '0';
-      let title = '';
-      let message = '';
-      let notifType = 'info';
+        if (state === 'COMPLETE') {
+          const amount = notification.amounts?.[0] || '0';
+          let title = '';
+          let message = '';
+          let notifType = 'info';
 
-      if (notificationType === 'transactions.inbound') {
-        const sender = notification.sourceAddress
-          ? await this.prisma.user.findFirst({
-              where: { mainWalletAddress: notification.sourceAddress },
-              select: { displayName: true },
-            })
-          : null;
-        const senderLabel = sender?.displayName
-          ? `@${sender.displayName}`
-          : null;
-        title = 'New Tip!';
-        message = senderLabel
-          ? `You received ${amount} USDC from ${senderLabel}`
-          : `You received ${amount} USDC`;
-        notifType = 'success';
-      } else if (notificationType === 'transactions.outbound') {
-        title = 'Transfer Sent';
-        message = `You sent ${amount} USDC`;
-        notifType = 'info';
-      }
+        const feeWalletId = this.configService.get<string>('FEE_WALLET_ID');
+
+        if (notificationType === 'transactions.inbound' && walletId === feeWalletId) {
+          this.logger.debug(`Inbound on fee wallet ${walletId} — skipping fee deduction`);
+        } else if (notificationType === 'transactions.inbound') {
+          const gross = parseFloat(amount);
+          const feeRate = 0.025;
+          const feeAmount = gross * feeRate;
+          const netAmount = gross - feeAmount;
+          const feeWalletAddress = this.configService.get<string>('FEE_WALLET_ADDRESS');
+
+          const sender = notification.sourceAddress
+            ? await this.prisma.user.findFirst({
+                where: { mainWalletAddress: notification.sourceAddress },
+                select: { displayName: true },
+              })
+            : null;
+          const senderLabel = sender?.displayName
+            ? `@${sender.displayName}`
+            : null;
+
+          await this.prisma.feeTransaction.create({
+            data: {
+              walletId,
+              type: 'DEPOSIT',
+              grossAmount: gross,
+              feeAmount: feeAmount,
+              netAmount: netAmount,
+              sourceTxHash: notification.txHash || null,
+              status: 'PENDING',
+            },
+          });
+
+          if (feeWalletAddress && feeAmount > 0) {
+            try {
+              const blockchain = this.configService.get<string>('DEFAULT_BLOCKCHAIN') as Blockchain;
+              const tokenId = this.getTokenIdForChain();
+              const feeTransfer = await this.transferToAddress(
+                walletId,
+                feeWalletAddress,
+                feeAmount.toFixed(6),
+                blockchain,
+                tokenId,
+              );
+              await this.prisma.feeTransaction.updateMany({
+                where: { walletId, sourceTxHash: notification.txHash || null, status: 'PENDING' },
+                data: { feeTxHash: feeTransfer.txHash || null, status: 'COMPLETED' },
+              });
+            } catch (feeErr) {
+              this.logger.warn(
+                `Fee transfer failed for inbound on wallet ${walletId}: ${(feeErr as Error).message}`,
+              );
+              await this.prisma.feeTransaction.updateMany({
+                where: { walletId, sourceTxHash: notification.txHash || null, status: 'PENDING' },
+                data: { status: 'FAILED' },
+              });
+            }
+          }
+
+          title = 'New Tip!';
+          const displayAmount = netAmount.toFixed(2);
+          message = senderLabel
+            ? `You received ${displayAmount} USDC from ${senderLabel}`
+            : `You received ${displayAmount} USDC`;
+          notifType = 'success';
+        } else if (notificationType === 'transactions.outbound') {
+          const feeWalletAddress = this.configService.get<string>('FEE_WALLET_ADDRESS');
+          if (notification.destinationAddress === feeWalletAddress) {
+            this.logger.debug(`Outbound to fee wallet — skipping notification`);
+          } else {
+            title = 'Transfer Sent';
+            message = `You sent ${amount} USDC`;
+            notifType = 'info';
+          }
+        }
 
       if (title) {
         this.logger.log(`Webhook: creating notification for userId=${userId} — ${title}: ${message}`);

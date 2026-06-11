@@ -313,6 +313,35 @@ model WebhookEvent {
   @@index([type, status, createdAt])
 }
 
+enum FeeType {
+  DEPOSIT
+  INTERNAL_TRANSFER
+  WITHDRAWAL
+}
+
+enum FeeStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model FeeTransaction {
+  id            String     @id @default(cuid())
+  walletId      String
+  type          FeeType
+  grossAmount   Decimal    @db.Decimal(20, 6)
+  feeAmount     Decimal    @db.Decimal(20, 6)
+  netAmount     Decimal    @db.Decimal(20, 6)
+  sourceTxHash  String?
+  feeTxHash     String?
+  status        FeeStatus  @default(PENDING)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@index([walletId])
+  @@index([sourceTxHash])
+}
+
 enum MediaStatus {
   PENDING
   UPLOADING

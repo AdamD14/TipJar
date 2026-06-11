@@ -30,6 +30,9 @@ export const GradientCard: React.FC<GradientCardProps> = ({ children, className 
         .card-surface:hover {
           background-position: 100% center;
           transform: translateY(0); /* Blokuje uniesienie z globals.css */
+          
+          /* Podpięcie dodanego niżej filtra */
+          filter: url(#chromatic-prism);
         }
 
         /* --- REZONANS JĄDROWY (Focus State) --- */
@@ -71,9 +74,63 @@ export const GradientCard: React.FC<GradientCardProps> = ({ children, className 
         }
       `}</style>
 
-      {/* Usunięto cały blok SVG z maską */}
+      {/* DODANY BLOK SVG Z TWOIM FILTREM */}
+      <svg width="0" height="0" style={{ position: 'absolute', pointerEvents: 'none' }}>
+        <defs>
+          {/* Model Snella-Descartesa: POPRAWIONE WARTOŚCI MACIERZY KANAŁÓW RGB */}
+          <filter id="chromatic-prism">
+            {/* Przesunięcia warstw bocznych dla efektu rozszczepienia */}
+            <feOffset dx="-2" dy="0" in="SourceGraphic" result="red_layer" />
+            <feOffset dx="2" dy="0" in="SourceGraphic" result="blue_layer" />
 
-      {/* Dodałem tabindex="0", żeby div był "focusable" */}
+            {/* Izolacja kanału czerwonego (R) */}
+            <feColorMatrix
+              type="matrix"
+              in="red_layer"
+              result="red_only"
+              values="
+              0 0 0 0 0
+              0 1 0 0 0
+              0 0 1 0 0
+              0 0 0 1 0"
+            />
+
+            {/* Izolacja kanału zielonego (G) */}
+            <feColorMatrix
+              type="matrix"
+              in="SourceGraphic"
+              result="green_only"
+              values="
+              0 0 0 0 0
+              0 0 0 0 0
+              0 0 1 0 0
+              0 0 0 1 0"
+            />
+
+            {/* Izolacja kanału niebieskiego (B) */}
+            <feColorMatrix
+              type="matrix"
+              in="blue_layer"
+              result="blue_only"
+              values="
+              0 0 0 0 0
+              0 1 0 0 0
+              0 0 1 0 0
+              0 0 0 1 0"
+            />
+
+            {/* Łączenie kanałów w finalny pryzmat trybym Screen */}
+            <feBlend
+              mode="screen"
+              in="red_only"
+              in2="green_only"
+              result="rg_mix"
+            />
+            <feBlend mode="screen" in="rg_mix" in2="blue_only" />
+          </filter>
+        </defs>
+      </svg>
+
       <div className={`card-surface ${className}`} tabIndex={0}>
         {children}
       </div>
