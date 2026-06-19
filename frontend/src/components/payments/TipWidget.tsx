@@ -180,7 +180,7 @@ export default function TipWidget({ goal, creatorId }: TipWidgetProps) {
                     : "bg-white/5 text-white/70 border border-white/10 hover:bg-white/10 hover:border-white/20",
                 )}
               >
-                {p} USDC
+                ${p}
               </button>
             ))}
           </div>
@@ -258,16 +258,10 @@ export default function TipWidget({ goal, creatorId }: TipWidgetProps) {
             fullWidth
             loading={isPending}
             size="md"
+            leftIcon={!isPending ? <Send size={16} /> : undefined}
             className="gap-2"
           >
-            {isPending ? (
-              "Sending..."
-            ) : (
-              <>
-                <Send size={16} />
-                Send {valid ? `${amount.toFixed(2)} USDC` : ""}
-              </>
-            )}
+            {isPending ? "Sending..." : `Send ${valid ? `${amount.toFixed(2)} USDC` : ""}`}
           </Button>
 
           {!isLoggedIn && (

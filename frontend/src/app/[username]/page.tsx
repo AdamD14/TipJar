@@ -372,12 +372,9 @@ function TipPanel({ creatorId }: { creatorId: string }) {
       setTipError("Log in to send a tip.");
       return;
     }
-    if (!message.trim()) {
-      setTipError("Add a message for the creator.");
-      return;
-    }
+
     try {
-      await mutateAsync({ creatorId, amount, message: message.trim() });
+      await mutateAsync({ creatorId, amount, message: message.trim() || undefined });
       toast.push({ type: "success", text: `Thank you! ${amount} USDC sent.` });
       track("tip_success", { creatorId, amount });
       setSuccess(true);
@@ -405,7 +402,7 @@ function TipPanel({ creatorId }: { creatorId: string }) {
                 : "bg-white/5 text-white/70 border border-white/10 hover:bg-white/10 hover:border-white/20",
             )}
           >
-            {p}
+            ${p}
           </button>
         ))}
       </div>
@@ -440,14 +437,9 @@ function TipPanel({ creatorId }: { creatorId: string }) {
         fullWidth
         loading={isPending}
         size="md"
-        className="gap-2"
+        leftIcon={!isPending ? <Send size={16} /> : undefined}
       >
-        {isPending ? "Sending..." : (
-          <>
-            <Send size={16} />
-            Send {valid ? `${amount.toFixed(2)} USDC` : ""}
-          </>
-        )}
+        {isPending ? "Sending..." : `Send ${valid ? `${amount.toFixed(2)} USDC` : ""}`}
       </Button>
 
       {!isLoggedIn && (
