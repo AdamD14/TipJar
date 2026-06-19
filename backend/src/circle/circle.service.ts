@@ -1,4 +1,3 @@
-// backend/src/circle/circle.service.ts
 import {
   Injectable,
   Logger,
@@ -24,7 +23,7 @@ import {
   GetTransactionInput,
   GetWalletTokenBalanceInput,
   Balance,
-  TokenInfo,
+  EvmBlockchain,
 } from '@circle-fin/developer-controlled-wallets';
 import axios, { isAxiosError } from 'axios';
 import { randomBytes, randomUUID } from 'crypto';
@@ -33,9 +32,6 @@ import { Prisma, UserRole } from '@prisma/client';
 import { Inject, OnModuleDestroy } from '@nestjs/common';
 import { RedisClientType } from 'redis';
 
-/* ————————————————————————
-   Lokalne typy odpowiedzi (bez any)
-   ———————————————————————— */
 type SdkCreateWalletsResp = {
   data?: { wallets?: Array<{ id: string; address: string }> };
 };
@@ -91,7 +87,7 @@ export class CircleService implements OnModuleInit, OnModuleDestroy {
         'CRITICAL: CIRCLE_API_KEY or CIRCLE_ENTITY_SECRET is not defined. CircleService will not function.',
       );
       throw new InternalServerErrorException(
-        'Brak konfiguracji kluczy API dla CircleService.',
+        'Missing API key configuration for CircleService.',
       );
     }
 
@@ -107,7 +103,7 @@ export class CircleService implements OnModuleInit, OnModuleDestroy {
       const message =
         error instanceof Error
           ? error.message
-          : 'Nie udało się zainicjalizować klienta Circle.';
+          : 'Failed to initialize Circle client.';
       this.logger.error(
         `Failed to initialize Circle Client in CircleService: ${message}`,
         (error as Error)?.stack,
@@ -157,12 +153,12 @@ export class CircleService implements OnModuleInit, OnModuleDestroy {
 
     if (errorCode === 152021) {
       throw new ConflictException(
-        'Portfel dla użytkownika mógł już zostać utworzony.',
+        'Wallet for user might have already been provisioned.',
       );
     }
 
     throw new HttpException(
-      `Błąd operacji Circle (${context}): ${errorMessage}`,
+      `Circle operation error (${context}): ${errorMessage}`,
       httpStatus,
     );
   }
@@ -176,12 +172,6 @@ export class CircleService implements OnModuleInit, OnModuleDestroy {
       `Attempting to provision Circle wallet for User ID: ${tipJarUserId}, Role: ${userRole || 'N/A'}`,
     );
     try {
-      type UserRecord = {
-        circleWalletId: string | null;
-        mainWalletAddress: string | null;
-        isCircleSetupComplete: boolean;
-      };
-
       const existingUserRecord = await this.prisma.user.findUnique({
         where: { id: tipJarUserId },
         select: {
@@ -193,7 +183,7 @@ export class CircleService implements OnModuleInit, OnModuleDestroy {
 
       if (!existingUserRecord) {
         throw new NotFoundException(
-          `Użytkownik o ID ${tipJarUserId} nie istnieje.`,
+          `User with ID ${tipJarUserId} does not exist.`,
         );
       }
 
@@ -216,7 +206,7 @@ export class CircleService implements OnModuleInit, OnModuleDestroy {
       );
       if (!walletSetId) {
         throw new InternalServerErrorException(
-          'Konfiguracja Wallet Set ID jest niekompletna.',
+          'Wallet Set ID configuration is incomplete.',
         );
       }
       const defaultBlockchain = this.configService.get<string>(
@@ -249,7 +239,7 @@ export class CircleService implements OnModuleInit, OnModuleDestroy {
       const createdWallet = response.data?.wallets?.[0];
       if (!createdWallet?.id || !createdWallet.address) {
         throw new InternalServerErrorException(
-          'Nie udało się utworzyć portfela Circle — nieprawidłowa odpowiedź SDK.',
+          'Failed to create Circle wallet - invalid SDK response.',
         );
       }
 
@@ -317,44 +307,43 @@ export class CircleService implements OnModuleInit, OnModuleDestroy {
       `Initiate withdrawal: UserID ${tipJarUserId}, Amount ${amountString} USDC, To ${destinationAddressString} on ${blockchain}`,
     );
     try {
-      type UserWallet = { circleWalletId: string | null };
       const user = await this.prisma.user.findUnique({
         where: { id: tipJarUserId },
         select: { circleWalletId: true },
       });
       if (!user?.circleWalletId) {
         throw new NotFoundException(
-          `Portfel Circle dla użytkownika ${tipJarUserId} nie znaleziony.`,
+          `Circle wallet for user ${tipJarUserId} not found.`,
         );
       }
       const sourceWalletId = user.circleWalletId;
       const amountDecimal = parseFloat(amountString);
       if (Number.isNaN(amountDecimal) || amountDecimal <= 0) {
-        throw new BadRequestException('Nieprawidłowa kwota wypłaty.');
+        throw new BadRequestException('Invalid withdrawal amount.');
       }
 
-    const transferRequestPayload: CreateTransferTransactionInput = {
-      idempotencyKey: randomUUID(),
-      walletId: sourceWalletId,
-      destinationAddress: destinationAddressString,
-      amount: [amountString],
-      ...(this.isCircleTokenUuid(tokenId)
-        ? { tokenId }
-        : {
-            tokenAddress: tokenId,
-            blockchain: blockchain as TokenBlockchain,
-          }),
-      fee: {
-        type: 'level' as const,
-        config: { feeLevel: FeeLevel.Medium },
-      },
-    } as CreateTransferTransactionInput;
+      const transferRequestPayload: CreateTransferTransactionInput = {
+        idempotencyKey: randomUUID(),
+        walletId: sourceWalletId,
+        destinationAddress: destinationAddressString,
+        amount: [amountString],
+        ...(this.isCircleTokenUuid(tokenId)
+          ? { tokenId }
+          : {
+              tokenAddress: tokenId,
+              blockchain: blockchain as TokenBlockchain,
+            }),
+        fee: {
+          type: 'level' as const,
+          config: { feeLevel: FeeLevel.Medium },
+        },
+      } as CreateTransferTransactionInput;
 
-const response = (await this.circleClient.createTransaction(
-  transferRequestPayload,
-)) as SdkCreateTxResp;
+      const response = (await this.circleClient.createTransaction(
+        transferRequestPayload,
+      )) as SdkCreateTxResp;
 
-  const txData = response.data;
+      const txData = response.data;
       if (!txData?.id || !txData.state) {
         throw new InternalServerErrorException(
           'Failed to initiate withdrawal — SDK error.',
@@ -384,12 +373,8 @@ const response = (await this.circleClient.createTransaction(
 
       const tokenBalances = response.data?.tokenBalances ?? [];
 
-      const usdcEntry = tokenBalances.find(
-        (tb) => tb.token?.symbol === 'USDC',
-      );
-      const totalUsdc = usdcEntry
-        ? parseFloat(usdcEntry.amount || '0')
-        : 0;
+      const usdcEntry = tokenBalances.find((tb) => tb.token?.symbol === 'USDC');
+      const totalUsdc = usdcEntry ? parseFloat(usdcEntry.amount || '0') : 0;
 
       return { totalUsdc, tokenBalances };
     } catch (error) {
@@ -414,10 +399,9 @@ const response = (await this.circleClient.createTransaction(
     try {
       const amountNetDecimal = parseFloat(amountNetString);
       if (Number.isNaN(amountNetDecimal) || amountNetDecimal <= 0) {
-        throw new BadRequestException('Nieprawidłowa kwota netto transferu.');
+        throw new BadRequestException('Invalid internal transfer net amount.');
       }
 
-      type WalletRecord = { mainWalletAddress: string | null };
       const destinationWalletRecord = await this.prisma.user.findFirst({
         where: { circleWalletId: destinationCircleWalletId },
         select: { mainWalletAddress: true },
@@ -425,7 +409,7 @@ const response = (await this.circleClient.createTransaction(
 
       if (!destinationWalletRecord?.mainWalletAddress) {
         throw new NotFoundException(
-          'Nie można znaleźć adresu docelowego portfela twórcy.',
+          'Cannot find destination address for creator wallet.',
         );
       }
 
@@ -458,31 +442,31 @@ const response = (await this.circleClient.createTransaction(
     try {
       const amountDecimal = parseFloat(amountString);
       if (Number.isNaN(amountDecimal) || amountDecimal <= 0) {
-        throw new BadRequestException('Nieprawidłowa kwota transferu.');
+        throw new BadRequestException('Invalid transfer amount.');
       }
 
-    const transferRequestPayload: CreateTransferTransactionInput = {
-      idempotencyKey: randomUUID(),
-      walletId: sourceCircleWalletId,
-      destinationAddress,
-      amount: [amountString],
-      ...(this.isCircleTokenUuid(tokenId)
-        ? { tokenId }
-        : {
-            tokenAddress: tokenId,
-            blockchain: blockchain as TokenBlockchain,
-          }),
-      fee: {
-        type: 'level' as const,
-        config: { feeLevel: FeeLevel.Medium },
-      },
-    } as CreateTransferTransactionInput;
+      const transferRequestPayload: CreateTransferTransactionInput = {
+        idempotencyKey: randomUUID(),
+        walletId: sourceCircleWalletId,
+        destinationAddress,
+        amount: [amountString],
+        ...(this.isCircleTokenUuid(tokenId)
+          ? { tokenId }
+          : {
+              tokenAddress: tokenId,
+              blockchain: blockchain as TokenBlockchain,
+            }),
+        fee: {
+          type: 'level' as const,
+          config: { feeLevel: FeeLevel.Medium },
+        },
+      } as CreateTransferTransactionInput;
 
-    const response = (await this.circleClient.createTransaction(
-      transferRequestPayload,
-    )) as SdkCreateTxResp;
+      const response = (await this.circleClient.createTransaction(
+        transferRequestPayload,
+      )) as SdkCreateTxResp;
 
-  const txData = response.data;
+      const txData = response.data;
       if (!txData?.id || !txData.state) {
         throw new InternalServerErrorException(
           `Transfer initiated but SDK response missing transaction data. Response: ${JSON.stringify(response?.data)}`,
@@ -686,13 +670,13 @@ const response = (await this.circleClient.createTransaction(
 
     const walletId = notification.walletId;
     const state = notification.state || '';
+    const feeWalletId = this.configService.get<string>('FEE_WALLET_ID');
+    const feeWalletAddress =
+      this.configService.get<string>('FEE_WALLET_ADDRESS');
+
     const HANDLED_TYPES = new Set([
       'transactions.inbound',
       'transactions.outbound',
-      'transactions.confirmed',
-      'transactions.complete',
-      'transactions.cancelled',
-      'transactions.failed',
     ]);
 
     if (!HANDLED_TYPES.has(notificationType)) {
@@ -702,10 +686,6 @@ const response = (await this.circleClient.createTransaction(
       return;
     }
 
-    this.logger.log(
-      `Webhook "${notificationType}" state="${state}" for walletId=${walletId} — refreshing cached balance`,
-    );
-
     if (state === 'FAILED' || state === 'CANCELLED' || state === 'DENIED') {
       this.logger.warn(
         `Transaction ${notification.id} on wallet ${walletId} reached terminal failure state: ${state}`,
@@ -713,64 +693,82 @@ const response = (await this.circleClient.createTransaction(
     }
 
     try {
-      const circleWallet = await this.prisma.circleWallet.findUnique({
-        where: { circleWalletId: walletId },
-      });
-        if (!circleWallet) {
-          this.logger.warn(
-            `No CircleWallet record for walletId=${walletId} — skipping cache update`,
+      if (notificationType === 'transactions.inbound' && state === 'COMPLETE') {
+        if (walletId === feeWalletId) {
+          this.logger.debug(
+            `Inbound on fee wallet ${walletId} — skipping fee deduction`,
           );
           return;
         }
 
-      const { totalUsdc, tokenBalances } =
-        await this.getWalletBalance(walletId);
+        const amount = notification.amounts?.[0] || '0';
+        const grossDecimal = new Prisma.Decimal(amount);
+        const feeAmountDecimal = grossDecimal
+          .mul(0.025)
+          .toDecimalPlaces(6, Prisma.Decimal.ROUND_DOWN);
+        const netAmountDecimal = grossDecimal
+          .sub(feeAmountDecimal)
+          .toDecimalPlaces(6, Prisma.Decimal.ROUND_DOWN);
 
-      await this.prisma.walletBalance.upsert({
-        where: { circleWalletId: circleWallet.id },
-        update: {
-          totalUsdc: totalUsdc,
-          rawJson: tokenBalances as unknown as Prisma.InputJsonValue,
-          circleUpdatedAt: new Date(),
-        },
-        create: {
-          circleWalletId: circleWallet.id,
-          totalUsdc: totalUsdc,
-          rawJson: tokenBalances as unknown as Prisma.InputJsonValue,
-          circleUpdatedAt: new Date(),
-        },
-      });
+        await this.prisma.feeTransaction.create({
+          data: {
+            walletId,
+            type: 'DEPOSIT',
+            grossAmount: grossDecimal,
+            feeAmount: feeAmountDecimal,
+            netAmount: netAmountDecimal,
+            sourceTxHash: notification.txHash || null,
+            status: 'PENDING',
+          },
+        });
 
-      this.logger.log(
-        `Cached balance updated for walletId=${walletId}: ${totalUsdc} USDC`,
-      );
+        if (feeWalletAddress && feeAmountDecimal.gt(0)) {
+          try {
+            const blockchain = this.configService.get<string>(
+              'DEFAULT_BLOCKCHAIN',
+            ) as Blockchain;
+            const tokenId = this.getTokenIdForChain();
+            const feeTransfer = await this.transferToAddress(
+              walletId,
+              feeWalletAddress,
+              feeAmountDecimal.toFixed(6),
+              blockchain,
+              tokenId,
+            );
 
-  // Redis Pub/Sub dla SSE - real-time balance updates
-  const userId = await this.getUserIdByWalletId(walletId);
-  this.logger.debug(`Webhook: userId lookup for walletId=${walletId} → userId=${userId}`);
-  if (userId) {
-    await this.redis.publish(
-      `balance:${userId}`,
-      JSON.stringify({ balance: totalUsdc, currency: 'USDC' })
-    );
+            await this.prisma.feeTransaction.updateMany({
+              where: {
+                walletId,
+                sourceTxHash: notification.txHash || null,
+                status: 'PENDING',
+              },
+              data: {
+                feeTxHash: feeTransfer.circleTransactionId,
+                status: 'COMPLETED',
+              },
+            });
+          } catch (feeErr) {
+            this.logger.error(
+              `Fee transfer failed for inbound on wallet ${walletId}: ${(feeErr as Error).message}`,
+            );
+            await this.prisma.feeTransaction.updateMany({
+              where: {
+                walletId,
+                sourceTxHash: notification.txHash || null,
+                status: 'PENDING',
+              },
+              data: { status: 'FAILED' },
+            });
+            throw feeErr;
+          }
+        }
 
-        if (state === 'COMPLETE') {
-          const amount = notification.amounts?.[0] || '0';
-          let title = '';
-          let message = '';
-          let notifType = 'info';
+        const circleWallet = await this.prisma.circleWallet.findUnique({
+          where: { circleWalletId: walletId },
+        });
 
-        const feeWalletId = this.configService.get<string>('FEE_WALLET_ID');
-
-        if (notificationType === 'transactions.inbound' && walletId === feeWalletId) {
-          this.logger.debug(`Inbound on fee wallet ${walletId} — skipping fee deduction`);
-        } else if (notificationType === 'transactions.inbound') {
-          const gross = parseFloat(amount);
-          const feeRate = 0.025;
-          const feeAmount = gross * feeRate;
-          const netAmount = gross - feeAmount;
-          const feeWalletAddress = this.configService.get<string>('FEE_WALLET_ADDRESS');
-
+        if (circleWallet) {
+          const userId = circleWallet.userId;
           const sender = notification.sourceAddress
             ? await this.prisma.user.findFirst({
                 where: { mainWalletAddress: notification.sourceAddress },
@@ -781,85 +779,202 @@ const response = (await this.circleClient.createTransaction(
             ? `@${sender.displayName}`
             : null;
 
-          await this.prisma.feeTransaction.create({
-            data: {
-              walletId,
-              type: 'DEPOSIT',
-              grossAmount: gross,
-              feeAmount: feeAmount,
-              netAmount: netAmount,
-              sourceTxHash: notification.txHash || null,
-              status: 'PENDING',
-            },
+          const title = 'New Tip Received';
+          const message = senderLabel
+            ? `${senderLabel} sent you ${grossDecimal.toFixed(2)} USDC. Your receive ${netAmountDecimal.toFixed(2)} USDC.`
+            : `A fan sent you ${grossDecimal.toFixed(2)} USDC. Your receive ${netAmountDecimal.toFixed(2)} USDC.`;
+
+          await this.prisma.notification.create({
+            data: { userId, title, message, type: 'success' },
           });
 
-          if (feeWalletAddress && feeAmount > 0) {
-            try {
-              const blockchain = this.configService.get<string>('DEFAULT_BLOCKCHAIN') as Blockchain;
-              const tokenId = this.getTokenIdForChain();
-              const feeTransfer = await this.transferToAddress(
-                walletId,
-                feeWalletAddress,
-                feeAmount.toFixed(6),
-                blockchain,
-                tokenId,
+          await this.redis.publish(
+            `notifications:${userId}`,
+            JSON.stringify({
+              title,
+              message,
+              type: 'success',
+              timestamp: new Date().toISOString(),
+            }),
+          );
+        }
+      } else if (notificationType === 'transactions.outbound') {
+        if (state === 'COMPLETE') {
+          this.logger.log(
+            `Outbound transaction ${notification.id} completed. Resolving blockchain hash.`,
+          );
+
+          const matchingFeeTx = await this.prisma.feeTransaction.findFirst({
+            where: { feeTxHash: notification.id },
+          });
+
+          if (matchingFeeTx) {
+            await this.prisma.feeTransaction.update({
+              where: { id: matchingFeeTx.id },
+              data: { feeTxHash: notification.txHash || null },
+            });
+          }
+
+          let shouldQueryBalance = true;
+          if (notification.destinationAddress === feeWalletAddress) {
+            if (matchingFeeTx && matchingFeeTx.type === 'WITHDRAWAL') {
+              this.logger.debug(
+                `Outbound to fee wallet for withdrawal completed — skipping duplicate balance query`,
               );
-              await this.prisma.feeTransaction.updateMany({
-                where: { walletId, sourceTxHash: notification.txHash || null, status: 'PENDING' },
-                data: { feeTxHash: feeTransfer.txHash || null, status: 'COMPLETED' },
-              });
-            } catch (feeErr) {
-              this.logger.warn(
-                `Fee transfer failed for inbound on wallet ${walletId}: ${(feeErr as Error).message}`,
-              );
-              await this.prisma.feeTransaction.updateMany({
-                where: { walletId, sourceTxHash: notification.txHash || null, status: 'PENDING' },
-                data: { status: 'FAILED' },
-              });
+              shouldQueryBalance = false;
             }
           }
 
-          title = 'New Tip!';
-          const displayAmount = netAmount.toFixed(2);
-          message = senderLabel
-            ? `You received ${displayAmount} USDC from ${senderLabel}`
-            : `You received ${displayAmount} USDC`;
-          notifType = 'success';
-        } else if (notificationType === 'transactions.outbound') {
-          const feeWalletAddress = this.configService.get<string>('FEE_WALLET_ADDRESS');
-          if (notification.destinationAddress === feeWalletAddress) {
-            this.logger.debug(`Outbound to fee wallet — skipping notification`);
-          } else {
-            title = 'Transfer Sent';
-            message = `You sent ${amount} USDC`;
-            notifType = 'info';
+          if (shouldQueryBalance) {
+            const { totalUsdc, tokenBalances } =
+              await this.getWalletBalance(walletId);
+
+            const circleWallet = await this.prisma.circleWallet.findUnique({
+              where: { circleWalletId: walletId },
+            });
+            if (!circleWallet) return;
+
+            await this.prisma.walletBalance.upsert({
+              where: { circleWalletId: circleWallet.id },
+              update: {
+                totalUsdc,
+                rawJson: tokenBalances as unknown as Prisma.InputJsonValue,
+                circleUpdatedAt: new Date(),
+              },
+              create: {
+                circleWalletId: circleWallet.id,
+                totalUsdc,
+                rawJson: tokenBalances as unknown as Prisma.InputJsonValue,
+                circleUpdatedAt: new Date(),
+              },
+            });
+
+            await this.redis.publish(
+              `balance:${circleWallet.userId}`,
+              JSON.stringify({ balance: totalUsdc, currency: 'USDC' }),
+            );
           }
+        } else if (
+          state === 'FAILED' ||
+          state === 'CANCELLED' ||
+          state === 'DENIED'
+        ) {
+          const payout = await this.prisma.payout.findUnique({
+            where: { circleTransactionId: notification.id },
+          });
+
+          if (!payout || payout.status === 'FAILED') {
+            return;
+          }
+
+          this.logger.log(
+            `Detected failed outbound payout ${payout.id}. Triggering automatic fee refund flow.`,
+          );
+
+          await this.prisma.payout.update({
+            where: { id: payout.id },
+            data: { status: 'FAILED', failureReason: `Circle state: ${state}` },
+          });
+
+          const circleWallet = await this.prisma.circleWallet.findUnique({
+            where: { circleWalletId: walletId },
+          });
+
+          if (!circleWallet) {
+            this.logger.error(
+              `CircleWallet record missing for walletId=${walletId} during refund process`,
+            );
+            return;
+          }
+
+          const feeTx = await this.prisma.feeTransaction.findFirst({
+            where: {
+              walletId: circleWallet.circleWalletId,
+              type: 'WITHDRAWAL',
+              status: 'COMPLETED',
+              grossAmount: payout.amount,
+            },
+            orderBy: { createdAt: 'desc' },
+          });
+
+          if (feeTx && feeWalletId) {
+            try {
+              const blockchain = this.configService.get<string>(
+                'DEFAULT_BLOCKCHAIN',
+              ) as Blockchain;
+              const tokenId = this.getTokenIdForChain();
+
+              this.logger.log(
+                `Refunding fee amount ${feeTx.feeAmount.toString()} USDC from platform wallet ${feeWalletId} to user wallet ${circleWallet.mainWalletAddress}`,
+              );
+
+              await this.transferToAddress(
+                feeWalletId,
+                circleWallet.mainWalletAddress,
+                feeTx.feeAmount.toFixed(6),
+                blockchain,
+                tokenId,
+              );
+
+              await this.prisma.feeTransaction.update({
+                where: { id: feeTx.id },
+                data: { status: 'FAILED' },
+              });
+            } catch (refundErr) {
+              this.logger.error(
+                `CRITICAL: Automatic fee refund failed for payout ${payout.id}: ${(refundErr as Error).message}`,
+              );
+            }
+          }
+
+          const { totalUsdc, tokenBalances } =
+            await this.getWalletBalance(walletId);
+
+          await this.prisma.walletBalance.upsert({
+            where: { circleWalletId: circleWallet.id },
+            update: {
+              totalUsdc,
+              rawJson: tokenBalances as unknown as Prisma.InputJsonValue,
+              circleUpdatedAt: new Date(),
+            },
+            create: {
+              circleWalletId: circleWallet.id,
+              totalUsdc,
+              rawJson: tokenBalances as unknown as Prisma.InputJsonValue,
+              circleUpdatedAt: new Date(),
+            },
+          });
+
+          const userId = circleWallet.userId;
+          await this.redis.publish(
+            `balance:${userId}`,
+            JSON.stringify({ balance: totalUsdc, currency: 'USDC' }),
+          );
+
+          const title = 'Withdrawal Failed';
+          const message = `Your withdrawal of ${payout.amount.toFixed(2)} USDC could not be processed. All funds and platform fees have been returned to your wallet.`;
+
+          await this.prisma.notification.create({
+            data: { userId, title, message, type: 'error' },
+          });
+
+          await this.redis.publish(
+            `notifications:${userId}`,
+            JSON.stringify({
+              title,
+              message,
+              type: 'error',
+              timestamp: new Date().toISOString(),
+            }),
+          );
         }
-
-      if (title) {
-        this.logger.log(`Webhook: creating notification for userId=${userId} — ${title}: ${message}`);
-        await this.prisma.notification.create({
-          data: { userId, title, message, type: notifType },
-        });
-
-        this.logger.log(`Webhook: publishing to notifications:${userId}`);
-        await this.redis.publish(
-          `notifications:${userId}`,
-          JSON.stringify({
-            title,
-            message,
-            type: notifType,
-            timestamp: new Date().toISOString(),
-          })
-        );
       }
-    }
-  }
     } catch (error) {
       this.logger.error(
-        `Failed to refresh balance on webhook for walletId=${walletId}`,
+        `Failed to process webhook for walletId=${walletId}`,
         (error as Error)?.stack,
       );
+      throw error;
     }
   }
 
@@ -897,7 +1012,7 @@ const response = (await this.circleClient.createTransaction(
     const txId = tx.data?.id;
     if (!txId) {
       throw new InternalServerErrorException(
-        'Nie udało się utworzyć transakcji addDelegate.',
+        'Failed to create addDelegate transaction.',
       );
     }
 
@@ -927,7 +1042,7 @@ const response = (await this.circleClient.createTransaction(
     const txId = tx.data?.id;
     if (!txId) {
       throw new InternalServerErrorException(
-        'Nie udało się utworzyć transakcji removeDelegate.',
+        'Failed to create removeDelegate transaction.',
       );
     }
 
@@ -938,7 +1053,7 @@ const response = (await this.circleClient.createTransaction(
 
   async deriveWalletOnChain(
     circleWalletId: string,
-    targetBlockchain: Blockchain,
+    targetBlockchain: EvmBlockchain,
   ): Promise<void> {
     this.logger.log(`Deriving wallet ${circleWalletId} on ${targetBlockchain}`);
 
@@ -947,7 +1062,7 @@ const response = (await this.circleClient.createTransaction(
     };
     const resp = (await this.circleClient.deriveWallet({
       id: circleWalletId,
-      blockchain: targetBlockchain as any,
+      blockchain: targetBlockchain,
     })) as WalletResp;
 
     this.logger.log(
@@ -962,32 +1077,18 @@ const response = (await this.circleClient.createTransaction(
     ) as Blockchain;
   }
 
-  private static readonly CHAIN_TOKEN_IDS: Record<
-    number,
-    string | undefined
-  > = {
-    5042002: undefined,
-    84532: undefined,
-    421614: undefined,
-    80001: undefined,
-    97: undefined,
-    8453: undefined,
-    42161: undefined,
-    137: undefined,
-    56: undefined,
-  };
-
-  private static readonly CHAIN_TOKEN_ENV: Record<number, string | undefined> = {
-    5042002: 'USDC_TOKEN_ID_ARC',
-    84532: 'USDC_TOKEN_ID_BASE_SEPOLIA',
-    421614: 'USDC_TOKEN_ID_ARB_SEPOLIA',
-    80001: 'USDC_TOKEN_ID_POLYGON_AMOY',
-    97: 'USDC_TOKEN_ID_BNB_TESTNET',
-    8453: 'USDC_TOKEN_ID_BASE',
-    42161: 'USDC_TOKEN_ID_ARB',
-    137: 'USDC_TOKEN_ID_POLYGON',
-    56: 'USDC_TOKEN_ID_BNB',
-  };
+  private static readonly CHAIN_TOKEN_ENV: Record<number, string | undefined> =
+    {
+      5042002: 'USDC_TOKEN_ID_ARC',
+      84532: 'USDC_TOKEN_ID_BASE_SEPOLIA',
+      421614: 'USDC_TOKEN_ID_ARB_SEPOLIA',
+      80001: 'USDC_TOKEN_ID_POLYGON_AMOY',
+      97: 'USDC_TOKEN_ID_BNB_TESTNET',
+      8453: 'USDC_TOKEN_ID_BASE',
+      42161: 'USDC_TOKEN_ID_ARB',
+      137: 'USDC_TOKEN_ID_POLYGON',
+      56: 'USDC_TOKEN_ID_BNB',
+    };
 
   getTokenIdForChain(chainId?: number): string {
     const id = chainId ?? this.getArcConfig().chainId;
@@ -997,7 +1098,7 @@ const response = (await this.circleClient.createTransaction(
         ? this.configService.get<string>('USDC_TOKEN_ID', 'USDC')
         : undefined;
     const tokenId = envKey
-      ? (this.configService.get<string>(envKey!, fallback as string) as string)
+      ? this.configService.get<string>(envKey, fallback as string)
       : fallback;
 
     if (!tokenId) {
@@ -1037,8 +1138,6 @@ const response = (await this.circleClient.createTransaction(
     };
   }
 
-
-
   async initiateGatewayDeposit(
     userId: string,
     amountString: string,
@@ -1053,11 +1152,10 @@ const response = (await this.circleClient.createTransaction(
 
     const amountDecimal = parseFloat(amountString);
     if (Number.isNaN(amountDecimal) || amountDecimal <= 0) {
-      throw new BadRequestException('Nieprawidłowa kwota depozytu.');
+      throw new BadRequestException('Invalid deposit amount.');
     }
 
     const arc = this.getArcConfig();
-    const gw = this.getGatewayConfig();
 
     const parseBalance = (value: string): string => {
       const [whole, decimal = ''] = value.split('.');
@@ -1083,7 +1181,7 @@ const response = (await this.circleClient.createTransaction(
       const approveTxId = approveTx.data?.id;
       if (!approveTxId) {
         throw new InternalServerErrorException(
-          'Nie udało się utworzyć transakcji approve.',
+          'Failed to create approve transaction.',
         );
       }
 
@@ -1106,7 +1204,7 @@ const response = (await this.circleClient.createTransaction(
       const depositTxId = depositTx.data?.id;
       if (!depositTxId) {
         throw new InternalServerErrorException(
-          'Nie udało się utworzyć transakcji deposit.',
+          'Failed to create deposit transaction.',
         );
       }
 
@@ -1134,7 +1232,7 @@ const response = (await this.circleClient.createTransaction(
 
     const amountDecimal = parseFloat(amountString);
     if (Number.isNaN(amountDecimal) || amountDecimal <= 0) {
-      throw new BadRequestException('Nieprawidłowa kwota transferu.');
+      throw new BadRequestException('Invalid transfer amount.');
     }
 
     const gw = this.getGatewayConfig();
@@ -1150,7 +1248,7 @@ const response = (await this.circleClient.createTransaction(
     };
 
     const stringifyTypedData = (obj: unknown): string => {
-      return JSON.stringify(obj, (_key, value) =>
+      return JSON.stringify(obj, (_key, value: unknown) =>
         typeof value === 'bigint' ? value.toString() : value,
       );
     };
@@ -1199,7 +1297,7 @@ const response = (await this.circleClient.createTransaction(
     const destChain = DESTINATION_CHAINS[destinationDomain];
     if (!destChain) {
       throw new BadRequestException(
-        `Nieobsługiwany domain docelowy: ${destinationDomain}`,
+        `Unsupported target domain: ${destinationDomain}`,
       );
     }
 
@@ -1257,9 +1355,7 @@ const response = (await this.circleClient.createTransaction(
 
       const burnSignature = signResponse.data?.signature;
       if (!burnSignature) {
-        throw new InternalServerErrorException(
-          'Nie udało się podpisać burn intent.',
-        );
+        throw new InternalServerErrorException('Failed to sign burn intent.');
       }
 
       const burnSignTxId = `sign-${Date.now()}`;
@@ -1279,14 +1375,14 @@ const response = (await this.circleClient.createTransaction(
 
       if (!attestation || !operatorSignature) {
         throw new InternalServerErrorException(
-          'Brak attestation lub operator signature w odpowiedzi Gateway.',
+          'Missing attestation or operator signature in Gateway response.',
         );
       }
 
       try {
         await this.deriveWalletOnChain(
           user.circleWalletId,
-          destChain.walletChain as Blockchain,
+          destChain.walletChain as EvmBlockchain,
         );
       } catch (deriveErr) {
         this.logger.warn(
@@ -1308,7 +1404,7 @@ const response = (await this.circleClient.createTransaction(
       const mintTxId = mintTx.data?.id;
       if (!mintTxId) {
         throw new InternalServerErrorException(
-          'Nie udało się utworzyć transakcji mint.',
+          'Failed to create mint transaction.',
         );
       }
 
@@ -1340,7 +1436,7 @@ const response = (await this.circleClient.createTransaction(
       if (state && terminalStates.has(state)) {
         if (state !== 'COMPLETE' && state !== 'CONFIRMED') {
           throw new InternalServerErrorException(
-            `${label} nie zakończył się sukcesem (state=${state})`,
+            `${label} transaction failed (state=${state})`,
           );
         }
         return data.transaction!;
@@ -1350,7 +1446,7 @@ const response = (await this.circleClient.createTransaction(
     }
 
     throw new InternalServerErrorException(
-      `${label} timeout — brak terminal state po ${maxAttempts * 3}s`,
+      `${label} timeout — terminal state not reached after ${maxAttempts * 3}s`,
     );
   }
 
