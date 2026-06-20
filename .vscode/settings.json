@@ -9,14 +9,4 @@
     "antigravity.workflowEditor": true
   },
   
-  // Konfiguracja Deno - zapobiega konfliktom z Node.js
-  "deno.enable": true,
-  "deno.enablePaths": [
-    "supabase/functions"
-  ],
-  "deno.importMap": "supabase/functions/storj-presigned/deno.json",
-  "deno.suggest.imports.hosts": {
-    "https://deno.land": true,
-    "https://esm.sh": true
-  }
-}
+  
