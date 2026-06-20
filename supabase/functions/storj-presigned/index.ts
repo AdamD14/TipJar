@@ -17,7 +17,16 @@ interface MyJWTPayload {
   [key: string]: unknown;
 }
 
-Deno.serve(async (req) => {
+const DenoGlobal = (globalThis as any).Deno;
+const env = {
+  get: (key: string) => DenoGlobal?.env?.get(key) as string | undefined,
+};
+
+if (!DenoGlobal?.serve) {
+  throw new Error("Deno runtime is required");
+}
+
+DenoGlobal.serve(async (req) => {
   // DYNAMICZNE LUSTRO DLA ORIGIN - przeglądarka wymaga dokładnego dopasowania
   const origin = req.headers.get("Origin") || req.headers.get("origin");
   const corsHeaders = {
@@ -63,7 +72,7 @@ Deno.serve(async (req) => {
       throw new Error("Missing token (Header & Cookie check failed)");
     }
 
-    const secret = Deno.env.get("JWT_SECRET");
+    const secret = env.get("JWT_SECRET");
     if (!secret) {
       throw new Error("Missing JWT_SECRET in environment");
     }
@@ -73,11 +82,11 @@ Deno.serve(async (req) => {
     const userId = claims.sub;
 
     // 4. Konfiguracja S3 (Storj)
-    const storjEndpoint = Deno.env.get("STORJ_ENDPOINT");
-    const storjAccessKey = Deno.env.get("STORJ_ACCESS_KEY");
-    const storjSecretKey = Deno.env.get("STORJ_SECRET_KEY");
-    const storjPublicUrlPrefix = Deno.env.get("STORJ_PUBLIC_URL_PREFIX");
-    const storjBucket = Deno.env.get("STORJ_BUCKET");
+    const storjEndpoint = env.get("STORJ_ENDPOINT");
+    const storjAccessKey = env.get("STORJ_ACCESS_KEY");
+    const storjSecretKey = env.get("STORJ_SECRET_KEY");
+    const storjPublicUrlPrefix = env.get("STORJ_PUBLIC_URL_PREFIX");
+    const storjBucket = env.get("STORJ_BUCKET");
 
     if (
       !storjEndpoint || !storjAccessKey || !storjSecretKey ||
@@ -101,8 +110,8 @@ Deno.serve(async (req) => {
     const publicUrl = `${cleanBase}/${s3Key}`;
 
     // 5. Rezerwacja Slotu w NestJS
-    const nestJsUrl = Deno.env.get("NESTJS_INTERNAL_URL");
-    const nestJsKey = Deno.env.get("NESTJS_SECRET_KEY");
+    const nestJsUrl = env.get("NESTJS_INTERNAL_URL");
+    const nestJsKey = env.get("NESTJS_SECRET_KEY");
 
     if (!nestJsUrl || !nestJsKey) {
       throw new Error("Missing NestJS configuration in Edge Function");
