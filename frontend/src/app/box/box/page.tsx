@@ -4,11 +4,12 @@ import { PremiumSubscriptionCard } from "@/components/ui/card/PremiumSubscriptio
 import { FrozenGlassErrorCard } from "@/components/ui/card/FrozenGlassErrorCard";
 import { MassTransferToggleCard } from "@/components/ui/card/MassTransferToggleCard";
 import { TacticalOverrideCard } from "@/components/ui/card/TacticalOverrideCard";
+import CreatorCard from "@/components/ui/card/CreatorCard";
 
 export default function Page() {
 
 return (
-    <div className="flex flex-wrap min-h-screen items-center justify-center gap-4 p-6">
+    <div className="flex flex-wrap items justify-align gap-14 p-10">
       {/* Karta 1: */}
       <Box2 
         variant="base" 
@@ -30,15 +31,19 @@ return (
       <div className="w-[480px] h-[240px]">
         <FrozenGlassErrorCard />
       </div>
+      <div className="w-[480px] h-[120px]">
+        <CreatorCard />
+      </div>
+      <div className="w-[480px] h-[240px]">
+        <TacticalOverrideCard />
+      </div>
       <div className="w-[480px] h-[240px]">
         <MassTransferToggleCard 
           title="MassTransferToggleCard" 
           description="Sponsor network transaction fees for your fans." 
           defaultChecked={true} 
         />
-      </div>
-      <div className="w-[480px] h-[240px]">
-        <TacticalOverrideCard />
+        
       </div>
 
     </div>
