@@ -5,7 +5,7 @@ import UsdcFinancialSummaryCard from '@/components/ui/card/UsdcFinancialSummaryC
 import LiveEventStreamCard from '@/components/ui/card/LiveEventStreamCard';
 import SmartContractActionCard from '@/components/ui/card/SmartContractActionCard';
 import AsyncInputValidationCard from '@/components/ui/card/AsyncInputValidationCard';
-import BentoCellMicroCard from '@/components/ui/card/BentoCellMicroCard';
+
 
 
 export default function Page() {
@@ -33,9 +33,7 @@ export default function Page() {
       <div className="w-[480px] h-[240px]">
         <AsyncInputValidationCard />
       </div>
-      <div className="w-[480px] h-[240px]">
-        <BentoCellMicroCard />
-      </div>
+      
     </div>
  </main>
 );

@@ -6,7 +6,6 @@ import AsynchronousStackedToastCard from '@/components/ui/card/AsynchronousStack
 import DlpAutosaveCard from '@/components/ui/card/DlpAutosaveCard';
 import PeripheralDriftIllusionCard from '@/components/ui/card/PeripheralDriftIllusionCard';
 import Web3EnigmaCard from '@/components/ui/card/Web3EnigmaCard';
-import AssumedCloseMonetizationCard from '@/components/ui/card/AssumedCloseMonetizationCard';
 
 export default function Page() {
   return (
@@ -35,9 +34,7 @@ export default function Page() {
       <div className="w-[480px] h-[240px]">
         <Web3EnigmaCard />
       </div>
-      <div className="w-[480px] h-[240px]">
-        <AssumedCloseMonetizationCard />
-      </div>
+
     </div>
   );
 }

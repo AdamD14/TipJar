@@ -16,11 +16,11 @@ export const ArtifactFrameCard: React.FC<ArtifactFrameCardProps> = ({
   onClick
 }) => {
   return (
-    <div 
+    <div
       onClick={onClick}
-      className="bg-[#003737] rounded-xl overflow-hidden group cursor-pointer border border-[#005959] relative transform-gpu transition-all duration-[400ms] hover:shadow-[0_15px_30px_rgba(0,31,31,0.7)] hover:-translate-y-1"
+      className="bg-teal-800 rounded-xl overflow-hidden group cursor-pointer border border-teal-600 relative transform-gpu transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1"
     >
-      <div className="relative w-full aspect-square bg-[#001F1F] flex items-center justify-center">
+      <div className="relative w-full aspect-square bg-teal-900 flex items-center justify-center">
         {imageUrl ? (
           <img src={imageUrl} alt={title} className="w-full h-full object-cover mix-blend-luminosity opacity-85 group-hover:opacity-100 transition-opacity duration-500" />
         ) : (
@@ -37,18 +37,16 @@ export const ArtifactFrameCard: React.FC<ArtifactFrameCardProps> = ({
             <polygon points="50,75 70,40 30,40" fill="none" stroke="#3FB5B5" strokeWidth="0.5" />
           </svg>
         )}
-        {/* Płynne wtopienie obrazka w bazowy Teal */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#003737] via-transparent to-transparent opacity-90"></div>
-        {/* Rarity Pill Badge z Emissive Neon Glow */}
-        <div className="absolute top-3 right-3 bg-[#4D194D]/90 border border-[#9932CC] text-[#E0F2F2] font-mono text-[10px] px-2 py-0.5 rounded-full shadow-[0_0_12px_rgba(77,25,77,0.8)]">
+        <div className="absolute inset-0 bg-gradient-to-t from-teal-800 via-transparent to-transparent opacity-90"></div>
+        <div className="absolute top-3 right-3 bg-purple-300/90 border border-purple-300 text-teal-25 font-mono text-[10px] px-2 py-0.5 rounded-full shadow-[0_0_12px_rgba(77,25,77,0.8)]">
           {rarity}
         </div>
       </div>
       <div className="p-4 absolute bottom-0 w-full z-10">
-        <h3 className="font-['Mukta_Malar'] text-[#E0F2F2] text-lg font-medium">{title}</h3>
+        <h3 className="font-heading text-teal-25 text-lg font-medium">{title}</h3>
         <div className="flex justify-between items-end mt-1">
-          <span className="font-mono text-[#CCF7F4] text-xs">Highest Bid</span>
-          <span className="font-mono text-[#FFD700] text-sm font-bold drop-shadow-[0_0_4px_rgba(255,215,0,0.6)]">{highestBid}</span>
+          <span className="font-mono text-teal-50 text-xs">Highest Bid</span>
+          <span className="font-mono text-gold-400 text-sm font-bold drop-shadow-[0_0_4px_rgba(255,215,0,0.6)]">{highestBid}</span>
         </div>
       </div>
     </div>

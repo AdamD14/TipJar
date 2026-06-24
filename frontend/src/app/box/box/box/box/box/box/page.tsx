@@ -1,26 +1,21 @@
-import Web3SkeletonShimmerCard from '@/components/ui/card/Web3SkeletonShimmerCard';
-import WideRefractiveChartCard from '@/components/ui/card/WideRefractiveChartCard';
-import DestructiveRollbackCard from '@/components/ui/card/DestructiveRollbackCard';
-import TopLayerWebAuthnModalOverlay from '@/components/ui/card/TopLayerWebAuthnModalOverlay';
+import CommunityGatedCard from '@/components/ui/card/CommunityGatedCard';
+import { ConflictResolutionCard } from '@/components/ui/card/ConflictResolutionCard';
+import { ContextualHelpCard } from '@/components/ui/card/ContextualHelpCard';
 
 export default function Page() {
   return (
-   <main id="main-content">
-  <div className="flex flex-wrap items-center justify-between p-16 gap-20">
-      <div className="w-[480px] h-[240px]">
-        <WideRefractiveChartCard />
+    <main id="main-content" className="min-h-screen flex items-center justify-center p-4">
+      <div className="grid grid-cols-3 gap-12 w-full max-w-7xl">
+        <div className="flex items-center justify-center">
+          <CommunityGatedCard isLocked={true} />
+        </div>
+        <div className="flex items-center justify-center">
+          <ConflictResolutionCard />
+        </div>
+        <div className="flex items-center justify-center">
+          <ContextualHelpCard />
+        </div>
       </div>
-        <div className="w-[480px] h-[240px]">
-            <Web3SkeletonShimmerCard />
-        </div>
-        <div className="w-[480px] h-[240px]">
-            <DestructiveRollbackCard />
-        </div>
-        <div className="w-[480px] h-[240px]">
-            <TopLayerWebAuthnModalOverlay />
-        </div>
-    
-    </div>
- </main>
-);
-}
+    </main>
+  );
+ }
