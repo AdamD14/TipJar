@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 
 export interface CreatorIdentityHeroCardProps {
@@ -7,11 +9,6 @@ export interface CreatorIdentityHeroCardProps {
   onCardClick?: () => void;
 }
 
-/**
- * WARIANT 1: Karta Tożsamości Twórcy (Creator Identity Hero Card)
- * LOKALIZACJA W DRZEWIE: creator-desktop/desktop/creator-pulse/
- * Opis: Punkt centralny ekonomii twórców z płynną typografią i geometrycznym tłem wektorowym.
- */
 export const CreatorIdentityHeroCard: React.FC<CreatorIdentityHeroCardProps> = ({
   name = 'CreatorIdentityHeroCard',
   username = '@decentralized_mind',
@@ -20,57 +17,6 @@ export const CreatorIdentityHeroCard: React.FC<CreatorIdentityHeroCardProps> = (
 }) => {
   return (
     <>
-      <style>{`
-        .base-card {
-          position: relative;
-          clip-path: url(#squircle-clip);
-          background-color: var(--teal-800, #002F2F);
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-          overflow: hidden;
-          contain: layout paint style;
-          isolation: isolate;
-        }
-        .card-hero {
-          display: flex;
-          flex-direction: column;
-          padding: 32px;
-          background: linear-gradient(135deg, var(--teal-800, #002F2F) 0%, var(--teal-900, #001F1F) 100%);
-          transition: transform 400ms var(--ease-spring, cubic-bezier(0.175, 0.885, 0.32, 1.275)), 
-                      box-shadow 400ms var(--ease-spring, cubic-bezier(0.175, 0.885, 0.32, 1.275));
-          cursor: pointer;
-          outline: none;
-        }
-        .card-hero:hover, .card-hero:focus-visible {
-          transform: translateY(-8px) scale(1.02);
-          box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 20px var(--gold-bloom, rgba(255, 215, 0, 0.15));
-        }
-        .hero-pattern-overlay {
-          position: absolute;
-          inset: 0;
-          z-index: -1;
-          background-image: url('data:image/svg+xml;utf8,<svg width="40" height="40" xmlns="http://www.w3.org/2000/svg"><path d="M0 20h40M20 0v40" stroke="%239D4EDD" stroke-width="0.75" stroke-opacity="0.15"/></svg>');
-          mask-image: radial-gradient(circle at top right, black 10%, transparent 85%);
-          -webkit-mask-image: radial-gradient(circle at top right, black 10%, transparent 85%);
-        }
-        .hero-avatar {
-          width: 72px;
-          height: 72px;
-          border-radius: 50%;
-          object-fit: cover;
-          position: relative;
-          z-index: 2;
-        }
-        .avatar-ring {
-          position: absolute;
-          inset: -4px;
-          border-radius: 50%;
-          background: linear-gradient(135deg, var(--gold-400, #FFD700), var(--purple-300, #9D4EDD));
-          z-index: 1;
-          opacity: 0.8;
-        }
-      `}</style>
-
-      {/* Jednorazowy element definicji masek i filtrów (odporny na SSR) */}
       <svg width="0" height="0" style={{ position: 'absolute', pointerEvents: 'none' }} aria-hidden="true">
         <defs>
           <clipPath id="squircle-clip" clipPathUnits="objectBoundingBox">
@@ -79,28 +25,46 @@ export const CreatorIdentityHeroCard: React.FC<CreatorIdentityHeroCardProps> = (
         </defs>
       </svg>
 
-      <article 
-        className="base-card card-hero" 
-        tabIndex={0} 
+      <article
+        className="relative overflow-hidden isolate bg-surface-base shadow-2 cursor-pointer outline-none
+                    flex flex-col p-8
+                    transition-transform duration-400 ease-spring,shadow duration-400 ease-spring
+                    hover:-translate-y-2 hover:scale-[1.02] hover:shadow-card-hover
+                    focus-visible:-translate-y-2 focus-visible:scale-[1.02] focus-visible:shadow-card-hover"
+        style={{
+          clipPath: 'url(#squircle-clip)',
+          background: 'linear-gradient(135deg, var(--color-teal-800) 0%, var(--color-teal-900) 100%)'
+        }}
+        tabIndex={0}
         aria-label={`Profil Twórcy: ${name}`}
         onClick={onCardClick}
       >
-        <div className="hero-pattern-overlay" aria-hidden="true"></div>
+        <div
+          className="absolute inset-0 -z-10 pointer-events-none"
+          style={{
+            backgroundImage: "url('data:image/svg+xml;utf8,<svg width=\"40\" height=\"40\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 20h40M20 0v40\" stroke=\"%239D4EDD\" stroke-width=\"0.75\" stroke-opacity=\"0.15\"/></svg>')",
+            maskImage: 'radial-gradient(circle at top right, black 10%, transparent 85%)',
+            WebkitMaskImage: 'radial-gradient(circle at top right, black 10%, transparent 85%)'
+          }}
+          aria-hidden="true"
+        />
         <div className="flex items-center gap-6 relative z-10">
-          <div className="avatar-container relative">
-            <img 
-              src={avatarUrl} 
-              alt={`Awatar użytkownika ${name}`} 
-              className="hero-avatar"
-              loading="lazy" 
+          <div className="relative">
+            <div className="absolute -inset-1 rounded-full z-[1] opacity-80"
+              style={{ background: 'linear-gradient(135deg, var(--color-gold-400), var(--color-purple-300))' }}
             />
-            <div className="avatar-ring"></div>
+            <img
+              src={avatarUrl}
+              alt={`Awatar użytkownika ${name}`}
+              className="w-[72px] h-[72px] rounded-full object-cover relative z-[2]"
+              loading="lazy"
+            />
           </div>
-          <div className="hero-typography">
-            <h1 className="text-[clamp(1.5rem,4vw,2.25rem)] font-semibold text-white leading-none m-0 mb-1">
+          <div>
+            <h1 className="text-[clamp(1.5rem,4vw,2.25rem)] font-semibold text-text-primary leading-none m-0 mb-1">
               {name}
             </h1>
-            <p className="text-[#5C7A7A] text-[clamp(0.875rem,1.5vw,1rem)] m-0 font-mono">
+            <p className="font-mono text-teal-100/50 text-[clamp(0.875rem,1.5vw,1rem)] m-0">
               {username}
             </p>
           </div>

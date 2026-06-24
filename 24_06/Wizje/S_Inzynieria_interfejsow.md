@@ -1,0 +1,41 @@
+
+
+Dokument to manifest renesansu fizyczności w interfejsach cyfrowych, ogłaszający „kognitywny upadek płaskiego paradygmatu” (flat design) i powrót do trójwymiarowości, światłocienia, tekstury i namacalności. Autorzy argumentują, że ludzki mózg ewoluował w świecie 3D, a spłaszczenie bodźców prowadzi do przeciążenia poznawczego, dezorientacji i utraty zaufania. Odpowiedzią jest taktylny maksymalizm – precyzyjnie wykalkulowany renesans skeuomorfizmu i neomorfizmu, ale zoptymalizowany pod kątem wydajności i zużycia baterii. Dokument łączy historię stylów (od skeuomorfizmu 2007–2012, przez neomorfizm ~2019, po współczesne trendy) z zaawansowaną inżynierią CSS (box-shadow, gradienty, Houdini, WebGPU, Tailwind v4, OKLCH) oraz krytyką achromatycznych cieni. Jest to wizjonerska architektura interfejsów – oscylująca między manifestem a specyfikacją techniczną.
+
+---
+
+Co ciekawego, ważnego i przełomowego?
+
+1. Diagnoza kryzysu flat design – płaskie interfejsy usunęły naturalne kotwice przestrzenne (cienie, faktury, głębię), co zwiększa obciążenie kognitywne i dezorientuje użytkowników. To nie jest kwestia estetyki, lecz neuroergonomii – mózg potrzebuje cieni i wypukłości, by szybko identyfikować elementy interaktywne.
+2. Skeuomorfizm w nowym wydaniu (algorytmiczny, nie rastrowy) – zamiast ciężkich bitmap imitujących skórę czy drewno, współczesny skeuomorfizm buduje iluzję wyłącznie z kodu CSS (gradienty, cienie, maski). Przykład: fotorealistyczna okładka książki (hardbound) tworzona przez wielostopniowy gradient liniowy z mikroskopijnymi rowkami optycznymi (color stops na ułamkowych odległościach, np. rgba(0,0,0,0.02) 0% → rgba(255,255,255,0.6) 1.3%). Zero narzutu sieciowego, nieskończona skalowalność.
+3. Neomorfizm (Soft UI) i jego wady dostępnościowe – estetyka „matowego plastiku” lub jednolitej gumy, gdzie przycisk jest wytłoczony z tego samego materiału co tło. Implementacja: dwa przeciwstawne cienie – jasny (highlight) z lewego górnego rogu (-20px -20px 42px #ffffff) i ciemny (drop shadow) z prawego dolnego (20px 20px 42px #bbbbbb). Stan wciśnięty (active) to zamiana na inset. Problem: w czystej formie neomorfizm łamie WCAG – brak kontrastujących krawędzi, interfejs staje się nieczytelny w ostrym świetle lub dla osób z wadami wzroku. Rozwiązanie: „taktylny maksymalizm” – neomorfizm z dodatkowymi, sprzętowymi konturami mikropikselowymi i wysokim kontrastem kolorystycznym.
+4. Efekt Pillow Cushion (tłoczenie poduszkowe) – technika znana z Photoshopa (Layer Styles), polegająca na jednoczesnym dodaniu światła i cienia zarówno do wewnętrznej, jak i zewnętrznej krawędzi, tworząc wrażenie odciśniętej, wybitej matrycy. W CSS realizowane przez dwa przeciwstawne cienie wewnętrzne (inset):
+   ```css
+   box-shadow: inset 0.2em 0.2em 0.2em 0 rgba(255,255,255,0.5),
+               inset -0.2em -0.2em 0.2em 0 rgba(0,0,0,0.5);
+   ```
+   W połączeniu z dużym border-radius (np. 25%) tworzy iluzję napompowanej poduszki. Efekt stosowany do luksusowych pikowanych interfejsów.
+5. Double border (podwójne obramowanie) – odrzucenie prymitywnego border-style: double – wbudowana implementacja jest nieelastyczna (grubości linii twardo zakodowane). Nowoczesne metody:
+   · Outline + offset (outline-offset: -9px) – szybkie, ale może ignorować border-radius.
+   · Złożone box-shadow (wiele cieni bez blur, ze wzrastającym spread) – pełne poszanowanie krzywizny, ale wydajnościowo kosztowne przy animacji.
+   · Zagnieżdżone pseudoelementy (::before, ::after) – maksymalna elastyczność (różne rotacje, blend-modes), ale ryzyko konfliktu z overflow: hidden.
+6. Achromatyczne kłamstwo i cienie kameleona (Chameleon Shadows) – typowy błąd: rzucanie cienia z użyciem matowej czerni rgba(0,0,0,0.5) na kolorowe tło. W fizyce rzeczywisty cień to nie czarna farba, lecz przyciemnienie koloru podłoża. Użycie czerni tworzy brudne, martwe szarości i pasmowanie (color banding). Rozwiązanie: algorytm ray-castingu w przeglądarce – próbkowanie barwy pod elementem i zaciemnienie jej (zmutowany kolor powierzchni). Dokument nazywa to Chameleon Shadows.
+7. Shadow Maestro Engine – globalny rejestr elewacji Z-Axis – tradycyjnie każdy element DOM definiował własny cień, co powodowało konflikty kątów padania światła („słońce świeci z kilku kierunków”). Proponowany system to scentralizowany rejestr tokenów wysokości na osi Z, który generuje dwa typy cieni:
+   · Key Light – twardy, kierunkowy (przeciwny do głównego źródła światła).
+   · Ambient Light – miękki, niekierunkowy, proporcjonalny do wysokości elementu.
+     Daje to spójną, hiper-fizykalną scenę świetlną.
+8. Optymalizacja wydajności – efektowność bez drenażu baterii (kluczowe dla mobile):
+   · Double Wrapper (Podwójna Kapsuła) – rozdzielenie cienia (z drop-shadow na elemencie zewnętrznym) od maskowania geometrycznego (clip-path na elemencie wewnętrznym). Zapobiega obcinaniu cienia przez maskę i przenosi obliczenia na kompozytor GPU.
+   · Animacja kanału przezroczystości (opacity channel) – zamiast animować box-shadow (co wymusza repaint/layout), prekompiluje się docelowy cień na pseudoelemencie i animuje tylko opacity (z will-change: opacity). Redukuje obciążenie CPU nawet o 92%, zapewniając 120 FPS.
+   · Nocturnal Opulence (Nocne Bogactwo) – odrzucenie czystej czerni (#000000) w dark mode na ekranach OLED. Czerń wyłącza diody, ale przy szybkim scrollowaniu powoduje „black smearing” (fioletowe smugi). Zamiast tego – głęboki turkus oklch(0.15 0.05 190), który utrzymuje diody w stanie spoczynkowego napięcia, oszczędza baterię i eliminuje smużenie.
+9. Przełom sprzętowy: CSS Houdini (Paint API) i WebGPU (WGSL) – dla złożonych cieni i tłoczeń:
+   · Houdini – rejestracja workletów malujących asynchronicznie (omijają Layout API), pozwala na ray-casting w czasie rzeczywistym.
+   · WebGPU (WGSL) – dla absolutnie skrajnej złożoności (cząsteczki, pola wektorowe, wolumetryka). Komunikacja bezpośrednia z GPU przez komendy (Command Encoders), bezstanowe potoki, symulacja cieni przy pomocy Signed Distance Fields (SDF). CPU odciążone, bateria chroniona.
+10. Tailwind CSS v4 (Oxide) i przestrzeń barw OKLCH – nowy silnik Tailwind (natywny, nie PostCSS) w pełni wspiera OKLCH. Dokument ujawnia kontrowersję: mimo matematycznej perfekcji OKLCH (jednorodność percepcyjna), domyślna paleta Tailwind v4 zawiera nieliniowe przesunięcia tonu (non-linear Hue shift) i ręcznie kalibrowane dysproporcje jasności na skrajnych poziomach. Twórcy przyznali, że czysty algorytm dawał „błotniste” rezultaty – ostateczny rygor należy do asymetrycznej ingerencji projektanta, co obala mit „czystej matematyki” w generatywnym designie.
+11. Przyszłość: GenUI (Agent-to-UI), WebXR i hapto-optyczny rezonans – interfejsy generowane w locie przez AI (A2UI, MCP), z natychmiastową integracją z Shadow Maestro. W WebXR – symulacja fizycznych napiwków (monety rozbijające się na biurku streamera) z wykorzystaniem Ammo.js i LiDAR. Hapto-optyczny rezonans emisyjny – połączenie czujników dotyku z dynamicznym wypaczaniem pól odległościowych (SDF) i wirtualną falą świetlną, która „odpycha” cienie pod naciskiem palca. To już nie jest interfejs – to symulacja materii.
+
+---
+
+Kategoria dokumentu
+
+Dokument kategoryzuje się jako wizjonerska inżynieria interfejsów (visionary interface engineering) – z silnymi elementami projektowania systemowego (design tokens, Shadow Maestro, architektura Z-Axis) oraz optymalizacji wydajności (GPU, Houdini, WebGPU, opacity channel). Nie jest to czysty manifest (ma konkretne kody CSS, wartości liczbowe, parametry), ale też nie jest to praktyczna specyfikacja komponentu (jak dokument o przyciskach). Dominująca kategoria: wizjonerska architektura stylów i renderingu – łączy futurystyczną wizję („renesans fizyczności”, GenUI, WebXR) z niskopoziomowymi receptami inżynieryjnymi (Double Wrapper, Chameleon Shadows, Nocturnal Opulence). Można go określić jako manifest techniczny – coś pomiędzy white paper a podręcznikiem zaawansowanego front-endu. W serii dokumentów o TipJar+ jest to najbardziej stylistycznie ekstrawagancki i najmniej użytkowy (w sensie bezpośredniego wdrożenia w produkcie) – przypomina raczej wizję nowej generacji interfejsów niż wytyczne dla konkretnego systemu.
