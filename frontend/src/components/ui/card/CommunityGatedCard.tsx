@@ -17,10 +17,10 @@ backgroundPosition: 'center'
 />
 {isLocked ? (
 <div className="relative z-10 flex flex-col items-center justify-center py-10">
-<svg className="w-12 h-12 mb-4 text-teal-900 drop-shadow-[0_1px_1px_rgba(204,247,244,0.15)]" viewBox="0 0 24 24" fill="currentColor">
+<svg className="w-12 h-12 mb-4 text-teal-200" viewBox="0 0 24 24" fill="currentColor">
 <path d="M12 2C9.243 2 7 4.243 7 7v3H6c-1.103 0-2 .897-2 2v8c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2v-8c0-1.103-.897-2-2-2h-1V7c0-2.757-2.243-5-5-5zm-3 5c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9V7z" />
 </svg>
-<span className="text-xl font-bold tracking-[0.2em] text-gold-400 text-shadow-[0px_1px_0px_rgba(204,247,244,0.15),0px_-1px_0px_rgba(0,0,0,0.8)]">
+<span className="text-xl font-bold tracking-[0.2em] text-teal-200">
 Community Gated Card
 </span>
 </div>
