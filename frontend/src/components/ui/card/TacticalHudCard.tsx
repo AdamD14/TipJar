@@ -4,10 +4,6 @@ export interface TacticalHudCardProps {
   systemStatus?: string;
 }
 
-/**
- * KARTA IX: Interfejs Nawigacji Optycznej (Tactical HUD Card)
- * LOKALIZACJA W DRZEWIE: creator-desktop/studio/live/overlays/
- */
 export const TacticalHudCard: React.FC<TacticalHudCardProps> = ({
   systemStatus = 'TacticalHudCard'
 }) => {
@@ -15,37 +11,53 @@ export const TacticalHudCard: React.FC<TacticalHudCardProps> = ({
     <>
       <style>{`
         .card-tactical-hud {
-          border-radius: 12px; 
+          border-radius: 12px;
           padding: 24px;
-          height: 250px; 
+          height: 250px;
           position: relative;
           background-color: var(--teal-900, #001F1F);
           border: 1px solid var(--teal-700, #004C4C);
+          transition: filter 0.3s ease;
+        }
+        .card-tactical-hud:hover {
+          filter: brightness(1.03);
+        }
+        .card-tactical-hud:hover .radar-scan {
+          filter: brightness(1.15);
         }
         .radar-scan {
-          position: absolute; 
-          top: 50%; 
-          left: 50%; 
+          position: absolute;
+          top: 50%;
+          left: 50%;
           transform: translate(-50%, -50%);
-          width: 100px; 
+          width: 100px;
           height: 100px;
-          border-radius: 50%; 
-          border: 1px solid rgba(77, 25, 77, 0.5);
+          border-radius: 50%;
+          border: 1px solid color-mix(in oklch, var(--gold-400, #FFD700) 50%, transparent);
+          transition: filter 0.3s ease;
         }
       `}</style>
 
-      <article className="TacticalHudCard" style={{ backgroundImage: 'url(#tacticalPattern)' }}>
+      <article
+        className="card-tactical-hud glass-liquid gpu-layer"
+        style={{ backgroundImage: 'url(#tacticalPattern)' }}
+      >
         <div className="hud-overlay absolute top-4 left-4 z-20">
-          <h4 className="font-plex-mono text-[#FFD700] text-xs font-bold tracking-wide">
+          <h4
+            className="text-xs font-bold tracking-wide font-heading"
+            style={{ color: 'var(--gold-400, #FFD700)' }}
+          >
             {systemStatus}
           </h4>
         </div>
         <div className="radar-scan flex items-center justify-center">
-          <div className="reticle-core w-2 h-2 rounded-full bg-[#FFD700]" />
+          <div
+            className="reticle-core w-2 h-2 rounded-full"
+            style={{ backgroundColor: 'var(--gold-400, #FFD700)' }}
+          />
         </div>
       </article>
 
-      {/* Dynamicznie wstrzykiwany wzór HUD do powtórzeń w tle */}
       <svg style={{ width: 0, height: 0, position: 'absolute' }} aria-hidden="true">
         <defs>
           <pattern id="tacticalPattern" width="160" height="160" patternUnits="userSpaceOnUse">

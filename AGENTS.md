@@ -81,3 +81,17 @@ PRZESTRZEGAC POLECEN, ZAKAZ IMPROWIZACJI, PODWÓJNE UPEWNIANIE SIE JAK NIE MA JA
 - Do not touch: Header, Hero, Footer (unless explicitly requested)
 - Creator components follow the gold accent from `rules/cards.md`
 - Card interactive hover: teal-600 bg, -translate-y-1.5, double box-shadow with gold glow
+
+## Preview Page Rule
+- **Preview page**: `frontend/src/app/box/box/box/box/box/box/page.tsx`
+- Po każdej edycji komponentów: na stronie podgląd wyświetlaj **tylko aktualnie edytowane komponenty** (max 3 w grid 3-kolumnowym)
+- **Usuwaj stare importy** — strona to podgląd bieżący, nie archiwum
+- Użytkownik ma tę stronę odpaloną na monitorze cały czas
+
+## ULEPSZAJ, NIE UPRASZCZAJ
+- Refaktoryzacja = **ulepszanie** kart, NIE usuwanie efektów wizualnych
+- ZAKAZ usuwania: pseudo-elementów, SVG filtrów, animacji, clip-path, decorative patterns
+- ZAKAZ zamieniania CSS klas na gołe inline style — używaj globals + dopisuj style обогащające
+- Każdy efekt oryginalny musi zostać zachowany lub **ulepszony** (nie usunięty)
+- Jeśli globals nie ma odpowiedniej klasy — dopisz inline style ale zachowaj efekt
+- Przy refaktoryzacji: tokeny z globals TAK, usuwanie efektów NIE

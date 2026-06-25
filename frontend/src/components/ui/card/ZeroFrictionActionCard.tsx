@@ -7,10 +7,6 @@ export interface ZeroFrictionActionCardProps {
   onExecute?: () => void;
 }
 
-/**
- * LOKALIZACJA W DRZEWIE: creator-desktop/desktop/quick-actions/ (alternatywnie: wallet/deposit/)
- * Zabezpieczony przed scroll-swipe interfejs aktywacyjny oparty na GPU.
- */
 export const ZeroFrictionActionCard: React.FC<ZeroFrictionActionCardProps> = ({
   title = 'ZeroFrictionActionCard',
   buttonText = 'Sign Transaction',
@@ -24,7 +20,7 @@ export const ZeroFrictionActionCard: React.FC<ZeroFrictionActionCardProps> = ({
   const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
     if (e.pointerType !== 'touch' && e.pointerType !== 'mouse') return;
     isScrollingRef.current = false;
-    
+
     pressTimerRef.current = setTimeout(() => {
       if (!isScrollingRef.current) {
         setIsPressed(true);
@@ -52,26 +48,60 @@ export const ZeroFrictionActionCard: React.FC<ZeroFrictionActionCardProps> = ({
   };
 
   return (
-    <article className="action-card bg-[#003737] rounded-xl p-6">
-      <div className="card-header mb-4">
-        <h3 className="text-[clamp(1.2rem,1.5vw+0.875rem,1.5rem)] font-semibold text-[#E0F2F2] font-['Mukta_Malar']">
-          {title}
-        </h3>
-      </div>
-      <button
-        id="cta-contract"
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handleRelease}
-        onPointerCancel={handleRelease}
-        className={`action-cta font-bold bg-[#FFD700] text-[#001F1F] text-[clamp(1rem,0.5vw+0.875rem,1.125rem)] border-none rounded-lg py-4 px-8 w-full transition-all duration-[400ms] cursor-pointer ${
-          isPressed ? 'is-physically-pressed' : ''
-        }`}
-        style={{ touchAction: 'pan-y pinch-zoom' }}
+    <>
+      <style>{`
+        .card-zero-friction:hover {
+          filter: brightness(1.04);
+        }
+        .card-zero-friction:hover .action-cta {
+          filter: brightness(1.08);
+        }
+        .action-cta {
+          transition: transform 150ms ease, filter 150ms ease;
+        }
+        .is-physically-pressed {
+          transform: scale(0.97);
+          filter: brightness(0.92);
+        }
+      `}</style>
+
+      <article
+        className="card-zero-friction rounded-xl p-6 glass-liquid gpu-layer"
+        style={{
+          backgroundColor: 'var(--teal-800, #003737)',
+        }}
       >
-        {buttonText}
-      </button>
-    </article>
+        <div className="card-header mb-4">
+          <h3
+            className="text-[clamp(1.2rem,1.5vw+0.875rem,1.5rem)] font-semibold"
+            style={{
+              color: 'var(--color-text-secondary, #E0F2F2)',
+              fontFamily: 'var(--font-heading)',
+            }}
+          >
+            {title}
+          </h3>
+        </div>
+        <button
+          id="cta-contract"
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handleRelease}
+          onPointerCancel={handleRelease}
+          className={`action-cta font-bold border-none rounded-lg py-4 px-8 w-full cursor-pointer ${
+            isPressed ? 'is-physically-pressed' : ''
+          }`}
+          style={{
+            touchAction: 'pan-y pinch-zoom',
+            backgroundColor: 'var(--gold-400, #FFD700)',
+            color: 'var(--teal-900, #001F1F)',
+            fontSize: 'clamp(1rem, 0.5vw + 0.875rem, 1.125rem)',
+          }}
+        >
+          {buttonText}
+        </button>
+      </article>
+    </>
   );
 };
 

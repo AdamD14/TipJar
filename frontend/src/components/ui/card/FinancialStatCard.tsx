@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 
 type FinancialStatSummaryProps = {
@@ -7,37 +8,59 @@ type FinancialStatSummaryProps = {
 };
 
 export default function FinancialStatCard({ value, label, trend }: FinancialStatSummaryProps) {
-return (
-<div className="relative p-6 rounded-[20px] bg-gradient-to-br
-from-[#002828] to-[#001111] shadow-[0_12px_25px_rgba(0,17,17,0.7)]
-group">
-{/* Subtelny Border Box-Shadow chroniący promień maskowania */}
-<div className="absolute inset-0 rounded-[20px]
-pointer-events-none shadow-[inset_0_0_0_1px_rgba(204,247,244,0.08)]"
-/>
-<p className="text-[#CCF7F4]/60 text-xs font-semibold uppercase
-tracking-[0.15em] mb-3">
-{label}
-</p>
-<div className="flex items-baseline gap-4 mb-6">
-{/* Typografia Tabelaryczna (tnum) zapobiegająca drżeniu
-znaków numerycznych */}
-<h3 className="text-4xl font-black text-
-font-feature-settings-tnum
-drop-shadow-[0_0_12px_rgba(255,215,0,0.3)]">
-{value}
-</h3>
-<span className="text-sm font-bold text-">{trend}</span>
-</div>
-{/* Wklęśnięcie (Pillow Cushion Deboss) dla koryta postępu */} <div className="w-full h-[14px] rounded-full bg-[#001111]
-shadow-[inset_1px_2px_4px_rgba(0,0,0,0.8),inset_-1px_-1px_2px_rgba(204
-,247,244,0.05)] relative overflow-hidden">
-{/* Płynąca energia: Emisyjny Glow we wnętrzu koryta */}
-<div className="absolute top-0 left-0 h-full w-[72%]
-bg-gradient-to-r from-[#003737] to-
-shadow-[0_0_8px_rgba(255,215,0,0.8)] rounded-full transition-all
-duration-1000 ease-in-out" />
-</div>
-</div>
-);
+  return (
+    <div className="glass-liquid gpu-layer shadow-maestro elevation-z-2 rounded-[20px] p-6 group"
+      style={{ transition: 'filter 0.25s ease' }}
+      onMouseEnter={(e) => { e.currentTarget.style.filter = 'brightness(1.06)'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.filter = 'brightness(1)'; }}
+    >
+      <div className="absolute inset-0 rounded-[20px] pointer-events-none"
+        style={{ boxShadow: 'inset 0 0 0 1px color-mix(in oklch, var(--teal-100) 8%, transparent)' }}
+      />
+
+      <p
+        className="text-xs font-semibold uppercase mb-3"
+        style={{
+          color: 'color-mix(in oklch, var(--teal-100) 60%, transparent)',
+          letterSpacing: '0.15em',
+        }}
+      >
+        {label}
+      </p>
+
+      <div className="flex items-baseline gap-4 mb-6">
+        <h3
+          className="text-4xl font-black font-heading"
+          style={{
+            color: 'var(--text-primary)',
+            fontVariantNumeric: 'tabular-nums',
+          }}
+        >
+          {value}
+        </h3>
+        <span
+          className="text-sm font-bold"
+          style={{ color: trend.startsWith('+') ? 'var(--color-success-base)' : 'var(--color-error-base)' }}
+        >
+          {trend}
+        </span>
+      </div>
+
+      <div
+        className="w-full h-[14px] rounded-full relative overflow-hidden"
+        style={{
+          backgroundColor: 'var(--teal-900)',
+          boxShadow: 'inset 1px 2px 4px rgba(0,0,0,0.8), inset -1px -1px 2px color-mix(in oklch, var(--teal-100) 5%, transparent)',
+        }}
+      >
+        <div
+          className="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-in-out"
+          style={{
+            width: '72%',
+            background: 'linear-gradient(to right, var(--teal-800), var(--gold-400))',
+          }}
+        />
+      </div>
+    </div>
+  );
 }

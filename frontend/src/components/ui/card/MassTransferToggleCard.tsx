@@ -19,25 +19,56 @@ export const MassTransferToggleCard: React.FC<MassTransferToggleCardProps> = ({
   const handleToggle = () => {
     const nextState = !checked;
     setChecked(nextState);
-    if (onToggle) {
-      onToggle(nextState);
-    }
+    if (onToggle) onToggle(nextState);
   };
 
   return (
-    <div className="bg-[#002121] rounded-xl p-5 border border-[#003737] flex items-center justify-between shadow-[0_6px_15px_rgba(0,31,31,0.6)] group hover:border-[#004545] transition-colors duration-300">
+    <div
+      className="glass-liquid gpu-layer relative w-full rounded-xl p-5 flex items-center justify-between"
+      style={{
+        border: '1px solid color-mix(in oklch, var(--teal-100) 15%, transparent)',
+        transition: 'filter 0.3s ease',
+      }}
+      onMouseEnter={(e) => { e.currentTarget.style.filter = 'brightness(1.05)'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.filter = ''; }}
+    >
       <div className="mr-4">
-        <h4 className="font-['Mukta_Malar'] text-[#E0F2F2] text-md font-semibold">{title}</h4>
-        <p className="font-mono text-[#CCF7F4]/60 text-xs mt-0.5">{description}</p>
+        <h4
+          className="text-md font-semibold font-heading"
+          style={{ color: 'var(--color-text-secondary)' }}
+        >
+          {title}
+        </h4>
+        <p
+          className="text-xs mt-0.5"
+          style={{ color: 'color-mix(in oklch, var(--color-text-tertiary) 60%, transparent)' }}
+        >
+          {description}
+        </p>
       </div>
-      {/* The Mass Transfer Toggle */}
-      <button 
+      <button
         onClick={handleToggle}
-        className="relative w-14 h-7 rounded-full bg-[#001111] shadow-[inset_0_2px_8px_rgba(0,0,0,0.9),inset_0_0_0_1px_rgba(0,55,55,0.4)] flex items-center p-1 cursor-pointer transition-colors duration-300 outline-none focus:ring-2 focus:ring-[#9932CC] focus:ring-offset-2 focus:ring-offset-[#002121]"
+        className="relative w-14 h-7 rounded-full flex items-center p-1 cursor-pointer outline-none focus:ring-2 focus:ring-offset-2"
+        style={{
+          backgroundColor: 'var(--teal-900)',
+          boxShadow: 'inset 0 2px 8px color-mix(in oklch, #000 90%, transparent), inset 0 0 0 1px color-mix(in oklch, var(--teal-800) 40%, transparent)',
+          transition: 'background-color 0.3s',
+          ['--tw-ring-color' as string]: 'var(--gold-400)',
+          ['--tw-ring-offset-color' as string]: 'var(--teal-800)',
+        }}
       >
-        {/* Masa przeciskająca się do odpowiedniego bieguna */}
-        <div className={`w-5 h-5 rounded-full bg-[#9932CC] shadow-[0_0_10px_#9932CC] transform transition-transform duration-[400ms] ${checked ? 'translate-x-7' : 'translate-x-0'}`}></div>
+        <div
+          className="w-5 h-5 rounded-full transform"
+          style={{
+            backgroundColor: 'var(--gold-400)',
+            boxShadow: `0 0 10px color-mix(in oklch, var(--gold-400) 60%, transparent)`,
+            transition: 'transform 400ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease',
+            transform: checked ? 'translateX(28px)' : 'translateX(0)',
+          }}
+        />
       </button>
     </div>
   );
 };
+
+export default MassTransferToggleCard;

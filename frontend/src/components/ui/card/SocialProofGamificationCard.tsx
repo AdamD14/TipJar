@@ -2,7 +2,7 @@ import React from 'react';
 
 export interface AvatarItem {
   initials: string;
-  rotation: string; // np. "135deg" lub "-45deg"
+  rotation: string;
 }
 
 export interface SocialProofGamificationCardProps {
@@ -10,10 +10,6 @@ export interface SocialProofGamificationCardProps {
   avatars?: AvatarItem[];
 }
 
-/**
- * LOKALIZACJA W DRZEWIE: creator-desktop/community/followers/ (alternatywnie: desktop/recommendations/)
- * Dymorfizm dowodu społecznego zabezpieczony twardym radial-gradientem przed zlewaniem.
- */
 export const SocialProofGamificationCard: React.FC<SocialProofGamificationCardProps> = ({
   title = 'SocialProofGamificationCard',
   avatars = [
@@ -23,34 +19,61 @@ export const SocialProofGamificationCard: React.FC<SocialProofGamificationCardPr
   ]
 }) => {
   return (
-    <article className="social-proof-card bg-[#003737] border-l-4 border-[#4D194D] p-6">
-      <div className="insight-header">
-        <h4 className="text-[clamp(1rem,0.5vw+0.875rem,1.125rem)] font-bold text-[#E0F2F2] font-['IBM_Plex_Sans']">
-          {title}
-        </h4>
-      </div>
-      <div className="avatar-cluster flex mt-4">
-        {avatars.map((avatar, idx) => (
-          <div
-            key={idx}
-            className={`avatar-badge w-12 h-12 rounded-full relative ${idx > 0 ? 'margin-left-custom -ml-3' : ''}`}
+    <>
+      <style>{`
+        .social-proof-card {
+          transition: filter 0.3s ease;
+        }
+        .social-proof-card:hover {
+          filter: brightness(1.05);
+        }
+        .social-proof-card:active {
+          transform: scale(0.98);
+        }
+      `}</style>
+
+      <article
+        className="social-proof-card glass-liquid gpu-layer p-6"
+        style={{
+          backgroundColor: 'var(--teal-800, #003737)',
+          borderLeft: '4px solid var(--gold-400, #FFD700)',
+        }}
+      >
+        <div className="insight-header">
+          <h4
+            className="font-bold font-heading"
             style={{
-              mask: 'radial-gradient(circle at 100% 50%, transparent 18%, black 19%)',
-              WebkitMask: 'radial-gradient(circle at 100% 50%, transparent 18%, black 19%)'
+              fontSize: 'clamp(1rem, 0.5vw + 0.875rem, 1.125rem)',
+              color: 'var(--color-text-secondary, #E0F2F2)',
             }}
           >
+            {title}
+          </h4>
+        </div>
+        <div className="avatar-cluster flex mt-4">
+          {avatars.map((avatar, idx) => (
             <div
-              className="avatar-gradient w-full h-full rounded-full flex items-center justify-center text-[#001F1F] font-bold font-['IBM_Plex_Sans']"
+              key={idx}
+              className={`avatar-badge w-12 h-12 rounded-full relative ${idx > 0 ? '-ml-3' : ''}`}
               style={{
-                background: `linear-gradient(${avatar.rotation}, #FFD700 0%, #4D194D 100%)`
+                mask: 'radial-gradient(circle at 100% 50%, transparent 18%, black 19%)',
+                WebkitMask: 'radial-gradient(circle at 100% 50%, transparent 18%, black 19%)',
               }}
             >
-              {avatar.initials}
+              <div
+                className="avatar-gradient w-full h-full rounded-full flex items-center justify-center font-bold font-heading"
+                style={{
+                  background: `linear-gradient(${avatar.rotation}, var(--gold-400, #FFD700) 0%, var(--teal-700, #004C4C) 100%)`,
+                  color: 'var(--teal-900, #001F1F)',
+                }}
+              >
+                {avatar.initials}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-    </article>
+          ))}
+        </div>
+      </article>
+    </>
   );
 };
 

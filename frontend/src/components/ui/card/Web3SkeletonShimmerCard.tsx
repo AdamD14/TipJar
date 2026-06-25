@@ -1,10 +1,5 @@
 import React from 'react';
 
-/**
- * WARIANT 8: Karta Asynchronicznego Wygaszania / Oczekiwania Systemu (Web3 Skeleton Shimmer Card)
- * LOKALIZACJA W DRZEWIE: Generyczny element ładowania asynchronicznego (Layout / Feed / Wallet)
- * Opis: Optymalizacja Shimmera na procesory graficzne (GPU) za pomocą transformacji TranslateX.
- */
 export const Web3SkeletonShimmerCard: React.FC = () => {
   return (
     <>
@@ -22,6 +17,13 @@ export const Web3SkeletonShimmerCard: React.FC = () => {
           padding: 32px;
           background-color: var(--teal-800, #002F2F);
           position: relative;
+          transition: filter 0.3s ease;
+        }
+        .card-skeleton-loader:hover {
+          filter: brightness(1.03);
+        }
+        .card-skeleton-loader:hover .skeleton-glow-track {
+          animation-duration: 1s;
         }
         .skeleton-glow-track {
           position: absolute;
@@ -36,7 +38,8 @@ export const Web3SkeletonShimmerCard: React.FC = () => {
           animation: shimmerTranslate 1.8s infinite linear;
           z-index: 10;
           pointer-events: none;
-        } 
+          transition: animation-duration 0.3s ease;
+        }
         @keyframes shimmerTranslate {
           100% { transform: translateX(100%); }
         }
@@ -67,9 +70,14 @@ export const Web3SkeletonShimmerCard: React.FC = () => {
         .subtitle-bar { width: 35%; }
         .full-bar { width: 100%; margin-bottom: 12px; }
         .mid-bar { width: 75%; }
+        @media (prefers-reduced-motion: reduce) {
+          .skeleton-glow-track {
+            animation: none;
+            opacity: 0.3;
+          }
+        }
       `}</style>
 
-      {/* Współdzielona struktura maskowania */}
       <svg width="0" height="0" style={{ position: 'absolute', pointerEvents: 'none' }} aria-hidden="true">
         <defs>
           <clipPath id="squircle-clip" clipPathUnits="objectBoundingBox">
@@ -78,7 +86,7 @@ export const Web3SkeletonShimmerCard: React.FC = () => {
         </defs>
       </svg>
 
-      <div className="base-card card-skeleton-loader" aria-busy="true" aria-label="Synchronizacja warstwy danych">
+      <div className="base-card card-skeleton-loader glass-liquid gpu-layer" aria-busy="true" aria-label="Synchronizacja warstwy danych">
         <div className="skeleton-glow-track"></div>
         <div className="skeleton-header">
           <div className="skeleton-orb"></div>

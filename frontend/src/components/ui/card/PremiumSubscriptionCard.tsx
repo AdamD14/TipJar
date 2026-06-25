@@ -1,4 +1,5 @@
-import React from 'react';
+"use client";
+import React, { useState, useRef } from 'react';
 
 export interface PremiumSubscriptionCardProps {
   tierName?: string;
@@ -13,25 +14,86 @@ export const PremiumSubscriptionCard: React.FC<PremiumSubscriptionCardProps> = (
   description = 'Unlock gasless microtransactions, programmable wallet automations, and zero platform fees.',
   onUpgrade
 }) => {
+  const borderRef = useRef<HTMLDivElement>(null);
+
   return (
-    <div className="relative p-[2px] rounded-2xl w-full isolate overflow-hidden group hover:scale-[1.02] transition-transform duration-[400ms]">
-      {/* Obracający się gradient conic symulujący błysk fotonowy na krawędzi */}
-      <div className="absolute inset-0 bg-[conic-gradient(from_0deg,#FFD700,#001717,#FFD700)] animate-spin -z-10" style={{ animationDuration: '4s' }}></div>
-      <div className="absolute inset-[2px] bg-[#001717] rounded-[14px] -z-10 shadow-[inset_0_20px_50px_-20px_rgba(255,215,0,0.15)]"></div>
-      
+    <div
+      className="relative p-[2px] rounded-2xl w-full isolate overflow-hidden"
+      style={{ transition: 'filter 0.3s ease' }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.filter = 'brightness(1.04)';
+        if (borderRef.current) borderRef.current.style.animationDuration = '2s';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.filter = '';
+        if (borderRef.current) borderRef.current.style.animationDuration = '4s';
+      }}
+    >
+      <div
+        ref={borderRef}
+        className="absolute inset-0 -z-10"
+        style={{
+          background: 'conic-gradient(from 0deg, var(--gold-400), var(--teal-900), var(--gold-400))',
+          animation: 'spin 4s linear infinite',
+          willChange: 'transform',
+        }}
+      />
+      <div
+        className="absolute inset-[2px] rounded-[14px] -z-10"
+        style={{
+          backgroundColor: 'var(--teal-900)',
+          boxShadow: 'inset 0 20px 50px -20px color-mix(in oklch, var(--gold-400) 15%, transparent)',
+        }}
+      />
+
       <div className="p-6 h-full flex flex-col relative z-10">
-        <div className="w-max px-3 py-1 bg-[#4D194D]/40 border border-[#9932CC] rounded-full font-mono text-[10px] text-[#E0F2F2] tracking-widest mb-5 shadow-[0_0_10px_rgba(77,25,77,0.6)]">
+        <div
+          className="w-max px-3 py-1 rounded-full tracking-widest mb-5"
+          style={{
+            backgroundColor: 'color-mix(in oklch, var(--gold-400) 15%, transparent)',
+            border: '1px solid var(--gold-400)',
+            color: 'var(--color-text-secondary)',
+            fontSize: '10px',
+            boxShadow: '0 0 10px color-mix(in oklch, var(--gold-400) 60%, transparent)',
+          }}
+        >
           {tierName}
         </div>
-        <h3 className="font-['Mukta_Malar'] text-[#FFD700] text-3xl font-light drop-shadow-[0_0_8px_rgba(255,215,0,0.4)]">{title}</h3>
-        <p className="font-sans text-[#E0F2F2] text-sm mt-3 mb-8 leading-relaxed">{description}</p>
-        <button 
+        <h3
+          className="text-3xl font-light font-heading"
+          style={{ color: 'var(--gold-400)' }}
+        >
+          {title}
+        </h3>
+        <p
+          className="text-sm mt-3 mb-8 leading-relaxed"
+          style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}
+        >
+          {description}
+        </p>
+        <button
           onClick={onUpgrade}
-          className="mt-auto w-full py-3.5 rounded-xl bg-[#FFD700] text-[#001F1F] font-bold font-mono tracking-wide shadow-[0_6px_20px_rgba(255,215,0,0.3)] hover:shadow-[0_10px_30px_rgba(255,215,0,0.5)] active:scale-95 transition-all duration-300 cursor-pointer"
+          className="mt-auto w-full py-3.5 rounded-xl font-bold tracking-wide cursor-pointer active:scale-95"
+          style={{
+            backgroundColor: 'var(--gold-400)',
+            color: 'var(--teal-900)',
+            transition: 'filter 0.3s ease, transform 0.1s ease',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.filter = 'brightness(1.1)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.filter = ''; }}
         >
           PremiumSubscriptionCard
         </button>
       </div>
+
+      <style>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 };
+
+export default PremiumSubscriptionCard;

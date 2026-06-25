@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 
 export interface PulseMomentumCardProps {
@@ -6,27 +7,47 @@ export interface PulseMomentumCardProps {
   currency?: string;
 }
 
-/**
- * LOKALIZACJA W DRZEWIE: creator-desktop/desktop/creator-pulse/
- * Komponent ucieleśniający tętno platformy (Creator Pulse) w czasie rzeczywistym.
- */
 export const PulseMomentumCard: React.FC<PulseMomentumCardProps> = ({
   title = 'PulseMomentumCard',
   amount = '14,250.00',
   currency = 'USDC'
 }) => {
   return (
-    <article className="pulse-card" aria-labelledby="pulse-title">
+    <article
+      className="glass-liquid gpu-layer border-gold-subtle relative w-full rounded-2xl p-6"
+      aria-labelledby="pulse-title"
+      style={{ transition: 'filter 0.3s ease' }}
+      onMouseEnter={(e) => { e.currentTarget.style.filter = 'brightness(1.03)'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.filter = ''; }}
+    >
       <header className="mb-4">
-        <h3 id="pulse-title" className="text-[clamp(1.5rem,2.5vw+1rem,2.5rem)] font-bold font-['Mukta_Malar'] text-white">
+        <h3
+          id="pulse-title"
+          className="font-bold font-heading"
+          style={{ color: 'var(--color-text-primary)', fontSize: 'clamp(1.5rem, 2.5vw + 1rem, 2.5rem)' }}
+        >
           {title}
         </h3>
       </header>
-      <div>
-        <div className="tabular-metrics font-['Mukta_Malar'] font-bold text-[clamp(2.5rem,4vw+1.5rem,4rem)] text-[#FFD700] flex items-baseline gap-3" style={{ fontFeatureSettings: "'tnum'" }}>
-          <span className="text-sm opacity-70 uppercase tracking-widest">{currency}</span>
-          <span>{amount}</span>
-        </div>
+      <div
+        className="font-bold font-heading flex items-baseline gap-3"
+        style={{
+          color: 'var(--gold-400)',
+          fontSize: 'clamp(2.5rem, 4vw + 1.5rem, 4rem)',
+          fontVariantNumeric: 'tabular-nums',
+          fontFeatureSettings: "'tnum'",
+          transition: 'filter 0.3s ease',
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.filter = 'brightness(1.12)'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.filter = ''; }}
+      >
+        <span
+          className="text-sm uppercase tracking-widest"
+          style={{ color: 'color-mix(in oklch, var(--color-text-tertiary) 70%, transparent)' }}
+        >
+          {currency}
+        </span>
+        <span>{amount}</span>
       </div>
     </article>
   );

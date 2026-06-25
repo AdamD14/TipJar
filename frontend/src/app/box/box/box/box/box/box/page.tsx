@@ -1,21 +1,21 @@
 "use client";
 
-import { CreatorIdentityCard2 } from '@/components/ui/card/CreatorIdentityCard2';
-import { CreatorIdentityHeroCard } from '@/components/ui/card/CreatorIdentityHeroCard';
-import { CreatorPulseCard } from '@/components/ui/card/CreatorPulseCard';
+import { Web3EnigmaCard } from '@/components/ui/card/Web3EnigmaCard';
+import { Web3SkeletonShimmerCard } from '@/components/ui/card/Web3SkeletonShimmerCard';
+import { ZeroFrictionActionCard } from '@/components/ui/card/ZeroFrictionActionCard';
 
 export default function Page() {
   return (
     <main id="main-content" className="min-h-screen p-8">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
         <div className="w-full">
-          <CreatorIdentityCard2 />
+          <Web3EnigmaCard />
         </div>
         <div className="w-full">
-          <CreatorIdentityHeroCard />
+          <Web3SkeletonShimmerCard />
         </div>
         <div className="w-full">
-          <CreatorPulseCard />
+          <ZeroFrictionActionCard />
         </div>
       </div>
     </main>
