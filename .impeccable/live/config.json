@@ -1,0 +1,6 @@
+{
+  "commentSyntax": "html",
+  "cspChecked": true,
+  "files": ["frontend/src/app/layout.tsx"],
+  "insertBefore": "</body>"
+}

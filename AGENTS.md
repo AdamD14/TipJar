@@ -95,3 +95,10 @@ PRZESTRZEGAC POLECEN, ZAKAZ IMPROWIZACJI, PODWÓJNE UPEWNIANIE SIE JAK NIE MA JA
 - Każdy efekt oryginalny musi zostać zachowany lub **ulepszony** (nie usunięty)
 - Jeśli globals nie ma odpowiedniej klasy — dopisz inline style ale zachowaj efekt
 - Przy refaktoryzacji: tokeny z globals TAK, usuwanie efektów NIE
+
+## Impeccable Design Context
+
+- **PRODUCT.md** at project root — strategic context (register: brand, personality: elegant·trusted·refined, OKLCH-first a11y, own design path)
+- **DESIGN.md** at project root — visual system (tokens, typography, elevation, components)
+- **Live config**: `.impeccable/live/config.json` (CSP patch skipped by user request)
+- **Rules**: Own design path, no copying category patterns. Gold accent as premium signal, teal depth for calm, purple for refinement. OKLCH contrast algorithms replace standard WCAG checklists.
