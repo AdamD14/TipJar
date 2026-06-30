@@ -4,44 +4,42 @@ export default function CardPage() {
       <div
         className="w-[480px] h-[240px]"
         style={{
-          border: '1px solid var(--color-teal-200)',
+          border: '1px solid var(--color-teal-500)',
           borderRadius: '56px',
-          outline: '1px solid var(--color-teal-300)',
+          outline: '1px solid var(--color-teal-400)',
           cornerShape: 'square square bevel',
           backdropFilter: 'blur(16px) saturate(120%)',
-          background: 'linear-gradient(110deg in oklch, oklch(0.1463 0.0258 214.5/0.8) 0%, oklch(0.246939 0.042152 194.7689/0.8) 50%, oklch(0.1463 0.0258 214.5/0.8) 100%)',
+          background: 'linear-gradient(110deg in oklch, oklch(0.408 0.0676 194.83/0.8) 0%, oklch(0.3814 0.0632 194.83/0.8) 50%, oklch(0.3603 0.0615 194.77/0.8) 100%)',
         }}
       />
       <div
         className="w-[480px] h-[240px]"
         style={{
-         border: '1px solid var(--color-teal-500)',
-          borderRadius: '48px',
-          outline: '1px solid var(--color-teal-450)',
+         border: '2px solid var(--color-teal-400)',
+          borderRadius: '12px',
           cornerShape: 'squircle',
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.15), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
-          background: 'linear-gradient(110deg in oklch, oklch(0.1608 0.0275 194.77) 0%, oklch(0.22 0.0718 188.47) 50%, oklch(0.1608 0.0275 194.77) 100%)',
+          background: 'linear-gradient(110deg in oklch, oklch(0.4559 0.0788 189.53) 0%, oklch(0.4147 0.0789 184.59) 50%, oklch(0.3833 0.0595 194.96) 100%)',
         }}
       />
       <div
         className="w-[480px] h-[240px]"
         style={{
-          border: '1px solid var(--color-teal-200)',
+          border: '1px solid var(--color-teal-300)',
           borderRadius: '24px',
-         outline: '1px solid var(--color-teal-300)',
-          cornerShape: 'scoop bevel ',
-          boxShadow: ' 2px 2px 6px var(--color-teal-400), -2px -2px 6px var(--color-teal-400)',
-          background: 'linear-gradient(110deg in oklch, oklch(0.246939 0.042152 194.7689) 0%, oklch(0.22 0.0718 188.47) 50%, oklch(0.2118 0.0362 194.77) 100%)',
+         cornerShape: 'square bevel',
+          boxShadow: ' 1px 1px 2px var(--color-teal-500), -1px -1px 2px var(--color-teal-500)',
+          background: 'linear-gradient(110deg in oklch, oklch(0.3603 0.0615 194.77) 0%, oklch(0.3912 0.0897 196.94) 50%, oklch(0.4147 0.0789 184.59) 100%)',
         }}
       />
       <div
         className="w-[480px] h-[240px]"
         style={{
-          border: '1px solid var(--color-teal-200)',
-          borderRadius: '24px',
-          outline: '2px solid var(--color-teal-450)',
-          cornerShape: 'scoop notch',
-          background: 'linear-gradient(110deg in oklch, oklch(0.2647 0.0493 205.42) 0%, oklch(0.256 0.0403 194.93) 40%, oklch(0.246939 0.042152 194.7689) 100%)',
+          border: '1px solid var(--color-teal-300)',
+          borderRadius: '36px',
+          outline: '2px solid var(--color-teal-400)',
+          cornerShape: 'scoop',
+          background: 'linear-gradient(110deg in oklch, oklch(0.4147 0.0789 184.59) 0%, oklch(0.4559 0.0788 189.53) 50%, oklch(0.4147 0.0789 184.59) 100%)',
         }}
       />
       
@@ -49,25 +47,22 @@ export default function CardPage() {
       <div
         className="w-[480px] h-[240px]"
         style={{
-         border: 'oklch(0.74 0.07 194/0.8) 2px double',
+         border: '2px solid var(--color-teal-300)',
         backdropFilter: 'blur(16px) saturate(160%)',
           borderRadius: '48px',
           cornerShape: 'bevel',
-          background: 'linear-gradient(110deg in oklch, oklch(0.22 0.0718 188.47/0.4) 0%, oklch(0.246939 0.042152 194.7689/0.5) 50%, oklch(0.2647 0.0493 205.42/0.6) 100%)',
+          background: 'linear-gradient(110deg in oklch, oklch(0.345 0.0587 194.8/0.8) 0%, oklch(0.3618 0.0613 200.12/0.8) 50%, oklch(0.3912 0.0897 196.94/0.8) 100%)',
         }}
       />
       <div
         className="w-[480px] h-[240px]"
         style={{
-          border: '1px solid var(--color-teal-400)',
-          borderRadius: '48px',
-          outline: '1px solid var(--color-teal-200)',
-          cornerShape: 'notch square',
-          boxShadow: 'inset 2px 2px 5px rgba(0, 0, 0, 0.5), inset -2px -2px 5px rgba(255, 255, 255, 0.2)',
+          border: '2px solid var(--color-teal-300)',
+          borderRadius: '12px',
           filter: 'drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.1))',
-          background: 'linear-gradient(110deg in oklch, oklch(0.246939 0.042152 194.7689) 0%, oklch(0.256 0.0403 194.93) 50%, oklch(0.2647 0.0493 205.42) 100%)',
+          background: 'linear-gradient(110deg in oklch, oklch(0.3955 0.0634 193.37) 0%, oklch(0.4559 0.0788 189.53) 50%, oklch(0.4147 0.0789 184.59) 100%)',
         }}
       />
-    </div>
+    </div> 
   );
 }
