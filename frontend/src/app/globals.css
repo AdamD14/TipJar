@@ -687,6 +687,72 @@ CARD UTILITY CLASSES — design.md §3.1 (updated)
   box-shadow: var(--shadow-card-focus);
 }
 
+/* ================================================================
+BENTO NAVIGATION CARDS — dashboard landing
+design.md §1.1a: dual shadow hover, brightness shift, no translateY
+=============================================================== */
+.bento-card {
+  background-color: var(--teal-700);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow-card-rest);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+  transition:
+    box-shadow 300ms var(--ease-premium),
+    background-color 300ms var(--ease-premium),
+    filter 300ms var(--ease-premium),
+    border-color 300ms var(--ease-premium);
+  text-decoration: none;
+}
+
+.bento-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: var(--inner-shadow-card);
+}
+
+.bento-card:hover,
+.bento-card:focus-within {
+  background-color: var(--teal-600);
+  box-shadow: var(--shadow-card-hover);
+  filter: brightness(1.04);
+  border-color: color-mix(in oklch, var(--gold-400) 15%, transparent);
+}
+
+.bento-card:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-card-focus);
+}
+
+.bento-arrow {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-quaternary);
+  opacity: 0;
+  transition: opacity 300ms var(--ease-premium), background-color 300ms var(--ease-premium), color 300ms var(--ease-premium);
+}
+
+.bento-card:hover .bento-arrow {
+  opacity: 1;
+  background: rgba(255, 215, 0, 0.1);
+  color: var(--gold-400);
+}
+
 /* Overlay for contrast stabilization on images */
 .card-overlay-contrast {
   position: relative;

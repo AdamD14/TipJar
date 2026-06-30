@@ -5,28 +5,14 @@ import Link from "next/link";
 import { useAuthStore } from "@/lib/store/authStore";
 import { me } from "@/lib/auth";
 import {
-  Monitor,
-  Clapperboard,
-  Users,
-  TrendingUp,
-  Wallet,
   ArrowUpRight,
   Paintbrush,
   Bell,
   Target,
-  MessageCircle,
-  Calendar,
   DollarSign,
-  BarChart3,
   Zap,
   CreditCard,
 } from "lucide-react";
-
-interface DashboardData {
-  username?: string;
-  displayName?: string;
-  avatarUrl?: string;
-}
 
 const studioChips = [
   { label: "Overlays", icon: Paintbrush },
@@ -42,7 +28,6 @@ const communityMetrics = [
 export default function CreatorDashboard() {
   const { username } = useParams<{ username: string }>();
   const router = useRouter();
-  const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const user = useAuthStore((state) => state.user);
   const hasHydrated = useAuthStore((state) => state._hasHydrated);
@@ -84,7 +69,6 @@ export default function CreatorDashboard() {
     }
 
     const timer = setTimeout(() => {
-      setData({ displayName: user.displayName, username: cleanUsername });
       setLoading(false);
     }, 400);
     return () => clearTimeout(timer);
@@ -107,13 +91,7 @@ export default function CreatorDashboard() {
   return (
     <div className="min-h-0">
       <div className="max-w-5xl mx-auto px-4 py-8 md:py-12">
-        <div className="mb-8 md:mb-10">
-          <p className="font-heading font-medium text-lg text-text-secondary tracking-tight">
-            {data?.displayName ? data.displayName : "Hey"}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-4xl mx-auto [grid-auto-rows:minmax(200px,auto)]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-4xl mx-auto [grid-auto-rows:minmax(200px,auto)] md:[grid-auto-flow:dense]">
           {/* ── Desktop — 2-col, dominant panel ── */}
           <Link
             href={`${prefix}/desktop`}
