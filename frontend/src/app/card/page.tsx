@@ -300,19 +300,17 @@ export default function CardPage() {
         className="w-[480px] h-[240px]"
         style={{
           border: '1px solid var(--color-teal-300)',
-          borderRadius: '36px',
+          borderRadius: '12px',
           outline: '2px solid var(--color-teal-400)',
           background: 'linear-gradient(110deg in oklch, oklch(0.4147 0.0789 184.59) 0%, oklch(0.4559 0.0788 189.53) 50%, oklch(0.4147 0.0789 184.59) 100%)',
         }}
       />
-      
-      
       <div
         className="relative u-shadow-chameleon w-[480px] h-[240px]"
         style={{
          border: '2px solid var(--color-teal-300)',
         backdropFilter: 'blur(16px) saturate(160%)',
-          borderRadius: '48px',
+          borderRadius: '12px',
           background: 'linear-gradient(110deg in oklch, oklch(0.345 0.0587 194.8/0.8) 0%, oklch(0.3618 0.0613 200.12/0.8) 50%, oklch(0.3912 0.0897 196.94/0.8) 100%)',
           '--dpr': dpr,
         } as CSSProperties}
