@@ -135,3 +135,68 @@ export function useGoalProgress(creatorId?: string) {
   });
 }
 
+export function useFollowStatus(creatorId?: string) {
+  return useQuery({
+    queryKey: ['follow-status', creatorId],
+    queryFn: async (): Promise<{ following: boolean }> =>
+      (await api.get(EP.followStatus(creatorId as string))).data,
+    enabled: !!creatorId,
+    retry: 1,
+    staleTime: 30_000,
+  });
+}
+
+export function useFollowersCount(creatorId?: string) {
+  return useQuery({
+    queryKey: ['followers-count', creatorId],
+    queryFn: async (): Promise<{ count: number }> =>
+      (await api.get(EP.followersCount(creatorId as string))).data,
+    enabled: !!creatorId,
+    retry: 1,
+    staleTime: 30_000,
+  });
+}
+
+export interface FollowerRow {
+  id: string;
+  username: string | null;
+  displayName: string;
+  avatarUrl: string | null;
+  followedAt: string;
+}
+
+export function useFollowersList(creatorId: string, page = 1, limit = 20) {
+  return useQuery({
+    queryKey: ['followers-list', creatorId, page, limit],
+    queryFn: async (): Promise<{ followers: FollowerRow[]; total: number }> =>
+      (await api.get(EP.follow(creatorId), { params: { page, limit } })).data,
+    enabled: !!creatorId,
+    retry: 1,
+    staleTime: 30_000,
+  });
+}
+
+export function useFollow() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (creatorId: string): Promise<{ following: boolean }> =>
+      (await api.post(EP.follow(creatorId))).data,
+    onSuccess: (_data, creatorId) => {
+      queryClient.invalidateQueries({ queryKey: ['follow-status', creatorId] });
+      queryClient.invalidateQueries({ queryKey: ['followers-count', creatorId] });
+    },
+  });
+}
+
+export function useUnfollow() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (creatorId: string): Promise<{ following: boolean }> =>
+      (await api.delete(EP.follow(creatorId))).data,
+    onSuccess: (_data, creatorId) => {
+      queryClient.invalidateQueries({ queryKey: ['follow-status', creatorId] });
+      queryClient.invalidateQueries({ queryKey: ['followers-count', creatorId] });
+    },
+  });
+}
+
