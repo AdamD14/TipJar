@@ -93,7 +93,7 @@ const sections: NavSection[] = [
   {
     label: "Growth",
     icon: BarChart3,
-    href: "analytics",
+    href: "growth",
   },
   {
     label: "Wallet",
