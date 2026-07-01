@@ -1885,10 +1885,16 @@ browser support ever lands. */
   inherits: false;
   initial-value: 16;
 }
+@property --masonry-row-unit {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 8;
+}
 
 .masonry-container {
   --masonry-columns: 4;
   --masonry-gap: 20;
+  --masonry-row-unit: 8;
 }
 
 @supports (display: layout(masonry)) {
@@ -1901,6 +1907,8 @@ browser support ever lands. */
   .masonry-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-auto-flow: dense;
+    grid-auto-rows: calc(var(--masonry-row-unit) * 1px);
     gap: calc(var(--masonry-gap) * 1px);
     align-items: start;
   }
