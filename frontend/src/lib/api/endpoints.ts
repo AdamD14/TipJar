@@ -8,4 +8,7 @@ export const EP = {
   withdraw: '/api/v1/creator/payout',
   goals: '/api/v1/creator/goals',
   subscriptions: '/api/v1/creator/subscriptions',
+  follow: (creatorId: string) => `/api/v1/follows/${creatorId}`,
+  followStatus: (creatorId: string) => `/api/v1/follows/${creatorId}/status`,
+  followersCount: (creatorId: string) => `/api/v1/follows/${creatorId}/count`,
 } as const;

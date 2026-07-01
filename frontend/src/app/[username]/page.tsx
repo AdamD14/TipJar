@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Check, ArrowLeft, Share2, Copy } from "lucide-react";
+import clsx from "clsx";
 import { getPublicProfile } from "@/lib/users";
 import { me } from "@/lib/auth";
 import Button from "@/components/ui/buttons/Button";
@@ -12,7 +13,14 @@ import Header from "@/components/landing/Header";
 import Navbar from "@/components/ui/layout/Navbar";
 import Modal from "@/components/ui/Modal";
 import { useAuthStore } from "@/lib/store/authStore";
-import { useGoalProgress } from "@/lib/api/queries";
+import {
+  useGoalProgress,
+  useFollowStatus,
+  useFollowersCount,
+  useFollow,
+  useUnfollow,
+} from "@/lib/api/queries";
+import { useToast } from "@/components/ui/notifications/Toast";
 import { GoalBar } from "@/components/studio/modal/GoalBar";
 import { GoalTipForm } from "@/components/payments/tip/GoalTipForm";
 import FanWall from "@/components/payments/FanWall";
@@ -57,6 +65,12 @@ export default function CreatorProfile() {
   const isOwnProfile = user?.username?.toLowerCase() === cleanUsername.toLowerCase();
 
   const { data: goalProgress } = useGoalProgress(profile?.id);
+  const { data: followStatus } = useFollowStatus(profile?.id);
+  const { data: followersCount } = useFollowersCount(profile?.id);
+  const { mutateAsync: followMutate, isPending: followPending } = useFollow();
+  const { mutateAsync: unfollowMutate, isPending: unfollowPending } = useUnfollow();
+  const toast = useToast();
+  const isFollowing = !!followStatus?.following;
 
   useEffect(() => {
     if (!cleanUsername) return;
@@ -129,6 +143,19 @@ export default function CreatorProfile() {
   const hasBio = Boolean(profile.profile?.bio?.trim());
   const creatorId = profile.id || cleanUsername;
   const liveCurrent = goalProgress ? Number(goalProgress.totalReceived) : 0;
+
+  const handleFollowToggle = async () => {
+    try {
+      if (isFollowing) {
+        await unfollowMutate(creatorId);
+      } else {
+        await followMutate(creatorId);
+        toast.push({ type: "success", text: `You're now following ${safeDisplayName}.` });
+      }
+    } catch {
+      toast.push({ type: "error", text: "Something went wrong. Please try again." });
+    }
+  };
 
   const goal = {
     title: profile.profile?.goalLabel || "Goal",
@@ -243,14 +270,21 @@ export default function CreatorProfile() {
               </button>
 
               {/* Action buttons */}
-              <div className="w-full grid grid-cols-2 gap-3 mt-6">
-                <Button
-                  variant="secondary"
-                  size="md"
-                  className="text-xs font-bold tracking-widest uppercase shadow-lg shadow-purple-500/10"
-                >
-                  Follow
-                </Button>
+              <div className={clsx("w-full grid gap-3 mt-6", isOwnProfile ? "grid-cols-1" : "grid-cols-2")}>
+                {!isOwnProfile && (
+                  <Button
+                    variant={isFollowing ? "glass" : "secondary"}
+                    size="md"
+                    onClick={handleFollowToggle}
+                    loading={followPending || unfollowPending}
+                    className={clsx(
+                      "text-xs font-bold tracking-widest uppercase shadow-lg shadow-purple-500/10",
+                      isFollowing && "border-gold-400/30",
+                    )}
+                  >
+                    {isFollowing ? "Following" : "Follow"}
+                  </Button>
+                )}
                 <Button
                   variant="glass"
                   size="md"
@@ -265,8 +299,8 @@ export default function CreatorProfile() {
       {/* Stats */}
       <div className="grid grid-cols-2 w-full gap-4 mt-6 pt-6 border-t border-teal-700/30 text-center">
         <div>
-          <p className="text-xl font-bold text-white leading-none">
-            0
+          <p className="text-xl font-bold text-white leading-none tnum">
+            {followersCount?.count ?? 0}
           </p>
           <p className="text-[8px] uppercase tracking-widest text-teal-400 mt-1 font-bold">
             Followers
