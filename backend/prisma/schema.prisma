@@ -93,6 +93,26 @@ model User {
   // Multi-role mapping (in addition to primary role)
   userRoles        UserRoleMap[]
   mediaRecords     MediaRecord[]
+
+  // Follow graph (added for /@username Follow button + community/followers)
+  following Follow[] @relation("Follower")
+  followers Follow[] @relation("Following")
+}
+
+model Follow {
+  id String @id @default(uuid())
+
+  followerId String
+  follower   User   @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+
+  followingId String
+  following   User   @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
 }
 
 model SocialConnection {
