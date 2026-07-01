@@ -29,6 +29,7 @@ import { MediaModule } from './media/media.module';
 import { FanModule } from './fan/fan.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { RemindersModule } from './reminders/reminders.module';
+import { FollowsModule } from './follows/follows.module';
 
 @Module({
   imports: [
@@ -77,6 +78,7 @@ import { RemindersModule } from './reminders/reminders.module';
     // Import the fan module to enable fan endpoints
     FanModule,
     MediaModule,
+    FollowsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
