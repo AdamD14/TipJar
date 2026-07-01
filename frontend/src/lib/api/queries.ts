@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/lib/apiClient';
 import { EP } from './endpoints';
 import type { Stats, CreatorProfile, Goal, Subscription } from './contracts';
@@ -82,9 +82,21 @@ export function useCreatorSubscriptions(params?: {
 }
 
 export function useTip() {
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (payload: { creatorId: string; amount: number; message?: string }) =>
-      (await api.post(EP.tips, { ...payload, amount: String(payload.amount) })).data,
+    mutationFn: async (payload: {
+      creatorId: string;
+      amount: number;
+      message?: string;
+      isAnonymous?: boolean;
+    }) => (await api.post(EP.tips, { ...payload, amount: String(payload.amount) })).data,
+    onSuccess: (_data, variables) => {
+      // Keeps GoalBar progress and FanWall in sync right after a tip,
+      // instead of waiting for staleTime/remount. No contract change —
+      // same POST /api/v1/tips call, just invalidating local caches.
+      queryClient.invalidateQueries({ queryKey: ['goal-progress', variables.creatorId] });
+      queryClient.invalidateQueries({ queryKey: ['public-tips', variables.creatorId] });
+    },
   });
 }
 
@@ -112,11 +124,12 @@ export function usePublicTips(creatorId: string, page = 1, limit = 20) {
   });
 }
 
-export function useGoalProgress(creatorId: string) {
+export function useGoalProgress(creatorId?: string) {
   return useQuery({
     queryKey: ['goal-progress', creatorId],
     queryFn: async (): Promise<{ totalReceived: string; tipCount: number }> =>
-      (await api.get(EP.goalProgress(creatorId))).data,
+      (await api.get(EP.goalProgress(creatorId as string))).data,
+    enabled: !!creatorId,
     retry: 1,
     staleTime: 30_000,
   });

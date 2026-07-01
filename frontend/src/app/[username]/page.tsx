@@ -1,9 +1,8 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Check, ArrowLeft, Share2, Copy, Send } from "lucide-react";
-import clsx from "clsx";
+import { Check, ArrowLeft, Share2, Copy } from "lucide-react";
 import { getPublicProfile } from "@/lib/users";
 import { me } from "@/lib/auth";
 import Button from "@/components/ui/buttons/Button";
@@ -11,18 +10,12 @@ import Spinner from "@/components/ui/Spinner";
 import AvatarCarousel from "@/components/onboarding/AvatarCarousel";
 import Header from "@/components/landing/Header";
 import Navbar from "@/components/ui/layout/Navbar";
+import Modal from "@/components/ui/Modal";
 import { useAuthStore } from "@/lib/store/authStore";
-import { useGoalProgress, useTip } from "@/lib/api/queries";
+import { useGoalProgress } from "@/lib/api/queries";
 import { GoalBar } from "@/components/studio/modal/GoalBar";
-import { AmountSlider } from "@/components/payments/tip/AmountSlider";
-import { useToast } from "@/components/ui/notifications/Toast";
-import { isValidUsdc, parseAmount } from "@/lib/currency";
-import { track } from "@/lib/analytics/track";
-import { normalize } from "@/lib/api/errors";
+import { GoalTipForm } from "@/components/payments/tip/GoalTipForm";
 import FanWall from "@/components/payments/FanWall";
-
-const TIP_PRESETS = [1, 2, 5, 10, 20];
-const MAX_MESSAGE = 80;
 
 type UserProfile = {
   id: string;
@@ -49,6 +42,7 @@ export default function CreatorProfile() {
   const searchParams = useSearchParams();
   const isPreview = searchParams.get("preview") === "true";
   const [copied, setCopied] = useState(false);
+  const [tipOpen, setTipOpen] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +56,7 @@ export default function CreatorProfile() {
   const isLoggedIn = hydrated && !!user?.username;
   const isOwnProfile = user?.username?.toLowerCase() === cleanUsername.toLowerCase();
 
-  const { data: goalProgress } = useGoalProgress(cleanUsername);
+  const { data: goalProgress } = useGoalProgress(profile?.id);
 
   useEffect(() => {
     if (!cleanUsername) return;
@@ -312,13 +306,17 @@ export default function CreatorProfile() {
             </div>
           )}
 
-  {/* Goal + Tip Panel */}
+  {/* Goal + Tip CTA — opens GoalTipForm in the shared Modal (bottom-sheet on mobile) */}
       {profile.profile?.goalTarget && (
         <div className="pt-2 max-w-xl flex flex-col gap-4">
-          <GoalBar goal={goal} />
-          {!isOwnProfile && profile.role !== "FAN" && (
-            <TipPanel creatorId={creatorId} />
-          )}
+          <GoalBar
+            goal={goal}
+            onTipClick={
+              !isOwnProfile && profile.role !== "FAN"
+                ? () => setTipOpen(true)
+                : undefined
+            }
+          />
         </div>
       )}
 
@@ -339,114 +337,15 @@ export default function CreatorProfile() {
       </div>
         </div>
   </main>
-  </div>
-  );
-}
 
-function TipPanel({ creatorId }: { creatorId: string }) {
-  const [amount, setAmount] = useState(5);
-  const [message, setMessage] = useState("");
-  const [tipError, setTipError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-
-  const { mutateAsync, isPending } = useTip();
-  const toast = useToast();
-  const user = useAuthStore((s) => s.user);
-  const hydrated = useAuthStore((s) => s._hasHydrated);
-  const isLoggedIn = hydrated && !!user;
-  const valid = isValidUsdc(amount);
-
-  const handlePreset = useCallback((p: number) => {
-    setAmount(p);
-    setTipError(null);
-    setSuccess(false);
-  }, []);
-
-  const submit = useCallback(async () => {
-    setTipError(null);
-    if (!valid) {
-      setTipError("Amount must be between 0.5 and 10,000 USDC.");
-      return;
-    }
-    if (!isLoggedIn) {
-      setTipError("Log in to send a tip.");
-      return;
-    }
-
-    try {
-      await mutateAsync({ creatorId, amount, message: message.trim() || undefined });
-      toast.push({ type: "success", text: `Thank you! ${amount} USDC sent.` });
-      track("tip_success", { creatorId, amount });
-      setSuccess(true);
-      setMessage("");
-      setTimeout(() => setSuccess(false), 4000);
-    } catch (e: unknown) {
-      const { msg } = normalize(e);
-      setTipError(msg || "Failed to process tip.");
-      toast.push({ type: "error", text: "Failed to process tip." });
-    }
-  }, [valid, isLoggedIn, creatorId, amount, message, mutateAsync, toast]);
-
-  return (
-    <div className="bg-gradient-to-br from-teal-900 to-teal-800 border border-teal-500/20 rounded-xl p-6 shadow-2 backdrop-blur-md space-y-4">
-      <div className="flex gap-2 flex-wrap">
-        {TIP_PRESETS.map((p) => (
-          <button
-            key={p}
-            type="button"
-            onClick={() => handlePreset(p)}
-            className={clsx(
-              "w-12 h-12 rounded-lg font-heading font-bold text-sm tracking-wider transition-all",
-              amount === p
-                ? "bg-gradient-to-r from-gold-400 to-gold-300 text-teal-900 shadow-md"
-                : "bg-white/5 text-white/70 border border-white/10 hover:bg-white/10 hover:border-white/20",
-            )}
-          >
-            ${p}
-          </button>
-        ))}
-      </div>
-
-      <AmountSlider value={amount} min={1} max={100} onChange={(v) => { setAmount(v); setTipError(null); setSuccess(false); }} />
-
-      <div>
-        <input
-          type="text"
-          maxLength={MAX_MESSAGE}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Your message (optional)"
-          className="w-full h-10 px-4 rounded-[6px] font-body text-base bg-teal-800 text-teal-25 placeholder:text-teal-100 border border-teal-700 hover:border-teal-450 focus:border-gold-300 focus:shadow-[0_0_0_1px_var(--teal-200),0_0_0_4px_rgba(255,215,0,0.25)] outline-none transition-all duration-200"
-        />
-        <p className="text-right text-[10px] text-teal-500/30 mt-1 tnum">
-          {message.length}/{MAX_MESSAGE}
-        </p>
-      </div>
-
-      {tipError && <p className="text-red-300 text-sm">{tipError}</p>}
-      {success && (
-        <div className="rounded-lg bg-green-500/10 border border-green-500/20 p-3 text-sm text-green-300">
-          Tip sent successfully!
-        </div>
-      )}
-
-      <Button
-        onClick={submit}
-        disabled={isPending || !valid}
-        variant="primary"
-        fullWidth
-        loading={isPending}
-        size="md"
-        leftIcon={!isPending ? <Send size={16} /> : undefined}
+      <Modal
+        open={tipOpen}
+        onClose={() => setTipOpen(false)}
+        size="form"
+        title={`Support ${safeDisplayName}`}
       >
-        {isPending ? "Sending..." : `Send ${valid ? `${amount.toFixed(2)} USDC` : ""}`}
-      </Button>
-
-      {!isLoggedIn && (
-        <p className="text-center text-xs text-teal-500/40">
-          Log in to send a tip
-        </p>
-      )}
-    </div>
+        <GoalTipForm creatorId={creatorId} onSuccess={() => setTipOpen(false)} />
+      </Modal>
+  </div>
   );
 }
