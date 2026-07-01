@@ -1160,8 +1160,34 @@ BLOKI 1–10 — NOWE KLASY @utility I REGUŁY GLOBALNE
   background-color: var(--color-deep-turquoise);
 }
 
+/* sdfChameleonShadow Paint Worklet progressive enhancement — call
+   useChameleonShadowWorklet() once in any tree using this class. No
+   existing usages found in the codebase, so this swap is safe. Needs
+   an ancestor that isn't `overflow: hidden`, since ::after extends
+   beyond the element's box via a negative inset. */
 .u-shadow-chameleon {
+  position: relative;
   box-shadow: var(--shadow-chameleon);
+  --shadow-intensity: 0.65;
+  --sdf-blur: 24;
+  --accent-teal: var(--teal-800);
+  --chamfer-size: 18;
+  --dpr: 1;
+}
+
+@supports (background: paint(sdfChameleonShadow)) {
+  .u-shadow-chameleon {
+    box-shadow: none;
+  }
+
+  .u-shadow-chameleon::after {
+    content: "";
+    position: absolute;
+    inset: calc(var(--sdf-blur) * -1px);
+    background: paint(sdfChameleonShadow);
+    z-index: -1;
+    pointer-events: none;
+  }
 }
 
 .u-shadow-card-chameleon {
@@ -1653,4 +1679,190 @@ Inline oklch values → semantic token references
 
 .cta-btn-quaternary:active {
   transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) scale(0.975) translateY(1px) !important;
+}
+
+/* ================================================================
+CSS HOUDINI PAINT WORKLETS — companion source docs: 01_06/*.md
+Registers Typed CSSOM properties (@property) so worklet-driven
+animations (--sweep-time, --grid-time) interpolate on the compositor
+thread instead of snapping (unregistered custom properties are just
+strings to the browser). Worklet modules live in /public/worklets/*.js
+and are loaded via the hooks in src/hooks/use*Worklet.ts — call the
+matching hook once in any component tree rendering the classes below.
+================================================================ */
+
+@property --dpr {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+/* --- chamferBorder (ChamferCard) --- */
+@property --border-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #a0b0ff;
+}
+@property --border-width {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1.5;
+}
+@property --chamfer-size {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 18;
+}
+@property --chromatic-intensity {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0.7;
+}
+@property --glow-intensity {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0.6;
+}
+@property --sweep-time {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+/* --- frozenNetworkGrid (FrozenBackground) --- */
+@property --grid-size {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 40;
+}
+@property --line-color {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #FFD700;
+}
+@property --glitch-intensity {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0.03;
+}
+@property --grid-opacity {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0.09;
+}
+@property --grid-time {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+/* --- sdfChameleonShadow (.u-shadow-chameleon) --- */
+@property --shadow-intensity {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0.65;
+}
+@property --sdf-blur {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 24;
+}
+@property --accent-teal {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #003737;
+}
+
+/* --- chamferBorder ambient sweep loop ---
+One full sine cycle every 6s (5236 * 0.0012 ~= 2*PI radians), so the
+loop restarts seamlessly (sin(0) === sin(2*PI)). Runs continuously,
+independent of :hover — an always-on ambient "breathing" highlight,
+consistent with --animate-pulse-breath / --animate-sheen elsewhere in
+this file. Fixes the source spec, where --sweep-time only reached 1 on
+:hover, capping `phase` at 0.0012 and making the sweep invisible. */
+@keyframes chamfer-sweep-time {
+  to { --sweep-time: 5236; }
+}
+
+.chamfer-card {
+  position: relative;
+  background-color: #0a0f14;
+  clip-path: polygon(
+    18px 0, calc(100% - 18px) 0, 100% 18px, 100% calc(100% - 18px),
+    calc(100% - 18px) 100%, 18px 100%, 0 calc(100% - 18px), 0 18px
+  );
+
+  --border-color: #a0b0ff;
+  --border-width: 1.5;
+  --chamfer-size: 18;
+  --chromatic-intensity: 0.7;
+  --glow-intensity: 0.6;
+  --sweep-time: 0;
+  --dpr: 1;
+
+  animation: chamfer-sweep-time 6s linear infinite;
+}
+
+@supports (background: paint(chamferBorder)) {
+  .chamfer-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: paint(chamferBorder);
+  }
+}
+
+@supports not (background: paint(chamferBorder)) {
+  .chamfer-card::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(90deg, transparent, #a0b0ff 25%, #ff4d8f 50%, #4dc3ff 75%, transparent);
+    background-size: 250% 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .chamfer-card:hover::before,
+  .chamfer-card.notify::before {
+    opacity: 0.75;
+    animation: chamfer-sweep-fallback 1.4s ease-in-out forwards;
+  }
+}
+
+@keyframes chamfer-sweep-fallback {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* --- frozenNetworkGrid ambient grid --- */
+.frozen-grid-background {
+  background-color: #001414;
+  background-image:
+    linear-gradient(rgba(255, 215, 0, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 215, 0, 0.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+
+  --grid-size: 40;
+  --line-color: #FFD700;
+  --glitch-intensity: 0.03;
+  --grid-opacity: 0.09;
+  --grid-time: 0;
+  --dpr: 1;
+
+  animation: frozen-grid-time-loop 8s linear infinite;
+}
+
+@supports (background: paint(frozenNetworkGrid)) {
+  .frozen-grid-background {
+    background-image: paint(frozenNetworkGrid);
+    background-color: transparent;
+  }
+}
+
+@keyframes frozen-grid-time-loop {
+  to { --grid-time: 2500; }
 }
