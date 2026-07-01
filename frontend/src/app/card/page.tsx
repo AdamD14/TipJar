@@ -1,3 +1,14 @@
+"use client";
+
+import type { CSSProperties } from "react";
+import { useChamferBorderWorklet } from "@/hooks/useChamferBorderWorklet";
+import { useFrozenGridWorklet } from "@/hooks/useFrozenGridWorklet";
+import { useChameleonShadowWorklet } from "@/hooks/useChameleonShadowWorklet";
+import { FrozenBackground } from "@/components/ui/effects/FrozenBackground";
+
+// Worklet showcase — added on top of the existing cards to demonstrate
+// chamferBorder, frozenNetworkGrid and sdfChameleonShadow. See the small
+// on-card caption below for exactly what was added where.
 export default function CardPage() {
   // Wymiary karty
   const w = 480;
@@ -12,16 +23,31 @@ export default function CardPage() {
   const clipPathD = `M ${bX},0 L ${1-bX},0 L 1,${bY} L 1,${1-bY} L ${1-bX},1 L ${bX},1 L 0,${1-bY} L 0,${bY} Z`;
   const rx = 12 / 480;
   const ry = 12 / 240;
+
+  // Load the three Paint Worklet modules once for this page.
+  useChamferBorderWorklet();
+  useFrozenGridWorklet();
+  useChameleonShadowWorklet();
+  const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
+
   return (
     <div className="grid grid-cols-2 gap-6 justify-center content-center justify-items-center items-center min-h-screen py-12">
       {/* KARTA z 4 ściętymi rogami i efektem chromatycznym */}
+      {/* WORKLET SHOWCASE: chamferBorder Paint Worklet added via the
+          .chamfer-card class (ambient light-sweep border), stacked on top
+          of the pre-existing SVG clip-path + chromatic filter treatment
+          below (kept untouched). */}
       <div
-        className="relative w-[480px] h-[240px]"
+        className="relative chamfer-card w-[480px] h-[240px]"
         style={{
           clipPath: 'url(#cardClip)',
           background: 'linear-gradient(110deg in oklch, oklch(0.3294 0.0562 194.77) 0%, oklch(0.304938 0.052052 194.7689) 50%, oklch(0.3311 0.053 194.9) 100%)',
-        }}
+          '--dpr': dpr,
+        } as CSSProperties}
       >
+        <span className="absolute top-2 left-3 z-20 text-[10px] font-mono tracking-wide text-gold-400/80 pointer-events-none">
+          chamferBorder Paint Worklet (added)
+        </span>
         <svg className="absolute inset-0 w-full h-full pointer-events-none"
              style={{ opacity: 0.15 }}
              viewBox="0 0 480 240"
@@ -282,16 +308,23 @@ export default function CardPage() {
       
       
       <div
-        className="w-[480px] h-[240px]"
+        className="relative u-shadow-chameleon w-[480px] h-[240px]"
         style={{
          border: '2px solid var(--color-teal-300)',
         backdropFilter: 'blur(16px) saturate(160%)',
           borderRadius: '48px',
           background: 'linear-gradient(110deg in oklch, oklch(0.345 0.0587 194.8/0.8) 0%, oklch(0.3618 0.0613 200.12/0.8) 50%, oklch(0.3912 0.0897 196.94/0.8) 100%)',
-        }}
-      />
+          '--dpr': dpr,
+        } as CSSProperties}
+      >
+        {/* WORKLET SHOWCASE: sdfChameleonShadow Paint Worklet, wired into
+            the existing .u-shadow-chameleon utility (globals.css). */}
+        <span className="absolute top-2 left-3 z-20 text-[10px] font-mono tracking-wide text-gold-400/80 pointer-events-none">
+          sdfChameleonShadow Paint Worklet (added)
+        </span>
+      </div>
       <div
-        className="w-[480px] h-[240px]"
+        className="relative w-[480px] h-[240px]"
         style={{
           border: '2px solid var(--color-teal-300)',
           borderRadius: '12px',
@@ -299,6 +332,13 @@ export default function CardPage() {
           background: 'linear-gradient(110deg in oklch, oklch(0.3955 0.0634 193.37) 0%, oklch(0.4559 0.0788 189.53) 50%, oklch(0.4147 0.0789 184.59) 100%)',
         }}
       >
+        {/* WORKLET SHOWCASE: frozenNetworkGrid Paint Worklet, added as an
+            overlay layered under the pre-existing static SVG grid lines
+            below (kept untouched). */}
+        <FrozenBackground className="absolute inset-0 rounded-[12px] overflow-hidden" />
+        <span className="absolute top-2 left-3 z-20 text-[10px] font-mono tracking-wide text-gold-400/80 pointer-events-none">
+          frozenNetworkGrid Paint Worklet (added)
+        </span>
         <svg className="absolute inset-0 w-full h-full pointer-events-none"
              style={{ opacity: 0.14 }}
              viewBox="0 0 480 240"
