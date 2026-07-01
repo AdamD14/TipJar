@@ -1866,3 +1866,42 @@ this file. Fixes the source spec, where --sweep-time only reached 1 on
 @keyframes frozen-grid-time-loop {
   to { --grid-time: 2500; }
 }
+
+/* --- masonry Layout Worklet ---
+The CSS Layout API (registerLayout / CSS.layoutWorklet) is not
+implemented in any shipping browser as of now (unlike the Paint API
+worklets above, which do work in Chromium). This class therefore always
+renders through the CSS Grid fallback below via `@supports not`. Kept
+forward-looking per the project's positioning around cutting-edge
+platform APIs — costs nothing today, activates automatically if/when
+browser support ever lands. */
+@property --masonry-columns {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 3;
+}
+@property --masonry-gap {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 16;
+}
+
+.masonry-container {
+  --masonry-columns: 4;
+  --masonry-gap: 20;
+}
+
+@supports (display: layout(masonry)) {
+  .masonry-container {
+    display: layout(masonry);
+  }
+}
+
+@supports not (display: layout(masonry)) {
+  .masonry-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: calc(var(--masonry-gap) * 1px);
+    align-items: start;
+  }
+}
