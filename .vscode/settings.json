@@ -7,6 +7,8 @@
     "workbench.editors.gettingStartedInput": true,
     "gitlens.rebase": true,
     "antigravity.workflowEditor": true
-  }
+  },
+  "gitlab.duoAgentPlatform.sandbox.enabled": true,
+  "gitlab.duoAgentPlatform.defaultNamespace": "gitlab-org"
 }
   
