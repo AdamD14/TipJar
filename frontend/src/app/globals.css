@@ -1866,3 +1866,92 @@ this file. Fixes the source spec, where --sweep-time only reached 1 on
 @keyframes frozen-grid-time-loop {
   to { --grid-time: 2500; }
 }
+
+/* --- masonry Layout Worklet ---
+The CSS Layout API (registerLayout / CSS.layoutWorklet) is not
+implemented in any shipping browser as of now (unlike the Paint API
+worklets above, which do work in Chromium). This class therefore always
+renders through the CSS Grid fallback below via `@supports not`. Kept
+forward-looking per the project's positioning around cutting-edge
+platform APIs — costs nothing today, activates automatically if/when
+browser support ever lands. */
+@property --masonry-columns {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 3;
+}
+@property --masonry-gap {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 16;
+}
+@property --masonry-row-unit {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 8;
+}
+
+.masonry-container {
+  --masonry-columns: 4;
+  --masonry-gap: 20;
+  --masonry-row-unit: 8;
+}
+
+@supports (display: layout(masonry)) {
+  .masonry-container {
+    display: layout(masonry);
+  }
+}
+
+@supports not (display: layout(masonry)) {
+  .masonry-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-auto-flow: dense;
+    grid-auto-rows: calc(var(--masonry-row-unit) * 1px);
+    gap: calc(var(--masonry-gap) * 1px);
+    align-items: start;
+  }
+}
+
+/* --- orbital Layout Worklet ---
+Same platform-support caveat as .masonry-container above: no shipping
+browser implements the CSS Layout API today, so this always renders
+through the flex-wrap fallback via `@supports not`. */
+@property --orbit-radius-factor {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0.75;
+}
+@property --orbit-start-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: -90deg;
+}
+@property --orbit-child-max-size {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 120px;
+}
+
+.orbital-container {
+  --orbit-radius-factor: 0.75;
+  --orbit-start-angle: -90deg;
+  --orbit-child-max-size: 120px;
+}
+
+@supports (display: layout(orbital)) {
+  .orbital-container {
+    display: layout(orbital);
+  }
+}
+
+@supports not (display: layout(orbital)) {
+  .orbital-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+}
