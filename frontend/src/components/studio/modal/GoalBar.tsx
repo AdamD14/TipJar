@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import clsx from "clsx";
+import Button from "@/components/ui/buttons/Button";
 
 export interface Goal {
   title: string;
@@ -20,7 +21,14 @@ function formatDeadline(dateStr: string) {
 const RADIUS = 18;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-export function GoalBar({ goal }: { goal: Goal }) {
+export function GoalBar({
+  goal,
+  onTipClick,
+}: {
+  goal: Goal;
+  /** Renders a "Tip" CTA when provided. Optional — existing call sites (TargetBar, StartBuildingShowcase) are unaffected. */
+  onTipClick?: () => void;
+}) {
   const percentage = Math.min((goal.current / (goal.target || 1)) * 100, 100);
   const displayCurrent = goal.current > 0 ? `$${goal.current.toLocaleString()}` : "—";
 
@@ -83,6 +91,19 @@ export function GoalBar({ goal }: { goal: Goal }) {
           </span>
         </div>
       </div>
+
+      {onTipClick && (
+        <Button
+          type="button"
+          variant="primary"
+          size="md"
+          fullWidth
+          onClick={onTipClick}
+          className="mt-4"
+        >
+          Tip
+        </Button>
+      )}
     </div>
   );
 }
