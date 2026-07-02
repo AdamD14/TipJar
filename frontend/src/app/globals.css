@@ -1840,15 +1840,15 @@ this file. Fixes the source spec, where --sweep-time only reached 1 on
 
 /* --- frozenNetworkGrid ambient grid --- */
 .frozen-grid-background {
-  background-color: #001414;
+  background-color: oklch(0.035 0.08 205);
   background-image:
     linear-gradient(rgba(255, 215, 0, 0.025) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 215, 0, 0.025) 1px, transparent 1px);
   background-size: 40px 40px;
 
   --grid-size: 40;
-  --line-color: #FFD700;
-  --glitch-intensity: 0.03;
+  --line-color: #ccf7f4;
+  --glitch-intensity: 0.1;
   --grid-opacity: 0.09;
   --grid-time: 0;
   --dpr: 1;

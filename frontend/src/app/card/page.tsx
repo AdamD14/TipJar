@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from 'react';
 
 import type { CSSProperties } from "react";
 import { useChamferBorderWorklet } from "@/hooks/useChamferBorderWorklet";
@@ -28,7 +29,15 @@ export default function CardPage() {
   useChamferBorderWorklet();
   useFrozenGridWorklet();
   useChameleonShadowWorklet();
-  const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
+  const [dpr, setDpr] = useState(1);
+
+useEffect(() => {
+  // Ten kod wykona się dopiero PO udanej hydratacji, 
+  // dzięki czemu serwer i klient zaczną od tej samej wartości (1)
+  if (typeof window !== "undefined") {
+    setDpr(window.devicePixelRatio || 1);
+  }
+}, []);
 
   return (
     <div className="grid grid-cols-2 gap-6 justify-center content-center justify-items-center items-center min-h-screen py-12">
@@ -41,11 +50,11 @@ export default function CardPage() {
         className="relative chamfer-card w-[480px] h-[240px]"
         style={{
           clipPath: 'url(#cardClip)',
-          background: 'linear-gradient(110deg in oklch, oklch(0.3294 0.0562 194.77) 0%, oklch(0.304938 0.052052 194.7689) 50%, oklch(0.3311 0.053 194.9) 100%)',
+          background: 'linear-gradient(110deg in oklch, oklch(0.35 0.08 205) 0%, oklch(0.37 0.12 195) 50%, oklch(0.34 0.09 195) 100%)',
           '--dpr': dpr,
         } as CSSProperties}
       >
-        <span className="absolute top-2 left-3 z-20 text-[10px] font-mono tracking-wide text-gold-400/80 pointer-events-none">
+        <span className="absolute top-2 left-6 z-20 font-size-caption font-heading tracking-wide text-teal-200/80 pointer-events-none">
           chamferBorder Paint Worklet (added)
         </span>
         <svg className="absolute inset-0 w-full h-full pointer-events-none"
@@ -192,7 +201,7 @@ export default function CardPage() {
   className="relative w-[480px] h-[240px]"
   style={{
     clipPath: 'url(#roundedClip)',
-    background: 'linear-gradient(110deg in oklch, oklch(0.4559 0.0788 189.53) 0%, oklch(0.4147 0.0789 184.59) 50%, oklch(0.3833 0.0595 194.96) 100%)',
+    background: 'linear-gradient(110deg in oklch, oklch(0.33 0.1 200) 0%, oklch(0.4 0.08 195) 50%, oklch(0.33 0.06 190) 100%)',
   }}
 >
   {/* ===== WZÓR (tylko ta warstwa ma opacity) ===== */}
@@ -267,7 +276,7 @@ export default function CardPage() {
   style={{
     clipPath: 'url(#cardClip2)',
     filter: 'drop-shadow(1px 1px 2px var(--color-teal-500)) drop-shadow(-1px -1px 2px var(--color-teal-500))',
-    background: 'linear-gradient(110deg in oklch, oklch(0.3603 0.0615 194.77) 0%, oklch(0.3912 0.0897 196.94) 50%, oklch(0.4147 0.0789 184.59) 100%)',
+    background: 'linear-gradient(110deg in oklch, oklch(0.32 0.06 198) 0%, oklch(0.36 0.065 194) 50%, oklch(0.40 0.07 190) 100%)',
   }}
 >
   <svg
@@ -302,7 +311,7 @@ export default function CardPage() {
           border: '1px solid var(--color-teal-300)',
           borderRadius: '12px',
           outline: '2px solid var(--color-teal-400)',
-          background: 'linear-gradient(110deg in oklch, oklch(0.4147 0.0789 184.59) 0%, oklch(0.4559 0.0788 189.53) 50%, oklch(0.4147 0.0789 184.59) 100%)',
+          background: 'linear-gradient(110deg in oklch, oklch(0.3 0.08 210) 0%, oklch(0.38 0.1 200) 50%, oklch(0.34 0.14 205) 100%)',
         }}
       />
       <div
@@ -311,7 +320,7 @@ export default function CardPage() {
          border: '2px solid var(--color-teal-300)',
         backdropFilter: 'blur(16px) saturate(160%)',
           borderRadius: '12px',
-          background: 'linear-gradient(110deg in oklch, oklch(0.345 0.0587 194.8/0.8) 0%, oklch(0.3618 0.0613 200.12/0.8) 50%, oklch(0.3912 0.0897 196.94/0.8) 100%)',
+          background: 'linear-gradient(110deg in oklch, oklch(0.3 0.06 200/0.8) 0%, oklch(0.36 0.08 197/0.8) 50%, oklch(0.39 0.1 193/0.8) 100%)',
           '--dpr': dpr,
         } as CSSProperties}
       >
@@ -327,14 +336,14 @@ export default function CardPage() {
           border: '2px solid var(--color-teal-300)',
           borderRadius: '12px',
           filter: 'drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.1))',
-          background: 'linear-gradient(110deg in oklch, oklch(0.3955 0.0634 193.37) 0%, oklch(0.4559 0.0788 189.53) 50%, oklch(0.4147 0.0789 184.59) 100%)',
+          background: 'linear-gradient(110deg in oklch, oklch(0.30 0.06 200) 0%, oklch(0.34 0.09 195) 50%, oklch(0.36 0.11 190) 100%)',
         }}
       >
         {/* WORKLET SHOWCASE: frozenNetworkGrid Paint Worklet, added as an
             overlay layered under the pre-existing static SVG grid lines
             below (kept untouched). */}
         <FrozenBackground className="absolute inset-0 rounded-[12px] overflow-hidden" />
-        <span className="absolute top-2 left-3 z-20 text-[10px] font-mono tracking-wide text-gold-400/80 pointer-events-none">
+        <span className="absolute top-2 left-3 z-20 text-[10px] font-mono tracking-wide text-teal-400/80 pointer-events-none">
           frozenNetworkGrid Paint Worklet (added)
         </span>
         <svg className="absolute inset-0 w-full h-full pointer-events-none"

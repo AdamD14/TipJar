@@ -7,7 +7,7 @@ import { useOnboardingStore } from '@/lib/store/onboardingStore';
 
 export default function useHydrateAuth() {
   const hydrated = useRef(false);
-  const { setUser } = useOnboardingStore();
+  const { setUser } = useOnboardingStore() as any;
   useEffect(() => {
     if (hydrated.current) return;
     hydrated.current = true;
