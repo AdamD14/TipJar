@@ -1160,41 +1160,7 @@ BLOKI 1–10 — NOWE KLASY @utility I REGUŁY GLOBALNE
   background-color: var(--color-deep-turquoise);
 }
 
-/* sdfChameleonShadow Paint Worklet progressive enhancement — call
-   useChameleonShadowWorklet() once in any tree using this class. No
-   existing usages found in the codebase, so this swap is safe. Needs
-   an ancestor that isn't `overflow: hidden`, since ::after extends
-   beyond the element's box via a negative inset. */
-.u-shadow-chameleon {
-  position: relative;
-  box-shadow: var(--shadow-chameleon);
-  --shadow-intensity: 0.65;
-  --sdf-blur: 24;
-  --accent-teal: var(--teal-800);
-  --chamfer-size: 18;
-  --dpr: 1;
-}
 
-@supports (background: paint(sdfChameleonShadow)) {
-  .u-shadow-chameleon {
-    box-shadow: none;
-  }
-
-  .u-shadow-chameleon::after {
-    content: "";
-    position: absolute;
-    inset: calc(var(--sdf-blur) * -1px);
-    background: paint(sdfChameleonShadow);
-    z-index: -1;
-    pointer-events: none;
-  }
-}
-
-.u-shadow-card-chameleon {
-  box-shadow:
-    0 4px 6px -1px color-mix(in oklch, var(--teal-800) 60%, transparent),
-    0 2px 4px -1px color-mix(in oklch, var(--teal-800) 70%, transparent);
-}
 
 .u-text-black-safe {
   color: var(--black-safe);
@@ -1865,6 +1831,41 @@ this file. Fixes the source spec, where --sweep-time only reached 1 on
 
 @keyframes frozen-grid-time-loop {
   to { --grid-time: 2500; }
+}
+
+/* --- sdfChameleonShadow (.u-shadow-chameleon) ---
+   Progressive enhancement: call useChameleonShadowWorklet() once in any
+   tree using this class. Needs an ancestor that isn't `overflow: hidden`,
+   since ::after extends beyond the element's box via a negative inset. */
+.u-shadow-chameleon {
+  position: relative;
+  box-shadow: var(--shadow-chameleon);
+  --shadow-intensity: 0.65;
+  --sdf-blur: 24;
+  --accent-teal: var(--teal-800);
+  --chamfer-size: 18;
+  --dpr: 1;
+}
+
+@supports (background: paint(sdfChameleonShadow)) {
+  .u-shadow-chameleon {
+    box-shadow: none;
+  }
+
+  .u-shadow-chameleon::after {
+    content: "";
+    position: absolute;
+    inset: calc(var(--sdf-blur) * -1px);
+    background: paint(sdfChameleonShadow);
+    z-index: -1;
+    pointer-events: none;
+  }
+}
+
+.u-shadow-card-chameleon {
+  box-shadow:
+    0 4px 6px -1px color-mix(in oklch, var(--teal-800) 60%, transparent),
+    0 2px 4px -1px color-mix(in oklch, var(--teal-800) 70%, transparent);
 }
 
 /* --- masonry Layout Worklet ---

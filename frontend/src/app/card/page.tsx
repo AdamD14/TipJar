@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 
 import type { CSSProperties } from "react";
 import { useChamferBorderWorklet } from "@/hooks/useChamferBorderWorklet";
-import { useFrozenGridWorklet } from "@/hooks/useFrozenGridWorklet";
 import { useChameleonShadowWorklet } from "@/hooks/useChameleonShadowWorklet";
 import { FrozenBackground } from "@/components/ui/effects/FrozenBackground";
 
@@ -27,7 +26,6 @@ export default function CardPage() {
 
   // Load the three Paint Worklet modules once for this page.
   useChamferBorderWorklet();
-  useFrozenGridWorklet();
   useChameleonShadowWorklet();
   const [dpr, setDpr] = useState(1);
 
@@ -70,9 +68,9 @@ useEffect(() => {
             <path stroke="var(--color-teal-200)" d="M120 100v30h100v150h200v200"/>
             <path stroke="var(--color-teal-450)" d="M0 200h150v200h150v80"/>
             <path stroke="var(--color-teal-200)" d="M0 210h140v180h150v90"/>
-            <path stroke="var(--color-teal-200)" d="M50 220h80v160h150v100M500 0v200h200v200h20₀v8₀"/>
-            <path stroke="var(--color-teal-100)" d="M5₀₀ ₁₆h₁₆v₁₆₈h₂₀₀v₂₀₀h₂₀₀v₉₆"/>
-            <path stroke="var(--color-teal-200)" d="M5₀₀ ₃₂h₃₂v₁₃₆h₂₀₀v₂₀₀h₂₀₀v₁₁₂"/>
+            <path stroke="var(--color-teal-200)" d="M50 220h80v160h150v100M500 0v200h200v200h200v80"/>
+            <path stroke="var(--color-teal-100)" d="M500 16h16v168h200v200h200v96"/>
+            <path stroke="var(--color-teal-200)" d="M500 32h32v136h200v200h200v112"/>
             <path stroke="var(--color-teal-300)" d="M400 400h200V200h200V0"/>
             <path stroke="var(--color-teal-100)" d="M400 416h216V184h200V0"/>
             <path stroke="var(--color-teal-200)" d="M200 0v100h100V0"/>
@@ -305,15 +303,7 @@ useEffect(() => {
     Dwa ścięte rogi (prawy-górny i lewy-dolny)
   </div>
 </div>
-      <div
-        className="w-[480px] h-[240px]"
-        style={{
-          border: '1px solid var(--color-teal-300)',
-          borderRadius: '12px',
-          outline: '2px solid var(--color-teal-400)',
-          background: 'linear-gradient(110deg in oklch, oklch(0.3 0.08 210) 0%, oklch(0.38 0.1 200) 50%, oklch(0.34 0.14 205) 100%)',
-        }}
-      />
+
       <div
         className="relative u-shadow-chameleon w-[480px] h-[240px]"
         style={{
@@ -359,9 +349,9 @@ useEffect(() => {
             <path stroke="var(--color-teal-100)" d="M120 100v30h100v150h200v200"/>
             <path stroke="var(--color-teal-50)" d="M0 200h150v200h150v80"/>
             <path stroke="var(--color-teal-25)" d="M0 210h140v180h150v90"/>
-            <path stroke="var(--color-teal-100)" d="M50 220h80v160h150v100M500 0v200h200v200h20₀v8₀"/>
-            <path stroke="var(--color-teal-50)" d="M5₀₀ ₁₆h₁₆v₁₆₈h₂₀₀v₂₀₀h₂₀₀v₉₆"/>
-            <path stroke="var(--color-teal-25)" d="M5₀₀ ₃₂h₃₂v₁₃₆h₂₀₀v₂₀₀h₂₀₀v₁₁₂"/>
+            <path stroke="var(--color-teal-100)" d="M50 220h80v160h150v100M500 0v200h200v200h200v80"/>
+            <path stroke="var(--color-teal-50)" d="M500 16h16v168h200v200h200v96"/>
+            <path stroke="var(--color-teal-25)" d="M500 32h32v136h200v200h200v112"/>
             <path stroke="#e0f2f2" d="M400 400h200V200h200V0"/>
             <path stroke="var(--color-teal-100)" d="M400 416h216V184h200V0"/>
             <path stroke="var(--color-teal-100)" d="M200 0v100h100V0"/>

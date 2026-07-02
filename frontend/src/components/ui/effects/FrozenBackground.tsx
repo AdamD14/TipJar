@@ -26,7 +26,12 @@ export function FrozenBackground({
   className = "",
 }: FrozenBackgroundProps) {
   useFrozenGridWorklet();
-  const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
+  const [dpr, setDpr] = React.useState(1);
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      setDpr(window.devicePixelRatio || 1);
+    }
+  }, []);
 
   return (
     <div
