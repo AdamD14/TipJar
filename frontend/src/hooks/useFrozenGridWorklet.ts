@@ -10,8 +10,17 @@ import { useEffect } from "react";
  */
 export function useFrozenGridWorklet() {
   useEffect(() => {
-    if (typeof CSS === "undefined" || !("paintWorklet" in CSS)) return;
-    CSS.paintWorklet
+    if (typeof CSS === "undefined") return;
+
+    const paintWorklet = (CSS as typeof CSS & {
+      paintWorklet?: {
+        addModule: (moduleName: string) => Promise<void>;
+      };
+    }).paintWorklet;
+
+    if (!paintWorklet) return;
+
+    paintWorklet
       .addModule("/worklets/frozen-grid-worklet.js")
       .catch((err) => console.error("[frozenNetworkGrid] worklet failed to load:", err));
   }, []);
