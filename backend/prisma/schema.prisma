@@ -35,6 +35,22 @@ enum PayoutStatus {
   FAILED
 }
 
+enum PostType {
+  POST
+  UPDATE
+  ANNOUNCEMENT
+  MEDIA
+}
+
+enum PostVisibility {
+  PUBLIC
+  SUBSCRIBERS_ONLY // NOTE: gating logic is deferred until the Memberships
+                   // module exists. Until then the public feed endpoint
+                   // excludes SUBSCRIBERS_ONLY posts entirely — see
+                   // PostsService.getPublicFeed().
+  DRAFT
+}
+
 /**
  * ======================
  * Modele danych
@@ -97,6 +113,10 @@ model User {
   // Follow graph (added for /@username Follow button + community/followers)
   following Follow[] @relation("Follower")
   followers Follow[] @relation("Following")
+
+  // Feed / Community posts
+  posts     Post[]     @relation("PostsByCreator")
+  reactions Reaction[]
 }
 
 model Follow {
@@ -147,7 +167,7 @@ model Profile {
   archetype  String?  // Selected archetype from Step 1 (e.g., "live-streamer", "visual-creator")
   industry   String?
   goalLabel    String?
-  goalTarget   Int? // w centach lub w USDC (np. 1000 = $10.00)
+  goalTarget   Decimal?   @db.Decimal(20, 6)
   goalDeadline DateTime?
   currency     String   @default("USDC")
   createdAt  DateTime @default(now())
@@ -398,4 +418,51 @@ model MediaRecord {
   @@unique([userId, slotId])
   @@index([userId])
   @@index([storjKey])
+}
+
+/**
+ * ======================
+ * Feed / Community Posts
+ * ======================
+ */
+model Post {
+  id        String  @id @default(uuid())
+  creatorId String
+  creator   User    @relation("PostsByCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+
+  type       PostType       @default(POST)
+  visibility PostVisibility @default(PUBLIC)
+
+  content   String   @db.Text
+  mediaUrls String[] @default([])
+  linkUrl   String?
+  tags      String[] @default([])
+
+  isPinned  Boolean   @default(false)
+  expiresAt DateTime? // ANNOUNCEMENT only — auto-archive after this date
+
+  reactions Reaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([creatorId, createdAt])
+  @@index([creatorId, isPinned])
+  @@index([creatorId, visibility])
+}
+
+model Reaction {
+  id     String @id @default(uuid())
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  emoji String // 'heart' | 'fire' | 'clap' — validated in DTO, not at DB level
+
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId, emoji])
+  @@index([postId])
 }

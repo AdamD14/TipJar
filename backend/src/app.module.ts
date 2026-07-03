@@ -30,6 +30,7 @@ import { FanModule } from './fan/fan.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { RemindersModule } from './reminders/reminders.module';
 import { FollowsModule } from './follows/follows.module';
+import { PostsModule } from './community/posts/posts.module';
 
 @Module({
   imports: [
@@ -79,6 +80,7 @@ import { FollowsModule } from './follows/follows.module';
     FanModule,
     MediaModule,
     FollowsModule,
+    PostsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
