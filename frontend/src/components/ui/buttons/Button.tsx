@@ -61,25 +61,28 @@ const GRADIENT_VARIANTS = new Set(["primary", "secondary", "tertiary", "cta-gold
 
 
 const variantClasses: Record<Variant, string> = {
+  // Primary = alias do cta-gold-01 (spójność z globals.css)
   primary: clsx(
-    "text-teal-800 ",
-   "bg-[linear-gradient(in_oklch_115deg,#ff8f00_0%,#ffd700_25%,#ffe100_96%,var(--gold-50)_100%)]",
-   "shadow-[inset_0_1px_0px_rgba(255,255,255,0.45),inset_0_-3px_1px_rgba(120,35,0,0.5),inset_0_-5px_8px_rgba(120,35,0,0.25),0_4px_12px_rgba(0,0,0,0.3)]",
-    "hover:brightness-[1.1] ",
-    "focus-visible:ring-gold-400/70",
-  ),secondary: clsx(
-    "text-white font-bold tracking-tight",
-     "bg-[linear-gradient(in_oklch_110deg,var(--color-purple-500)_0%,var(--color-purple-300)_50%,var(--color-purple-100)_100%)]",
-     "shadow-[inset_0_1px_0px_rgba(232,121,249,0.4),inset_0_4px_10px_rgba(0,0,0,0.25),inset_0_-3px_1px_rgba(43,15,43,0.7),inset_0_-5px_8px_rgba(0,0,0,0.3),0_4px_14px_rgba(0,15,15,0.5)]",
-     "hover:brightness-[1.1]",
-     "focus-visible:ring-purple-300/70",
-     "[&>span]:transition-transform [&>span]:duration-[300ms] [&>span]:[transition-timing-function:var(--ease-spring)]",
-    
+    "cta-gold cta-gold-01",
+    "text-teal-800",
   ),
-  
+  secondary: clsx(
+    "text-white font-bold tracking-tight",
+    // Poprawione tokeny: --purple-* zamiast --color-purple-*
+    "bg-[linear-gradient(in_oklch_110deg,var(--purple-500)_0%,var(--purple-300)_50%,var(--purple-100)_100%)]",
+    "shadow-maestro",
+    "elevation-z-2",
+    "hover:brightness-[1.1]",
+    "focus-visible:ring-purple-300/70",
+    "[&>span]:transition-transform [&>span]:duration-[300ms] [&>span]:[transition-timing-function:var(--ease-spring)]",
+  ),
   tertiary: clsx(
     "text-white",
-    "bg-[linear-gradient(in_oklch_110deg,var(--color-teal-800)_0%,var(--color-teal-500)_50%,var(--color-teal-300)_100%)]",
+    // Poprawione tokeny: --teal-* zamiast --color-teal-*
+    "bg-[linear-gradient(in_oklch_110deg,var(--teal-800)_0%,var(--teal-500)_50%,var(--teal-300)_100%)]",
+    // Glassmorphism + border z globals
+    "glass-liquid",
+    "border-gold-subtle",
     "hover:brightness-[1.15]",
     "focus-visible:ring-teal-400/70",
   ),
@@ -99,21 +102,54 @@ const variantClasses: Record<Variant, string> = {
     "bg-[rgba(0,31,31,0.44)] backdrop-blur-[20px] border border-white/[0.125] text-teal-25",
     "hover:bg-[rgba(0,31,31,0.6)] hover:border-white/20",
   ),
+  // CTA Gold warianty — wzbogacone o efekty premium
   "cta-gold-01": clsx(
     "cta-gold cta-gold-01",
     "h-14 px-9 text-xl rounded-[var(--radius-md)]",
+    // GPU acceleration — odciążenie main thread
+    "util-gpu-composited",
+    "gpu-layer",
+    // Haptic feedback + touch prediction
+    "haptic-glow",
+    "touch-predict",
+    // Smooth shadow transition
+    "shadow-transition",
+    // Volumetric elevation
+    "elevation-z-3",
+    "hover:elevation-z-4",
   ),
   "cta-gold-02": clsx(
     "cta-gold cta-gold-02",
     "h-14 px-9 text-xl rounded-[var(--radius-md)]",
+    "util-gpu-composited",
+    "gpu-layer",
+    "haptic-glow",
+    "touch-predict",
+    "shadow-transition",
+    "elevation-z-3",
+    "hover:elevation-z-4",
   ),
   "cta-gold-03": clsx(
     "cta-gold cta-gold-03",
     "h-14 px-9 text-xl rounded-[var(--radius-md)]",
+    "util-gpu-composited",
+    "gpu-layer",
+    "haptic-glow",
+    "touch-predict",
+    "shadow-transition",
+    "elevation-z-3",
+    "hover:elevation-z-4",
   ),
   "cta-gold-04": clsx(
     "cta-gold cta-gold-04",
     "h-14 px-9 text-xl rounded-[var(--radius-lg)]",
+    "util-gpu-composited",
+    "gpu-layer",
+    "haptic-glow",
+    "touch-predict",
+    "shadow-transition",
+    "elevation-z-3",
+    "hover:elevation-z-4",
   ),
 };
 
@@ -165,7 +201,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
     <>
       {isGradient && !isCtaGold && !loading && (
         <span
-          className="pointer-events-none absolute inset-0 w-full h-full bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent)] -translate-x-[140%] group-hover:animate-sheen"
+          className="pointer-events-none absolute inset-0 w-full h-full bg-[linear-gradient(90deg,transparent,rgba(255,255,255,var(--sheen-opacity,0.25)),transparent)] -translate-x-[140%] group-hover:animate-sheen"
           aria-hidden="true"
         />
       )}
@@ -180,7 +216,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
           {children}
           {variant === "primary" && (
             <span
-              className="absolute bottom-0 w-[95%] h-[1px] bg-gold-100 saturate-[200%] blur-[2px] translate-y-[2px]"
+              className="absolute bottom-0 w-[95%] h-[1px] bg-gold-100 saturate-[200%] blur-[2px] translate-y-[2px] [box-shadow:0_0_10px_var(--gold-400)]"
               aria-hidden="true"
             />
           )}

@@ -12,15 +12,15 @@ export const GradientCard: React.FC<GradientCardProps> = ({ children, className 
         .card-surface {
           /* --- BAZOWA FIZYKA ŚWIATŁA (Hover) --- */
           background: linear-gradient(110deg,
-            var(--color-teal-600) 10%,
-            var(--color-teal-500) 40%,
-            var(--color-teal-600) 90%
+            var(--color-teal-600/30) 10%,
+            var(--color-teal-700/40) 40%,
+            var(--color-teal-600/30) 90%
           );
           background-size: 200% 100%;
-          background-position: 0% center;
+          background-position: 50% center;
           transition: background-position 0.5s ease-out;
 
-          /* --- Usunięto clip-path, powrót do klasycznego kształtu --- */
+        
 
           /* --- Setup pod Focus State --- */
           position: relative;
@@ -29,10 +29,9 @@ export const GradientCard: React.FC<GradientCardProps> = ({ children, className 
 
         .card-surface:hover {
           background-position: 100% center;
-          transform: translateY(0); /* Blokuje uniesienie z globals.css */
-          
-          /* Podpięcie dodanego niżej filtra */
-          filter: url(#chromatic-prism);
+          transform: translateY(0); 
+          border: 1px solid;
+          border-image: url(#chromatic-prism) 30;
         }
 
         /* --- REZONANS JĄDROWY (Focus State) --- */
@@ -42,7 +41,7 @@ export const GradientCard: React.FC<GradientCardProps> = ({ children, className 
           position: absolute;
           inset: 0;
           
-          /* Radialny gradient fioletowy ze slajdu:
+          /* Radialny gradient fioletowy:
              - startuje na środku (at center)
              - Core Intensity: 100% fiolet (używam magenty dla żywotności)
              - Inverted Halo Effect: ciemny teal wokół
@@ -78,7 +77,7 @@ export const GradientCard: React.FC<GradientCardProps> = ({ children, className 
       <svg width="0" height="0" style={{ position: 'absolute', pointerEvents: 'none' }}>
         <defs>
           {/* Model Snella-Descartesa: POPRAWIONE WARTOŚCI MACIERZY KANAŁÓW RGB */}
-          <filter id="chromatic-prism">
+          <filter id="chromatic-prism" x="-50%" y="-50%" width="200%" height="200%">
             {/* Przesunięcia warstw bocznych dla efektu rozszczepienia */}
             <feOffset dx="-2" dy="0" in="SourceGraphic" result="red_layer" />
             <feOffset dx="2" dy="0" in="SourceGraphic" result="blue_layer" />
@@ -89,9 +88,9 @@ export const GradientCard: React.FC<GradientCardProps> = ({ children, className 
               in="red_layer"
               result="red_only"
               values="
+              1 0 0 0 0
               0 0 0 0 0
-              0 1 0 0 0
-              0 0 1 0 0
+              0 0 0 0 0
               0 0 0 1 0"
             />
 
@@ -101,9 +100,9 @@ export const GradientCard: React.FC<GradientCardProps> = ({ children, className 
               in="SourceGraphic"
               result="green_only"
               values="
+              1 0 0 0 0
+              0 1 0 0 0
               0 0 0 0 0
-              0 0 0 0 0
-              0 0 1 0 0
               0 0 0 1 0"
             />
 
@@ -114,7 +113,7 @@ export const GradientCard: React.FC<GradientCardProps> = ({ children, className 
               result="blue_only"
               values="
               0 0 0 0 0
-              0 1 0 0 0
+              0 0 0 0 0
               0 0 1 0 0
               0 0 0 1 0"
             />

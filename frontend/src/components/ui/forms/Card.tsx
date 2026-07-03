@@ -41,45 +41,75 @@ export default function Card({
         BG[variant],
         "relative overflow-hidden",
         "rounded-xl",
-        "border border-white/10",
-        "shadow-[0_4px_6px_-1px_rgba(0,0,0,0.5)]",
-        // Backdrop blur for glassmorphism
-        "backdrop-blur-[20px]",
-        // Inner shadow for depth
-        "[box-shadow:inset_0_1px_2px_rgba(0,0,0,0.2),0_4px_6px_-1px_rgba(0,0,0,0.5)]",
+        
+        // Glassmorphism z globals (Blok 2)
+        "glass-liquid",
+        "border-gold-subtle",
+        
+        // Volumetric shadow (Blok 5) — głębia 3D
+        "card-volumetric",
+        "shadow-maestro",
+        
+        // GPU acceleration — odciążenie main thread
+        "util-gpu-composited",
+        "gpu-layer",
+        
+        // Haptic glow on hover (Blok 1)
+        interactive && "haptic-glow",
+        
+        // Touch prediction (Blok 4)
+        interactive && "touch-predict",
+        
         // Padding
         !noPadding && "p-6",
-        // Hardware acceleration
-        "[transform:translateZ(0)]",
-        // Interactive states
+        
+        // Interactive states — wzbogacone
         interactive && [
           "cursor-pointer",
-          "transition-all duration-300 [transition-timing-function:cubic-bezier(0.25,0.8,0.25,1)]",
+          "shadow-transition",
+          "squishy",
           HOVER_BG[variant],
           "hover:-translate-y-1.5",
-          "hover:[box-shadow:inset_0_1px_2px_rgba(0,0,0,0.2),0_20px_25px_-5px_rgba(0,0,0,0.6),0_0_10px_rgba(252,194,1,0.1)]",
+          "hover:elevation-z-3",
+          "hover:emissive-glow",
           "focus-visible:outline-none",
-          "focus-visible:[box-shadow:0_0_0_1px_#FFD700,0_0_0_4px_rgba(255,215,0,0.25)]",
+          "focus-visible:[box-shadow:var(--shadow-card-focus)]",
         ],
+        
+        // Noise texture dla premium feel (Blok 2)
+        "texture-paper",
+        
         className,
       )}
       {...rest}
     >
       {children}
-      {/* Glow pseudo-element for interactive cards */}
+      
+      {/* Glow pseudo-element — ulepszony z tokenami */}
       {interactive && (
         <span
-          className="pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-300 [transition-timing-function:cubic-bezier(0.25,0.8,0.25,1)] group-hover:opacity-100 peer-hover:opacity-100"
+          className="pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-300 [transition-timing-function:cubic-bezier(0.25,0.8,0.25,1)] group-hover:opacity-100"
           style={{
-            background:
-              "linear-gradient(135deg, #023D3F 0%, #3FB5B5 40%, #063035 100%)",
-            filter: "blur(10px)",
+            background: "radial-gradient(circle at center, var(--purple-300), transparent 70%)",
+            filter: "blur(var(--gpu-fallback-blur))",
             margin: "-2px",
             borderRadius: "14px",
+            mixBlendMode: "screen",
           }}
           aria-hidden="true"
         />
       )}
+      
+      {/* Inner sheen animation — premium highlight */}
+      <span
+        className="pointer-events-none absolute inset-0 -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-[600ms] [transition-timing-function:var(--ease-spring)]"
+        style={{
+          background: "linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%)",
+          transform: "translateX(-140%)",
+          animation: "sheen 6s ease-in-out infinite",
+        }}
+        aria-hidden="true"
+      />
     </div>
   );
 }
