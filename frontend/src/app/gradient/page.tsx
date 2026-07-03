@@ -5,63 +5,84 @@ export default function CardPage() {
     <div className="min-h-screen bg-gradient-main py-12 px-6">
       <div className="max-w-[1920px] mx-auto">
         <h1 className="font-heading text-4xl font-bold text-teal-25 mb-8 text-center">
-          GradientCard Preview
+          GradientCard — 3 Color Variants
         </h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* GradientCard 1 */}
+          {/* Variant 1: oklch(0.34 0.085 205) */}
           <div className="space-y-4">
             <h2 className="font-heading text-xl font-semibold text-gold-400 text-center">
-              Card 1
+              Variant 1
             </h2>
-            <GradientCard className="min-w-[480px] min-h-[280px]">
+            <p className="text-xs text-text-ds-tertiary text-center">
+              oklch(0.74 0.085 205)
+            </p>
+            <GradientCard 
+              variant={1}
+              className="min-w-[480px] min-h-[280px]"
+            >
               <div className="flex flex-col items-center justify-center h-full text-center p-6">
                 <span className="font-heading text-2xl font-bold text-teal-25">
-                  GradientCard
+                  Variant 1
                 </span>
                 <span className="text-sm text-text-ds-secondary mt-3">
-                  Chromatic prism<br />
-                  Radial glow on focus<br />
-                  Shimmer gradient
+                  L: 0.34, C: 0.085<br />
+                  H: 205 (blue)<br />
+                  Hover: prism<br />
+                  Focus: purple glow
                 </span>
               </div>
             </GradientCard>
           </div>
           
-          {/* GradientCard 2 */}
+          {/* Variant 2: oklch(0.39 0.08 204) */}
           <div className="space-y-4">
             <h2 className="font-heading text-xl font-semibold text-gold-400 text-center">
-              Card 2
+              Variant 2
             </h2>
-            <GradientCard className="min-w-[480px] min-h-[280px]">
+            <p className="text-xs text-text-ds-tertiary text-center">
+              oklch(0.39 0.08 204)
+            </p>
+            <GradientCard 
+              variant={2}
+              className="min-w-[480px] min-h-[280px]"
+            >
               <div className="flex flex-col items-center justify-center h-full text-center p-6">
                 <span className="font-heading text-2xl font-bold text-teal-25">
-                  GradientCard
+                  Variant 2
                 </span>
                 <span className="text-sm text-text-ds-secondary mt-3">
-                  Focus-within glow<br />
-                  SVG filter<br />
-                  Smooth transition
+                  L: 0.39, C: 0.08<br />
+                  H: 204 (blue)<br />
+                  Hover: prism<br />
+                  Focus: purple glow
                 </span>
               </div>
             </GradientCard>
           </div>
           
-          {/* GradientCard 3 */}
+          {/* Variant 3: oklch(0.38 0.08 204) */}
           <div className="space-y-4">
             <h2 className="font-heading text-xl font-semibold text-gold-400 text-center">
-              Card 3
+              Variant 3
             </h2>
-            <GradientCard className="min-w-[480px] min-h-[280px]">
+            <p className="text-xs text-text-ds-tertiary text-center">
+              oklch(0.38 0.08 204)
+            </p>
+            <GradientCard 
+              variant={3}
+              className="min-w-[480px] min-h-[280px]"
+            >
               <div className="flex flex-col items-center justify-center h-full text-center p-6">
                 <span className="font-heading text-2xl font-bold text-teal-25">
-                  GradientCard
+                  Variant 3
                 </span>
                 <span className="text-sm text-text-ds-secondary mt-3">
-                  Hover prism<br />
-                  Purple radial<br />
-                  Native SVG
+                  L: 0.38, C: 0.08<br />
+                  H: 204 (blue)<br />
+                  Hover: prism<br />
+                  Focus: purple glow
                 </span>
               </div>
             </GradientCard>

@@ -3,21 +3,25 @@ import React from 'react';
 interface GradientCardProps {
   children?: React.ReactNode;
   className?: string;
+  variant?: 1 | 2 | 3; // NOWE: 3 warianty kolorystyczne
 }
 
-export const GradientCard: React.FC<GradientCardProps> = ({ children, className = '' }) => {
+export const GradientCard: React.FC<GradientCardProps> = ({ children, className = '', variant = 1 }) => {
+  // 3 warianty kolorystyczne - tylko background, nic więcej
+  const bgVariants = {
+    1: 'linear-gradient(110deg in oklch, oklch(0.74 0.085 205))',
+    2: 'linear-gradient(110deg in oklch, oklch(0.39 0.08 204))',
+    3: 'linear-gradient(110deg in oklch, oklch(0.38 0.08 204))',
+  };
+
   return (
     <>
       <style>{`
         .card-surface {
           /* --- BAZOWA FIZYKA ŚWIATŁA (Hover) --- */
-          background: linear-gradient(110deg,
-            var(--color-teal-600/30) 10%,
-            var(--color-teal-700/40) 40%,
-            var(--color-teal-600/30) 90%
-          );
+          background: ${bgVariants[variant]};
           background-size: 200% 100%;
-          background-position: 50% center;
+          background-position: 0% center;
           transition: background-position 0.5s ease-out;
 
         
@@ -118,7 +122,7 @@ export const GradientCard: React.FC<GradientCardProps> = ({ children, className 
               0 0 0 1 0"
             />
 
-            {/* Łączenie kanałów w finalny pryzmat trybym Screen */}
+            {/* Łączenie kanałów w finalny pryzmat trybem Screen */}
             <feBlend
               mode="screen"
               in="red_only"
