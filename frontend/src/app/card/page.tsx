@@ -1,8 +1,12 @@
 "use client";
+import type { CSSProperties } from "react";
 
-// Worklet showcase — added on top of the existing cards to demonstrate
-// chamferBorder, frozenNetworkGrid and sdfChameleonShadow. See the small
-// on-card caption below for exactly what was added where.
+declare module "react" {
+  interface CSSProperties {
+    "corner-shape"?: string;
+  }
+}
+
 export default function CardPage() {
   // Wymiary karty
   const w = 480;
@@ -20,17 +24,13 @@ export default function CardPage() {
 
   return (
     <div className="grid grid-cols-2 gap-6 justify-center content-center justify-items-center items-center min-h-screen py-12">
-      {/* KARTA z 4 ściętymi rogami i efektem chromatycznym */}
-      {/* WORKLET SHOWCASE: chamferBorder Paint Worklet added via the
-          .chamfer-card class (ambient light-sweep border), stacked on top
-          of the pre-existing SVG clip-path + chromatic filter treatment
-          below (kept untouched). */}
       <div
-        className="relative w-[480px] h-[240px]"
+        className="relative card-1-shape w-[480px] h-[240px]"
         style={{
-          clipPath: "url(#cardClip)",
-          background:
-            "linear-gradient(110deg in oklch, oklch(0.3575 0.0617 205.47) 0%, oklch(0.37 0.0791 195.07) 50%, oklch(0.36 0.07 204) 100%)",
+          border: "1px solid var(--color-teal-300)",
+          borderRadius: "24px",
+          "corner-shape": "bevel",
+          background: "var(--color-teal-700)",
         }}
       >
         <svg
@@ -245,11 +245,6 @@ export default function CardPage() {
           preserveAspectRatio="none"
         >
           <defs>
-            {/* ClipPath dla 4 ściętych rogów */}
-            <clipPath id="cardClip" clipPathUnits="objectBoundingBox">
-              <path d={clipPathD} />
-            </clipPath>
-
             {/* Filtr chromatyczny (rozszczepienie światła) */}
             <filter id="chromatic-prism">
               {/* Przesunięcia warstw */}
@@ -320,11 +315,10 @@ export default function CardPage() {
         </div>
       </div>
       <div
-        className="relative w-[480px] h-[240px]"
+        className="relative card-2-shape w-[480px] h-[240px]"
         style={{
-          clipPath: "url(#roundedClip)",
           background:
-            "linear-gradient(110deg in oklch, oklch(0.33 0.1 200) 0%, oklch(0.4 0.08 195) 50%, oklch(0.33 0.06 190) 100%)",
+            "linear-gradient(110deg in oklch, oklch(0.33 0.08 200) 0%, oklch(0.32 0.0623 201.1) 50%, oklch(0.33 0.06 195) 100%)",
         }}
       >
         {/* ===== WZÓR (tylko ta warstwa ma opacity) ===== */}
@@ -490,11 +484,6 @@ export default function CardPage() {
           viewBox="0 0 1 1"
           preserveAspectRatio="none"
         >
-          <defs>
-            <clipPath id="roundedClip" clipPathUnits="objectBoundingBox">
-              <rect x="0" y="0" width="1" height="1" rx={rx} ry={ry} />
-            </clipPath>
-          </defs>
           <rect
             x="0"
             y="0"
@@ -503,7 +492,7 @@ export default function CardPage() {
             rx={rx}
             ry={ry}
             fill="none"
-            stroke="var(--color-teal-100)"
+            stroke="var(--color-teal-200)"
             strokeWidth="1.5"
             vectorEffect="non-scaling-stroke"
           />
@@ -516,13 +505,14 @@ export default function CardPage() {
       </div>
 
       <div
-        className="relative w-[480px] h-[240px]"
+        className="relative card-3-shape w-[480px] h-[240px]"
         style={{
-          clipPath: "url(#cardClip2)",
+          borderRadius: "48px",
+          "corner-shape": "round bevel round bevel",
           filter:
             "drop-shadow(1px 1px 2px var(--color-teal-500)) drop-shadow(-1px -1px 2px var(--color-teal-500))",
           background:
-            "linear-gradient(110deg in oklch, oklch(0.32 0.06 198) 0%, oklch(0.36 0.065 194) 50%, oklch(0.40 0.07 190) 100%)",
+            "linear-gradient(110deg in oklch, oklch(0.3419 0.0745 198.08) 0%, oklch(0.3241 0.0632 201.1) 50%, oklch(0.3485 0.0809 195.15) 100%)",
         }}
       >
         <svg
@@ -530,13 +520,6 @@ export default function CardPage() {
           viewBox="0 0 1 1"
           preserveAspectRatio="none"
         >
-          <defs>
-            <clipPath id="cardClip2" clipPathUnits="objectBoundingBox">
-              {/* TYLKO DWA ŚCIĘTE ROGI: prawy-górny i lewy-dolny */}
-              <polygon points="0,0 0.9,0 1,0.2 1,1 0.1,1 0,0.8" />
-            </clipPath>
-          </defs>
-
           {/* Ramka SVG – dokładnie ten sam kształt */}
           <polygon
             points="0,0 0.9,0 1,0.2 1,1 0.1,1 0,0.8"
@@ -556,29 +539,30 @@ export default function CardPage() {
         className="w-[480px] h-[240px]"
         style={{
           border: "1px solid var(--color-teal-300)",
-          borderRadius: "12px",
-          outline: "2px solid var(--color-teal-400)",
+          borderRadius: "18px",
+          "corner-shape": "scoop",
+          outline: "1px solid var(--color-teal-400)",
           background:
-            "linear-gradient(110deg in oklch, oklch(0.3 0.08 210) 0%, oklch(0.38 0.1 200) 50%, oklch(0.34 0.14 205) 100%)",
+            "linear-gradient(110deg in oklch, oklch(0.3034 0.0596 197.48) 0%, oklch(0.3229 0.0663 196.24) 50%, oklch(0.3419 0.0745 198.08) 100%)",
         }}
       />
 
       <div
         className="relative w-[480px] h-[240px]"
         style={{
-          border: "2px solid var(--color-teal-300)",
-          borderRadius: "12px",
-          background: "linear-gradient(110deg in oklch, oklch(0.3 0.06 200) 0%, oklch(0.36 0.08 197) 50%, oklch(0.39 0.1 193) 100%)",
+          border: "1px solid var(--color-teal-300)",
+          borderRadius: "32px",
+          "corner-shape": "superellipse(-0.4)",
+          background: "linear-gradient(110deg in oklch, oklch(0.3034 0.0596 200.93) 0%, oklch(0.3376 0.0733 202.24) 50%, oklch(0.32 0.0623 201.1) 100%)",
         }}
       />
-      <div
-        className="relative w-[480px] h-[240px]"
+      <div className="relative w-[480px] h-[240px]"
         style={{
-          border: "2px solid var(--color-teal-300)",
-          borderRadius: "12px",
-          filter: "drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.1))",
+          border: "1px solid var(--color-teal-300)",
+          borderRadius: "18px",
+          "corner-shape": "notch",
           background:
-            "linear-gradient(110deg in oklch, oklch(0.30 0.06 200) 0%, oklch(0.34 0.09 195) 50%, oklch(0.36 0.11 190) 100%)",
+            "linear-gradient(110deg in oklch, oklch(0.3034 0.0596 200.93) 0%, oklch(0.3376 0.0733 202.24) 50%, oklch(0.3241 0.0623 201.1) 100%)",
         }}
       >
 

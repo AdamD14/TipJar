@@ -1956,3 +1956,87 @@ through the flex-wrap fallback via `@supports not`. */
     gap: 16px;
   }
 }
+
+/* ================================================================
+NEW CSS PROPERTIES SHOWCASE: corner-shape
+================================================================ */
+
+/*
+<corner-shape-value> = 
+  round             
+  scoop             
+  bevel             
+  notch             
+  square            
+  squircle          
+  <superellipse()>
+
+Single value set for all four corners
+corner-shape: bevel;
+
+top-left and bottom-right, top-right and bottom-left
+corner-shape: notch superellipse(0.6);
+
+top-left, top-right and bottom-left, bottom-right
+corner-shape: superellipse(-1.2) square squircle;
+
+top-left, top-right, bottom-right, bottom-left
+corner-shape: scoop superellipse(-1.6) superellipse(-2.2) round;
+
+Global values
+corner-shape: inherit;
+corner-shape: initial;
+corner-shape: revert;
+corner-shape: revert-layer;
+corner-shape: unset;
+*/
+
+@keyframes corner-pulse {
+  0% {
+    corner-shape: square;
+  }
+
+  /* To make the starting point apparent, let us keep
+  the shape the same for a small duration. */
+  20% {
+    corner-shape: square;
+  }
+
+  100% {
+    corner-shape: notch;
+  }
+}
+
+div {
+  animation: corner-pulse infinite alternate 4s linear;
+}
+
+/* Fallback dla Safari - pierwsza karta */
+.card-1-shape {
+  clip-path: polygon(24px 0, calc(100% - 24px) 0, 100% 24px, 100% calc(100% - 24px), calc(100% - 24px) 100%, 24px 100%, 0 calc(100% - 24px), 0 24px);
+}
+@supports (corner-shape: bevel) or (-webkit-corner-shape: bevel) {
+  .card-1-shape {
+    clip-path: none;
+  }
+}
+
+/* Fallback dla Safari - druga karta (umożliwia animację corner-shape) */
+.card-2-shape {
+  border-radius: 12px;
+}
+@supports (corner-shape: notch) or (-webkit-corner-shape: notch) {
+  .card-2-shape {
+    /* No clip-path, global div animation will pulse the corner shape */
+  }
+}
+
+/* Fallback dla Safari - trzecia karta */
+.card-3-shape {
+  clip-path: polygon(0 0, calc(100% - 48px) 0, 100% 48px, 100% 100%, 48px 100%, 0 calc(100% - 48px));
+}
+@supports (corner-shape: bevel) or (-webkit-corner-shape: bevel) {
+  .card-3-shape {
+    clip-path: none;
+  }
+}
