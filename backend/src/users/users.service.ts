@@ -53,7 +53,7 @@ export interface PublicUserProfile {
     acceptsTips: boolean;
     archetype: string | null;
     goalLabel: string | null;
-    goalTarget: number | null;
+    goalTarget: Prisma.Decimal | null;
     goalDeadline: Date | null;
   } | null;
 }
