@@ -1,537 +1,48 @@
 "use client";
-import type { CSSProperties } from "react";
-
-declare module "react" {
-  interface CSSProperties {
-    "corner-shape"?: string;
-  }
-}
-
 export default function CardPage() {
-  // Wymiary karty
-  const w = 480;
-  const h = 240;
-  const bevel = 24; // rozmiar ścięcia w pikselach
-
-  // Współczynniki w skali 0–1 (objectBoundingBox)
-  const bX = bevel / w;
-  const bY = bevel / h;
-
-  // Ścieżka – wszystkie 4 rogi ścięte
-  const clipPathD = `M ${bX},0 L ${1 - bX},0 L 1,${bY} L 1,${1 - bY} L ${1 - bX},1 L ${bX},1 L 0,${1 - bY} L 0,${bY} Z`;
-  const rx = 12 / 480;
-  const ry = 12 / 240;
-
-  return (
+ return (
     <div className="grid grid-cols-2 gap-6 justify-center content-center justify-items-center items-center min-h-screen py-12">
       <div
-        className="relative card-1-shape w-[480px] h-[240px]"
+        className="relative w-[480px] h-[240px]"
         style={{
           border: "1px solid var(--color-teal-300)",
-          borderRadius: "24px",
-          "corner-shape": "bevel",
+          borderRadius: "36px",
           background: "var(--color-teal-700)",
-        }}
-      >
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{ opacity: 0.15 }}
-          viewBox="0 0 480 240"
-          preserveAspectRatio="none"
-        >
-          <rect width="480" height="240" fill="transparent" />
-          <path fill="transparent" d="M0 0h960v480H0z" />
-          <g fill="none">
-            <path
-              stroke="var(--color-teal-450)"
-              d="M100 0v150h100v150h200v180"
-            />
-            <path
-              stroke="var(--color-teal-450)"
-              d="M108 50v92h100v150h200v188"
-            />
-            <path
-              stroke="var(--color-teal-200)"
-              d="M120 100v30h100v150h200v200"
-            />
-            <path stroke="var(--color-teal-450)" d="M0 200h150v200h150v80" />
-            <path stroke="var(--color-teal-200)" d="M0 210h140v180h150v90" />
-            <path
-              stroke="var(--color-teal-200)"
-              d="M50 220h80v160h150v100M500 0v200h200v200h200v80"
-            />
-            <path
-              stroke="var(--color-teal-100)"
-              d="M500 16h16v168h200v200h200v96"
-            />
-            <path
-              stroke="var(--color-teal-200)"
-              d="M500 32h32v136h200v200h200v112"
-            />
-            <path stroke="var(--color-teal-300)" d="M400 400h200V200h200V0" />
-            <path stroke="var(--color-teal-100)" d="M400 416h216V184h200V0" />
-            <path stroke="var(--color-teal-200)" d="M200 0v100h100V0" />
-            <path stroke="var(--color-teal-100)" d="M220 0v120h60V0" />
-            <path stroke="var(--color-teal-450)" d="M120 130v150" />
-            <path stroke="var(--color-teal-450)" d="M140 390v90" />
-            <path stroke="var(--color-teal-200)" d="M516 184h200" />
-            <circle cx="200" cy="150" r="3" fill="var(--color-teal-200)" />
-            <circle cx="150" cy="400" r="3" fill="var(--color-teal-100)" />
-            <circle cx="600" cy="200" r="3" fill="var(--color-teal-300)" />
-            <circle cx="700" cy="400" r="3" fill="var(--color-teal-200)" />
-            <circle cx="800" cy="200" r="3" fill="var(--color-teal-100)" />
-            <circle cx="414" cy="414" r="3" fill="var(--color-teal-300)" />
-            <path fill="var(--color-teal-200)" d="M300 50h8v8h-8z" />
-            <path fill="var(--color-teal-100)" d="M800 200h12v12h-12z" />
-            <path fill="var(--color-teal-200)" d="M250 250h10v10h-10z" />
-          </g>
-        </svg>
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{ opacity: 0.15 }}
-          viewBox="0 0 480 240"
-          preserveAspectRatio="none"
-        >
-          <rect width="480" height="240" fill="transparent" />
-          <polyline
-            points="10,10 10,100"
-            fill="none"
-            stroke="var(--color-teal-200)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="10,10 100,10"
-            fill="none"
-            stroke="var(--color-teal-100)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="20,20 20,80"
-            fill="none"
-            stroke="var(--color-teal-300)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="20,20 80,20"
-            fill="none"
-            stroke="var(--color-teal-300)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="30,30 30,60"
-            fill="none"
-            stroke="var(--color-teal-100)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="30,30 60,30"
-            fill="none"
-            stroke="var(--color-teal-450)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="470,10 370,10"
-            fill="none"
-            stroke="var(--color-teal-100)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="470,10 470,100"
-            fill="none"
-            stroke="var(--color-teal-200)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="460,20 380,20"
-            fill="none"
-            stroke="var(--color-teal-200)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="460,20 460,80"
-            fill="none"
-            stroke="var(--color-teal-300)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="450,30 450,60"
-            fill="none"
-            stroke="var(--color-teal-200)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="450,30 400,30"
-            fill="none"
-            stroke="var(--color-teal-100)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="10,230 100,230"
-            fill="none"
-            stroke="var(--color-teal-200)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="10,230 10,150"
-            fill="none"
-            stroke="var(--color-teal-100)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="20,220 90,220"
-            fill="none"
-            stroke="var(--color-teal-200)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="20,220 20,160"
-            fill="none"
-            stroke="var(--color-teal-300)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="30,210 30,180"
-            fill="none"
-            stroke="var(--color-teal-100)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="30,210 70,210"
-            fill="none"
-            stroke="var(--color-teal-200)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="470,230 470,140"
-            fill="none"
-            stroke="var(--color-teal-300)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="470,230 370,230"
-            fill="none"
-            stroke="var(--color-teal-200)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="460,220 460,160"
-            fill="none"
-            stroke="var(--color-teal-400)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="460,220 380,220"
-            fill="none"
-            stroke="var(--color-teal-200)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="450,210 450,180"
-            fill="none"
-            stroke="var(--color-teal-200)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="450,210 400,210"
-            fill="none"
-            stroke="var(--color-teal-300)"
-            strokeWidth="1"
-          />
-        </svg>
-        {/* Warstwa SVG z definicjami clip-path, filtrem i ramką */}
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          viewBox="0 0 1 1"
-          preserveAspectRatio="none"
-        >
-          <defs>
-            {/* Filtr chromatyczny (rozszczepienie światła) */}
-            <filter id="chromatic-prism">
-              {/* Przesunięcia warstw */}
-              <feOffset dx="-2" dy="0" in="SourceGraphic" result="red_layer" />
-              <feOffset dx="2" dy="0" in="SourceGraphic" result="blue_layer" />
-
-              {/* Red only */}
-              <feColorMatrix
-                type="matrix"
-                in="red_layer"
-                result="red_only"
-                values="
-                  0 0 0 0 0
-                  0 0 0 0 0
-                  0 0 1 0 0
-                  0 0 0 1 0"
-              />
-
-              {/* Green only */}
-              <feColorMatrix
-                type="matrix"
-                in="SourceGraphic"
-                result="green_only"
-                values="
-                  0 0 0 0 0
-                  0 2 0 0 0
-                  0 0 1 0 0
-                  0 2 0 1 0"
-              />
-
-              {/* Blue only */}
-              <feColorMatrix
-                type="matrix"
-                in="blue_layer"
-                result="blue_only"
-                values="
-                  0 0 0 0 0
-                  0 0 0 0 0
-                  0 0 1 0 0
-                  0 0 0 1 0"
-              />
-
-              {/* Mieszanie */}
-              <feBlend
-                mode="screen"
-                in="red_only"
-                in2="green_only"
-                result="rg_mix"
-              />
-              <feBlend mode="screen" in="rg_mix" in2="blue_only" />
-            </filter>
-          </defs>
-
-          {/* Ramka (stroke) z nałożonym filtrem chromatycznym */}
-          <path
-            d={clipPathD}
-            fill="none"
-            stroke="var(--color-teal-50)"
-            strokeWidth="1.5"
-            vectorEffect="non-scaling-stroke"
-            filter="url(#chromatic-prism)"
-          />
-        </svg>
-
-        {/* Treść karty */}
+          "corner-shape": "bevel",
+          outline: "1px solid var(--color-teal-400)",
+        }} >
         <div className="w-full h-full flex items-center justify-center text-primary font-heading font-bold text-2xl">
-          Desktop
+          1
         </div>
       </div>
       <div
-        className="relative card-2-shape w-[480px] h-[240px]"
+        className="relative w-[480px] h-[240px]"
         style={{
+        border: "1px solid var(--color-teal-300)",
+          borderRadius: "48px",
+          "corner-shape": "square bevel square", 
+         outline: "1px solid var(--color-teal-400)",
           background:
             "linear-gradient(110deg in oklch, oklch(0.33 0.08 200) 0%, oklch(0.32 0.0623 201.1) 50%, oklch(0.33 0.06 195) 100%)",
-        }}
-      >
-        {/* ===== WZÓR (tylko ta warstwa ma opacity) ===== */}
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{ opacity: 0.2 }}
-          viewBox="0 0 480 240"
-          preserveAspectRatio="none"
-        >
-          <rect width="480" height="240" fill="transparent" />
-
-          <polyline
-            points="10,10 10,100"
-            fill="none"
-            stroke="var(--color-teal-200)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="10,10 100,10"
-            fill="none"
-            stroke="var(--color-teal-100)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="20,20 20,80"
-            fill="none"
-            stroke="var(--color-teal-50)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="20,20 80,20"
-            fill="none"
-            stroke="var(--color-teal-25)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="30,30 30,60"
-            fill="none"
-            stroke="var(--color-teal-100)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="30,30 60,30"
-            fill="none"
-            stroke="var(--color-teal-50)"
-            strokeWidth="1"
-          />
-
-          <polyline
-            points="470,10 370,10"
-            fill="none"
-            stroke="var(--color-teal-100)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="470,10 470,100"
-            fill="none"
-            stroke="var(--color-teal-200)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="460,20 380,20"
-            fill="none"
-            stroke="var(--color-teal-25)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="460,20 460,80"
-            fill="none"
-            stroke="var(--color-teal-50)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="450,30 450,60"
-            fill="none"
-            stroke="var(--color-teal-200)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="450,30 400,30"
-            fill="none"
-            stroke="var(--color-teal-100)"
-            strokeWidth="1"
-          />
-
-          <polyline
-            points="10,230 100,230"
-            fill="none"
-            stroke="var(--color-teal-50)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="10,230 10,150"
-            fill="none"
-            stroke="var(--color-teal-100)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="20,220 90,220"
-            fill="none"
-            stroke="var(--color-teal-200)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="20,220 20,160"
-            fill="none"
-            stroke="var(--color-teal-25)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="30,210 30,180"
-            fill="none"
-            stroke="var(--color-teal-100)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="30,210 70,210"
-            fill="none"
-            stroke="var(--color-teal-50)"
-            strokeWidth="1"
-          />
-
-          <polyline
-            points="470,230 470,140"
-            fill="none"
-            stroke="var(--color-teal-25)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="470,230 370,230"
-            fill="none"
-            stroke="var(--color-teal-200)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="460,220 460,160"
-            fill="none"
-            stroke="var(--color-teal-100)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="460,220 380,220"
-            fill="none"
-            stroke="var(--color-teal-50)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="450,210 450,180"
-            fill="none"
-            stroke="var(--color-teal-200)"
-            strokeWidth="1"
-          />
-          <polyline
-            points="450,210 400,210"
-            fill="none"
-            stroke="var(--color-teal-25)"
-            strokeWidth="1"
-          />
-        </svg>
-        {/* ===== RAMKA SVG ===== */}
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          viewBox="0 0 1 1"
-          preserveAspectRatio="none"
-        >
-          <rect
-            x="0"
-            y="0"
-            width="1"
-            height="1"
-            rx={rx}
-            ry={ry}
-            fill="none"
-            stroke="var(--color-teal-200)"
-            strokeWidth="1.5"
-            vectorEffect="non-scaling-stroke"
-          />
-        </svg>
-
-        {/* ===== TREŚĆ ===== */}
+        }} >
         <div className="w-full h-full flex items-center justify-center">
-          Zaokrąglone rogi (SVG)
+          2
         </div>
       </div>
 
       <div
-        className="relative card-3-shape w-[480px] h-[240px]"
+        className="relative w-[480px] h-[240px]"
         style={{
-          borderRadius: "48px",
-          "corner-shape": "round bevel round bevel",
-          filter:
-            "drop-shadow(1px 1px 2px var(--color-teal-500)) drop-shadow(-1px -1px 2px var(--color-teal-500))",
-          background:
+          border: "1px solid var(--color-teal-300)",
+          outline: "1px solid var(--color-teal-400)",
+          borderRadius: "36px",
+          "corner-shape": "bevel square bevel", 
+     background:
             "linear-gradient(110deg in oklch, oklch(0.3419 0.0745 198.08) 0%, oklch(0.3241 0.0632 201.1) 50%, oklch(0.3485 0.0809 195.15) 100%)",
         }}
       >
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          viewBox="0 0 1 1"
-          preserveAspectRatio="none"
-        >
-          {/* Ramka SVG – dokładnie ten sam kształt */}
-          <polygon
-            points="0,0 0.9,0 1,0.2 1,1 0.1,1 0,0.8"
-            fill="none"
-            stroke="var(--color-teal-300)"
-            strokeWidth="1.5"
-            vectorEffect="non-scaling-stroke"
-          />
-        </svg>
-
-        <div className="w-full h-full flex items-center justify-center">
-          Dwa ścięte rogi (prawy-górny i lewy-dolny)
+       <div className="w-full h-full flex items-center justify-center">
+          3
         </div>
       </div>
 
@@ -539,88 +50,47 @@ export default function CardPage() {
         className="w-[480px] h-[240px]"
         style={{
           border: "1px solid var(--color-teal-300)",
-          borderRadius: "18px",
-          "corner-shape": "scoop",
+          borderRadius: "24px",
           outline: "1px solid var(--color-teal-400)",
           background:
             "linear-gradient(110deg in oklch, oklch(0.3034 0.0596 197.48) 0%, oklch(0.3229 0.0663 196.24) 50%, oklch(0.3419 0.0745 198.08) 100%)",
-        }}
-      />
+          "corner-shape": "scoop",
+        }} 
+        >
+        <div className="w-full h-full flex items-center justify-center">
+          4
+        </div>
+      </div>
 
       <div
         className="relative w-[480px] h-[240px]"
         style={{
-          border: "1px solid var(--color-teal-300)",
+          border: "1px groove var(--color-teal-300)",
           borderRadius: "32px",
-          "corner-shape": "superellipse(-0.4)",
           background: "linear-gradient(110deg in oklch, oklch(0.3034 0.0596 200.93) 0%, oklch(0.3376 0.0733 202.24) 50%, oklch(0.32 0.0623 201.1) 100%)",
+          "corner-shape": "superellipse(-0.4)",
+       outline: "1px solid var(--color-teal-400)"
         }}
-      />
+       >
+       <div className="w-full h-full flex items-center justify-center">
+          5
+        </div>
+        </div>
+      
       <div className="relative w-[480px] h-[240px]"
         style={{
-          border: "1px solid var(--color-teal-300)",
+          border: "1px solid var(--color-teal-400)",
           borderRadius: "18px",
-          "corner-shape": "notch",
+        outline: "1px solid var(--color-teal-400)",
           background:
             "linear-gradient(110deg in oklch, oklch(0.3034 0.0596 200.93) 0%, oklch(0.3376 0.0733 202.24) 50%, oklch(0.3241 0.0623 201.1) 100%)",
-        }}
-      >
+           "corner-shape": "notch",
+        }} >
+ <div className="w-full h-full flex items-center justify-center">
+          6
+        </div>
 
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{ opacity: 0.14 }}
-          viewBox="0 0 480 240"
-          preserveAspectRatio="none"
-        >
-          <rect width="480" height="240" fill="transparent" />
-          <path fill="transparent" d="M0 0h960v480H0z" />
-          <g fill="none">
-            <path
-              stroke="var(--color-teal-50)"
-              d="M100 0v150h100v150h200v180"
-            />
-            <path
-              stroke="var(--color-teal-50)"
-              d="M108 50v92h100v150h200v188"
-            />
-            <path
-              stroke="var(--color-teal-100)"
-              d="M120 100v30h100v150h200v200"
-            />
-            <path stroke="var(--color-teal-50)" d="M0 200h150v200h150v80" />
-            <path stroke="var(--color-teal-25)" d="M0 210h140v180h150v90" />
-            <path
-              stroke="var(--color-teal-100)"
-              d="M50 220h80v160h150v100M500 0v200h200v200h200v80"
-            />
-            <path
-              stroke="var(--color-teal-50)"
-              d="M500 16h16v168h200v200h200v96"
-            />
-            <path
-              stroke="var(--color-teal-25)"
-              d="M500 32h32v136h200v200h200v112"
-            />
-            <path stroke="#e0f2f2" d="M400 400h200V200h200V0" />
-            <path stroke="var(--color-teal-100)" d="M400 416h216V184h200V0" />
-            <path stroke="var(--color-teal-100)" d="M200 0v100h100V0" />
-            <path stroke="var(--color-teal-100)" d="M220 0v120h60V0" />
-            <path stroke="var(--color-teal-50)" d="M120 130v150" />
-            <path stroke="var(--color-teal-50)" d="M140 390v90" />
-            <path stroke="var(--color-teal-100)" d="M408 292v188" />
-            <path stroke="var(--color-teal-25)" d="M516 184h200" />
-            <circle cx="200" cy="150" r="3" fill="var(--color-teal-25)" />
-            <circle cx="150" cy="400" r="3" fill="var(--color-teal-50)" />
-            <circle cx="600" cy="200" r="3" fill="var(--color-teal-100)" />
-            <circle cx="700" cy="400" r="3" fill="var(--color-teal-100)" />
-            <circle cx="800" cy="200" r="3" fill="var(--color-teal-100)" />
-            <circle cx="414" cy="414" r="3" fill="var(--color-teal-50)" />
-            <path fill="var(--color-teal-25)" d="M300 50h8v8h-8z" />
-            <path fill="var(--color-teal-100)" d="M800 200h12v12h-12z" />
-            <path fill="var(--color-teal-25)" d="M250 250h10v10h-10z" />
-          </g>
-        </svg>
-      </div>
+ </div>
     </div>
   );
 }

@@ -1,0 +1,68 @@
+// PASTE TARGET: backend/prisma/schema.prisma
+// Add the enums + models below anywhere in the file.
+//
+// Then add these two relation fields inside the existing `User` model
+// (next to `following`/`followers` from the Follow section):
+//
+//   posts     Post[]     @relation("PostsByCreator")
+//   reactions Reaction[]
+//
+// No other existing model needs to change.
+
+enum PostType {
+  POST
+  UPDATE
+  ANNOUNCEMENT
+  MEDIA
+}
+
+enum PostVisibility {
+  PUBLIC
+  SUBSCRIBERS_ONLY // NOTE: gating logic is deferred until the Memberships
+                   // module exists. Until then the public feed endpoint
+                   // excludes SUBSCRIBERS_ONLY posts entirely — see
+                   // PostsService.getPublicFeed().
+  DRAFT
+}
+
+model Post {
+  id        String  @id @default(uuid())
+  creatorId String
+  creator   User    @relation("PostsByCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+
+  type       PostType       @default(POST)
+  visibility PostVisibility @default(PUBLIC)
+
+  content   String   @db.Text
+  mediaUrls String[] @default([])
+  linkUrl   String?
+  tags      String[] @default([])
+
+  isPinned  Boolean   @default(false)
+  expiresAt DateTime? // ANNOUNCEMENT only — auto-archive after this date
+
+  reactions Reaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([creatorId, createdAt])
+  @@index([creatorId, isPinned])
+  @@index([creatorId, visibility])
+}
+
+model Reaction {
+  id     String @id @default(uuid())
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  emoji String // 'heart' | 'fire' | 'clap' — validated in DTO, not at DB level
+
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId, emoji])
+  @@index([postId])
+}
