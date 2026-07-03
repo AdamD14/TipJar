@@ -8,7 +8,7 @@ export default function WhyTipJar() {
   return (
     <section id="why-tipjar" className="relative w-full min-h-screen">
       <img
-        src="/B06.webp"
+        src="/pattern.svg"
         alt=""
         className="pointer-events-none absolute inset-0 -z-10 w-full h-full mx-auto object-cover"
       />
