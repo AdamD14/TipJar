@@ -16,7 +16,7 @@ export default function CardPage() {
               Variant 1
             </h2>
             <p className="text-xs text-text-ds-tertiary text-center">
-              oklch(0.74 0.085 205)
+              oklch(0.4 0.085 205)
             </p>
             <GradientCard 
               variant={1}
@@ -27,7 +27,7 @@ export default function CardPage() {
                   Variant 1
                 </span>
                 <span className="text-sm text-text-ds-secondary mt-3">
-                  L: 0.34, C: 0.085<br />
+                  L: 0.4, C: 0.085<br />
                   H: 205 (blue)<br />
                   Hover: prism<br />
                   Focus: purple glow

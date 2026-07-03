@@ -9,9 +9,9 @@ interface GradientCardProps {
 export const GradientCard: React.FC<GradientCardProps> = ({ children, className = '', variant = 1 }) => {
   // 3 warianty kolorystyczne - tylko background, nic więcej
   const bgVariants = {
-    1: 'linear-gradient(110deg in oklch, oklch(0.74 0.085 205))',
-    2: 'linear-gradient(110deg in oklch, oklch(0.39 0.08 204))',
-    3: 'linear-gradient(110deg in oklch, oklch(0.38 0.08 204))',
+    1: 'background: oklch(0.4 0.085 205)',
+    2: 'background: oklch(0.39 0.08 204)',
+    3: 'background: oklch(0.38 0.08 204)',
   };
 
   return (
