@@ -15,9 +15,9 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const BG: Record<CardVariant, string> = {
-  base: "bg-teal-700",
-  elevated: "bg-teal-600",
-  modal: "bg-teal-800",
+  base: "linear-gradient(120deg in oklch, oklch(0.295 0.059 203) 30%, oklch(0.32 0.07 204) 60%, oklch(0.27 0.055 203) 100%)",
+  elevated: "linear-gradient(110deg in oklch, oklch(0.25 0.0425 203) 0%, oklch(0.295 0.059 203) 20%, oklch(0.2301 0.0394 203) 100%)",
+  modal: "linear-gradient(135deg in oklch, oklch(0.27 0.055 203) 0%, oklch(0.31 0.062 204) 40%, oklch(0.295 0.059 203) 100%)",
 };
 
 const HOVER_BG: Record<CardVariant, string> = {
