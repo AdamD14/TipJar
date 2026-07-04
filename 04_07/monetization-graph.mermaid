@@ -1,0 +1,37 @@
+graph TD
+    Fan([Fan / Visitor])
+
+    %% Entry points
+    Fan -->|"punkt wejścia A"| Tip[Tip - jednorazowy]
+    Fan -->|"punkt wejścia B"| BuyProduct[Kup Product standalone]
+    Fan -->|"punkt wejścia C"| Subscribe[Subskrybuj Tier]
+
+    %% Tip -> Goal
+    Tip -->|"opcjonalnie zasila"| Goal[Goal]
+    Goal -->|"progress widoczny na"| Profile[Public Profile / GoalBar]
+    Goal -->|"po osiągnięciu"| Celebration[Thank you / celebration]
+
+    %% Tier <-> Product (many-to-many)
+    Subscribe --> Tier[Tier: cena + cykl]
+    Tier -->|"includes"| ProductA[Product: video]
+    Tier -->|"includes"| ProductB[Product: course]
+    Tier2[Tier wyższy] -->|"includes"| ProductA
+    Tier2 -->|"includes"| ProductC[Product: live-session]
+
+    %% Product <-> Bundle (many-to-many)
+    Bundle[Bundle] -->|"grupuje"| ProductA
+    Bundle -->|"grupuje"| BuyProduct
+
+    %% Cross-domain: live-session product execution
+    ProductC -->|"config: cena/dostęp tu, wykonanie w"| LiveDomain[[studio/live/ - OBS, overlay, nagranie]]
+
+    %% Upsell / cross-sell paths - the actual graph part
+    Tip -.->|"upsell: 'wspierasz? zostań stałym fanem'"| Subscribe
+    BuyProduct -.->|"upsell: 'kup 3 produkty taniej w Tierze'"| Subscribe
+    Subscribe -.->|"cross-sell: produkt spoza tieru"| BuyProduct
+    Goal -.->|"kontekstowy CTA obok progresu"| Subscribe
+
+    style Fan fill:#FFD700,stroke:#004545,color:#001F1F
+    style Tier fill:#004545,color:#fff
+    style Tier2 fill:#004545,color:#fff
+    style LiveDomain fill:#333,color:#fff,stroke-dasharray: 5 5
