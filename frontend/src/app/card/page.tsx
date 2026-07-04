@@ -23,7 +23,7 @@ export default function CardPage() {
           "corner-shape": "square bevel square", 
          outline: "1px solid var(--color-teal-400)",
           background:
-            "linear-gradient(110deg in oklch, oklch(0.33 0.08 200) 0%, oklch(0.32 0.0623 201.1) 50%, oklch(0.33 0.06 195) 100%)",
+            
         }} >
         <div className="w-full h-full flex items-center justify-center">
           2

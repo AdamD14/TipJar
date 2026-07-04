@@ -1,134 +1,110 @@
+'use client';
 import React from 'react';
 
 interface GradientCardProps {
   children?: React.ReactNode;
   className?: string;
-  variant?: 1 | 2 | 3; // NOWE: 3 warianty kolorystyczne
+  variant?: 1 | 2 | 3;
 }
 
-export const GradientCard: React.FC<GradientCardProps> = ({ children, className = '', variant = 1 }) => {
-  // 3 warianty kolorystyczne - tylko background, nic więcej
-  const bgVariants = {
-    1: 'background: oklch(0.4 0.085 205)',
-    2: 'background: oklch(0.39 0.08 204)',
-    3: 'background: oklch(0.38 0.08 204)',
-  };
+const bgVariants: Record<NonNullable<GradientCardProps['variant']>, string> = {
+  1: 'linear-gradient(110deg in oklch, oklch(0.2301 0.0394 203) 0%, oklch(0.27 0.055 203) 10%, oklch(0.25 0.0425 203) 20%, oklch(0.295 0.059 203) 30%,  oklch(0.32 0.07 204) 39%, oklch(0.36 0.073 204) 48%, oklch(0.35 0.072 202) 56%, oklch(0.39 0.08 204) 64%, oklch(0.38 0.08 203) 72%, oklch(0.402 0.085 205) 84%, oklch(0.39 0.08 204) 92%, oklch(0.43 0.085 204) 100%)',
+  2: 'linear-gradient(110deg in oklch, oklch(0.2301 0.0394 203) 0%, oklch(0.27 0.055 203) 10%, oklch(0.25 0.0425 203) 20%, oklch(0.295 0.059 203) 30%,  oklch(0.32 0.07 204) 39%, oklch(0.36 0.073 204) 48%, oklch(0.35 0.072 202) 56%, oklch(0.39 0.08 204) 64%, oklch(0.38 0.08 203) 72%, oklch(0.402 0.085 205) 84%, oklch(0.39 0.08 204) 92%, oklch(0.43 0.085 204) 100%)',
+  3: 'linear-gradient(110deg in oklch, oklch(0.2301 0.0394 203) 0%, oklch(0.27 0.055 203) 10%, oklch(0.32 0.07 204) 20%, oklch(0.35 0.072 202) 30%, oklch(0.402 0.085 205) 40%, oklch(0.39 0.08 204) 50%, oklch(0.43 0.085 204) 60%, oklch(0.38 0.08 203) 70%, oklch(0.32 0.07 204) 80%, oklch(0.27 0.055 203) 90%, oklch(0.295 0.059 203) 100%)',
+
+};
+
+export const GradientCard: React.FC<GradientCardProps> = ({
+  children,
+  className = '',
+  variant = 1,
+}) => {
+  const bgColor = bgVariants[variant];
 
   return (
     <>
-      <style>{`
+      <style jsx>{`
         .card-surface {
-          /* --- BAZOWA FIZYKA ŚWIATŁA (Hover) --- */
-          background: ${bgVariants[variant]};
+          background: ${bgColor};
           background-size: 200% 100%;
           background-position: 0% center;
           transition: background-position 0.5s ease-out;
-
-        
-
-          /* --- Setup pod Focus State --- */
           position: relative;
-          outline: none; /* Ukrywa standardowy ring focusa */
+          outline: none;
         }
 
         .card-surface:hover {
           background-position: 100% center;
-          transform: translateY(0); 
+          transform: translateY(0);
           border: 1px solid;
           border-image: url(#chromatic-prism) 30;
         }
 
-        /* --- REZONANS JĄDROWY (Focus State) --- */
-        /* Pseudo-element ::before dla promieniowania fioletowego na środku */
         .card-surface::before {
           content: "";
           position: absolute;
           inset: 0;
-          
-          /* Radialny gradient fioletowy:
-             - startuje na środku (at center)
-             - Core Intensity: 100% fiolet (używam magenty dla żywotności)
-             - Inverted Halo Effect: ciemny teal wokół
-             - Edge Cutoff: 98% (gwałtowne odcięcie przy krawędzi)
-          */
           background: radial-gradient(circle at center,
-            rgba(255, 0, 255, 1) 0%,      /* Fioletowy rdzeń (100% intensity) */
-            rgba(255, 0, 255, 0.5) 50%,   /* Fading core */
-            rgba(0, 31, 31, 0.97) 98%,    /* Inverted Halo edge cutoff (Dims bg to 3%) */
-            rgba(0, 31, 31, 1) 100%       /* Edge blend */
+            rgba(255, 0, 255, 1) 0%,
+            rgba(255, 0, 255, 0.5) 50%,
+            rgba(0, 31, 31, 0.97) 98%,
+            rgba(0, 31, 31, 1) 100%
           );
-          
           opacity: 0;
           transition: opacity 0.5s ease-in-out;
-          
-          /* Upewnia się, że gradient nie zasłoni treści */
-          z-index: -1; 
+          z-index: -1;
         }
 
-        /* Aktywacja promieniowania na focus */
         .card-surface:focus-within::before {
           opacity: 1;
         }
 
-        /* Aby treść karty była czytelna na ciemnym tle fioletowym */
         .card-surface * {
-          position: relative; /* Utrzymuje treść nad pseudoelementem */
-          z-index: 1; 
+          position: relative;
+          z-index: 1;
         }
       `}</style>
 
-      {/* DODANY BLOK SVG Z TWOIM FILTREM */}
       <svg width="0" height="0" style={{ position: 'absolute', pointerEvents: 'none' }}>
         <defs>
-          {/* Model Snella-Descartesa: POPRAWIONE WARTOŚCI MACIERZY KANAŁÓW RGB */}
           <filter id="chromatic-prism" x="-50%" y="-50%" width="200%" height="200%">
-            {/* Przesunięcia warstw bocznych dla efektu rozszczepienia */}
             <feOffset dx="-2" dy="0" in="SourceGraphic" result="red_layer" />
             <feOffset dx="2" dy="0" in="SourceGraphic" result="blue_layer" />
 
-            {/* Izolacja kanału czerwonego (R) */}
             <feColorMatrix
               type="matrix"
               in="red_layer"
               result="red_only"
               values="
-              1 0 0 0 0
-              0 0 0 0 0
-              0 0 0 0 0
-              0 0 0 1 0"
+                0 0 0 0 0
+                0 1 0 0 0
+                0 0 0 0 0
+                0 0 0 1 0"
             />
 
-            {/* Izolacja kanału zielonego (G) */}
             <feColorMatrix
               type="matrix"
               in="SourceGraphic"
               result="green_only"
               values="
-              1 0 0 0 0
-              0 1 0 0 0
-              0 0 0 0 0
-              0 0 0 1 0"
+                0 0 0 0 0
+                0 1 0 0 0
+                0 0 0 0 0
+                0 0 0 1 0"
             />
 
-            {/* Izolacja kanału niebieskiego (B) */}
             <feColorMatrix
               type="matrix"
               in="blue_layer"
               result="blue_only"
               values="
-              0 0 0 0 0
-              0 0 0 0 0
-              0 0 1 0 0
-              0 0 0 1 0"
+                0 0 0 0 0
+                0 0 0 0 0
+                0 0 1 0 0
+                0 0 0 1 0"
             />
 
-            {/* Łączenie kanałów w finalny pryzmat trybem Screen */}
-            <feBlend
-              mode="screen"
-              in="red_only"
-              in2="green_only"
-              result="rg_mix"
-            />
+            <feBlend mode="screen" in="red_only" in2="green_only" result="rg_mix" />
             <feBlend mode="screen" in="rg_mix" in2="blue_only" />
           </filter>
         </defs>

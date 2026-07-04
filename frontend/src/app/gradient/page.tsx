@@ -16,7 +16,7 @@ export default function CardPage() {
               Variant 1
             </h2>
             <p className="text-xs text-text-ds-tertiary text-center">
-              oklch(0.4 0.085 205)
+              oklch(0.37 0.08 204)
             </p>
             <GradientCard 
               variant={1}
@@ -24,11 +24,11 @@ export default function CardPage() {
             >
               <div className="flex flex-col items-center justify-center h-full text-center p-6">
                 <span className="font-heading text-2xl font-bold text-teal-25">
-                  Variant 1
+                  Variant 11111
                 </span>
                 <span className="text-sm text-text-ds-secondary mt-3">
-                  L: 0.4, C: 0.085<br />
-                  H: 205 (blue)<br />
+                  L: 0.37, C: 0.08<br />
+                  H: 204 (blue)<br />
                   Hover: prism<br />
                   Focus: purple glow
                 </span>
@@ -42,7 +42,7 @@ export default function CardPage() {
               Variant 2
             </h2>
             <p className="text-xs text-text-ds-tertiary text-center">
-              oklch(0.39 0.08 204)
+              oklch(0.37 0.075 204)
             </p>
             <GradientCard 
               variant={2}
@@ -53,7 +53,7 @@ export default function CardPage() {
                   Variant 2
                 </span>
                 <span className="text-sm text-text-ds-secondary mt-3">
-                  L: 0.39, C: 0.08<br />
+                  L: 0.37, C: 0.075<br />
                   H: 204 (blue)<br />
                   Hover: prism<br />
                   Focus: purple glow
@@ -68,7 +68,7 @@ export default function CardPage() {
               Variant 3
             </h2>
             <p className="text-xs text-text-ds-tertiary text-center">
-              oklch(0.38 0.08 204)
+              oklch(0.36 0.075 204)
             </p>
             <GradientCard 
               variant={3}
@@ -79,7 +79,7 @@ export default function CardPage() {
                   Variant 3
                 </span>
                 <span className="text-sm text-text-ds-secondary mt-3">
-                  L: 0.38, C: 0.08<br />
+                  L: 0.36, C: 0.075<br />
                   H: 204 (blue)<br />
                   Hover: prism<br />
                   Focus: purple glow
