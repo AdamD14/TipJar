@@ -160,7 +160,7 @@ export default function CreatorSidebar() {
 
       {/* ── Sidebar ── */}
       <aside
-        className={`fixed lg:sticky top-14 left-0 z-[70] lg:z-0 h-[calc(100vh-3.5rem)] w-64 bg-teal-800/90 backdrop-blur-2xl border-r border-border-subtle flex flex-col transition-transform duration-300 ${
+        className={`fixed lg:sticky top-14 left-0 z-[70] lg:z-0 h-[calc(100vh-3.5rem)] w-64 bg-linear-gradient(135deg in oklch, oklch(0.31 0.062 204) 0%, oklch(0.35 0.072 202) 50%, oklch(0.31 0.062 204) 100%), backdrop-blur-2xl border-r border-border-subtle flex flex-col transition-transform duration-300 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >

@@ -575,7 +575,7 @@ UTILITY CLASSES
 
 /* Rich main background (aurora gradient) */
 .bg-gradient-main {
-  background-color: #021a1a;
+  background-color: #00303f;
   background-image:
     radial-gradient(1100px 520px at 110% -8%, rgba(131, 80, 159, 0.24) 0%, rgba(131, 80, 159, 0.00) 62%),
     radial-gradient(900px 520px at -10% 112%, rgba(39, 151, 151, 0.22) 0%, rgba(39, 151, 151, 0.00) 68%),
@@ -583,8 +583,8 @@ UTILITY CLASSES
     linear-gradient(
       135deg,
       hsl(180 100% 7%) 0%,
-      hsl(180 100% 8%) 10%,
-      hsl(178 60% 11%) 20%,
+      hsl(180 100% 8%) 4%,
+      hsl(178 60% 11%) 12%,
       hsl(185 62% 12%) 30%,
       hsl(192 68% 13%) 40%,
       hsl(196 72% 13%) 50%,
@@ -603,25 +603,8 @@ UTILITY CLASSES
 @media (min-width: 1024px) {
   .bg-gradient-main {
     background-image:
-      radial-gradient(1200px 560px at 115% -10%, rgba(131, 80, 159, 0.22) 0%, rgba(131, 80, 159, 0.00) 64%),
-      radial-gradient(1000px 560px at -12% 120%, rgba(39, 151, 151, 0.20) 0%, rgba(39, 151, 151, 0.00) 70%),
-      radial-gradient(660px 360px at 78% 30%, rgba(255, 215, 0, 0.12) 0%, rgba(255, 215, 0, 0.00) 62%),
-      linear-gradient(135deg in oklch, oklch(0.27 0.055 203) 0%, oklch(0.31 0.062 204) 40%, oklch(0.295 0.059 203) 100%)
-
-      linear-gradient(
-        135deg,
-        hsl(180 100% 7%) 0%,
-        hsl(180 100% 8%) 12%,
-        hsl(178 60% 11%) 24%,
-        hsl(185 62% 12%) 36%,
-        hsl(192 68% 13%) 48%,
-        hsl(196 72% 13%) 60%,
-        hsl(202 78% 12%) 72%,
-        hsl(208 80% 11%) 84%,
-        hsl(215 100% 11%) 100%
+       linear-gradient(110deg in oklch, oklch(0.40 0.08 203) 0%, oklch(0.43 0.077 203) 20%, oklch(0.4 0.076 203)  40%, oklch(0.42 0.078 204) 60%, oklch(0.4 0.077 203) 80%, oklch(0.42 0.078 204) 100%
       );
-    -webkit-mask-image: radial-gradient(135% 135% at 50% 42%, #000 62%, transparent 100%);
-    mask-image: radial-gradient(135% 135% at 50% 42%, #000 62%, transparent 100%);
   }
 }
 

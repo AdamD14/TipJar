@@ -3,11 +3,11 @@ export default function CardPage() {
  return (
     <div className="grid grid-cols-2 gap-6 justify-center content-center justify-items-center items-center min-h-screen py-12">
       <div
-        className="relative w-[480px] h-[240px]"
+        className="relative w-[880px] h-[480px]"
         style={{
           border: "1px solid var(--color-teal-300)",
           borderRadius: "36px",
-          background: "var(--color-teal-700)",
+          background: "linear-gradient(135deg in oklch, oklch(0.31 0.062 195) 0%, oklch(0.35 0.072 192) 50%, oklch(0.31 0.062 195) 100%)",
           "corner-shape": "bevel",
           outline: "1px solid var(--color-teal-400)",
         }} >
@@ -16,29 +16,29 @@ export default function CardPage() {
         </div>
       </div>
       <div
-        className="relative w-[480px] h-[240px]"
+        className="relative w-[880px] h-[480px]"
         style={{
-        border: "1px solid var(--color-teal-300)",
+          border: "1px solid var(--color-teal-300)",
           borderRadius: "48px",
-          "corner-shape": "square bevel square", 
-         outline: "1px solid var(--color-teal-400)",
+          "corner-shape": "square bevel square",
+          outline: "1px solid var(--color-teal-400)",
           background:
-            
-        }} >
+            "linear-gradient(135deg in oklch, oklch(0.31 0.062 204) 0%, oklch(0.35 0.072 202) 50%, oklch(0.31 0.062 204) 100%)",
+        }}>
         <div className="w-full h-full flex items-center justify-center">
           2
         </div>
       </div>
 
       <div
-        className="relative w-[480px] h-[240px]"
+        className="relative w-[880px] h-[480px]"
         style={{
           border: "1px solid var(--color-teal-300)",
           outline: "1px solid var(--color-teal-400)",
           borderRadius: "36px",
           "corner-shape": "bevel square bevel", 
      background:
-            "linear-gradient(110deg in oklch, oklch(0.3419 0.0745 198.08) 0%, oklch(0.3241 0.0632 201.1) 50%, oklch(0.3485 0.0809 195.15) 100%)",
+            "linear-gradient(135deg in oklch, oklch(0.31 0.062 200) 0%, oklch(0.35 0.072 198) 50%, oklch(0.31 0.062 200) 100%)",
         }}
       >
        <div className="w-full h-full flex items-center justify-center">
@@ -47,13 +47,13 @@ export default function CardPage() {
       </div>
 
       <div
-        className="w-[480px] h-[240px]"
+        className="w-[880px] h-[480px]"
         style={{
           border: "1px solid var(--color-teal-300)",
           borderRadius: "24px",
           outline: "1px solid var(--color-teal-400)",
           background:
-            "linear-gradient(110deg in oklch, oklch(0.3034 0.0596 197.48) 0%, oklch(0.3229 0.0663 196.24) 50%, oklch(0.3419 0.0745 198.08) 100%)",
+            "linear-gradient(135deg, hsla(185, 100%, 10%, 1) 2%, hsla(186, 100%, 12%, 1) 17%, hsla(184, 100%, 15%, 1) 37%, hsla(186, 100%, 14%, 1) 54%, hsla(186, 100%, 13%, 1) 72%, hsla(186, 100%, 12%, 1) 100%)",
           "corner-shape": "scoop",
         }} 
         >
@@ -63,7 +63,7 @@ export default function CardPage() {
       </div>
 
       <div
-        className="relative w-[480px] h-[240px]"
+        className="relative w-[880px] h-[480px]"
         style={{
           border: "1px groove var(--color-teal-300)",
           borderRadius: "32px",
@@ -77,7 +77,7 @@ export default function CardPage() {
         </div>
         </div>
       
-      <div className="relative w-[480px] h-[240px]"
+      <div className="relative w-[880px] h-[480px]"
         style={{
           border: "1px solid var(--color-teal-400)",
           borderRadius: "18px",

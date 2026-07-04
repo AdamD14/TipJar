@@ -59,16 +59,17 @@ export default function Navbar() {
 
   return (
     <header
-      className="fixed top-0 inset-x-0 z-elevated h-14 flex items-center px-4 gap-4 border-b border-border-subtle backdrop-blur-[20px] saturate-[200%]"
+      className="fixed top-0 inset-x-0 z-elevated h-14 flex items-center px-4 gap-4 border-b border-teal-300  backdrop-blur-[20px] saturate-[200%]"
       style={{
-        backgroundColor: "rgba(0, 31, 31, 0.44)",
+        backgroundImage:
+          "linear-gradient(110deg in oklch, oklch(0.37 0.072 202) 0%, oklch(0.36 0.07 204) 50%, oklch(0.38 0.071 202) 100%)",
       }}
     >
     {/* ── Column 1: Brand ── */}
     <div className="flex items-center gap-2 shrink-0">
       <Link
         href={homeHref}
-        className="flex items-center gap-2 group transition-colors duration-200 hover:text-text-primary hover:bg-surface-elevated/70 rounded-lg py-1.5 px-3"
+        className="flex items-center gap-2 group transition-colors duration-200 hover:text-text-primary hover:bg-surface-elevated/70 rounded-lg py-1.5 px-2"
       >
         <span className="font-heading font-semibold text-xl text-text-primary hidden sm:inline">
           tipjar.plus
