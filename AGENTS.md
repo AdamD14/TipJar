@@ -102,3 +102,41 @@ PRZESTRZEGAC POLECEN, ZAKAZ IMPROWIZACJI, PODWÓJNE UPEWNIANIE SIE JAK NIE MA JA
 - **DESIGN.md** at project root — visual system (tokens, typography, elevation, components)
 - **Live config**: `.impeccable/live/config.json` (CSP patch skipped by user request)
 - **Rules**: Own design path, no copying category patterns. Gold accent as premium signal, teal depth for calm, purple for refinement. OKLCH contrast algorithms replace standard WCAG checklists.
+
+## Creator Desktop Navigation (Authoritative)
+
+**Root po zalogowaniu jako CREATOR:**
+- `frontend/src/app/[username]/creator-desktop/page.tsx` — strona główna creatora
+- `frontend/src/app/[username]/creator-desktop/layout.tsx` — layout; zawiera **Navbar** i **CreatorSidebar** — przeczytać ten plik żeby znać strukturę nawigacji
+
+**ROLA FAN = POWIETRZE.** Nie omawiamy, nie sprawdzamy, ignorujemy scieżki fan.
+
+**Navbar (od lewej):**
+1. "tipjar.plus" → prowadzi na `/app/[username]/creator-desktop/page.tsx`
+2. Kolejno: Desktop, Studio, Add, Community, Growth — każda przechodzi po drzewie w dół
+   - np. istnieje `creator-desktop/desktop/page.tsx`
+3. Trzecia kolumna navbar: ikona Wallet, powiadomienia, outline @username button (gdy zalogowany)
+4. Gdy jesteśmy w danej kategorii — dana ikona+napis podświetlone (nice-to-have, nie krytyczne)
+
+**Sidebar:**
+- Te same ścieżki co navbar, ale wszystko powinno się rozwijać (drzewa)
+- Istnieje `PathBreadcrumb` — trzeba go poprawić (osobne zadanie)
+
+**Four main modules w studio (`creator-desktop/studio/`):**
+- `studio/page.tsx` — jeden z najistotniejszych: 4 duże widgety od góry (jak desktop) + widgety z `desktop/page.tsx` gdzie user edytuje profil/ustawienia (same route, nie robimy logiki)
+- Cztery główne foldery w studio/: **monetization/**, **share/**, **live/** (+ ew. więcej)
+- `monetization/` — zawiera podfoldery (3+): m.in. `premiumContent/`
+
+**Scieżka która musi istnieć a której brakował:**
+- `frontend/src/app/[username]/creator-desktop/studio/monetization/premiumContent/page.tsx` — **MUSI istnieć** jako strona
+
+## Zasady pracy agenta (od usera, sesja 2026-07-04)
+
+1. **NIE PRZEGLĄDAJ folderów na oślep** — nie marnuj zapytań na folder-walking. Jesteś w konkretnej sekcji, zajmujesz się tylko nią.
+2. **Czytaj pliki które user wskazał** — nie całego repo.
+3. **Jak MUSISZ sprawdzić konkretny endpoint/trasę** — szukaj celnie, nie browsing.
+4. **Nie kopiuj 15 plików z folderu 04_07** — to już było robione, sprawdzaj czy wdrożone, nie przekopiu po raz drugi.
+5. **Plan = całościowy i kompletny** — od deski do deski. Nie ma miejsca na "a stworzę plik i huj".
+6. **Nie przekopu limitów API** — user widzi co sprawdzasz, jak zobaczy drugą stronę medalu to wkurwi się.
+7. **Jak wiesz co robić — rób. Jak nie wiesz — pytaj.** Nie pytaj głupich pytań.
+8. **Podwójne upewnienie się przy braku jasności co do polecenia.**
