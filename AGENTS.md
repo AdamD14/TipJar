@@ -61,33 +61,6 @@ PRZESTRZEGAC POLECEN, ZAKAZ IMPROWIZACJI, PODWÓJNE UPEWNIANIE SIE JAK NIE MA JA
 
 # TipJar+ Project Memory
 
-## Critical Constraints (from user)
-- **Pseudo-elements allowed** — but must be correctly positioned (my `::after` covered the card because of bad z-index/positioning; use `<span>` glow as safe default)
-- **Ask before every change** — never touch files without explicit permission
-- **Surgical changes only** — do not rewrite entire files; modify only what's requested
-- **No independent actions** — do not run builds, installs, git operations, or edits without approval
-- **Iterate one thing at a time** — the user reviews and approves each step before proceeding
-
-## Today's Session Summary
-- Card.tsx: Restored `<span>` glow (removed `::before`/`::after` pseudo-elements)
-- StartBuildingShowcase: Added `show.webp` background
-- StartBuildingShowcase: 3-column grid with ExampleProfile (left), empty (center/right)
-- ExampleProfile: Changed from popup to inline mode, added AvatarCarousel in place of round avatar
-- HowItWorks: Changed "For Creators" from purple (`text-purple-300`) to gold (`text-gold-400`)
-- No commits, no builds, no installs were run without permission
-
-## Design Preferences
-- Color accent for Creator sections: **gold** (`text-gold-400`, border-gold-400)
-- Do not touch: Header, Hero, Footer (unless explicitly requested)
-- Creator components follow the gold accent from `rules/cards.md`
-- Card interactive hover: teal-600 bg, -translate-y-1.5, double box-shadow with gold glow
-
-## Preview Page Rule
-- **Preview page**: `frontend/src/app/box/box/box/box/box/box/page.tsx`
-- Po każdej edycji komponentów: na stronie podgląd wyświetlaj **tylko aktualnie edytowane komponenty** (max 3 w grid 3-kolumnowym)
-- **Usuwaj stare importy** — strona to podgląd bieżący, nie archiwum
-- Użytkownik ma tę stronę odpaloną na monitorze cały czas
-
 ## ULEPSZAJ, NIE UPRASZCZAJ
 - Refaktoryzacja = **ulepszanie** kart, NIE usuwanie efektów wizualnych
 - ZAKAZ usuwania: pseudo-elementów, SVG filtrów, animacji, clip-path, decorative patterns
@@ -103,34 +76,6 @@ PRZESTRZEGAC POLECEN, ZAKAZ IMPROWIZACJI, PODWÓJNE UPEWNIANIE SIE JAK NIE MA JA
 - **Live config**: `.impeccable/live/config.json` (CSP patch skipped by user request)
 - **Rules**: Own design path, no copying category patterns. Gold accent as premium signal, teal depth for calm, purple for refinement. OKLCH contrast algorithms replace standard WCAG checklists.
 
-## Creator Desktop Navigation (Authoritative)
-
-**Root po zalogowaniu jako CREATOR:**
-- `frontend/src/app/[username]/creator-desktop/page.tsx` — strona główna creatora
-- `frontend/src/app/[username]/creator-desktop/layout.tsx` — layout; zawiera **Navbar** i **CreatorSidebar** — przeczytać ten plik żeby znać strukturę nawigacji
-
-**ROLA FAN = POWIETRZE.** Nie omawiamy, nie sprawdzamy, ignorujemy scieżki fan.
-
-**Navbar (od lewej):**
-1. "tipjar.plus" → prowadzi na `/app/[username]/creator-desktop/page.tsx`
-2. Kolejno: Desktop, Studio, Add, Community, Growth — każda przechodzi po drzewie w dół
-   - np. istnieje `creator-desktop/desktop/page.tsx`
-3. Trzecia kolumna navbar: ikona Wallet, powiadomienia, outline @username button (gdy zalogowany)
-4. Gdy jesteśmy w danej kategorii — dana ikona+napis podświetlone (nice-to-have, nie krytyczne)
-
-**Sidebar:**
-- Te same ścieżki co navbar, ale wszystko powinno się rozwijać (drzewa)
-- Istnieje `PathBreadcrumb` — trzeba go poprawić (osobne zadanie)
-
-**Four main modules w studio (`creator-desktop/studio/`):**
-- `studio/page.tsx` — jeden z najistotniejszych: 4 duże widgety od góry (jak desktop) + widgety z `desktop/page.tsx` gdzie user edytuje profil/ustawienia (same route, nie robimy logiki)
-- Cztery główne foldery w studio/: **monetization/**, **share/**, **live/** (+ ew. więcej)
-- `monetization/` — zawiera podfoldery (3+): m.in. `premiumContent/`
-
-**Scieżka która musi istnieć a której brakował:**
-- `frontend/src/app/[username]/creator-desktop/studio/monetization/premiumContent/page.tsx` — **MUSI istnieć** jako strona
-
-## Zasady pracy agenta (od usera, sesja 2026-07-04)
 
 1. **NIE PRZEGLĄDAJ folderów na oślep** — nie marnuj zapytań na folder-walking. Jesteś w konkretnej sekcji, zajmujesz się tylko nią.
 2. **Czytaj pliki które user wskazał** — nie całego repo.

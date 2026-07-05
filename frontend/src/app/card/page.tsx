@@ -7,7 +7,7 @@ export default function CardPage() {
         style={{
           border: "1px solid var(--color-teal-300)",
           borderRadius: "36px",
-          background: "linear-gradient(135deg in oklch, oklch(0.31 0.062 195) 0%, oklch(0.35 0.072 192) 50%, oklch(0.31 0.062 195) 100%)",
+          background: "oklch(0.35 0.059 200)",
           "corner-shape": "bevel",
           outline: "1px solid var(--color-teal-400)",
         }} >
@@ -22,8 +22,7 @@ export default function CardPage() {
           borderRadius: "48px",
           "corner-shape": "square bevel square",
           outline: "1px solid var(--color-teal-400)",
-          background:
-            "linear-gradient(135deg in oklch, oklch(0.31 0.062 204) 0%, oklch(0.35 0.072 202) 50%, oklch(0.31 0.062 204) 100%)",
+          background: "oklch(0.35 0.08 200)",
         }}>
         <div className="w-full h-full flex items-center justify-center">
           2
