@@ -69,18 +69,24 @@ export function useNotificationsLive() {
   const addNotification = useNotificationStore((s) => s.addNotification);
   const hasHydrated = useAuthStore((s) => s._hasHydrated);
   const accessToken = useAuthStore((s) => s.accessToken);
+  const user = useAuthStore((s) => s.user);
   const abortRef = useRef<AbortController | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const failureCountRef = useRef<number>(0);
 
   const connect = useCallback(
     (signal: AbortSignal) => {
+      if (signal.aborted) return;
+
       const token = getAuthToken();
 
       // Not authenticated — don't connect, don't retry, don't spam console
-      if (!token) return;
+      if (!token && !user) return;
 
-      const headers: Record<string, string> = {
-        Authorization: `Bearer ${token}`,
-      };
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
 
       fetch(`${BACKEND_ORIGIN}/api/v1/circle/notifications/stream`, {
         headers,
@@ -94,22 +100,33 @@ export function useNotificationsLive() {
               console.warn('[useNotificationsLive] SSE 401 — attempting token refresh');
               const refreshed = await tryRefreshToken();
               if (refreshed && !signal.aborted) {
-                setTimeout(() => connect(signal), 1000);
+                timeoutRef.current = setTimeout(() => connect(signal), 1000);
               }
               // If refresh failed the user is logged out — stop silently
               return;
             }
-            console.warn(`[useNotificationsLive] SSE ${response.status} — retrying in 5s`);
-            if (!signal.aborted) setTimeout(() => connect(signal), 5000);
+            if (failureCountRef.current === 0) {
+              console.warn(`[useNotificationsLive] SSE ${response.status} — retrying in 5s`);
+            }
+            failureCountRef.current += 1;
+            if (!signal.aborted) {
+              timeoutRef.current = setTimeout(() => connect(signal), 5000);
+            }
             return;
           }
           if (!response.body) {
-            console.warn('[useNotificationsLive] No body — retrying in 5s');
-            if (!signal.aborted) setTimeout(() => connect(signal), 5000);
+            if (failureCountRef.current === 0) {
+              console.warn('[useNotificationsLive] No body — retrying in 5s');
+            }
+            failureCountRef.current += 1;
+            if (!signal.aborted) {
+              timeoutRef.current = setTimeout(() => connect(signal), 5000);
+            }
             return;
           }
 
           console.log('[useNotificationsLive] SSE connected');
+          failureCountRef.current = 0;
           const reader = response.body.getReader();
           const decoder = new TextDecoder();
           let buffer = '';
@@ -118,7 +135,9 @@ export function useNotificationsLive() {
             const { done, value } = await reader.read();
             if (done) {
               console.log('[useNotificationsLive] SSE stream ended — reconnecting in 3s');
-              if (!signal.aborted) setTimeout(() => connect(signal), 3000);
+              if (!signal.aborted) {
+                timeoutRef.current = setTimeout(() => connect(signal), 3000);
+              }
               break;
             }
 
@@ -149,18 +168,21 @@ export function useNotificationsLive() {
         })
         .catch(() => {
           if (!signal.aborted) {
-            console.warn('[useNotificationsLive] SSE error — retrying in 5s');
-            setTimeout(() => connect(signal), 5000);
+            if (failureCountRef.current === 0) {
+              console.warn('[useNotificationsLive] SSE connection failed (backend offline), retrying silently...');
+            }
+            failureCountRef.current += 1;
+            timeoutRef.current = setTimeout(() => connect(signal), 5000);
           }
         });
     },
-    [addNotification],
+    [addNotification, user],
   );
 
   useEffect(() => {
     // Wait for hydration; skip entirely if not authenticated
     if (!hasHydrated) return;
-    if (!accessToken) return;
+    if (!accessToken && !user) return;
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -168,6 +190,9 @@ export function useNotificationsLive() {
 
     return () => {
       controller.abort();
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
-  }, [connect, hasHydrated, accessToken]);
+  }, [connect, hasHydrated, accessToken, user]);
 }

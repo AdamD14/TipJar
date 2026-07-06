@@ -63,7 +63,11 @@ function StudioCardShell({
 
 export default function StudioPage() {
   const { username } = useParams<{ username: string }>();
-  const prefix = `/@${username}/creator-desktop/studio`;
+  const decodedUsername = decodeURIComponent(username || "");
+  const cleanUsername = decodedUsername.startsWith("@")
+    ? decodedUsername.slice(1)
+    : decodedUsername;
+  const prefix = `/@${cleanUsername}/creator-desktop/studio`;
 
   const cards: StudioCard[] = [
     {

@@ -61,8 +61,7 @@ export default function Navbar() {
     <header
       className="fixed top-0 inset-x-0 z-elevated h-14 flex items-center px-4 gap-4 border-b border-teal-300  backdrop-blur-[20px] saturate-[200%]"
       style={{
-        backgroundImage:
-          "linear-gradient(110deg in oklch, oklch(0.37 0.072 202) 0%, oklch(0.36 0.07 204) 50%, oklch(0.38 0.071 202) 100%)",
+        backgroundImage: "linear-gradient" 
       }}
     >
     {/* ── Column 1: Brand ── */}

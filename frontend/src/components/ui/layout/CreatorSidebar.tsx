@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -37,13 +37,24 @@ import {
   Megaphone,
   Mail,
   PieChart,
+  UserCircle,
+  Share2,
+  Coins,
+  Gem,
 } from "lucide-react";
 
 interface NavSection {
   label: string;
   icon: React.ElementType;
   href: string;
-  sub?: { label: string; icon: React.ElementType; href: string }[];
+  sub?: NavSubItem[];
+}
+
+interface NavSubItem {
+  label: string;
+  icon: React.ElementType;
+  href: string;
+  sub?: NavSubItem[];
 }
 
 const sections: NavSection[] = [
@@ -67,6 +78,32 @@ const sections: NavSection[] = [
     label: "Studio",
     icon: Clapperboard,
     href: "studio",
+    sub: [
+      { label: "Profil", icon: UserCircle, href: "studio/profil" },
+      {
+        label: "Monetization",
+        icon: Coins,
+        href: "studio/monetization",
+        sub: [
+          { label: "Tips", icon: Coins, href: "studio/monetization/tips" },
+          { label: "Goals", icon: Target, href: "studio/monetization/goals" },
+          {
+            label: "Premium Content",
+            icon: Gem,
+            href: "studio/monetization/premiumContent",
+            sub: [
+              { label: "Products", icon: Gem, href: "studio/monetization/premiumContent/products" },
+              { label: "Tiers", icon: Crown, href: "studio/monetization/premiumContent/tiers" },
+              { label: "Bundles", icon: Repeat, href: "studio/monetization/premiumContent/bundles" },
+              { label: "Access Settings", icon: Settings, href: "studio/monetization/premiumContent/access-settings" },
+              { label: "Billing", icon: CreditCard, href: "studio/monetization/premiumContent/billing" },
+            ],
+          },
+        ],
+      },
+      { label: "Share", icon: Share2, href: "studio/share" },
+      { label: "Live", icon: Radio, href: "studio/live" },
+    ],
   },
   {
     label: "Add",
@@ -96,6 +133,16 @@ const sections: NavSection[] = [
     href: "growth",
   },
   {
+    label: "Analytics",
+    icon: PieChart,
+    href: "analytics",
+  },
+  {
+    label: "Notifications",
+    icon: Bell,
+    href: "notifications",
+  },
+  {
     label: "Wallet",
     icon: Wallet,
     href: "wallet",
@@ -119,17 +166,29 @@ export default function CreatorSidebar() {
   const pathname = usePathname();
   const params = useParams<{ username: string }>();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [manuallyExpanded, setManuallyExpanded] = useState<string | null>(null);
+  const [expandedStates, setExpandedStates] = useState<Record<string, boolean>>({});
 
-  const username = params.username;
-  const prefix = `/@${username}/creator-desktop`;
+  const rawUsername = params.username || "";
+  const decodedUsername = decodeURIComponent(rawUsername).replace(/^@/, "");
+  const prefix = `/@${decodedUsername}/creator-desktop`;
 
-  const activeSection = sections.find((s) => pathname.startsWith(`${prefix}/${s.href}`));
+  const isPathActive = useCallback((href: string) => {
+    const fullHref = `${prefix}/${href}`;
+    return pathname === fullHref || pathname.startsWith(`${fullHref}/`);
+  }, [pathname, prefix]);
 
-  const expandedSection = manuallyExpanded ?? activeSection?.href ?? null;
+  const isSectionExpanded = (href: string) => {
+    if (expandedStates[href] !== undefined) {
+      return expandedStates[href];
+    }
+    return isPathActive(href);
+  };
 
   const toggleSection = (href: string) => {
-    setManuallyExpanded((prev) => (prev === href ? null : href === activeSection?.href && prev === null ? null : href));
+    setExpandedStates((prev) => ({
+      ...prev,
+      [href]: !isSectionExpanded(href),
+    }));
   };
 
   const closeMobile = () => setMobileOpen(false);
@@ -169,8 +228,8 @@ export default function CreatorSidebar() {
           {sections.map((section) => {
             const Icon = section.icon;
             const fullHref = `${prefix}/${section.href}`;
-            const isActive = pathname === fullHref || pathname.startsWith(`${fullHref}/`);
-            const isExpanded = expandedSection === section.href;
+            const isActive = isPathActive(section.href);
+            const isExpanded = isSectionExpanded(section.href);
             const hasSub = section.sub && section.sub.length > 0;
 
             return (
@@ -220,21 +279,182 @@ export default function CreatorSidebar() {
                           const SubIcon = sub.icon;
                           const subHref = `${prefix}/${sub.href}`;
                           const isSubActive = pathname === subHref;
+                          const hasNestedSub = sub.sub && sub.sub.length > 0;
+                          const isNestedExpanded = isSectionExpanded(sub.href);
+                          const isNestedActive = hasNestedSub && isPathActive(sub.href);
 
                           return (
-                            <Link
-                              key={sub.href}
-                              href={subHref}
-                              onClick={closeMobile}
-                              className={`flex items-center gap-2.5 px-2.5 py-2 rounded-md transition-colors duration-200 text-xs font-medium ${
-                                isSubActive
-                                  ? "text-gold-400 bg-surface-elevated/60"
-                                  : "text-text-quaternary hover:text-text-secondary hover:bg-surface-elevated/40"
-                              }`}
-                            >
-                              <SubIcon className="w-3.5 h-3.5 shrink-0" />
-                              <span className="font-body">{sub.label}</span>
-                            </Link>
+                            <div key={sub.href}>
+                              {hasNestedSub ? (
+                                <>
+                                  <Link
+                                    href={subHref}
+                                    onClick={() => {
+                                      closeMobile();
+                                      if (!isNestedExpanded) {
+                                        setExpandedStates((prev) => ({ ...prev, [sub.href]: true }));
+                                      }
+                                    }}
+                                    className={`flex w-full items-center gap-2.5 px-2.5 py-2 rounded-md transition-colors duration-200 text-xs font-medium group ${
+                                      isNestedActive
+                                        ? "text-gold-400 bg-surface-elevated/60"
+                                        : "text-text-quaternary hover:text-text-secondary hover:bg-surface-elevated/40"
+                                    }`}
+                                  >
+                                    <SubIcon className="w-3.5 h-3.5 shrink-0" />
+                                    <span className="font-body flex-1 text-left">
+                                      {sub.label}
+                                    </span>
+                                    <button
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        toggleSection(sub.href);
+                                      }}
+                                      className={`p-0.5 rounded transition-transform duration-200 ${
+                                        isNestedExpanded ? "rotate-180" : ""
+                                      }`}
+                                    >
+                                      <ChevronDown className="w-3.5 h-3.5 text-text-quaternary" />
+                                    </button>
+                                  </Link>
+
+                                  <AnimatePresence initial={false}>
+                                    {isNestedExpanded && (
+                                      <motion.div
+                                        initial={{ height: 0, opacity: 0 }}
+                                        animate={{ height: "auto", opacity: 1 }}
+                                        exit={{ height: 0, opacity: 0 }}
+                                        transition={{
+                                          duration: 0.2,
+                                          ease: [0.4, 0, 0.2, 1],
+                                        }}
+                                        className="overflow-hidden"
+                                      >
+                                        <div className="ml-4 pl-3 border-l border-border-subtle mt-0.5 mb-1 space-y-0.5">
+                                          {sub.sub!.map((nested) => {
+                                            const NestedIcon = nested.icon;
+                                            const nestedHref = `${prefix}/${nested.href}`;
+                                            const isNestedSubActive = isPathActive(nested.href);
+                                            const hasDeepSub = nested.sub && nested.sub.length > 0;
+                                            const isDeepExpanded = isSectionExpanded(nested.href);
+
+                                            return (
+                                              <div key={nested.href}>
+                                                {hasDeepSub ? (
+                                                  <>
+                                                    <Link
+                                                      href={nestedHref}
+                                                      onClick={() => {
+                                                        closeMobile();
+                                                        if (!isDeepExpanded) {
+                                                          setExpandedStates((prev) => ({ ...prev, [nested.href]: true }));
+                                                        }
+                                                      }}
+                                                      className={`flex w-full items-center gap-2 px-2.5 py-1.5 rounded-md transition-colors duration-200 text-xs font-medium group ${
+                                                        isNestedSubActive
+                                                          ? "text-gold-400 bg-surface-elevated/60"
+                                                          : "text-text-quaternary hover:text-text-secondary hover:bg-surface-elevated/40"
+                                                      }`}
+                                                    >
+                                                      <NestedIcon className="w-3.5 h-3.5 shrink-0" />
+                                                      <span className="font-body flex-1 text-left">
+                                                        {nested.label}
+                                                      </span>
+                                                      <button
+                                                        onClick={(e) => {
+                                                          e.preventDefault();
+                                                          e.stopPropagation();
+                                                          toggleSection(nested.href);
+                                                        }}
+                                                        className={`p-0.5 rounded transition-transform duration-200 ${
+                                                          isDeepExpanded ? "rotate-180" : ""
+                                                        }`}
+                                                      >
+                                                        <ChevronDown className="w-3 h-3 text-text-quaternary" />
+                                                      </button>
+                                                    </Link>
+
+                                                    <AnimatePresence initial={false}>
+                                                      {isDeepExpanded && (
+                                                        <motion.div
+                                                          initial={{ height: 0, opacity: 0 }}
+                                                          animate={{ height: "auto", opacity: 1 }}
+                                                          exit={{ height: 0, opacity: 0 }}
+                                                          transition={{
+                                                            duration: 0.2,
+                                                            ease: [0.4, 0, 0.2, 1],
+                                                          }}
+                                                          className="overflow-hidden"
+                                                        >
+                                                          <div className="ml-4 pl-3 border-l border-border-subtle mt-0.5 mb-1 space-y-0.5">
+                                                            {nested.sub!.map((deep) => {
+                                                              const DeepIcon = deep.icon;
+                                                              const deepHref = `${prefix}/${deep.href}`;
+                                                              const isDeepActive = pathname === deepHref;
+
+                                                              return (
+                                                                <Link
+                                                                  key={deep.href}
+                                                                  href={deepHref}
+                                                                  onClick={closeMobile}
+                                                                  className={`flex items-center gap-2 px-2 py-1 rounded-md transition-colors duration-200 text-xs font-medium ${
+                                                                    isDeepActive
+                                                                      ? "text-gold-400 bg-surface-elevated/60"
+                                                                      : "text-text-quaternary hover:text-text-secondary hover:bg-surface-elevated/40"
+                                                                  }`}
+                                                                >
+                                                                  <DeepIcon className="w-3.5 h-3.5 shrink-0" />
+                                                                  <span className="font-body">
+                                                                    {deep.label}
+                                                                  </span>
+                                                                </Link>
+                                                              );
+                                                            })}
+                                                          </div>
+                                                        </motion.div>
+                                                      )}
+                                                    </AnimatePresence>
+                                                  </>
+                                                ) : (
+                                                  <Link
+                                                    href={nestedHref}
+                                                    onClick={closeMobile}
+                                                    className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md transition-colors duration-200 text-xs font-medium ${
+                                                      isNestedSubActive
+                                                        ? "text-gold-400 bg-surface-elevated/60"
+                                                        : "text-text-quaternary hover:text-text-secondary hover:bg-surface-elevated/40"
+                                                    }`}
+                                                  >
+                                                    <NestedIcon className="w-3.5 h-3.5 shrink-0" />
+                                                    <span className="font-body">
+                                                      {nested.label}
+                                                    </span>
+                                                  </Link>
+                                                )}
+                                              </div>
+                                            );
+                                          })}
+                                        </div>
+                                      </motion.div>
+                                    )}
+                                  </AnimatePresence>
+                                </>
+                              ) : (
+                                <Link
+                                  href={subHref}
+                                  onClick={closeMobile}
+                                  className={`flex items-center gap-2.5 px-2.5 py-2 rounded-md transition-colors duration-200 text-xs font-medium ${
+                                    isSubActive
+                                      ? "text-gold-400 bg-surface-elevated/60"
+                                      : "text-text-quaternary hover:text-text-secondary hover:bg-surface-elevated/40"
+                                  }`}
+                                >
+                                  <SubIcon className="w-3.5 h-3.5 shrink-0" />
+                                  <span className="font-body">{sub.label}</span>
+                                </Link>
+                              )}
+                            </div>
                           );
                         })}
                       </div>

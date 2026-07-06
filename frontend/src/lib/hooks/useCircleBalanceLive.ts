@@ -21,7 +21,11 @@ function getAuthToken(): string {
 export function useCircleBalanceLive() {
   const queryClient = useQueryClient();
   const hasHydrated = useAuthStore((s) => s._hasHydrated);
+  const accessToken = useAuthStore((s) => s.accessToken);
+  const user = useAuthStore((s) => s.user);
   const abortRef = useRef<AbortController | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const failureCountRef = useRef<number>(0);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['circle-balance'],
@@ -30,38 +34,54 @@ export function useCircleBalanceLive() {
       return data;
     },
     staleTime: Infinity,
+    enabled: hasHydrated && (!!accessToken || !!user),
   });
 
-  const connect = useCallback(() => {
+  const connect = useCallback((signal: AbortSignal) => {
     if (!hasHydrated) return;
+    if (signal.aborted) return;
 
     const token = getAuthToken();
-    if (!token) return;
+    if (!token && !user) return;
 
     const origin =
       process.env.NEXT_PUBLIC_BACKEND_ORIGIN?.replace(/\/+$/, '') ||
       'http://localhost:3001';
 
-    const controller = new AbortController();
-    abortRef.current = controller;
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
 
     fetch(`${origin}/api/v1/circle/balance/stream`, {
-      headers: { Authorization: `Bearer ${token}` },
-      signal: controller.signal,
+      headers,
+      credentials: 'include',
+      signal,
     })
       .then(async (response) => {
         if (!response.ok) {
-          console.warn(`[useCircleBalanceLive] SSE ${response.status} — retrying in 5s`);
-          setTimeout(connect, 5000);
+          if (failureCountRef.current === 0) {
+            console.warn(`[useCircleBalanceLive] SSE ${response.status} — retrying in 5s`);
+          }
+          failureCountRef.current += 1;
+          if (!signal.aborted) {
+            timeoutRef.current = setTimeout(() => connect(signal), 5000);
+          }
           return;
         }
         if (!response.body) {
-          console.warn('[useCircleBalanceLive] No body — retrying in 5s');
-          setTimeout(connect, 5000);
+          if (failureCountRef.current === 0) {
+            console.warn('[useCircleBalanceLive] No body — retrying in 5s');
+          }
+          failureCountRef.current += 1;
+          if (!signal.aborted) {
+            timeoutRef.current = setTimeout(() => connect(signal), 5000);
+          }
           return;
         }
 
         console.log('[useCircleBalanceLive] SSE connected');
+        failureCountRef.current = 0;
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let buffer = '';
@@ -70,7 +90,9 @@ export function useCircleBalanceLive() {
           const { done, value } = await reader.read();
           if (done) {
             console.log('[useCircleBalanceLive] SSE stream ended — reconnecting in 3s');
-            setTimeout(connect, 3000);
+            if (!signal.aborted) {
+              timeoutRef.current = setTimeout(() => connect(signal), 3000);
+            }
             break;
           }
 
@@ -90,19 +112,31 @@ export function useCircleBalanceLive() {
         }
       })
       .catch(() => {
-        if (!controller.signal.aborted) {
-          console.warn('[useCircleBalanceLive] SSE error — retrying in 5s');
-          setTimeout(connect, 5000);
+        if (!signal.aborted) {
+          if (failureCountRef.current === 0) {
+            console.warn('[useCircleBalanceLive] SSE connection failed (backend offline), retrying silently...');
+          }
+          failureCountRef.current += 1;
+          timeoutRef.current = setTimeout(() => connect(signal), 5000);
         }
       });
-  }, [queryClient, hasHydrated]);
+  }, [queryClient, hasHydrated, user]);
 
   useEffect(() => {
-    connect();
+    if (!hasHydrated) return;
+    if (!accessToken && !user) return;
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+    connect(controller.signal);
+
     return () => {
-      abortRef.current?.abort();
+      controller.abort();
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
-  }, [connect]);
+  }, [connect, hasHydrated, accessToken, user]);
 
   return { data, isLoading, error };
 }
