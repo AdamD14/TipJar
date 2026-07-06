@@ -234,7 +234,7 @@ export default function CreatorProfile() {
 
       {/* ═══ MAIN CONTENT ═══ */}
       <main
-        className={`${isPreview ? "pt-20" : isLoggedIn ? "pt-14" : "pt-28"} max-w-7xl mx-auto px-6 pb-20`}
+        className={`${isPreview ? "pt-6" : isLoggedIn ? "pt-6" : "pt-6"} max-w-7xl mx-auto px-4 pb-10`}
       >
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* ── LEFT COLUMN: Avatar + Link + Buttons + Stats ── */}
