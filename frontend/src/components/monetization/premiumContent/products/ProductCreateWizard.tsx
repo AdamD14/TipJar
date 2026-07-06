@@ -53,7 +53,8 @@ export default function ProductCreateWizard({
 
     try {
       const { files, ...payload } = draft;
-      const created = await mutateAsync(payload);
+      const createdResult = await mutateAsync(payload);
+      const created = typeof createdResult === "function" ? createdResult() : createdResult;
       toast.push({ type: "success", text: `${created.title} published.` });
       onPublished?.(created.id);
     } catch (e: unknown) {

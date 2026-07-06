@@ -8,7 +8,6 @@ import {
   generateMockProduct,
   generateMockTier,
   generateMockBundle,
-  mockDelay,
 } from "@/lib/api/mocks/premiumContentMocks";
 
 const MOCK_MODE = true;
@@ -31,12 +30,12 @@ function invalidateBundles() {
   return bundlesCache;
 }
 
-function mockQuery<T>(data: T): Promise<T> {
-  return mockDelay().then(() => data);
+function mockQuery<T>(data: T): T {
+  return data;
 }
 
-function mockMutation<T>(fn: () => T): Promise<T> {
-  return mockDelay().then(fn);
+function mockMutation<T>(fn: T): T {
+  return fn();
 }
 
 export function useProducts() {

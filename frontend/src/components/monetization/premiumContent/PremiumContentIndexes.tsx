@@ -18,7 +18,7 @@ export function ProductsIndex() {
         <h2 className="text-sm font-heading font-medium text-teal-400">
           Products
         </h2>
-        <Link href="./products/create">
+        <Link href="./create">
           <Button variant="primary" size="sm" leftIcon={<Plus size={14} />}>
             New product
           </Button>
@@ -41,7 +41,7 @@ export function ProductsIndex() {
         {products?.map((product) => (
           <Link
             key={product.id}
-            href={`./products/${product.id}`}
+            href={`./${product.id}`}
             className="block bg-black/40 border border-white/10 hover:border-white/20 rounded-2xl p-5 transition-colors"
           >
             <p className="text-[10px] font-heading font-bold text-teal-500/40 uppercase tracking-widest mb-1">
@@ -70,7 +70,7 @@ export function TiersIndex() {
         <h2 className="text-sm font-heading font-medium text-teal-400">
           Tiers
         </h2>
-        <Link href="./tiers/create">
+        <Link href="./create">
           <Button variant="primary" size="sm" leftIcon={<Plus size={14} />}>
             New tier
           </Button>
@@ -83,15 +83,15 @@ export function TiersIndex() {
         </div>
       )}
 
-      <div className="space-y-3">
-        {[...(tiers ?? [])]
-          .sort((a, b) => a.price - b.price)
-          .map((tier) => (
-            <Link
-              key={tier.id}
-              href={`./tiers/${tier.id}`}
-              className="flex items-center justify-between bg-black/40 border border-white/10 hover:border-white/20 rounded-xl px-5 py-4 transition-colors"
-            >
+<div className="space-y-3">
+          {[...(tiers ?? [])]
+            .sort((a, b) => a.price - b.price)
+            .map((tier) => (
+              <Link
+                key={tier.id}
+                href={`./${tier.id}`}
+                className="flex items-center justify-between bg-black/40 border border-white/10 hover:border-white/20 rounded-xl px-5 py-4 transition-colors"
+              >
               <div>
                 <h3 className="text-sm font-heading font-semibold text-text-ds-primary">
                   {tier.name}
@@ -122,7 +122,7 @@ export function BundlesIndex() {
         <h2 className="text-sm font-heading font-medium text-teal-400">
           Bundles
         </h2>
-        <Link href="./bundles/create">
+        <Link href="./create">
           <Button variant="primary" size="sm" leftIcon={<Plus size={14} />}>
             New bundle
           </Button>
