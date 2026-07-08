@@ -7,9 +7,10 @@ export default function CardPage() {
         style={{
           border: "1px solid var(--color-teal-300)",
           borderRadius: "36px",
-          background: "oklch(0.35 0.059 200)",
+          background: 
+          "linear-gradient(135deg in oklch, oklch(0.33 0.0764 198) 0%, oklch(0.36 0.08295 200) 50%, oklch(0.34 0.0787 197) 100%)",
+         outline: "1px solid var(--color-teal-400)",
           "corner-shape": "bevel",
-          outline: "1px solid var(--color-teal-400)",
         }} >
         <div className="w-full h-full flex items-center justify-center text-primary font-heading font-bold text-2xl">
           1
@@ -22,10 +23,11 @@ export default function CardPage() {
           borderRadius: "48px",
           "corner-shape": "square bevel square",
           outline: "1px solid var(--color-teal-400)",
-          background: "oklch(0.35 0.08 200)",
+          background: 
+          "linear-gradient(135deg in oklch, oklch(0.455 0.104 201) 0%, oklch(0.41 0.094 201) 50%, oklch(0.44 0.1 201) 100%)",
         }}>
         <div className="w-full h-full flex items-center justify-center">
-          2
+          0.45 do 0.44 przez 0.41
         </div>
       </div>
 
@@ -37,7 +39,7 @@ export default function CardPage() {
           borderRadius: "36px",
           "corner-shape": "bevel square bevel", 
      background:
-            "linear-gradient(135deg in oklch, oklch(0.31 0.062 200) 0%, oklch(0.35 0.072 198) 50%, oklch(0.31 0.062 200) 100%)",
+            "linear-gradient(135deg in oklch, oklch(0.5 0.1145 201) 0%, oklch(0.41 0.094 201) 50%, oklch(0.485 0.11 201) 100%)",
         }}
       >
        <div className="w-full h-full flex items-center justify-center">

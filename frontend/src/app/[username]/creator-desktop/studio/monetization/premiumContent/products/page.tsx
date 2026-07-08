@@ -1,7 +1,7 @@
 "use client";
 
-import { ProductsIndex } from "@/components/monetization/premiumContent/PremiumContentIndexes";
+import { ProductsIndexV2 } from "@/components/monetization/premiumContent/PremiumContentIndexesV2";
 
 export default function ProductsPage() {
-  return <ProductsIndex />;
+  return <ProductsIndexV2 />;
 }

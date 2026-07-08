@@ -1,7 +1,7 @@
 "use client";
 
-import { TiersIndex } from "@/components/monetization/premiumContent/PremiumContentIndexes";
+import { TiersIndexV2 } from "@/components/monetization/premiumContent/PremiumContentIndexesV2";
 
 export default function TiersPage() {
-  return <TiersIndex />;
+  return <TiersIndexV2 />;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import clsx from "clsx";
 import {
   Image as GalleryIcon,
@@ -34,29 +34,66 @@ const TYPES: ProductType[] = [
 interface ProductTypeSelectorProps {
   value?: ProductType;
   onSelect: (type: ProductType) => void;
+  error?: string;
 }
 
-/**
- * Krok 1 kreatora — wybór typu produktu. Karta na typ, ikona + label + opis.
- * Wybrany stan: złoty border + subtelne tło. Kliknięcie -> onSelect -> wizard idzie do kroku 2.
- */
 export default function ProductTypeSelector({
   value,
   onSelect,
+  error,
 }: ProductTypeSelectorProps) {
+  const radiosRef = useRef<HTMLButtonElement[]>([]);
+
+  useEffect(() => {
+    const selectedIndex = radiosRef.current.findIndex(
+      (btn) => btn.getAttribute("aria-checked") === "true"
+    );
+    if (selectedIndex >= 0) {
+      radiosRef.current[selectedIndex]?.focus();
+    }
+  }, [value]);
+
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    let newIndex = index;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      e.preventDefault();
+      newIndex = (index + 1) % TYPES.length;
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      e.preventDefault();
+      newIndex = (index - 1 + TYPES.length) % TYPES.length;
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      newIndex = 0;
+    } else if (e.key === "End") {
+      e.preventDefault();
+      newIndex = TYPES.length - 1;
+    }
+
+    if (newIndex !== index) {
+      radiosRef.current[newIndex]?.focus();
+    }
+  };
+
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      <div className="flex items-center gap-3 border-l-4 border-teal-400 pl-4">
-        <h2 className="text-sm font-heading font-medium text-teal-400">
-          What are you selling?
-        </h2>
-      </div>
+    <fieldset className="space-y-6 max-w-5xl mx-auto">
+      <legend className="text-sm font-heading font-medium text-teal-400 flex items-center gap-3 border-l-4 border-teal-400 pl-4">
+        What are you selling?
+      </legend>
       <p className="text-xs text-white/40 ml-1">
         Choose the format. You can change this later before publishing.
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {TYPES.map((type) => {
+      {error && (
+        <div className="text-xs text-red-400" role="alert">{error}</div>
+      )}
+
+      <div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+        role="radiogroup"
+        aria-label="Product type"
+        aria-describedby={error ? undefined : "type-hint"}
+      >
+        {TYPES.map((type, index) => {
           const meta = PRODUCT_TYPE_META[type];
           const Icon = TYPE_ICONS[type];
           const selected = value === type;
@@ -64,13 +101,20 @@ export default function ProductTypeSelector({
           return (
             <button
               key={type}
+              ref={(el) => { radiosRef.current[index] = el!; }}
               type="button"
+              role="radio"
+              aria-checked={selected}
+              aria-label={meta.label}
               onClick={() => onSelect(type)}
+              onKeyDown={(e) => handleKeyDown(e, index)}
+              tabIndex={selected ? 0 : -1}
               className={clsx(
                 "relative p-6 rounded-2xl border transition-all duration-300 [transition-timing-function:var(--ease-spring)] group",
                 selected
                   ? "border-gold-400 bg-gold-400/5 shadow-[0_0_0_1px_rgba(255,215,0,0.15)]"
                   : "border-white/10 hover:border-white/20 hover:bg-white/5",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-app"
               )}
             >
               <div className={clsx(
@@ -96,6 +140,9 @@ export default function ProductTypeSelector({
           );
         })}
       </div>
-    </div>
+      <span id="type-hint" className="sr-only">
+        Use arrow keys to navigate between options, press Enter or Space to select
+      </span>
+    </fieldset>
   );
 }

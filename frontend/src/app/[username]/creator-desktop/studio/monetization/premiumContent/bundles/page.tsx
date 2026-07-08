@@ -1,7 +1,7 @@
 "use client";
 
-import { BundlesIndex } from "@/components/monetization/premiumContent/PremiumContentIndexes";
+import { BundlesIndexV2 } from "@/components/monetization/premiumContent/PremiumContentIndexesV2";
 
 export default function BundlesPage() {
-  return <BundlesIndex />;
+  return <BundlesIndexV2 />;
 }

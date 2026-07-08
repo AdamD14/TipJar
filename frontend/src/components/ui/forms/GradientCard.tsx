@@ -8,9 +8,9 @@ interface GradientCardProps {
 }
 
 const bgVariants: Record<NonNullable<GradientCardProps['variant']>, string> = {
-  1: 'linear-gradient(110deg in oklch, oklch(0.2301 0.0394 203) 0%, oklch(0.27 0.055 203) 10%, oklch(0.25 0.0425 203) 20%, oklch(0.295 0.059 203) 30%,  oklch(0.32 0.07 204) 39%, oklch(0.36 0.073 204) 48%, oklch(0.35 0.072 202) 56%, oklch(0.39 0.08 204) 64%, oklch(0.38 0.08 203) 72%, oklch(0.402 0.085 205) 84%, oklch(0.39 0.08 204) 92%, oklch(0.43 0.085 204) 100%)',
-  2: 'linear-gradient(110deg in oklch, oklch(0.2301 0.0394 203) 0%, oklch(0.27 0.055 203) 10%, oklch(0.25 0.0425 203) 20%, oklch(0.295 0.059 203) 30%,  oklch(0.32 0.07 204) 39%, oklch(0.36 0.073 204) 48%, oklch(0.35 0.072 202) 56%, oklch(0.39 0.08 204) 64%, oklch(0.38 0.08 203) 72%, oklch(0.402 0.085 205) 84%, oklch(0.39 0.08 204) 92%, oklch(0.43 0.085 204) 100%)',
-  3: 'linear-gradient(110deg in oklch, oklch(0.2301 0.0394 203) 0%, oklch(0.27 0.055 203) 10%, oklch(0.32 0.07 204) 20%, oklch(0.35 0.072 202) 30%, oklch(0.402 0.085 205) 40%, oklch(0.39 0.08 204) 50%, oklch(0.43 0.085 204) 60%, oklch(0.38 0.08 203) 70%, oklch(0.32 0.07 204) 80%, oklch(0.27 0.055 203) 90%, oklch(0.295 0.059 203) 100%)',
+  1: 'linear-gradient(110deg in oklch, oklch(0.3 0.0698 198) 0%, oklch(0.32 0.0742 198) 50%, oklch(0.31 0.0715 200) 100%)',
+  2: 'linear-gradient(110deg in oklch, oklch(0.3 0.0698 198) 0%, oklch(0.4 0.0921 200) 50%, oklch(0.34 0.0787 197) 100%)',
+  3: 'linear-gradient(110deg in oklch, oklch(0.3 0.06975 200) 0%, oklch(0.455 0.104 201) 50%, oklch(0.34 0.07855 200) 100%)',
 
 };
 
@@ -28,7 +28,7 @@ export const GradientCard: React.FC<GradientCardProps> = ({
           background: ${bgColor};
           background-size: 200% 100%;
           background-position: 0% center;
-          transition: background-position 0.5s ease-out;
+          transition: background-position 0.8s ease-out;
           position: relative;
           outline: none;
         }
