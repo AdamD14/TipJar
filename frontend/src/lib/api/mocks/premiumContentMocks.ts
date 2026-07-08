@@ -51,7 +51,6 @@ function initializeMocks() {
         { id: 'mod-7', title: 'Landscape & Travel', order: 7, contentUrl: '#' },
         { id: 'mod-8', title: 'Post-Processing Workflow', order: 8, contentUrl: '#' },
         { id: 'mod-9', title: 'Color Grading', order: 9, contentUrl: '#' },
-        ' },
         { id: 'mod-10', title: 'Building Your Portfolio', order: 10, contentUrl: '#' },
         { id: 'mod-11', title: 'Client Work & Pricing', order: 11, contentUrl: '#' },
         { id: 'mod-12', title: 'Final Project & Review', order: 12, contentUrl: '#' },

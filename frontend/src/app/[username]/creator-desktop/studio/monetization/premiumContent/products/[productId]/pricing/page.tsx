@@ -1,10 +1,14 @@
 "use client";
 
-import { use } from "react";
-import Link from "next/link";
+import React, { useState } from "react";
 import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { use } from "react";
 import Spinner from "@/components/ui/Spinner";
-import { useProduct } from "@/lib/api/premiumContent";
+import { useProduct, useUpdateProductPricing } from "@/lib/api/premiumContent";
+import { PRODUCT_TYPE_META } from "@/types/premiumContent";
+import { useToast } from "@/components/ui/notifications/Toast";
+import Input from "@/components/ui/forms/Input";
 
 export default function ProductPricingPage({
   params,
@@ -13,6 +17,11 @@ export default function ProductPricingPage({
 }) {
   const { productId } = use(params);
   const { data: product, isLoading } = useProduct(productId);
+  const updatePricing = useUpdateProductPricing(productId);
+  const toast = useToast();
+  const [isSaving, setIsSaving] = useState(false);
+  const [price, setPrice] = useState(product?.price ?? "");
+  const [currency] = useState(product?.currency ?? "USDC");
 
   if (isLoading) {
     return (
@@ -25,6 +34,20 @@ export default function ProductPricingPage({
   if (!product) {
     return <p className="text-sm text-white/30">Product not found.</p>;
   }
+
+  const handleSave = async () => {
+    if (!price) return;
+    setIsSaving(true);
+    try {
+      await updatePricing.mutateAsync({ price: Number(price), currency });
+      toast.push({ type: "success", text: "Pricing saved." });
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Failed to save pricing.";
+      toast.push({ type: "error", text: message });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
@@ -42,37 +65,33 @@ export default function ProductPricingPage({
         </h1>
       </div>
 
-      <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 space-y-4">
-        <p className="text-xs text-white/30">
-          Read-only preview. Pricing editing will be enabled when backend is connected.
-        </p>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-[10px] font-heading font-bold uppercase tracking-[0.15em] text-white/30 mb-1">
-              Price
-            </p>
-            <p className="text-2xl font-heading font-bold text-gold-400 tnum">
-              {product.accessModel === "tier-included"
-                ? "Included in tier"
-                : product.price
-                  ? `$${product.price.toLocaleString()}`
-                  : "—"}
-            </p>
-          </div>
-          <div>
-            <p className="text-[10px] font-heading font-bold uppercase tracking-[0.15em] text-white/30 mb-1">
-              Currency
-            </p>
-            <p className="text-sm text-text-ds-primary">{product.currency}</p>
-          </div>
-          <div>
-            <p className="text-[10px] font-heading font-bold uppercase tracking-[0.15em] text-white/30 mb-1">
-              Access Model
-            </p>
-            <p className="text-sm text-text-ds-primary capitalize">
-              {product.accessModel}
-            </p>
-          </div>
+      <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 space-y-6">
+        <div className="space-y-2">
+          <label className="text-[10px] font-heading font-bold uppercase tracking-[0.15em] text-white/30 ml-1">
+            Price ({currency})
+          </label>
+          <Input
+            type="text"
+            inputMode="numeric"
+            value={price}
+            onChange={(e) => {
+              const v = e.target.value.replace(/\D/g, "");
+              setPrice(v);
+            }}
+            className="tnum"
+            disabled={isSaving}
+          />
+        </div>
+
+        <div className="pt-4 border-t border-white/10 flex justify-end">
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={isSaving || !price}
+            className="px-6 py-2.5 bg-teal-600 text-teal-900 font-heading font-semibold rounded-lg hover:bg-teal-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {isSaving ? "Saving..." : "Save pricing"}
+          </button>
         </div>
       </div>
     </div>

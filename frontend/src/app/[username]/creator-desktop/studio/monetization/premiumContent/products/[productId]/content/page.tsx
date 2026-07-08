@@ -1,14 +1,16 @@
 "use client";
 
-import { use } from "react";
-import Link from "next/link";
+import React, { useState } from "react";
 import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { use } from "react";
 import Spinner from "@/components/ui/Spinner";
-import { useProduct } from "@/lib/api/premiumContent";
+import { useProduct, useUpdateProductContent } from "@/lib/api/premiumContent";
 import { PRODUCT_TYPE_META } from "@/types/premiumContent";
-import CourseModulesEditor from "@/components/monetization/premiumContent/products/content/CourseModulesEditor";
-import LiveSessionScheduler from "@/components/monetization/premiumContent/products/content/LiveSessionScheduler";
-import GenericContentUpload from "@/components/monetization/premiumContent/products/content/GenericContentUpload";
+import CourseModulesEditorV2 from "@/components/monetization/premiumContent/products/content/CourseModulesEditorV2";
+import LiveSessionSchedulerV2 from "@/components/monetization/premiumContent/products/content/LiveSessionSchedulerV2";
+import GenericContentUploadV2 from "@/components/monetization/premiumContent/products/content/GenericContentUploadV2";
+import { useToast } from "@/components/ui/notifications/Toast";
 
 export default function ProductContentPage({
   params,
@@ -17,6 +19,9 @@ export default function ProductContentPage({
 }) {
   const { productId } = use(params);
   const { data: product, isLoading } = useProduct(productId);
+  const updateContent = useUpdateProductContent(productId);
+  const toast = useToast();
+  const [isSaving, setIsSaving] = useState(false);
 
   if (isLoading) {
     return (
@@ -29,6 +34,19 @@ export default function ProductContentPage({
   if (!product) {
     return <p className="text-sm text-white/30">Product not found.</p>;
   }
+
+  const handleSave = async (contentData: any) => {
+    setIsSaving(true);
+    try {
+      await updateContent.mutateAsync(contentData);
+      toast.push({ type: "success", text: "Content saved." });
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Failed to save content.";
+      toast.push({ type: "error", text: message });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
@@ -47,34 +65,33 @@ export default function ProductContentPage({
       </div>
 
       <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 space-y-6">
-        <p className="text-xs text-white/30">
-          Content editing is read-only in this preview. Connect to backend to enable mutations.
-        </p>
-
         {product.type === "course" && (
-          <CourseModulesEditor
+          <CourseModulesEditorV2
             modules={product.modules ?? []}
-            onChange={() => {}}
+            onChange={handleSave}
+            isSaving={isSaving}
           />
         )}
 
         {product.type === "live-session" && (
-          <LiveSessionScheduler
+          <LiveSessionSchedulerV2
             value={
               product.liveSession ?? {
                 scheduledAt: "",
                 durationMinutes: 60,
               }
             }
-            onChange={() => {}}
+            onChange={handleSave}
+            isSaving={isSaving}
           />
         )}
 
-        {product.type !== "course" && product.type !== "live-session" && (
-          <GenericContentUpload
+        {["gallery", "video", "audio", "document"].includes(product.type) && (
+          <GenericContentUploadV2
             type={product.type}
             files={[]}
-            onChange={() => {}}
+            onChange={(files) => handleSave({ files })}
+            isSaving={isSaving}
           />
         )}
       </div>

@@ -1,10 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import BundleForm from "@/components/monetization/premiumContent/bundles/BundleForm";
+import { BundleFormV2 } from "@/components/monetization/premiumContent/bundles/BundleFormV2";
 
 export default function CreateBundlePage() {
-  const router = useRouter();
-
-  return <BundleForm onSaved={() => router.push("../")} />;
+  return <BundleFormV2 mode="create" />;
 }

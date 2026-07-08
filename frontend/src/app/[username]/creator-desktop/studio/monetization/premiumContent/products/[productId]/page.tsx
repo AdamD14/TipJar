@@ -6,6 +6,7 @@ import { ArrowLeft, FileText, Lock, DollarSign, Truck } from "lucide-react";
 import Spinner from "@/components/ui/Spinner";
 import { useProduct } from "@/lib/api/premiumContent";
 import { PRODUCT_TYPE_META, ACCESS_MODEL_META, DELIVERY_MODEL_META } from "@/types/premiumContent";
+import { ErrorBanner } from "@/components/ui/feedback";
 
 export default function ProductDetailPage({
   params,
@@ -13,12 +14,30 @@ export default function ProductDetailPage({
   params: Promise<{ productId: string }>;
 }) {
   const { productId } = use(params);
-  const { data: product, isLoading } = useProduct(productId);
+  const { data: product, isLoading, isError, error, refetch } = useProduct(productId);
 
   if (isLoading) {
     return (
       <div className="flex justify-center py-12">
         <Spinner size="md" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="max-w-5xl mx-auto space-y-6">
+        <Link
+          href=".."
+          className="inline-flex items-center gap-2 text-sm text-text-ds-tertiary hover:text-white transition-colors"
+        >
+          <ArrowLeft size={16} />
+          Back to products
+        </Link>
+        <ErrorBanner
+          message={error instanceof Error ? error.message : "Failed to load product"}
+          onRetry={() => refetch()}
+        />
       </div>
     );
   }
@@ -76,8 +95,8 @@ export default function ProductDetailPage({
               {product.accessModel === "tier-included"
                 ? "Included in tier"
                 : product.price
-                  ? `$${product.price.toLocaleString()} ${product.currency}`
-                  : "—"}
+                ? `$${product.price.toLocaleString()} ${product.currency}`
+                : "—"}
             </p>
           </div>
           <div>
@@ -99,13 +118,19 @@ export default function ProductDetailPage({
         </div>
       </div>
 
-      <nav className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <nav
+        className="grid grid-cols-2 sm:grid-cols-4 gap-3"
+        role="tablist"
+        aria-label="Product sections"
+      >
         {tabs.map((tab) => {
           const Icon = tab.icon;
           return (
             <Link
               key={tab.href}
               href={tab.href}
+              role="tab"
+              aria-selected={false}
               className="flex flex-col items-center gap-2 p-5 bg-black/40 border border-white/10 hover:border-gold-400/40 hover:bg-gold-400/5 rounded-2xl transition-colors"
             >
               <Icon size={20} className="text-teal-400" />

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Rocket, ChevronRight } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -12,7 +11,7 @@ import Input from "@/components/ui/forms/Input";
 import { useToast } from "@/components/ui/notifications/Toast";
 import { useCreateProduct } from "@/lib/api/premiumContent";
 import { PRODUCT_TYPE_META } from "@/types/premiumContent";
-import { createProductSchema, productTypeSchema, productDetailsSchema, productAccessSchema, productDeliverySchema } from "./schemas";
+import { createProductSchema } from "./schemas";
 import ProductTypeSelector from "./ProductTypeSelector";
 import DisplayCategoryPicker from "./DisplayCategoryPicker";
 import CourseModulesEditorV2 from "./content/CourseModulesEditorV2";
@@ -35,6 +34,33 @@ interface ProductCreateWizardV2Props {
   onPublished?: (productId: string) => void;
 }
 
+function getStepButtonClassName(index: number, currentStepIndex: number): string {
+  const base = "flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-heading font-medium transition-colors";
+  if (index === currentStepIndex) {
+    return base + " bg-teal-900/30 text-teal-400 border border-teal-400/40";
+  }
+  if (index < currentStepIndex) {
+    return base + " bg-white/5 text-white/60 hover:bg-white/10";
+  }
+  return base + " bg-white/5 text-white/30 cursor-not-allowed";
+}
+
+function getStepIndicatorClassName(index: number, currentStepIndex: number): string {
+  const base = "flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold";
+  if (index === currentStepIndex) {
+    return base + " bg-teal-400 text-teal-900";
+  }
+  if (index < currentStepIndex) {
+    return base + " bg-green-500 text-white";
+  }
+  return base + " bg-white/10 text-white/30";
+}
+
+function getConnectorClassName(index: number, currentStepIndex: number): string {
+  const base = "flex-1 h-0.5 rounded";
+  return base + (index < currentStepIndex ? " bg-teal-400/40" : " bg-white/10");
+}
+
 export default function ProductCreateWizardV2({ onPublished }: ProductCreateWizardV2Props) {
   const router = useRouter();
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -47,7 +73,6 @@ export default function ProductCreateWizardV2({ onPublished }: ProductCreateWiza
     setValue,
     trigger,
     formState: { errors, isValid, dirtyFields },
-    reset,
   } = useForm<ProductWizardData>({
     resolver: zodResolver(createProductSchema),
     mode: "onChange",
@@ -341,31 +366,19 @@ export default function ProductCreateWizardV2({ onPublished }: ProductCreateWiza
               <button
                 role="tab"
                 aria-selected={index === currentStepIndex}
-                aria-controls={`panel-${step.id}`}
-                id={`tab-${step.id}`}
+                aria-controls={"panel-" + step.id}
+                id={"tab-" + step.id}
                 onClick={() => goToStep(index)}
                 disabled={index > currentStepIndex && !dirtyFields[STEPS[currentStepIndex]?.id as keyof ProductWizardData]}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-heading font-medium transition-colors ${
-                  index === currentStepIndex
-                    ? "bg-teal-900/30 text-teal-400 border border-teal-400/40"
-                    : index < currentStepIndex
-                    ? "bg-white/5 text-white/60 hover:bg-white/10"
-                    : "bg-white/5 text-white/30 cursor-not-allowed"
-                }`}
+                className={getStepButtonClassName(index, currentStepIndex)}
               >
-                <span className="flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${
-                  index === currentStepIndex
-                    ? "bg-teal-400 text-teal-900"
-                    : index < currentStepIndex
-                    ? "bg-green-500 text-white"
-                    : "bg-white/10 text-white/30"
-                }">
+                <span className={getStepIndicatorClassName(index, currentStepIndex)}>
                   {index < currentStepIndex ? <ChevronRight size={10} /> : index + 1}
                 </span>
                 <span>{step.label}</span>
               </button>
               {index < STEPS.length - 1 && (
-                <div className={`flex-1 h-0.5 rounded ${index < currentStepIndex ? "bg-teal-400/40" : "bg-white/10"}`} />
+                <div className={getConnectorClassName(index, currentStepIndex)} />
               )}
             </React.Fragment>
           ))}
@@ -373,9 +386,9 @@ export default function ProductCreateWizardV2({ onPublished }: ProductCreateWiza
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div
-            id={`panel-${currentStep.id}`}
+            id={"panel-" + currentStep.id}
             role="tabpanel"
-            aria-labelledby={`tab-${currentStep.id}`}
+            aria-labelledby={"tab-" + currentStep.id}
             className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 space-y-8 shadow-2xl"
           >
             {renderStepContent()}
@@ -432,14 +445,14 @@ function ProductPreviewCard({ data }: { data: Partial<ProductWizardData> }) {
     data.accessModel === "tier-included"
       ? "Included in tier"
       : data.price
-      ? `$${data.price.toLocaleString()} ${data.currency ?? "USDC"}`
+      ? "$" + data.price.toLocaleString() + " " + (data.currency ?? "USDC")
       : "—";
 
   return (
     <div className="relative overflow-hidden bg-gradient-to-br from-teal-900 to-teal-800 border border-teal-500/20 rounded-xl p-6 shadow-2 backdrop-blur-md">
       <p className="text-[10px] font-heading font-bold text-teal-500/40 uppercase tracking-widest mb-1">
         {meta.label}
-        {data.displayCategory ? ` · ${data.displayCategory}` : ""}
+        {data.displayCategory ? " · " + data.displayCategory : ""}
       </p>
       <h3 className="text-xl font-heading font-bold text-text-ds-primary tracking-tight leading-tight">
         {data.title || "Untitled product"}

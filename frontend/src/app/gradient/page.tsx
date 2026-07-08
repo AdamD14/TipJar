@@ -11,7 +11,7 @@ export default function CardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Variant 1: oklch(0.34 0.085 205) */}
-          <div className="space-y-2">
+          <div className="space-y-4">
             <h2 className="font-heading text-xl font-semibold text-gold-400 text-center">
               Variant 1
             </h2>

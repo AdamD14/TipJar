@@ -1,7 +1,7 @@
 "use client";
 
-import TierForm from "@/components/monetization/premiumContent/tiers/TierForm";
+import { TierFormV2 } from "@/components/monetization/premiumContent/tiers/TierFormV2";
 
 export default function CreateTierPage() {
-  return <TierForm />;
+  return <TierFormV2 mode="create" />;
 }

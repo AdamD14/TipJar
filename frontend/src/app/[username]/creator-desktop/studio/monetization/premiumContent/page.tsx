@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Plus, Package, Layers, Lock, CreditCard, ArrowRight } from "lucide-react";
+import { ProductsIndexV2, TiersIndexV2, BundlesIndexV2 } from "@/components/monetization/premiumContent/PremiumContentIndexesV2";
 import { useProducts, useTiers, useBundles } from "@/lib/api/premiumContent";
 
 export default function PremiumContentDashboard() {
@@ -65,72 +66,43 @@ export default function PremiumContentDashboard() {
         </div>
       </section>
 
-      {/* Manage Section */}
+      {/* Products */}
       <section className="space-y-4">
-        <h2 className="text-sm font-heading font-medium text-teal-400 uppercase tracking-widest">
-          Manage
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Link
-            href="./products"
-            className="group flex items-center justify-between p-6 bg-black/40 border border-white/10 hover:border-white/20 rounded-2xl transition-colors"
-          >
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-teal-900/30 rounded-xl">
-                <Package size={24} className="text-teal-400" />
-              </div>
-              <div>
-                <h3 className="text-sm font-heading font-semibold text-text-ds-primary">
-                  Products
-                </h3>
-                <p className="text-xs text-text-ds-secondary mt-0.5">
-                  {productCount} {productCount === 1 ? "item" : "items"}
-                </p>
-              </div>
-            </div>
-            <ArrowRight size={20} className="text-white/30 group-hover:text-white group-hover:translate-x-1 transition-all" />
-          </Link>
-
-          <Link
-            href="./tiers"
-            className="group flex items-center justify-between p-6 bg-black/40 border border-white/10 hover:border-white/20 rounded-2xl transition-colors"
-          >
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-teal-900/30 rounded-xl">
-                <Layers size={24} className="text-teal-400" />
-              </div>
-              <div>
-                <h3 className="text-sm font-heading font-semibold text-text-ds-primary">
-                  Tiers
-                </h3>
-                <p className="text-xs text-text-ds-secondary mt-0.5">
-                  {tierCount} {tierCount === 1 ? "active" : "active"}
-                </p>
-              </div>
-            </div>
-            <ArrowRight size={20} className="text-white/30 group-hover:text-white group-hover:translate-x-1 transition-all" />
-          </Link>
-
-          <Link
-            href="./bundles"
-            className="group flex items-center justify-between p-6 bg-black/40 border border-white/10 hover:border-white/20 rounded-2xl transition-colors"
-          >
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-teal-900/30 rounded-xl">
-                <Package size={24} className="text-teal-400" />
-              </div>
-              <div>
-                <h3 className="text-sm font-heading font-semibold text-text-ds-primary">
-                  Bundles
-                </h3>
-                <p className="text-xs text-text-ds-secondary mt-0.5">
-                  {bundleCount} {bundleCount === 1 ? "pack" : "packs"}
-                </p>
-              </div>
-            </div>
-            <ArrowRight size={20} className="text-white/30 group-hover:text-white group-hover:translate-x-1 transition-all" />
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-heading font-medium text-teal-400 uppercase tracking-widest">
+            Products
+          </h2>
+          <Link href="./products/create">
+            <span className="text-sm text-teal-400 hover:text-teal-300 font-medium">Create</span>
           </Link>
         </div>
+        <ProductsIndexV2 />
+      </section>
+
+      {/* Tiers */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-heading font-medium text-teal-400 uppercase tracking-widest">
+            Tiers
+          </h2>
+          <Link href="./tiers/create">
+            <span className="text-sm text-teal-400 hover:text-teal-300 font-medium">Create</span>
+          </Link>
+        </div>
+        <TiersIndexV2 />
+      </section>
+
+      {/* Bundles */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-heading font-medium text-teal-400 uppercase tracking-widest">
+            Bundles
+          </h2>
+          <Link href="./bundles/create">
+            <span className="text-sm text-teal-400 hover:text-teal-300 font-medium">Create</span>
+          </Link>
+        </div>
+        <BundlesIndexV2 />
       </section>
 
       {/* Settings Section */}

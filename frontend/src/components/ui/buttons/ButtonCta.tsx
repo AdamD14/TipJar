@@ -93,11 +93,9 @@ export const ButtonCta = forwardRef<HTMLButtonElement, ButtonCtaProps>(
         >
           {children}
         </span>
-      </button>
-    );
-  }
-);
-  }
+</button>
+  );
+}
 );
 
 ButtonCta.displayName = "ButtonCta";

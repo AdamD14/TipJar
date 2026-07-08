@@ -1,13 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import ProductCreateWizard from "@/components/monetization/premiumContent/products/ProductCreateWizard";
+import ProductCreateWizardV2 from "@/components/monetization/premiumContent/products/ProductCreateWizardV2";
 
 export default function CreateProductPage() {
   const router = useRouter();
 
   return (
-    <ProductCreateWizard
+    <ProductCreateWizardV2
       onPublished={(id) => router.push(`../${id}`)}
     />
   );
