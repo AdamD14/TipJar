@@ -33,7 +33,7 @@ export const GradientCard: React.FC<GradientCardProps> = ({
          box-shadow: var(--shadow-card-rest);
          contain: layout paint; 
           corner-shape: bevel;
-          border-radius: 36px;
+          border-radius: 24px;
           transform: translateZ(0);
          position: relative;
           outline: none;

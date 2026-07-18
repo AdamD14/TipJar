@@ -73,7 +73,11 @@ function BundleCard({ bundle }: { bundle: Bundle }) {
   );
 }
 
-export function ProductsIndexV2() {
+interface IndexProps {
+  createHref?: string;
+}
+
+export function ProductsIndexV2({ createHref = "products/create" }: IndexProps) {
   const queryClient = useQueryClient();
   const toast = useToast();
   const { data: products, isLoading, isError, error, refetch } = useProducts();
@@ -88,7 +92,7 @@ export function ProductsIndexV2() {
       <div className="max-w-5xl mx-auto space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-heading font-medium text-teal-400">Products</h2>
-          <Link href="create">
+          <Link href={createHref}>
             <Button variant="primary" size="sm" leftIcon={<Plus size={14} />}>New product</Button>
           </Link>
         </div>
@@ -102,7 +106,7 @@ export function ProductsIndexV2() {
       <div className="max-w-5xl mx-auto space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-heading font-medium text-teal-400">Products</h2>
-          <Link href="create">
+          <Link href={createHref}>
             <Button variant="primary" size="sm" leftIcon={<Plus size={14} />}>New product</Button>
           </Link>
         </div>
@@ -118,7 +122,7 @@ export function ProductsIndexV2() {
     <div className="max-w-5xl mx-auto space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-heading font-medium text-teal-400">Products</h2>
-        <Link href="./create">
+        <Link href={createHref}>
           <Button variant="primary" size="sm" leftIcon={<Plus size={14} />}>New product</Button>
         </Link>
       </div>
@@ -145,7 +149,7 @@ export function ProductsIndexV2() {
   );
 }
 
-export function TiersIndexV2() {
+export function TiersIndexV2({ createHref = "tiers/create" }: IndexProps) {
   const queryClient = useQueryClient();
   const toast = useToast();
   const { data: tiers, isLoading, isError, error, refetch } = useTiers();
@@ -160,7 +164,7 @@ export function TiersIndexV2() {
       <div className="max-w-5xl mx-auto space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-heading font-medium text-teal-400">Tiers</h2>
-          <Link href="create">
+          <Link href={createHref}>
             <Button variant="primary" size="sm" leftIcon={<Plus size={14} />}>New tier</Button>
           </Link>
         </div>
@@ -174,7 +178,7 @@ export function TiersIndexV2() {
       <div className="max-w-5xl mx-auto space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-heading font-medium text-teal-400">Tiers</h2>
-          <Link href="create">
+          <Link href={createHref}>
             <Button variant="primary" size="sm" leftIcon={<Plus size={14} />}>New tier</Button>
           </Link>
         </div>
@@ -192,7 +196,7 @@ export function TiersIndexV2() {
     <div className="max-w-5xl mx-auto space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-heading font-medium text-teal-400">Tiers</h2>
-        <Link href="create">
+        <Link href={createHref}>
           <Button variant="primary" size="sm" leftIcon={<Plus size={14} />}>New tier</Button>
         </Link>
       </div>
@@ -215,7 +219,7 @@ export function TiersIndexV2() {
   );
 }
 
-export function BundlesIndexV2() {
+export function BundlesIndexV2({ createHref = "bundles/create" }: IndexProps) {
   const queryClient = useQueryClient();
   const toast = useToast();
   const { data: bundles, isLoading, isError, error, refetch } = useBundles();
@@ -230,7 +234,7 @@ export function BundlesIndexV2() {
       <div className="max-w-5xl mx-auto space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-heading font-medium text-teal-400">Bundles</h2>
-          <Link href="./create">
+          <Link href={createHref}>
             <Button variant="primary" size="sm" leftIcon={<Plus size={14} />}>New bundle</Button>
           </Link>
         </div>
@@ -244,7 +248,7 @@ export function BundlesIndexV2() {
       <div className="max-w-5xl mx-auto space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-heading font-medium text-teal-400">Bundles</h2>
-          <Link href="create">
+          <Link href={createHref}>
             <Button variant="primary" size="sm" leftIcon={<Plus size={14} />}>New bundle</Button>
           </Link>
         </div>
@@ -260,7 +264,7 @@ export function BundlesIndexV2() {
     <div className="max-w-5xl mx-auto space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-heading font-medium text-teal-400">Bundles</h2>
-        <Link href="create">
+        <Link href={createHref}>
           <Button variant="primary" size="sm" leftIcon={<Plus size={14} />}>New bundle</Button>
         </Link>
       </div>

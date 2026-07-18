@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Plus, Package, Layers, Lock, CreditCard, ArrowRight } from "lucide-react";
 import { ProductsIndexV2, TiersIndexV2, BundlesIndexV2 } from "@/components/monetization/premiumContent/PremiumContentIndexesV2";
 import { useProducts, useTiers, useBundles } from "@/lib/api/premiumContent";
 
 export default function PremiumContentDashboard() {
+  const pathname = usePathname();
   const { data: products } = useProducts();
   const { data: tiers } = useTiers();
   const { data: bundles } = useBundles();
@@ -13,6 +15,8 @@ export default function PremiumContentDashboard() {
   const productCount = products?.length ?? 0;
   const tierCount = tiers?.length ?? 0;
   const bundleCount = bundles?.length ?? 0;
+
+  const basePath = pathname.endsWith("/") ? pathname : pathname + "/";
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
@@ -35,7 +39,7 @@ export default function PremiumContentDashboard() {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Link
-            href="products/create"
+            href={`${basePath}products/create`}
             className="group flex flex-col items-center justify-center gap-3 p-8 bg-black/40 border border-white/10 hover:border-teal-400/40 hover:bg-teal-900/10 rounded-2xl transition-colors"
           >
             <Plus size={32} className="text-teal-400 group-hover:scale-110 transition-transform" />
@@ -45,7 +49,7 @@ export default function PremiumContentDashboard() {
           </Link>
 
           <Link
-            href="tiers/create"
+            href={`${basePath}tiers/create`}
             className="group flex flex-col items-center justify-center gap-3 p-8 bg-black/40 border border-white/10 hover:border-teal-400/40 hover:bg-teal-900/10 rounded-2xl transition-colors"
           >
             <Layers size={32} className="text-teal-400 group-hover:scale-110 transition-transform" />
@@ -55,7 +59,7 @@ export default function PremiumContentDashboard() {
           </Link>
 
           <Link
-            href="bundles/create"
+            href={`${basePath}bundles/create`}
             className="group flex flex-col items-center justify-center gap-3 p-8 bg-black/40 border border-white/10 hover:border-teal-400/40 hover:bg-teal-900/10 rounded-2xl transition-colors"
           >
             <Package size={32} className="text-teal-400 group-hover:scale-110 transition-transform" />
@@ -72,11 +76,11 @@ export default function PremiumContentDashboard() {
           <h2 className="text-sm font-heading font-medium text-teal-400 uppercase tracking-widest">
             Products
           </h2>
-          <Link href="products/create">
+          <Link href={`${basePath}products/create`}>
             <span className="text-sm text-teal-400 hover:text-teal-300 font-medium">Create</span>
           </Link>
         </div>
-        <ProductsIndexV2 />
+        <ProductsIndexV2 createHref={`${basePath}products/create`} />
       </section>
 
       {/* Tiers */}
@@ -85,11 +89,11 @@ export default function PremiumContentDashboard() {
           <h2 className="text-sm font-heading font-medium text-teal-400 uppercase tracking-widest">
             Tiers
           </h2>
-          <Link href="tiers/create">
+          <Link href={`${basePath}tiers/create`}>
             <span className="text-sm text-teal-400 hover:text-teal-300 font-medium">Create</span>
           </Link>
         </div>
-        <TiersIndexV2 />
+        <TiersIndexV2 createHref={`${basePath}tiers/create`} />
       </section>
 
       {/* Bundles */}
@@ -98,11 +102,11 @@ export default function PremiumContentDashboard() {
           <h2 className="text-sm font-heading font-medium text-teal-400 uppercase tracking-widest">
             Bundles
           </h2>
-          <Link href="bundles/create">
+          <Link href={`${basePath}bundles/create`}>
             <span className="text-sm text-teal-400 hover:text-teal-300 font-medium">Create</span>
           </Link>
         </div>
-        <BundlesIndexV2 />
+        <BundlesIndexV2 createHref={`${basePath}bundles/create`} />
       </section>
 
       {/* Settings Section */}
@@ -112,7 +116,7 @@ export default function PremiumContentDashboard() {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Link
-            href="./access-settings"
+            href={`${basePath}access-settings`}
             className="group flex items-center justify-between p-6 bg-black/40 border border-white/10 hover:border-white/20 rounded-2xl transition-colors"
           >
             <div className="flex items-center gap-4">
@@ -132,7 +136,7 @@ export default function PremiumContentDashboard() {
           </Link>
 
           <Link
-            href="./billing"
+            href={`${basePath}billing`}
             className="group flex items-center justify-between p-6 bg-black/40 border border-white/10 hover:border-white/20 rounded-2xl transition-colors"
           >
             <div className="flex items-center gap-4">

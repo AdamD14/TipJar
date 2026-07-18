@@ -5,9 +5,9 @@ export default function CardPage() {
       <div
         className="relative w-[880px] h-[480px]"
         style={{
-          borderRadius: "48px",
+          borderRadius: "36px",
           background:
-            "linear-gradient(135deg in oklch, oklch(0.33 0.0764 198) 0%, oklch(0.36 0.08295 200) 50%, oklch(0.34 0.0787 197) 100%)",
+            "linear-gradient(135deg in oklch, oklch(0.35 0.0764 198) 0%, oklch(0.32 0.08295 200) 50%, oklch(0.4 0.0787 197) 100%)",
           backdropFilter: "blur(var(--glass-blur, 20px))",
           border: "1px solid var(--color-teal-300)",
            boxShadow: " var(--shadow-card-rest)",
