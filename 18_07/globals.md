@@ -1,0 +1,1958 @@
+@import "tailwindcss";
+
+/* ================================================================
+TIPJAR+ DESIGN SYSTEM — globals.css
+Single source of truth for all design tokens.
+Spec: design.md
+================================================================ */
+
+/* ----------------------------------------------------------------
+FONTS — Mukta Malar + IBM Plex Sans (Google Fonts)
+design.md §3: Mukta Malar (headings, buttons), IBM Plex Sans (body)
+Loaded via next/font/google in layout.tsx → --font-heading-var / --font-body-var
+---------------------------------------------------------------- */
+
+/* ================================================================
+TAILWIND v4 @theme — token registration
+Maps CSS custom properties to Tailwind utility classes.
+e.g. bg-teal-800, text-gold-400, shadow-modal
+================================================================ */
+
+@theme {
+  /* --- Primitive: Teal — design.md §1.1 --- */
+  --color-teal-25: #E0F2F2;
+  --color-teal-50: #CCF7F4;
+  --color-teal-100: #ABE1E1;
+  --color-teal-200: #76CBCB;
+  --color-teal-300: #3FB5B5;
+  --color-teal-400: #2A8A8A;
+  --color-teal-450: #0F7F7F;
+  --color-teal-500: #007373;
+  --color-teal-600: #005959;
+  --color-teal-700: #004545;
+  --color-teal-800: #003737;
+  --color-teal-850: #002121;
+  --color-teal-900: #001F1F;
+
+  /* --- Primitive: Gold — design.md §1.1 --- */
+  --color-gold-50: #FEFFE0;
+  --color-gold-100: #FAFF46;
+  --color-gold-200: #FFEA00;
+  --color-gold-300: #FFE100;
+  --color-gold-400: #FFD700;
+  --color-gold-500: #FFC312;
+  --color-gold-600: #FFAB00;
+  --color-gold-700: #FF8F00;
+  --color-gold-800: #F08010;
+  --color-gold-900: #CC7A06;
+
+  /* --- Primitive: Purple — design.md §1.1 --- */
+  --color-purple-100: #661B66;
+  --color-purple-200: #5C005C;
+  --color-purple-300: #4D194D;
+  --color-purple-400: #3A143A;
+  --color-purple-500: #2F0D2F;
+
+  /* --- Validation — design.md §1.1 --- */
+  --color-error-light: #FFB4AB;
+  --color-error-base: #FF5252;
+  --color-error-dark: #3D1010;
+  --color-success-light: #69F0AE;
+  --color-success-base: #00E676;
+  --color-success-dark: #004D26;
+  --color-warning-base: #FF9100;
+  --color-info-base: #66D9E8;
+
+  /* --- Semantic surface — design.md §1.2 --- */
+  --color-surface-app: #001F1F;
+  --color-surface-base: #003737;
+  --color-surface-elevated: #004545;
+  --color-surface-modal: #003737;
+
+  /* --- Semantic text — design.md §1.2 --- */
+  --color-text-primary: #f2f7f7;
+  --color-text-secondary: #E0F2F2;
+  --color-text-tertiary: #CCF7F4;
+  --color-text-quaternary: #ABE1E1;
+
+  /* --- Semantic text-ds (Tailwind v4 compatible aliases) --- */
+  --color-text-ds-primary: #f2f7f7;
+  --color-text-ds-secondary: #E0F2F2;
+  --color-text-ds-tertiary: #CCF7F4;
+  --color-text-ds-quaternary: #ABE1E1;
+
+  /* --- Semantic surface (Tailwind v4 aliases) --- */
+  --color-surface-app: #001F1F;
+  --color-surface-base: #003737;
+  --color-surface-elevated: #004545;
+  --color-surface-modal: #003737;
+
+  /* --- Semantic border — design.md §1.2 --- */
+  --color-border-subtle: #004545;
+  --color-border-focus: #4D194D;
+
+  /* --- Semantic action — design.md §1.2 --- */
+  --color-action-primary-bg: #FFD700;
+  --color-action-primary-text: #001F1F;
+  --color-action-secondary-bg: #4D194D;
+
+  /* --- Fonts — design.md §3 --- */
+  --font-heading: var(--font-heading-var, var(--font-heading-fallback)), sans-serif;
+  --font-body: var(--font-body-var, var(--font-body-fallback)), sans-serif;
+
+  /* --- Font sizes (fluid) — design.md §3 --- */
+  --font-size-display: clamp(2.5rem, 4vw + 1.5rem, 4rem);
+  --font-size-h1: clamp(2rem, 1.5vw + 1.6rem, 2.5rem);
+  --font-size-h2: clamp(1.75rem, 1vw + 1.5rem, 2rem);
+  --font-size-h3: clamp(1.5rem, 0.5vw + 1.3rem, 1.75rem);
+  --font-size-body-m: 1rem;
+  --font-size-caption: 0.75rem;
+  --font-size-button: 1rem;
+
+  /* --- Shadows — design.md §4 --- */
+  --shadow-1: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  --shadow-2: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+  --shadow-modal: 0 24px 48px -12px rgba(0, 0, 0, 0.7);
+  --shadow-tooltip: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-toast: 0 8px 24px -4px rgba(0, 0, 0, 0.6);
+  --shadow-gold-glow: 0 0 10px rgba(255, 215, 0, 0.1);
+  --shadow-toast: 0 8px 24px -4px rgba(0, 0, 0, 0.6);
+  --shadow-tooltip: 0 4px 16px rgba(0, 0, 0, 0.5);
+
+  /* --- Card shadows — design.md §3.1 --- */
+  --shadow-card-rest: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  --shadow-card-hover-layer-1: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+  --shadow-card-hover-layer-2: 0 0 10px rgba(252, 194, 1, 0.1);
+  --shadow-card-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 0 10px rgba(252, 194, 1, 0.1);
+  --shadow-card-focus: 0 0 0 1px #FFD700, 0 0 0 4px rgba(255, 215, 0, 0.25);
+  --inner-shadow-card: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+
+  /* --- Z-index — design.md §5 --- */
+  --z-index-base: 0;
+  --z-index-elevated: 10;
+  --z-index-dropdown: 100;
+  --z-index-fab: 200;
+  --z-index-backdrop: 500;
+  --z-index-modal: 1000;
+  --z-index-tooltip: 1500;
+  --z-index-toast: 9999;
+
+  /* --- Motion (cubic-bezier) — design.md §4 --- */
+  --ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-premium: cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  /* --- Border radius --- */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* --- Animations --- */
+  --animate-fade-in: fade-in 200ms ease-out both;
+  --animate-slide-down: slide-down 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-slide-up: slide-up 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-shimmer: shimmer 1.5s linear infinite;
+  --animate-sheen: sheen 6s ease-in-out infinite;
+  --animate-dash: dash 1.5s ease-in-out infinite;
+  --animate-spin-slow: spin 2s linear infinite;
+  --animate-toast-desktop: toast-slide-desktop 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  --animate-toast-mobile: toast-slide-mobile 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  --animate-pulse-breath: pulse-breath 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+
+  /* --- Breakpoints — design.md §6 --- */
+  --breakpoint-xs: 320px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+
+  /* ================================================================
+  BLOKI 1–10 — NOWE TOKENY W @theme
+  =============================================================== */
+
+  /* --- Blok 1: Oświetlenie i cieniowanie --- */
+  --elevation-z-0: 0px;
+  --elevation-z-1: 4px;
+  --elevation-z-2: 8px;
+  --elevation-z-3: 16px;
+  --elevation-z-4: 32px;
+  --elevation-z-5: 64px;
+  --light-dir-x: 0.707;
+  --light-dir-y: -0.707;
+  --light-dir-z: 0.5;
+  --ambient-intensity: 0.25;
+  --shadow-chameleon: 0 16px 32px color-mix(in oklch, var(--teal-800) 70%, #000);
+  --glow-emissive: 0 0 20px 4px var(--gold-400);
+  --shadow-type: classic;
+
+  /* --- Blok 2: Materiał i efekty szklane --- */
+  --glass-saturate: 200%;
+  --squish-scale: 0.94;
+  --squish-3d-translate: -6px;
+  --noise-intensity: 0.05;
+
+  /* --- Blok 3: Adaptacja środowiskowa --- */
+  --ambient-lux: 50;
+  --environmental-theme: neutral;
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+
+  /* --- Blok 4: Animacje i interakcje --- */
+  --shadow-hover-target: var(--shadow-card-hover);
+  --shadow-transition-duration: 0.3s;
+  --double-wrapper-offset: 1px;
+  --double-wrapper-blur: 25px;
+  --double-wrapper-color: rgba(0, 40, 40, 0.85);
+  --touch-prediction-scale: 0.98;
+  --touch-prediction-duration: 0.1s;
+
+  /* --- Blok 5: Wydajność i rendering sprzętowy --- */
+  --webgpu-supported: 0;
+  --houdini-supported: 0;
+  --gpu-fallback-blur: 20px;
+
+  /* --- Blok 6: Typografia i układ przestrzenny --- */
+  --container-query-breakpoint-xs: 320px;
+  --container-query-breakpoint-sm: 640px;
+  --container-query-breakpoint-md: 768px;
+  --container-query-breakpoint-lg: 1024px;
+  --container-query-breakpoint-xl: 1280px;
+
+  /* --- Blok 7: Iluzje percepcyjne --- */
+  --illusion-bg: var(--teal-800);
+  --illusion-opacity: 0.6;
+
+  /* --- Blok 8: Generative UI --- */
+  --genui-transition-duration: 0.3s;
+  --genui-elevation-default: var(--elevation-z-2);
+
+  /* --- Blok 9: Kolory i przestrzenie barw --- */
+  --color-deep-turquoise: #006747;
+  --color-deep-turquoise-oklch: oklch(0.45 0.12 185);
+  --black-safe: var(--teal-900);
+  --shadow-chameleon-alt: 0 25px 50px -12px color-mix(in oklch, var(--teal-800) 60%, transparent);
+
+  /* --- Blok 10: Maskowanie i geometria --- */
+  --arc-cut-size: 15px;
+  --arc-cut-coord: 0.85;
+  --arc-curve: 0.93;
+}
+
+/* ================================================================
+CSS CUSTOM PROPERTIES — :root
+Use these in components via var(). They mirror the @theme tokens
+and add aliases that can't be expressed in @theme.
+================================================================ */
+
+:root {
+  /* Primitive: Teal — design.md §1.1 */
+  --teal-25: #E0F2F2;
+  --teal-50: #CCF7F4;
+  --teal-100: #ABE1E1;
+  --teal-200: #76CBCB;
+  --teal-300: #3FB5B5;
+  --teal-400: #2A8A8A;
+  --teal-450: #0F7F7F;
+  --teal-500: #007373;
+  --teal-600: #005959;
+  --teal-700: #004545;
+  --teal-800: #003737;
+  --teal-850: #002121;
+  --teal-900: #001F1F;
+
+  /* Primitive: Gold — design.md §1.1 */
+  --gold-50: #FEFFE0;
+  --gold-100: #FAFF46;
+  --gold-200: #FFEA00;
+  --gold-300: #FFE100;
+  --gold-400: #FFD700;
+  --gold-500: #FFC312;
+  --gold-600: #FFAB00;
+  --gold-700: #FF8F00;
+  --gold-800: #F08010;
+  --gold-900: #CC7A06;
+
+  /* Primitive: Purple — design.md §1.1 */
+  --purple-100: #661B66;
+  --purple-200: #5C005C;
+  --purple-300: #4D194D;
+  --purple-400: #3A143A;
+  --purple-500: #2F0D2F;
+
+  /* Validation — design.md §1.1 */
+  --error-light: #FFB4AB;
+  --error-base: #FF5252;
+  --error-dark: #3D1010;
+  --success-light: #69F0AE;
+  --success-base: #00E676;
+  --success-dark: #004D26;
+  --warning-base: #FF9100;
+  --info-base: #66D9E8;
+
+  /* Semantic: surfaces — design.md §1.2 */
+  --bg-app-global: var(--teal-900);
+  --bg-surface-base: var(--teal-800);
+  --bg-surface-elevated: var(--teal-700);
+  --bg-surface-modal: var(--teal-800);
+
+  /* Semantic: text — design.md §1.2 */
+  --text-primary: #f2f7f7;
+  --text-secondary: var(--teal-25);
+  --text-tertiary: var(--teal-50);
+  --text-quaternary: var(--teal-100);
+
+  /* Semantic: borders — design.md §1.2 */
+  --border-subtle: var(--teal-700);
+  --border-focus: var(--purple-300);
+
+  /* Semantic: actions — design.md §1.2 */
+  --action-primary-bg: var(--gold-400);
+  --action-primary-text: var(--teal-900);
+  --action-secondary-bg: var(--purple-300);
+
+  /* Typography — design.md §3 */
+  --font-heading: var(--font-heading-var, var(--font-heading-fallback)), sans-serif;
+  --font-body: var(--font-body-var, var(--font-body-fallback)), sans-serif;
+
+  /* Fluid font sizes — design.md §3 */
+  --fs-display: clamp(2.5rem, 4vw + 1.5rem, 4rem);
+  --fs-h1: clamp(2rem, 1.5vw + 1.6rem, 2.5rem);
+  --fs-h2: clamp(1.75rem, 1vw + 1.5rem, 2rem);
+  --fs-h3: clamp(1.5rem, 0.5vw + 1.3rem, 1.75rem);
+  --fs-body-m: 1rem;
+  --fs-caption: 0.75rem;
+  --fs-button: 1rem;
+
+  /* Elevation — design.md §4 */
+  --shadow-1: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  --shadow-2: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+  --shadow-modal: 0 24px 48px -12px rgba(0, 0, 0, 0.7);
+
+  /* Glassmorphism — design.md §4 */
+  --glass-overlay: rgba(0, 31, 31, 0.44);
+  --glass-blur: blur(20px) saturate(200%);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.125);
+
+  /* Motion — design.md §4 */
+  --ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  /* Z-index stack — design.md §5 */
+  --z-base: 0;
+  --z-elevated: 10;
+  --z-dropdown: 100;
+  --z-fab: 200;
+  --z-backdrop: 500;
+  --z-modal: 1000;
+  --z-tooltip: 1500;
+  --z-toast: 9999;
+
+  /* ================================================================
+  BLOKI 1–10 — NOWE ZMIENNE W :root
+  (niektóre już były na końcu – poniżej wszystkie, bez powtórzeń)
+  =============================================================== */
+
+  /* --- Tokeny głębi Z (elevation) dla Shadow Maestro --- */
+  --elevation-z-0: 0px;
+  --elevation-z-1: 4px;
+  --elevation-z-2: 8px;
+  --elevation-z-3: 16px;
+  --elevation-z-4: 32px;
+  --elevation-z-5: 64px;
+
+  /* --- Wirtualne źródło światła 3D --- */
+  --light-dir-x: 0.707;
+  --light-dir-y: -0.707;
+  --light-dir-z: 0.5;
+
+  /* --- Natężenie światła otoczenia (aktualizowane przez JS) --- */
+  --ambient-intensity: 0.25;
+
+  /* --- Chameleon shadow (cień jako zagęszczenie pigmentu) --- */
+  --shadow-chameleon: 0 16px 32px color-mix(in oklch, var(--teal-800) 70%, #000);
+
+  /* --- Emisyjna poświata (zamiast cienia dla dark mode / niskie luksy) --- */
+  --glow-emissive: 0 0 20px 4px var(--gold-400);
+  --shadow-type: classic;
+
+  /* --- Blok 2: Liquid Glass, Squishy UI, Texture --- */
+  --glass-saturate: 200%;
+  --squish-scale: 0.94;
+  --squish-3d-translate: -6px;
+  --noise-intensity: 0.05;
+
+  /* --- Blok 3: Adaptacja środowiskowa --- */
+  --ambient-lux: 50;
+  --environmental-theme: neutral;
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+
+  /* --- Blok 4: Animacje i interakcje --- */
+  --shadow-hover-target: var(--shadow-card-hover);
+  --shadow-transition-duration: 0.3s;
+  --double-wrapper-offset: 1px;
+  --double-wrapper-blur: 25px;
+  --double-wrapper-color: rgba(0, 40, 40, 0.85);
+  --touch-prediction-scale: 0.98;
+  --touch-prediction-duration: 0.1s;
+
+  /* --- Blok 5: Wydajność i rendering sprzętowy --- */
+  --webgpu-supported: 0;
+  --houdini-supported: 0;
+  --gpu-fallback-blur: 20px;
+
+  /* --- Blok 6: Typografia i układ przestrzenny --- */
+  --container-query-breakpoint-xs: 320px;
+  --container-query-breakpoint-sm: 640px;
+  --container-query-breakpoint-md: 768px;
+  --container-query-breakpoint-lg: 1024px;
+  --container-query-breakpoint-xl: 1280px;
+
+  /* --- Blok 7: Iluzje percepcyjne --- */
+  --illusion-bg: var(--teal-800);
+  --illusion-opacity: 0.6;
+
+  /* --- Blok 8: Generative UI --- */
+  --genui-transition-duration: 0.3s;
+  --genui-elevation-default: var(--elevation-z-2);
+
+  /* --- Blok 9: Kolory i przestrzenie barw --- */
+  --color-deep-turquoise: #006747;
+  --color-deep-turquoise-oklch: oklch(0.45 0.12 185);
+  --black-safe: var(--teal-900);
+
+  /* --- Blok 10: Maskowanie i geometria --- */
+  --arc-cut-size: 15px;
+  --arc-cut-coord: 0.85;
+  --arc-curve: 0.93;
+}
+
+/* ================================================================
+GLOBAL BASE STYLES
+================================================================ */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-app-global);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--fs-body-m);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Numeric figures — prevent layout shift on dynamic numbers — design.md §3 */
+[data-numeric],
+.tnum {
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+/* Custom scrollbar (textarea, overflow containers) — design.md §2.3 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--teal-600);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--teal-500);
+}
+
+/* ================================================================
+KEYFRAMES
+================================================================ */
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes spin-gradient {
+  to { transform: rotate(360deg); }
+}
+@keyframes pulse-breath {
+  0%, 100% { opacity: 0.2; transform: scale(0.98); filter: blur(8px); }
+  50% { opacity: 0.6; transform: scale(1.02); filter: blur(14px); }
+}
+
+@keyframes dash {
+  0% { stroke-dasharray: 1, 150; stroke-dashoffset: 0; }
+  50% { stroke-dasharray: 90, 150; stroke-dashoffset: -35; }
+  100% { stroke-dasharray: 90, 150; stroke-dashoffset: -124; }
+}
+
+@keyframes toast-slide-in-desktop {
+  from {
+    transform: translateX(calc(100% + 24px));
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-slide-in-mobile {
+  from {
+    transform: translateY(-120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; transform: scale(0.96); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(100%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes sheen {
+  0% { transform: translateX(-140%); opacity: 0; }
+  10% { opacity: 1; }
+  35% { transform: translateX(140%); opacity: 1; }
+  45% { opacity: 0; }
+  100% { transform: translateX(140%); opacity: 0; }
+}
+
+/* Nowa keyframe dla Generative UI (Blok 8) */
+@keyframes genui-fade-scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheen::after { animation: none; }
+}
+
+/* ================================================================
+UTILITY CLASSES
+================================================================ */
+
+/* Rich main background (aurora gradient) */
+.bg-gradient-main {
+  background-color: #021a1a;
+  background-image:
+    radial-gradient(1100px 520px at 110% -8%, rgba(131, 80, 159, 0.24) 0%, rgba(131, 80, 159, 0.00) 62%),
+    radial-gradient(900px 520px at -10% 112%, rgba(39, 151, 151, 0.22) 0%, rgba(39, 151, 151, 0.00) 68%),
+    radial-gradient(600px 320px at 76% 34%, rgba(255, 215, 0, 0.14) 0%, rgba(255, 215, 0, 0.00) 60%),
+    linear-gradient(
+      135deg,
+      hsl(180 100% 7%) 0%,
+      hsl(180 100% 8%) 10%,
+      hsl(178 60% 11%) 20%,
+      hsl(185 62% 12%) 30%,
+      hsl(192 68% 13%) 40%,
+      hsl(196 72% 13%) 50%,
+      hsl(202 78% 12%) 60%,
+      hsl(208 80% 11%) 70%,
+      hsl(212 82% 11%) 82%,
+      hsl(215 100% 11%) 100%
+    );
+  background-repeat: no-repeat;
+  background-size: auto, auto, auto, cover;
+  background-position: center;
+  -webkit-mask-image: radial-gradient(140% 140% at 50% 40%, #000 60%, transparent 100%);
+  mask-image: radial-gradient(140% 140% at 50% 40%, #000 60%, transparent 100%);
+}
+
+@media (min-width: 1024px) {
+  .bg-gradient-main {
+    background-image:
+      radial-gradient(1200px 560px at 115% -10%, rgba(131, 80, 159, 0.22) 0%, rgba(131, 80, 159, 0.00) 64%),
+      radial-gradient(1000px 560px at -12% 120%, rgba(39, 151, 151, 0.20) 0%, rgba(39, 151, 151, 0.00) 70%),
+      radial-gradient(660px 360px at 78% 30%, rgba(255, 215, 0, 0.12) 0%, rgba(255, 215, 0, 0.00) 62%),
+      linear-gradient(
+        135deg,
+        hsl(180 100% 7%) 0%,
+        hsl(180 100% 8%) 12%,
+        hsl(178 60% 11%) 24%,
+        hsl(185 62% 12%) 36%,
+        hsl(192 68% 13%) 48%,
+        hsl(196 72% 13%) 60%,
+        hsl(202 78% 12%) 72%,
+        hsl(208 80% 11%) 84%,
+        hsl(215 100% 11%) 100%
+      );
+    -webkit-mask-image: radial-gradient(135% 135% at 50% 42%, #000 62%, transparent 100%);
+    mask-image: radial-gradient(135% 135% at 50% 42%, #000 62%, transparent 100%);
+  }
+}
+
+/* Shimmer skeleton utility — design.md §5.2 */
+.skeleton-shimmer {
+  background: linear-gradient(
+    110deg,
+    var(--teal-800) 0%,
+    var(--teal-700) 40%,
+    var(--teal-800) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+}
+
+/* Glass surface utility — design.md §4 */
+.glass-surface {
+  background: var(--glass-overlay);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+}
+
+/* ================================================================
+CARD UTILITY CLASSES — design.md §3.1 (updated)
+=============================================================== */
+
+/* Base card surface */
+.card-surface {
+  background-color: var(--teal-700);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow-card-rest);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: box-shadow 300ms var(--ease-premium), transform 300ms var(--ease-premium);
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Inner shadow for depth */
+.card-surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: var(--inner-shadow-card);
+}
+
+/* Card hover state */
+.card-surface:hover,
+.card-surface:focus-within {
+  background-color: var(--teal-600);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-6px);
+}
+
+/* Focus ring for cards */
+.card-surface:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-card-focus);
+}
+
+/* ================================================================
+BENTO NAVIGATION CARDS — dashboard landing
+design.md §1.1a: dual shadow hover, brightness shift, no translateY
+=============================================================== */
+.bento-card {
+  background-color: var(--teal-700);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow-card-rest);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+  transition:
+    box-shadow 300ms var(--ease-premium),
+    background-color 300ms var(--ease-premium),
+    filter 300ms var(--ease-premium),
+    border-color 300ms var(--ease-premium);
+  text-decoration: none;
+}
+
+.bento-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: var(--inner-shadow-card);
+}
+
+.bento-card:hover,
+.bento-card:focus-within {
+  background-color: var(--teal-600);
+  box-shadow: var(--shadow-card-hover);
+  filter: brightness(1.04);
+  border-color: color-mix(in oklch, var(--gold-400) 15%, transparent);
+}
+
+.bento-card:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-card-focus);
+}
+
+.bento-arrow {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-quaternary);
+  opacity: 0;
+  transition: opacity 300ms var(--ease-premium), background-color 300ms var(--ease-premium), color 300ms var(--ease-premium);
+}
+
+.bento-card:hover .bento-arrow {
+  opacity: 1;
+  background: rgba(255, 215, 0, 0.1);
+  color: var(--gold-400);
+}
+
+/* Overlay for contrast stabilization on images */
+.card-overlay-contrast {
+  position: relative;
+}
+
+.card-overlay-contrast::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(18, 18, 18, 0.8);
+  filter: saturate(180%);
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+/* Safe-area helpers — design.md §6 */
+.safe-bottom {
+  padding-bottom: calc(72px + env(safe-area-inset-bottom));
+}
+.safe-bottom-sm {
+  padding-bottom: calc(64px + env(safe-area-inset-bottom));
+}
+
+/* ================================================================
+BLOKI 1–10 — NOWE KLASY @utility I REGUŁY GLOBALNE
+================================================================ */
+
+/* ----- Blok 1: Oświetlenie i cieniowanie ----- */
+.elevation-z-0 { --elevation-z: var(--elevation-z-0); }
+.elevation-z-1 { --elevation-z: var(--elevation-z-1); }
+.elevation-z-2 { --elevation-z: var(--elevation-z-2); }
+.elevation-z-3 { --elevation-z: var(--elevation-z-3); }
+.elevation-z-4 { --elevation-z: var(--elevation-z-4); }
+.elevation-z-5 { --elevation-z: var(--elevation-z-5); }
+
+.shadow-maestro {
+  box-shadow:
+    calc(var(--elevation-z) * var(--light-dir-x))
+    calc(var(--elevation-z) * var(--light-dir-y))
+    calc(var(--elevation-z) * 0.2)
+    color-mix(in oklch, var(--bg-surface, var(--teal-800)) 70%, #000),
+    0 0 calc(var(--elevation-z) * 0.8)
+    color-mix(in oklch, var(--bg-surface, var(--teal-800)) 85%, #000, var(--ambient-intensity));
+}
+
+.emissive-glow {
+  box-shadow: none;
+  filter: drop-shadow(var(--glow-emissive));
+}
+
+/* Luminance step-up – dark mode */
+[data-theme="dark"] {
+  --bg-z-0: oklch(0.12 0.02 260);
+  --bg-z-1: oklch(0.18 0.03 260);
+  --bg-z-2: oklch(0.24 0.04 260);
+  --bg-z-3: oklch(0.30 0.05 260);
+}
+
+.surface-z-0 { background: var(--bg-z-0); }
+.surface-z-1 { background: var(--bg-z-1); }
+.surface-z-2 { background: var(--bg-z-2); }
+.surface-z-3 { background: var(--bg-z-3); }
+
+/* Haptyczny rezonans – fallback deklaratywny */
+.haptic-glow {
+  transition: filter 0.1s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+.haptic-glow:hover {
+  filter: drop-shadow(0 0 12px var(--gold-400));
+  transform: scale(0.98);
+}
+
+/* ----- Blok 2: Materiał i efekty szklane ----- */
+.glass-liquid {
+  background: var(--glass-overlay);
+  backdrop-filter: blur(var(--glass-blur, 20px)) saturate(var(--glass-saturate));
+  border: var(--glass-border);
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.border-gold-subtle {
+  border: 1px solid color-mix(in oklch, var(--gold-400), transparent 80%);
+}
+.border-purple-subtle {
+  border: 1px solid color-mix(in oklch, var(--purple-300), transparent 70%);
+}
+
+.squishy {
+  transition: transform 0.15s var(--ease-spring);
+  transform: scale(1);
+}
+.squishy:active {
+  transform: scale(var(--squish-scale));
+}
+.squishy-3d {
+  transition: transform 0.12s cubic-bezier(0.20, 0.90, 0.40, 1.10);
+}
+.squishy-3d:active {
+  transform: translateZ(var(--squish-3d-translate)) scale(var(--squish-scale));
+}
+
+.gpu-layer {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  isolation: isolate;
+}
+
+.texture-paper {
+  background-image: paint(procedural-noise);
+}
+.texture-chrome {
+  background: linear-gradient(135deg, #e0e0e0 0%, #b0b0b0 50%, #f0f0f0 100%);
+  background-blend-mode: overlay;
+}
+
+/* ----- Blok 3: Adaptacja środowiskowa i biometryczna ----- */
+.safe-bottom {
+  padding-bottom: calc(72px + var(--safe-area-bottom));
+}
+.safe-bottom-sm {
+  padding-bottom: calc(64px + var(--safe-area-bottom));
+}
+.safe-top {
+  padding-top: calc(16px + var(--safe-area-top));
+}
+.safe-left {
+  padding-left: calc(16px + var(--safe-area-left));
+}
+.safe-right {
+  padding-right: calc(16px + var(--safe-area-right));
+}
+
+.adapt-contrast {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+[data-environmental-theme="emissive-dark"] {
+  --text-primary: #CCF7F4;
+  --bg-surface-base: #001F1F;
+  --glow-intensity: 0.8;
+  --shadow-type: glow;
+}
+
+[data-environmental-theme="sunlight-high-contrast"] {
+  --text-primary: #ffffff;
+  --bg-surface-base: #000000;
+  --contrast-boost: 1.2;
+  --shadow-type: classic;
+}
+
+/* ----- Blok 4: Animacje i interakcje ----- */
+.shadow-transition {
+  position: relative;
+  transition: box-shadow var(--shadow-transition-duration) var(--ease-spring);
+}
+.shadow-transition::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--shadow-hover-target);
+  opacity: 0;
+  transition: opacity var(--shadow-transition-duration) var(--ease-spring);
+  pointer-events: none;
+  will-change: opacity;
+}
+.shadow-transition:hover::after {
+  opacity: 1;
+}
+
+.double-wrapper-outer {
+  position: relative;
+  filter: drop-shadow(0 var(--double-wrapper-offset) var(--double-wrapper-blur) var(--double-wrapper-color));
+}
+.double-wrapper-inner {
+  overflow: hidden;
+  background: inherit;
+}
+@layer utilities {
+  .mask-corner {
+    clip-path: polygon(0 15px, 15px 0, 100% 0, 100% 100%, 0 100%);
+  }
+
+  .group-hover-blur-siblings {
+    transition: all 0.3s ease;
+  }
+  .group:hover .group-hover-blur-siblings:not(:hover) {
+    opacity: 0.5;
+    filter: blur(2px);
+    transform: scale(0.98);
+  }
+
+  .touch-predict {
+    transition: transform var(--touch-prediction-duration) cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    transform: scale(1);
+  }
+  .touch-predict:hover {
+    transform: scale(var(--touch-prediction-scale));
+  }
+  .touch-predict:active {
+    transform: scale(0.94);
+  }
+}
+
+@layer utilities {
+  .halo-pulse {
+    position: relative;
+
+    &:focus-within::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: inherit;
+      background: radial-gradient(circle at center, var(--purple-300), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      z-index: -1;
+    }
+
+    &:focus-within::before {
+      opacity: 0.6;
+      animation: pulse-breath 2s infinite;
+    }
+  }
+}
+
+/* ----- Blok 5: Wydajność i rendering sprzętowy ----- */
+.util-gpu-composited {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  contain: layout paint style;
+}
+
+.util-webgpu-enabled {
+  /* fallback when webgpu selector is not supported */
+  @supports not (selector(:has(webgpu))) {
+    backdrop-filter: blur(var(--gpu-fallback-blur));
+  }
+}
+
+.util-force-120fps {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  contain: strict;
+  isolation: isolate;
+}
+
+.util-optimize-animation {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Wsparcie dla volumetric-shadow (opcjonalna klasa) */
+.card-volumetric {
+  --volumetric-depth: 16px;
+  --volumetric-color: color-mix(in oklch, var(--teal-800) 70%, black);
+  --volumetric-blur: 24px;
+  --volumetric-intensity: 0.8;
+  background-image: paint(volumetric-shadow);
+}
+
+/* ----- Blok 6: Typografia i układ przestrzenny ----- */
+.text-balance {
+  text-wrap: balance;
+}
+
+.field-sizing-content {
+  field-sizing: content;
+}
+
+/* Logical properties – pełny zestaw */
+.ps-0 { padding-inline-start: 0px; }
+.ps-1 { padding-inline-start: 0.25rem; }
+.ps-2 { padding-inline-start: 0.5rem; }
+.ps-3 { padding-inline-start: 0.75rem; }
+.ps-4 { padding-inline-start: 1rem; }
+.ps-5 { padding-inline-start: 1.25rem; }
+.ps-6 { padding-inline-start: 1.5rem; }
+.ps-8 { padding-inline-start: 2rem; }
+.ps-10 { padding-inline-start: 2.5rem; }
+
+.pe-0 { padding-inline-end: 0px; }
+.pe-1 { padding-inline-end: 0.25rem; }
+.pe-2 { padding-inline-end: 0.5rem; }
+.pe-3 { padding-inline-end: 0.75rem; }
+.pe-4 { padding-inline-end: 1rem; }
+.pe-5 { padding-inline-end: 1.25rem; }
+.pe-6 { padding-inline-end: 1.5rem; }
+.pe-8 { padding-inline-end: 2rem; }
+.pe-10 { padding-inline-end: 2.5rem; }
+
+.ms-0 { margin-inline-start: 0px; }
+.ms-1 { margin-inline-start: 0.25rem; }
+.ms-2 { margin-inline-start: 0.5rem; }
+.ms-3 { margin-inline-start: 0.75rem; }
+.ms-4 { margin-inline-start: 1rem; }
+.ms-5 { margin-inline-start: 1.25rem; }
+.ms-6 { margin-inline-start: 1.5rem; }
+.ms-8 { margin-inline-start: 2rem; }
+.ms-10 { margin-inline-start: 2.5rem; }
+
+.me-0 { margin-inline-end: 0px; }
+.me-1 { margin-inline-end: 0.25rem; }
+.me-2 { margin-inline-end: 0.5rem; }
+.me-3 { margin-inline-end: 0.75rem; }
+.me-4 { margin-inline-end: 1rem; }
+.me-5 { margin-inline-end: 1.25rem; }
+.me-6 { margin-inline-end: 1.5rem; }
+.me-8 { margin-inline-end: 2rem; }
+.me-10 { margin-inline-end: 2.5rem; }
+
+.mbs-0 { margin-block-start: 0px; }
+.mbs-1 { margin-block-start: 0.25rem; }
+.mbs-2 { margin-block-start: 0.5rem; }
+.mbs-3 { margin-block-start: 0.75rem; }
+.mbs-4 { margin-block-start: 1rem; }
+.mbs-5 { margin-block-start: 1.25rem; }
+.mbs-6 { margin-block-start: 1.5rem; }
+.mbs-8 { margin-block-start: 2rem; }
+
+.mbe-0 { margin-block-end: 0px; }
+.mbe-1 { margin-block-end: 0.25rem; }
+.mbe-2 { margin-block-end: 0.5rem; }
+.mbe-3 { margin-block-end: 0.75rem; }
+.mbe-4 { margin-block-end: 1rem; }
+.mbe-5 { margin-block-end: 1.25rem; }
+.mbe-6 { margin-block-end: 1.5rem; }
+.mbe-8 { margin-block-end: 2rem; }
+
+.pbs-0 { padding-block-start: 0px; }
+.pbs-1 { padding-block-start: 0.25rem; }
+.pbs-2 { padding-block-start: 0.5rem; }
+.pbs-3 { padding-block-start: 0.75rem; }
+.pbs-4 { padding-block-start: 1rem; }
+.pbs-5 { padding-block-start: 1.25rem; }
+.pbs-6 { padding-block-start: 1.5rem; }
+.pbs-8 { padding-block-start: 2rem; }
+
+.pbe-0 { padding-block-end: 0px; }
+.pbe-1 { padding-block-end: 0.25rem; }
+.pbe-2 { padding-block-end: 0.5rem; }
+.pbe-3 { padding-block-end: 0.75rem; }
+.pbe-4 { padding-block-end: 1rem; }
+.pbe-5 { padding-block-end: 1.25rem; }
+.pbe-6 { padding-block-end: 1.5rem; }
+.pbe-8 { padding-block-end: 2rem; }
+
+/* ----- Blok 7: Iluzje percepcyjne i wzorce wizualne ----- */
+.illusion-container {
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.illusion-type-v {
+  transition: filter 0.3s ease;
+}
+[data-environmental-theme="emissive-dark"] .illusion-type-v {
+  filter: hue-rotate(180deg);
+}
+
+/* ----- Blok 8: Generative UI i architektura agentowa ----- */
+.genui-agent-component {
+  --elevation-z: var(--genui-elevation-default);
+  box-shadow: var(--shadow-maestro);
+  transition: box-shadow var(--genui-transition-duration) var(--ease-premium),
+              transform var(--genui-transition-duration) var(--ease-spring);
+  transform: translateZ(0);
+  will-change: transform, box-shadow;
+}
+
+.genui-agent-component-elevated {
+  --elevation-z: var(--elevation-z-4);
+  transform: translateY(-2px);
+}
+
+.genui-double-wrapper-outer {
+  position: relative;
+  filter: drop-shadow(0 1px 25px rgba(0, 40, 40, 0.85));
+}
+
+.genui-double-wrapper-inner {
+  clip-path: polygon(0 15px, 15px 0, 100% 0, 100% 100%, 0 100%);
+  overflow: hidden;
+  background: var(--glass-overlay);
+  backdrop-filter: blur(var(--glass-blur, 20px)) saturate(var(--glass-saturate, 200%));
+  border: var(--glass-border);
+}
+
+.u-genui-enter {
+  animation: genui-fade-scale-in 0.3s var(--ease-spring) both;
+}
+
+/* ----- Blok 9: Kolory i przestrzenie barw ----- */
+.u-bg-deep-turquoise {
+  background-color: var(--color-deep-turquoise);
+}
+
+
+
+.u-text-black-safe {
+  color: var(--black-safe);
+}
+.u-bg-black-safe {
+  background-color: var(--black-safe);
+}
+
+.u-bezold-trigger {
+  transition: filter 0.2s ease;
+}
+.u-bezold-trigger:hover {
+  filter: hue-rotate(5deg) saturate(1.05);
+}
+
+/* Globalny zakaz czystej czerni (opcjonalnie odkomentować) */
+/*
+.text-black { color: var(--black-safe) !important; }
+.bg-black { background-color: var(--black-safe) !important; }
+*/
+
+/* ----- Blok 10: Techniki maskowania i geometrii ----- */
+.u-arc-mask {
+  clip-path: url(#arc-mask);
+}
+
+/* ================================================================
+CTA GOLD BUTTON CLASSES — 4 variants from orange_button.md
+Inline oklch values → semantic token references
+============================================================== */
+
+/* Shared CTA gold base */
+.cta-gold {
+  position: relative;
+  cursor: pointer;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: filter 0.2s ease, background 0.25s ease-in-out, transform 0.1s ease;
+  overflow: hidden;
+}
+
+.cta-gold:hover {
+  filter: brightness(1.1);
+}
+
+.cta-gold:active {
+  transform: perspective(1000px) rotateX(var(--cta-rot-x, 0deg)) rotateY(var(--cta-rot-y, 0deg)) scale(0.975) translateY(2px);
+}
+
+/* Metallic border (::before) — shared across all CTA variants */
+.cta-gold::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(in oklch 125deg,
+    oklch(0.95 0.15 85) 0%,
+    oklch(0.80 0.15 70) 40%,
+    oklch(0.98 0.10 90) 85%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+  transition: background 0.25s ease-in-out;
+}
+
+.cta-gold:hover::before {
+  background: linear-gradient(in oklch 125deg,
+    oklch(0.999 0.03 95) 0%,
+    oklch(0.85 0.15 72) 40%,
+    oklch(0.98 0.10 90) 85%
+  );
+}
+
+/* Engraved text shadow — shared */
+.cta-gold-text {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  z-index: 2;
+  text-align: center;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.8), 0px 1px 0px rgba(255, 255, 255, 0.15);
+}
+
+/* --- CTA-GOLD-01: Convex 1:3 (Sign Up) --- */
+.cta-gold-01 {
+  background: linear-gradient(in oklch 122deg, oklch(0.711 0.177 54.5) 0%, oklch(0.840 0.172 84.1) 40%, oklch(0.852 0.189 95.8) 90%);
+  border-radius: var(--radius-md);
+  box-shadow:
+    0 -2px 6px rgba(255, 255, 255, 0.18),
+    0 3px 6px rgba(60, 25, 5, 0.5),
+    0 16px 48px rgba(60, 25, 5, 0.6),
+    0 20px 60px rgba(180, 120, 20, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.35),
+    inset 0 8px 20px -8px rgba(255, 255, 240, 0.15),
+    inset 0 -1px 0px rgba(180, 80, 10, 0.65),
+    inset 0 -8px 16px rgba(0, 0, 0, 0.3);
+  --cta-rot-x: 2deg;
+  --cta-rot-y: -2deg;
+  transform: perspective(1000px) rotateX(var(--cta-rot-x)) rotateY(var(--cta-rot-y));
+}
+
+/* Wet gloss highlight */
+.cta-gold-01::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.12) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cta-gold-01 .cta-gold-text {
+  background-image: linear-gradient(in oklch 125deg, oklch(0.2856 0.0472 201.54) 0%, oklch(0.2696 0.0425 207.64) 50%, oklch(0.2843 0.0446 206.86) 100%);
+}
+
+/* --- CTA-GOLD-02: Convex 1:4 (Begin as a Creator) --- */
+.cta-gold-02 {
+  background: linear-gradient(in oklch 144deg, oklch(0.711 0.177 54.5) 0%, oklch(0.840 0.172 84.1) 45%, oklch(0.852 0.189 95.8) 95%);
+  border-radius: var(--radius-md);
+  box-shadow:
+    0 -1px 3px rgba(255, 255, 255, 0.07),
+    0 2px 4px rgba(0, 15, 15, 0.5),
+    0 12px 40px rgba(0, 15, 15, 0.65),
+    inset 0 1px 2px rgba(255, 255, 255, 0.06),
+    inset 0 -6px 12px rgba(0, 0, 0, 0.35);
+  --cta-rot-x: 3deg;
+  --cta-rot-y: -3deg;
+  transform: perspective(1000px) rotateX(var(--cta-rot-x)) rotateY(var(--cta-rot-y));
+}
+
+.cta-gold-02::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cta-gold-02 .cta-gold-text {
+  background-image: linear-gradient(in oklch 125deg, oklch(0.2236 0.0313 243.98) 0%, oklch(0.2257 0.0337 211.87) 50%, oklch(0.2543 0.0385 218.28) 100%);
+  letter-spacing: -0.025em;
+  word-spacing: -0.05em;
+}
+
+/* --- CTA-GOLD-03: Convex 1:4 reverse (Join as a Creator) --- */
+.cta-gold-03 {
+  background: linear-gradient(in oklch 315deg, oklch(0.852 0.189 95.8) 0%, oklch(0.840 0.172 84.1) 50%, oklch(0.954 0.202 108.8) 100%);
+  border-radius: var(--radius-md);
+  box-shadow:
+    0 -1px 3px rgba(255, 255, 220, 0.25),
+    0 2px 4px rgba(80, 40, 5, 0.5),
+    0 12px 40px rgba(80, 40, 5, 0.6),
+    inset 0 1px 2px rgba(255, 255, 220, 0.3),
+    inset 0 -6px 12px rgba(60, 25, 0, 0.4);
+  --cta-rot-x: 3deg;
+  --cta-rot-y: -3deg;
+  transform: perspective(1000px) rotateX(var(--cta-rot-x)) rotateY(var(--cta-rot-y));
+}
+
+.cta-gold-03::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 250, 200, 0.2) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cta-gold-03 .cta-gold-text {
+  background-image: linear-gradient(in oklch 245deg, oklch(0.2543 0.0385 218.28) 0%, oklch(0.2655 0.04 217.12) 50%, oklch(0.2236 0.0313 243.98) 100%);
+  letter-spacing: -0.025em;
+  word-spacing: -0.05em;
+}
+
+/* --- CTA-GOLD-04: Arched 1:3 (Tip It $) --- */
+.cta-gold-04 {
+  background: linear-gradient(in oklch 110deg, oklch(0.711 0.177 54.5) 0%, oklch(0.840 0.172 84.1) 55%, oklch(0.954 0.202 108.8) 100%);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 -1px 3px rgba(255, 255, 200, 0.2),
+    0 2px 6px rgba(50, 25, 0, 0.55),
+    0 16px 48px rgba(50, 25, 0, 0.7),
+    inset 0 1px 2px rgba(255, 255, 200, 0.2),
+    inset 0 -8px 18px rgba(40, 18, 0, 0.45);
+  --cta-rot-x: 2deg;
+  --cta-rot-y: -2deg;
+  transform: perspective(1000px) rotateX(var(--cta-rot-x)) rotateY(var(--cta-rot-y));
+  overflow: visible;
+}
+
+/* 3D glass edge reflections on all 4 sides */
+.cta-gold-04::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: transparent;
+  box-shadow:
+    inset 0 3px 4px -2px rgba(255, 255, 220, 0.25),
+    inset 0 -3px 4px -2px rgba(255, 255, 220, 0.12),
+    inset 3px 0 4px -2px rgba(255, 255, 220, 0.18),
+    inset -3px 0 4px -2px rgba(255, 255, 220, 0.12);
+  z-index: 1;
+}
+
+.cta-gold-04 .cta-gold-text {
+  background-image: linear-gradient(in oklch 125deg, oklch(0.2101 0.0318 264.66) 0%, oklch(0.2307 0.0326 240.91) 50%, oklch(0.3047 0.0489 203.4) 100%);
+}
+
+/* CTA SVG tech pattern overlay */
+.cta-gold svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 1;
+  pointer-events: none;
+  transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+.cta-gold:hover svg {
+  filter: brightness(1.1);
+}
+
+.cta-gold-01 svg { opacity: 0.4; }
+.cta-gold-02 svg { opacity: 0.3; }
+.cta-gold-03 svg { opacity: 0.3; }
+.cta-gold-04 svg { opacity: 0.4; }
+
+/* Double wrapper już zdefiniowany w Bloku 4, tutaj tylko dodatkowe */
+.u-svg-crisp {
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  shape-rendering: crispEdges;
+}
+
+.u-svg-sharp {
+  vector-effect: non-scaling-stroke;
+  shape-rendering: geometricPrecision;
+}
+
+.cta-btn {
+  position: relative;
+  height: 48px;
+  padding-left: 24px;
+  padding-right: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  user-select: none;
+  transition: filter 0.2s ease, background 0.25s ease-in-out, transform 0.1s ease;
+}
+
+.cta-btn:hover {
+  filter: brightness(1.1);
+}
+
+.cta-btn:hover .cta-btn-svg {
+  filter: brightness(1.1);
+}
+
+.cta-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(in oklch 125deg,
+    oklch(0.95 0.15 85) 0%,
+    oklch(0.80 0.15 70) 40%,
+    oklch(0.98 0.10 90) 85%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+  transition: background 0.25s ease-in-out;
+}
+
+.cta-btn:hover::before {
+  background: linear-gradient(in oklch 125deg,
+    oklch(0.999 0.03 95) 0%,
+    oklch(0.85 0.15 72) 40%,
+    oklch(0.98 0.10 90) 85%
+  );
+}
+
+.cta-btn-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 1;
+  pointer-events: none;
+  transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+.cta-btn-text {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 20px;
+  z-index: 2;
+  text-align: center;
+  white-space: nowrap;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.8), 0px 1px 0px rgba(255, 255, 255, 0.15);
+}
+
+.cta-btn-primary {
+  width: 144px;
+  background: linear-gradient(in oklch 122deg, oklch(0.711 0.177 54.5) 0%, oklch(0.840 0.172 84.1) 40%, oklch(0.852 0.189 95.8) 90%);
+  border-radius: 4px;
+  box-shadow: 
+    0 -1px 2px rgba(255, 255, 255, 0.15),
+    0 1px 2px rgba(60, 25, 5, 0.4),
+    0 5px 16px rgba(60, 25, 5, 0.5),
+    0 7px 20px rgba(180, 120, 20, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    inset 0 3px 7px -3px rgba(255, 255, 240, 0.15),
+    inset 0 -1px 0px rgba(180, 80, 10, 0.6),
+    inset 0 -3px 5px rgba(0, 0, 0, 0.25);
+  transform: perspective(1000px) rotateX(2deg) rotateY(-2deg);
+}
+
+.cta-btn-primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.12) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cta-btn-primary .cta-btn-svg {
+  opacity: 0.4;
+}
+
+.cta-btn-primary .cta-btn-text {
+  background-image: linear-gradient(in oklch 125deg, oklch(0.2856 0.0472 201.54) 0%, oklch(0.2696 0.0425 207.64) 50%, oklch(0.2843 0.0446 206.86) 100%);
+}
+
+.cta-btn-primary:active {
+  transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) scale(0.975) translateY(1px) !important;
+}
+
+.cta-btn-secondary {
+  width: 192px;
+  background: linear-gradient(in oklch 144deg, oklch(0.711 0.177 54.5) 0%, oklch(0.840 0.172 84.1) 45%, oklch(0.852 0.189 95.8) 95%);
+  border-radius: 4px;
+  box-shadow: 
+    0 -1px 1px rgba(255, 255, 255, 0.07),
+    0 1px 1px rgba(0, 15, 15, 0.4),
+    0 4px 13px rgba(0, 15, 15, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.06),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+  transform: perspective(1000px) rotateX(3deg) rotateY(-3deg);
+}
+
+.cta-btn-secondary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cta-btn-secondary .cta-btn-svg {
+  opacity: 0.3;
+}
+
+.cta-btn-secondary .cta-btn-text {
+  background-image: linear-gradient(in oklch 125deg, oklch(0.2236 0.0313 243.98) 0%, oklch(0.2257 0.0337 211.87) 50%, oklch(0.2543 0.0385 218.28) 100%);
+  letter-spacing: -0.025em;
+  word-spacing: -0.05em;
+}
+
+.cta-btn-secondary:active {
+  transform: perspective(1000px) rotateX(3deg) rotateY(-3deg) scale(0.975) translateY(1px) !important;
+}
+
+.cta-btn-tertiary {
+  width: 192px;
+  background: linear-gradient(in oklch 315deg, oklch(0.852 0.189 95.8) 0%, oklch(0.840 0.172 84.1) 50%, oklch(0.954 0.202 108.8) 100%);
+  border-radius: 4px;
+  box-shadow:
+    0 -1px 1px rgba(255, 255, 220, 0.25),
+    0 1px 1px rgba(80, 40, 5, 0.4),
+    0 4px 13px rgba(80, 40, 5, 0.5),
+    inset 0 1px 1px rgba(255, 255, 220, 0.3),
+    inset 0 -2px 4px rgba(60, 25, 0, 0.4);
+  transform: perspective(1000px) rotateX(3deg) rotateY(-3deg);
+}
+
+.cta-btn-tertiary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 250, 200, 0.2) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cta-btn-tertiary .cta-btn-svg {
+  opacity: 0.3;
+}
+
+.cta-btn-tertiary .cta-btn-text {
+  background-image: linear-gradient(in oklch 245deg, oklch(0.2543 0.0385 218.28) 0%, oklch(0.2655 0.04 217.12) 50%, oklch(0.2236 0.0313 243.98) 100%);
+  letter-spacing: -0.025em;
+  word-spacing: -0.05em;
+}
+
+.cta-btn-tertiary:active {
+  transform: perspective(1000px) rotateX(3deg) rotateY(-3deg) scale(0.975) translateY(1px) !important;
+}
+
+.cta-btn-quaternary {
+  width: 144px;
+  background: linear-gradient(in oklch 110deg, oklch(0.711 0.177 54.5) 0%, oklch(0.840 0.172 84.1) 55%, oklch(0.954 0.202 108.8) 100%);
+  border-radius: 6px;
+  box-shadow: 
+    0 -1px 1px rgba(255, 255, 200, 0.2),
+    0 1px 2px rgba(50, 25, 0, 0.55),
+    0 5px 16px rgba(50, 25, 0, 0.7),
+    inset 0 1px 1px rgba(255, 255, 200, 0.2),
+    inset 0 -3px 6px rgba(40, 18, 0, 0.45);
+  transform: perspective(1000px) rotateX(2deg) rotateY(-2deg);
+}
+
+.cta-btn-quaternary::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: transparent;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 220, 0.25),
+    inset 0 -1px 1px rgba(255, 255, 220, 0.12),
+    inset 1px 0 1px rgba(255, 255, 220, 0.18),
+    inset -1px 0 1px rgba(255, 255, 220, 0.12);
+  z-index: 1;
+}
+
+.cta-btn-quaternary .cta-btn-svg {
+  opacity: 0.4;
+}
+
+.cta-btn-quaternary .cta-btn-text {
+  background-image: linear-gradient(in oklch 125deg, oklch(0.2101 0.0318 264.66) 0%, oklch(0.2307 0.0326 240.91) 50%, oklch(0.3047 0.0489 203.4) 100%);
+}
+
+.cta-btn-quaternary:active {
+  transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) scale(0.975) translateY(1px) !important;
+}
+
+/* ================================================================
+CSS HOUDINI PAINT WORKLETS — companion source docs: 01_06/*.md
+Registers Typed CSSOM properties (@property) so worklet-driven
+animations (--sweep-time, --grid-time) interpolate on the compositor
+thread instead of snapping (unregistered custom properties are just
+strings to the browser). Worklet modules live in /public/worklets/*.js
+and are loaded via the hooks in src/hooks/use*Worklet.ts — call the
+matching hook once in any component tree rendering the classes below.
+================================================================ */
+
+@property --dpr {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+/* --- chamferBorder (ChamferCard) --- */
+@property --border-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #a0b0ff;
+}
+@property --border-width {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1.5;
+}
+@property --chamfer-size {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 18;
+}
+@property --chromatic-intensity {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0.7;
+}
+@property --glow-intensity {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0.6;
+}
+@property --sweep-time {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+/* --- frozenNetworkGrid (FrozenBackground) --- */
+@property --grid-size {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 40;
+}
+@property --line-color {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #FFD700;
+}
+@property --glitch-intensity {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0.03;
+}
+@property --grid-opacity {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0.09;
+}
+@property --grid-time {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+/* --- sdfChameleonShadow (.u-shadow-chameleon) --- */
+@property --shadow-intensity {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0.65;
+}
+@property --sdf-blur {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 24;
+}
+@property --accent-teal {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #003737;
+}
+
+/* --- chamferBorder ambient sweep loop ---
+One full sine cycle every 6s (5236 * 0.0012 ~= 2*PI radians), so the
+loop restarts seamlessly (sin(0) === sin(2*PI)). Runs continuously,
+independent of :hover — an always-on ambient "breathing" highlight,
+consistent with --animate-pulse-breath / --animate-sheen elsewhere in
+this file. Fixes the source spec, where --sweep-time only reached 1 on
+:hover, capping `phase` at 0.0012 and making the sweep invisible. */
+@keyframes chamfer-sweep-time {
+  to { --sweep-time: 5236; }
+}
+
+.chamfer-card {
+  position: relative;
+  background-color: #0a0f14;
+  clip-path: polygon(
+    18px 0, calc(100% - 18px) 0, 100% 18px, 100% calc(100% - 18px),
+    calc(100% - 18px) 100%, 18px 100%, 0 calc(100% - 18px), 0 18px
+  );
+
+  --border-color: #a0b0ff;
+  --border-width: 1.5;
+  --chamfer-size: 18;
+  --chromatic-intensity: 0.7;
+  --glow-intensity: 0.6;
+  --sweep-time: 0;
+  --dpr: 1;
+
+  animation: chamfer-sweep-time 6s linear infinite;
+}
+
+@supports (background: paint(chamferBorder)) {
+  .chamfer-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: paint(chamferBorder);
+  }
+}
+
+@supports not (background: paint(chamferBorder)) {
+  .chamfer-card::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(90deg, transparent, #a0b0ff 25%, #ff4d8f 50%, #4dc3ff 75%, transparent);
+    background-size: 250% 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .chamfer-card:hover::before,
+  .chamfer-card.notify::before {
+    opacity: 0.75;
+    animation: chamfer-sweep-fallback 1.4s ease-in-out forwards;
+  }
+}
+
+@keyframes chamfer-sweep-fallback {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* --- frozenNetworkGrid ambient grid --- */
+.frozen-grid-background {
+  background-color: oklch(0.035 0.08 205);
+  background-image:
+    linear-gradient(rgba(255, 215, 0, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 215, 0, 0.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+
+  --grid-size: 40;
+  --line-color: #ccf7f4;
+  --glitch-intensity: 0.1;
+  --grid-opacity: 0.09;
+  --grid-time: 0;
+  --dpr: 1;
+
+  animation: frozen-grid-time-loop 8s linear infinite;
+}
+
+@supports (background: paint(frozenNetworkGrid)) {
+  .frozen-grid-background {
+    background-image: paint(frozenNetworkGrid);
+    background-color: transparent;
+  }
+}
+
+@keyframes frozen-grid-time-loop {
+  to { --grid-time: 2500; }
+}
+
+/* --- sdfChameleonShadow (.u-shadow-chameleon) ---
+   Progressive enhancement: call useChameleonShadowWorklet() once in any
+   tree using this class. Needs an ancestor that isn't `overflow: hidden`,
+   since ::after extends beyond the element's box via a negative inset. */
+.u-shadow-chameleon {
+  position: relative;
+  box-shadow: var(--shadow-chameleon);
+  --shadow-intensity: 0.65;
+  --sdf-blur: 24;
+  --accent-teal: var(--teal-800);
+  --chamfer-size: 18;
+  --dpr: 1;
+}
+
+@supports (background: paint(sdfChameleonShadow)) {
+  .u-shadow-chameleon {
+    box-shadow: none;
+  }
+
+  .u-shadow-chameleon::after {
+    content: "";
+    position: absolute;
+    inset: calc(var(--sdf-blur) * -1px);
+    background: paint(sdfChameleonShadow);
+    z-index: -1;
+    pointer-events: none;
+  }
+}
+
+.u-shadow-card-chameleon {
+  box-shadow:
+    0 4px 6px -1px color-mix(in oklch, var(--teal-800) 60%, transparent),
+    0 2px 4px -1px color-mix(in oklch, var(--teal-800) 70%, transparent);
+}
+
+/* --- masonry Layout Worklet ---
+The CSS Layout API (registerLayout / CSS.layoutWorklet) is not
+implemented in any shipping browser as of now (unlike the Paint API
+worklets above, which do work in Chromium). This class therefore always
+renders through the CSS Grid fallback below via `@supports not`. Kept
+forward-looking per the project's positioning around cutting-edge
+platform APIs — costs nothing today, activates automatically if/when
+browser support ever lands. */
+@property --masonry-columns {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 3;
+}
+@property --masonry-gap {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 16;
+}
+@property --masonry-row-unit {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 8;
+}
+
+.masonry-container {
+  --masonry-columns: 4;
+  --masonry-gap: 20;
+  --masonry-row-unit: 8;
+}
+
+@supports (display: layout(masonry)) {
+  .masonry-container {
+    display: layout(masonry);
+  }
+}
+
+@supports not (display: layout(masonry)) {
+  .masonry-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-auto-flow: dense;
+    grid-auto-rows: calc(var(--masonry-row-unit) * 1px);
+    gap: calc(var(--masonry-gap) * 1px);
+    align-items: start;
+  }
+}
+
+/* --- orbital Layout Worklet ---
+Same platform-support caveat as .masonry-container above: no shipping
+browser implements the CSS Layout API today, so this always renders
+through the flex-wrap fallback via `@supports not`. */
+@property --orbit-radius-factor {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0.75;
+}
+@property --orbit-start-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: -90deg;
+}
+@property --orbit-child-max-size {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 120px;
+}
+
+.orbital-container {
+  --orbit-radius-factor: 0.75;
+  --orbit-start-angle: -90deg;
+  --orbit-child-max-size: 120px;
+}
+
+@supports (display: layout(orbital)) {
+  .orbital-container {
+    display: layout(orbital);
+  }
+}
+
+@supports not (display: layout(orbital)) {
+  .orbital-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+}
