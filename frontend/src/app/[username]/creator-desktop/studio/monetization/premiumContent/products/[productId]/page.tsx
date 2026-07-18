@@ -6,7 +6,7 @@ import { ArrowLeft, FileText, Lock, DollarSign, Truck } from "lucide-react";
 import Spinner from "@/components/ui/Spinner";
 import { useProduct } from "@/lib/api/premiumContent";
 import { PRODUCT_TYPE_META, ACCESS_MODEL_META, DELIVERY_MODEL_META } from "@/types/premiumContent";
-import { ErrorBanner } from "@/components/ui/feedback";
+import { ErrorBanner } from "@/components/ui/feedback/ErrorBanner";
 
 export default function ProductDetailPage({
   params,

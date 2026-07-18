@@ -117,7 +117,7 @@ export default function BundleFormV2({ mode, bundleId, onSaved }: BundleFormV2Pr
                 <Input
                   type="number"
                   inputMode="numeric"
-                  {...register("price", { valueAsNumber: Number })}
+                  {...register("price", { valueAsNumber: true })}
                   placeholder="0"
                   className="tnum"
                   min="1"

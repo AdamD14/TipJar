@@ -35,7 +35,7 @@ export default function PremiumContentDashboard() {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Link
-            href="./products/create"
+            href="products/create"
             className="group flex flex-col items-center justify-center gap-3 p-8 bg-black/40 border border-white/10 hover:border-teal-400/40 hover:bg-teal-900/10 rounded-2xl transition-colors"
           >
             <Plus size={32} className="text-teal-400 group-hover:scale-110 transition-transform" />
@@ -45,7 +45,7 @@ export default function PremiumContentDashboard() {
           </Link>
 
           <Link
-            href="./tiers/create"
+            href="tiers/create"
             className="group flex flex-col items-center justify-center gap-3 p-8 bg-black/40 border border-white/10 hover:border-teal-400/40 hover:bg-teal-900/10 rounded-2xl transition-colors"
           >
             <Layers size={32} className="text-teal-400 group-hover:scale-110 transition-transform" />
@@ -55,7 +55,7 @@ export default function PremiumContentDashboard() {
           </Link>
 
           <Link
-            href="./bundles/create"
+            href="bundles/create"
             className="group flex flex-col items-center justify-center gap-3 p-8 bg-black/40 border border-white/10 hover:border-teal-400/40 hover:bg-teal-900/10 rounded-2xl transition-colors"
           >
             <Package size={32} className="text-teal-400 group-hover:scale-110 transition-transform" />
@@ -72,7 +72,7 @@ export default function PremiumContentDashboard() {
           <h2 className="text-sm font-heading font-medium text-teal-400 uppercase tracking-widest">
             Products
           </h2>
-          <Link href="./products/create">
+          <Link href="products/create">
             <span className="text-sm text-teal-400 hover:text-teal-300 font-medium">Create</span>
           </Link>
         </div>
@@ -85,7 +85,7 @@ export default function PremiumContentDashboard() {
           <h2 className="text-sm font-heading font-medium text-teal-400 uppercase tracking-widest">
             Tiers
           </h2>
-          <Link href="./tiers/create">
+          <Link href="tiers/create">
             <span className="text-sm text-teal-400 hover:text-teal-300 font-medium">Create</span>
           </Link>
         </div>
@@ -98,7 +98,7 @@ export default function PremiumContentDashboard() {
           <h2 className="text-sm font-heading font-medium text-teal-400 uppercase tracking-widest">
             Bundles
           </h2>
-          <Link href="./bundles/create">
+          <Link href="bundles/create">
             <span className="text-sm text-teal-400 hover:text-teal-300 font-medium">Create</span>
           </Link>
         </div>

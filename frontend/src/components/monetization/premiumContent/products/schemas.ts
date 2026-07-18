@@ -26,14 +26,14 @@ export const productDeliverySchema = z.object({
 );
 
 export const courseModuleSchema = z.object({
-  id: z.string().optional(),
+  id: z.string(),
   title: z.string().min(1, 'Module title is required').max(100),
   order: z.number().int().nonnegative(),
   contentUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
 }).strict();
 
 export const liveSessionDetailsSchema = z.object({
-  scheduledAt: z.string().datetime({ offset: true }, { message: 'Invalid date/time format' }),
+  scheduledAt: z.string().datetime({ offset: true, message: 'Invalid date/time format' }),
   durationMinutes: z.number().int().positive('Duration must be positive').max(480, 'Maximum 8 hours'),
   capacity: z.number().int().positive('Capacity must be positive').optional(),
 }).strict();
@@ -64,6 +64,7 @@ export const createProductSchema = z.object({
   scheduledAt: z.string().datetime({ offset: true }).optional(),
   liveSession: liveSessionDetailsSchema.optional(),
   modules: z.array(courseModuleSchema).optional(),
+  files: z.any().optional(),
   displayCategory: z.enum([
     'courses-learning',
     'programs-coaching',
@@ -72,19 +73,15 @@ export const createProductSchema = z.object({
     'live-experiences',
   ]).optional(),
   status: z.enum(['draft', 'published', 'archived']).default('draft'),
-}).refine(
-  (data) => data.accessModel === 'tier-included' || (data.price && data.price > 0),
-  { message: 'Price is required for one-time and add-on products', path: ['price'] }
-).refine(
-  (data) => data.delivery !== 'scheduled-drop' || (data.scheduledAt && new Date(data.scheduledAt) > new Date()),
-  { message: 'Scheduled drop requires a future date/time', path: ['scheduledAt'] }
-).refine(
-  (data) => data.type !== 'course' || (data.modules && data.modules.length > 0),
-  { message: 'Course must have at least one module', path: ['modules'] }
-).refine(
-  (data) => data.type !== 'live-session' || data.liveSession,
-  { message: 'Live session requires scheduling details', path: ['liveSession'] }
-);
+}).superRefine((data, ctx) => {
+  if (data.accessModel !== 'tier-included' && (!data.price || data.price <= 0)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Price is required for one-time and add-on products',
+      path: ['price'],
+    });
+  }
+});
 
 export type CreateProductInput = z.infer<typeof createProductSchema>;
 export type ProductDetailsInput = z.infer<typeof productDetailsSchema>;

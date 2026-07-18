@@ -10,7 +10,7 @@ import Button from "@/components/ui/buttons/Button";
 import Input from "@/components/ui/forms/Input";
 import { useToast } from "@/components/ui/notifications/Toast";
 import { useCreateProduct } from "@/lib/api/premiumContent";
-import { PRODUCT_TYPE_META } from "@/types/premiumContent";
+import { PRODUCT_TYPE_META, ProductType } from "@/types/premiumContent";
 import { createProductSchema } from "./schemas";
 import ProductTypeSelector from "./ProductTypeSelector";
 import DisplayCategoryPicker from "./DisplayCategoryPicker";
@@ -74,7 +74,7 @@ export default function ProductCreateWizardV2({ onPublished }: ProductCreateWiza
     trigger,
     formState: { errors, isValid, dirtyFields },
   } = useForm<ProductWizardData>({
-    resolver: zodResolver(createProductSchema),
+    resolver: zodResolver(createProductSchema) as any,
     mode: "onChange",
     defaultValues: {
       type: "gallery",
@@ -199,11 +199,12 @@ export default function ProductCreateWizardV2({ onPublished }: ProductCreateWiza
               />
             )}
 
-            {["gallery", "video", "audio", "document"].includes(watchedType) && (
+            {!["course", "live-session"].includes(watchedType) && (
               <GenericContentUploadV2
-                type={watchedType}
+                type={watchedType as Exclude<ProductType, "course" | "live-session">}
+                files={watch("files") ?? []}
                 onChange={(files) => setValue("files" as any, files)}
-                error={errors.files?.message}
+                error={errors.files ? String(errors.files.message) : undefined}
               />
             )}
           </div>
@@ -258,7 +259,7 @@ export default function ProductCreateWizardV2({ onPublished }: ProductCreateWiza
                   <Input
                     type="text"
                     inputMode="numeric"
-                    {...register("price", { valueAsNumber: Number })}
+                    {...register("price", { valueAsNumber: true })}
                     placeholder="0"
                     className="tnum"
                     aria-invalid={!!errors.price}
@@ -412,7 +413,6 @@ export default function ProductCreateWizardV2({ onPublished }: ProductCreateWiza
                 variant="primary"
                 size="lg"
                 loading={isSubmitting || isCreating}
-                onClick={() => handleSubmit(onSubmit)()}
                 type="submit"
                 leftIcon={!isSubmitting && !isCreating ? <Rocket size={18} /> : undefined}
                 disabled={!isValid || isSubmitting || isCreating}

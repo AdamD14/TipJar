@@ -232,7 +232,7 @@ export default function AccessSettingsForm() {
                 type="number"
                 min="13"
                 max="21"
-                {...register("ageGateThreshold", { valueAsNumber: Number })}
+                {...register("ageGateThreshold", { valueAsNumber: true })}
                 className="w-24"
               />
             </div>

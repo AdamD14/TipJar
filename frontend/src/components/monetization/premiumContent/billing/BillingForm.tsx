@@ -87,7 +87,7 @@ export default function BillingForm() {
               <Input
                 type="number"
                 min="1"
-                {...register("minimumPayout", { valueAsNumber: Number })}
+                {...register("minimumPayout", { valueAsNumber: true })}
                 className="tnum"
               />
             </div>

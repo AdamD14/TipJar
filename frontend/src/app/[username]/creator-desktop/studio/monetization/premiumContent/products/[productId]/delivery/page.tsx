@@ -54,7 +54,7 @@ export default function ProductDeliveryPage({
     { value: "instant", label: "Instant" },
     { value: "scheduled-drop", label: "Scheduled drop" },
     { value: "booking", label: "Booking / Live" },
-  ];
+  ] as const;
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">

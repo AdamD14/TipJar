@@ -32,7 +32,7 @@ function ButtonSpinner({ dark }: { dark?: boolean }) {
   );
 }
 
-type Variant = "primary" | "secondary" | "tertiary" | "ghost" | "danger" | "link" | "glass" | "cta-gold-01" | "cta-gold-02" | "cta-gold-03" | "cta-gold-04";
+type Variant = "primary" | "secondary" | "tertiary" | "ghost" | "danger" | "link" | "glass" | "cta-gold-01" | "cta-gold-02" | "cta-gold-03" | "cta-gold-04" | "gold" | "outline";
 type Size = "sm" | "md" | "lg";
 
 type BaseProps = {
@@ -150,6 +150,14 @@ const variantClasses: Record<Variant, string> = {
     "shadow-transition",
     "elevation-z-3",
     "hover:elevation-z-4",
+  ),
+  gold: clsx(
+    "cta-gold cta-gold-01",
+    "text-teal-800",
+  ),
+  outline: clsx(
+    "bg-transparent text-gold-400 border border-gold-400/60",
+    "hover:bg-gold-400/10",
   ),
 };
 

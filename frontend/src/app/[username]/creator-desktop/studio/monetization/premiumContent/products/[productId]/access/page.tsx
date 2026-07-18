@@ -99,7 +99,7 @@ export default function ProductAccessPage({
                   name="accessModel"
                   value={opt.value}
                   checked={accessModel === opt.value}
-                  onChange={() => setAccessModel(opt.value)}
+                  onChange={() => setAccessModel(opt.value as "one-time" | "tier-included" | "add-on")}
                   disabled={isSaving}
                   className="sr-only"
                 />

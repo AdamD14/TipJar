@@ -86,9 +86,9 @@ export default function ProductContentPage({
           />
         )}
 
-        {["gallery", "video", "audio", "document"].includes(product.type) && (
+        {!["course", "live-session"].includes(product.type) && (
           <GenericContentUploadV2
-            type={product.type}
+            type={product.type as Exclude<typeof product.type, "course" | "live-session">}
             files={[]}
             onChange={(files) => handleSave({ files })}
             isSaving={isSaving}

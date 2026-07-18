@@ -129,7 +129,7 @@ export default function TierFormV2({ mode, tierId, onSaved }: TierFormV2Props) {
                   <Input
                     type="number"
                     inputMode="numeric"
-                    {...register("price", { valueAsNumber: Number })}
+                    {...register("price", { valueAsNumber: true })}
                     placeholder="0"
                     className="tnum"
                     min="1"
@@ -149,7 +149,7 @@ export default function TierFormV2({ mode, tierId, onSaved }: TierFormV2Props) {
                   </label>
                   <div className="flex gap-2" role="radiogroup" aria-label="Billing cycle">
                     {(["monthly", "yearly"] as const).map((cycle) => (
-                      <label key={cycle} className={getCycleButtonClass(cycle, watchedPriceCycle)}>
+                      <label key={cycle} className={getCycleButtonClass(cycle, watchedPriceCycle ?? "monthly")}>
                         <input
                           type="radio"
                           {...register("priceCycle")}

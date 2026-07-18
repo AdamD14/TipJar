@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Plus, Package, Layers } from "lucide-react";
 import { useProducts, useTiers, useBundles } from "@/lib/api/premiumContent";
 import { PRODUCT_TYPE_META } from "@/types/premiumContent";
+import type { Product, Tier, Bundle } from "@/types/premiumContent";
 import { SkeletonCard, SkeletonGrid, EmptyState, ErrorBanner } from "@/components/ui/feedback";
 import Button from "@/components/ui/buttons/Button";
 import { useToast } from "@/components/ui/notifications/Toast";
@@ -12,7 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 const RETRY_DELAY = 1000;
 
-function ProductCard({ product }: { product: ReturnType<typeof useProducts>['data'] extends (infer T)[] ? T : never }) {
+function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={`./${product.id}`}
@@ -32,7 +33,7 @@ function ProductCard({ product }: { product: ReturnType<typeof useProducts>['dat
   );
 }
 
-function TierCard({ tier }: { tier: ReturnType<typeof useTiers>['data'] extends (infer T)[] ? T : never }) {
+function TierCard({ tier }: { tier: Tier }) {
   return (
     <Link
       href={`./${tier.id}`}
@@ -53,7 +54,7 @@ function TierCard({ tier }: { tier: ReturnType<typeof useTiers>['data'] extends 
   );
 }
 
-function BundleCard({ bundle }: { bundle: ReturnType<typeof useBundles>['data'] extends (infer T)[] ? T : never }) {
+function BundleCard({ bundle }: { bundle: Bundle }) {
   return (
     <Link
       href={`./${bundle.id}`}
@@ -87,7 +88,7 @@ export function ProductsIndexV2() {
       <div className="max-w-5xl mx-auto space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-heading font-medium text-teal-400">Products</h2>
-          <Link href="./create">
+          <Link href="create">
             <Button variant="primary" size="sm" leftIcon={<Plus size={14} />}>New product</Button>
           </Link>
         </div>
@@ -101,7 +102,7 @@ export function ProductsIndexV2() {
       <div className="max-w-5xl mx-auto space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-heading font-medium text-teal-400">Products</h2>
-          <Link href="./create">
+          <Link href="create">
             <Button variant="primary" size="sm" leftIcon={<Plus size={14} />}>New product</Button>
           </Link>
         </div>
@@ -159,7 +160,7 @@ export function TiersIndexV2() {
       <div className="max-w-5xl mx-auto space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-heading font-medium text-teal-400">Tiers</h2>
-          <Link href="./create">
+          <Link href="create">
             <Button variant="primary" size="sm" leftIcon={<Plus size={14} />}>New tier</Button>
           </Link>
         </div>
@@ -173,7 +174,7 @@ export function TiersIndexV2() {
       <div className="max-w-5xl mx-auto space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-heading font-medium text-teal-400">Tiers</h2>
-          <Link href="./create">
+          <Link href="create">
             <Button variant="primary" size="sm" leftIcon={<Plus size={14} />}>New tier</Button>
           </Link>
         </div>
@@ -191,7 +192,7 @@ export function TiersIndexV2() {
     <div className="max-w-5xl mx-auto space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-heading font-medium text-teal-400">Tiers</h2>
-        <Link href="./create">
+        <Link href="create">
           <Button variant="primary" size="sm" leftIcon={<Plus size={14} />}>New tier</Button>
         </Link>
       </div>
@@ -243,7 +244,7 @@ export function BundlesIndexV2() {
       <div className="max-w-5xl mx-auto space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-heading font-medium text-teal-400">Bundles</h2>
-          <Link href="./create">
+          <Link href="create">
             <Button variant="primary" size="sm" leftIcon={<Plus size={14} />}>New bundle</Button>
           </Link>
         </div>
@@ -259,7 +260,7 @@ export function BundlesIndexV2() {
     <div className="max-w-5xl mx-auto space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-heading font-medium text-teal-400">Bundles</h2>
-        <Link href="./create">
+        <Link href="create">
           <Button variant="primary" size="sm" leftIcon={<Plus size={14} />}>New bundle</Button>
         </Link>
       </div>

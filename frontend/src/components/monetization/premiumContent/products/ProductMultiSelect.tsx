@@ -23,14 +23,12 @@ export default function ProductMultiSelect({
   const optionsRef = useRef<HTMLButtonElement[]>([]);
 
   useEffect(() => {
-    const firstSelectedIndex = products?.findIndex((p) =>
+    if (!products) return;
+    const firstSelectedIndex = products.findIndex((p) =>
       selectedIds.includes(p.id)
     );
-    if (firstSelectedIndex >= 0) {
-      optionsRef.current[firstSelectedIndex]?.focus();
-    } else {
-      optionsRef.current[0]?.focus();
-    }
+    const focusIndex = firstSelectedIndex >= 0 ? firstSelectedIndex : 0;
+    optionsRef.current[focusIndex]?.focus();
   }, [products, selectedIds]);
 
   const toggle = (id: string) => {
