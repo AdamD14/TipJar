@@ -34,25 +34,20 @@ function AnimatedBrand() {
   const letters = ['T', 'I', 'P', 'J', 'A', 'R', '.', 'P', 'L', 'U', 'S'];
   
   return (
-    <span className="text-[13px] md:text-sm font-heading font-semibold tracking-[0.20em] uppercase text-text-secondary transition-colors inline-flex">
+    <span className="text-[24px] font-heading font-semibold tracking-[0.10em] lowercase text-text-primary transition-colors inline-flex">
       {letters.map((letter, index) => (
         <span
           key={index}
-          className="inline-block hover:text-gold-400 transition-all duration-300 hover:scale-110 hover:-translate-y-1"
+          className="inline-block hover:text-gold-300 transition-all duration-300 hover:scale-110 hover:-translate-y-1"
           style={{
             animationDelay: `${index * 0.1}s`,
-            animation: 'letterFloat 3s ease-in-out infinite'
+            animation: 'letterFloat 3s ease-in-out infinite',
           }}
         >
           {letter}
         </span>
       ))}
-      <style jsx>{`
-        @keyframes letterFloat {
-          0%, 90%, 100% { transform: translateY(0); }
-          45% { transform: translateY(-2px); }
-        }
-      `}</style>
+   
     </span>
   );
 }
@@ -104,7 +99,7 @@ export default function Header() {
         aria-label="Primary"
       >
         <nav className="mx-auto w-full px-4 md:px-6" aria-label="Main">
-          <div className="flex py-1 items-center justify-between">
+          <div className="flex py-2 items-center justify-between">
             {/* Left: Branding — animated text */}
             <div className="flex-1 flex items-center justify-start">
               <Link href="/" aria-label="tipjar.plus — homepage" className="flex items-center gap-2">

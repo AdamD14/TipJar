@@ -77,9 +77,9 @@ const variantClasses: Record<Variant, string> = {
     "[&>span]:transition-transform [&>span]:duration-[300ms] [&>span]:[transition-timing-function:var(--ease-spring)]",
   ),
   tertiary: clsx(
-    "text-white",
+    "text-teal-50",
     // Poprawione tokeny: --teal-* zamiast --color-teal-*
-    "bg-[linear-gradient(in_oklch_110deg,var(--teal-800)_0%,var(--teal-500)_50%,var(--teal-300)_100%)]",
+    "bg-[linear-gradient(in_oklch_110deg,var(--teal-800)_0%,var(--teal-850)_50%,var(--teal-900)_100%)]",
     // Glassmorphism + border z globals
     "glass-liquid",
     "border-gold-subtle",
