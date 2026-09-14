@@ -81,12 +81,6 @@ e.g. bg-teal-800, text-gold-400, shadow-modal
   --color-text-ds-tertiary: #CCF7F4;
   --color-text-ds-quaternary: #ABE1E1;
 
-  /* --- Semantic surface (Tailwind v4 aliases) --- */
-  --color-surface-app: #001F1F;
-  --color-surface-base: #003737;
-  --color-surface-elevated: #004545;
-  --color-surface-modal: #003737;
-
   /* --- Semantic border — design.md §1.2 --- */
   --color-border-subtle: #004545;
   --color-border-focus: #4D194D;
@@ -116,8 +110,6 @@ e.g. bg-teal-800, text-gold-400, shadow-modal
   --shadow-tooltip: 0 4px 16px rgba(0, 0, 0, 0.5);
   --shadow-toast: 0 8px 24px -4px rgba(0, 0, 0, 0.6);
   --shadow-gold-glow: 0 0 10px rgba(255, 215, 0, 0.1);
-  --shadow-toast: 0 8px 24px -4px rgba(0, 0, 0, 0.6);
-  --shadow-tooltip: 0 4px 16px rgba(0, 0, 0, 0.5);
 
   /* --- Card shadows — design.md §3.1 --- */
   --shadow-card-rest: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
@@ -158,8 +150,8 @@ e.g. bg-teal-800, text-gold-400, shadow-modal
   --animate-sheen: sheen 6s ease-in-out infinite;
   --animate-dash: dash 1.5s ease-in-out infinite;
   --animate-spin-slow: spin 2s linear infinite;
-  --animate-toast-desktop: toast-slide-desktop 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
-  --animate-toast-mobile: toast-slide-mobile 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  --animate-toast-desktop: toast-slide-in-desktop 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  --animate-toast-mobile: toast-slide-in-mobile 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
   --animate-pulse-breath: pulse-breath 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 
   /* --- Breakpoints — design.md §6 --- */
@@ -184,7 +176,6 @@ e.g. bg-teal-800, text-gold-400, shadow-modal
   --light-dir-y: -0.707;
   --light-dir-z: 0.5;
   --ambient-intensity: 0.25;
-  --shadow-chameleon: 0 16px 32px color-mix(in oklch, var(--teal-800) 70%, #000);
   --glow-emissive: 0 0 20px 4px var(--gold-400);
   --shadow-type: classic;
 
@@ -211,11 +202,6 @@ e.g. bg-teal-800, text-gold-400, shadow-modal
   --touch-prediction-scale: 0.98;
   --touch-prediction-duration: 0.1s;
 
-  /* --- Blok 5: Wydajność i rendering sprzętowy --- */
-  --webgpu-supported: 0;
-  --houdini-supported: 0;
-  --gpu-fallback-blur: 20px;
-
   /* --- Blok 6: Typografia i układ przestrzenny --- */
   --container-query-breakpoint-xs: 320px;
   --container-query-breakpoint-sm: 640px;
@@ -235,8 +221,6 @@ e.g. bg-teal-800, text-gold-400, shadow-modal
   --color-deep-turquoise: #006747;
   --color-deep-turquoise-oklch: oklch(0.45 0.12 185);
   --black-safe: var(--teal-900);
-  --shadow-chameleon-alt: 0 25px 50px -12px color-mix(in oklch, var(--teal-800) 60%, transparent);
-
   /* --- Blok 10: Maskowanie i geometria --- */
   --arc-cut-size: 15px;
   --arc-cut-coord: 0.85;
@@ -374,9 +358,6 @@ and add aliases that can't be expressed in @theme.
   /* --- Natężenie światła otoczenia (aktualizowane przez JS) --- */
   --ambient-intensity: 0.25;
 
-  /* --- Chameleon shadow (cień jako zagęszczenie pigmentu) --- */
-  --shadow-chameleon: 0 16px 32px color-mix(in oklch, var(--teal-800) 70%, #000);
-
   /* --- Emisyjna poświata (zamiast cienia dla dark mode / niskie luksy) --- */
   --glow-emissive: 0 0 20px 4px var(--gold-400);
   --shadow-type: classic;
@@ -403,11 +384,6 @@ and add aliases that can't be expressed in @theme.
   --double-wrapper-color: rgba(0, 40, 40, 0.85);
   --touch-prediction-scale: 0.98;
   --touch-prediction-duration: 0.1s;
-
-  /* --- Blok 5: Wydajność i rendering sprzętowy --- */
-  --webgpu-supported: 0;
-  --houdini-supported: 0;
-  --gpu-fallback-blur: 20px;
 
   /* --- Blok 6: Typografia i układ przestrzenny --- */
   --container-query-breakpoint-xs: 320px;
@@ -453,6 +429,148 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Native controls — design.md §2.1–§2.2 */
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button,
+[role="button"] {
+  transition: transform 100ms var(--ease-standard), outline-color 200ms var(--ease-standard), box-shadow 200ms var(--ease-standard);
+}
+
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+button:not(:disabled):active,
+[role="button"]:not([aria-disabled="true"]):active {
+  transform: scale(0.98);
+}
+
+input:not([type="checkbox"]):not([type="radio"]),
+textarea,
+select {
+  min-height: 48px;
+  box-sizing: border-box;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface-base);
+  color: var(--text-primary);
+  padding-inline: 16px;
+  transition: border-color 200ms var(--ease-standard), box-shadow 200ms var(--ease-standard), background-color 200ms var(--ease-standard);
+}
+
+textarea {
+  min-height: 96px;
+  padding-block: 16px;
+  resize: vertical;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-quaternary);
+  opacity: 1;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):hover:not(:disabled),
+textarea:hover:not(:disabled),
+select:hover:not(:disabled) {
+  border-color: var(--teal-600);
+}
+
+input:not([type="checkbox"]):not([type="radio"]):focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  border-color: var(--gold-400);
+  box-shadow: 0 0 0 1px var(--gold-400), 0 0 0 4px rgba(255, 215, 0, 0.25);
+}
+
+input[aria-invalid="true"],
+textarea[aria-invalid="true"],
+select[aria-invalid="true"],
+.field-error {
+  border-color: var(--error-base);
+  box-shadow: 0 0 0 4px rgba(255, 82, 82, 0.25);
+}
+
+input[aria-invalid="false"],
+textarea[aria-invalid="false"],
+select[aria-invalid="false"],
+.field-success {
+  border-color: var(--success-base);
+}
+
+input:disabled,
+textarea:disabled,
+select:disabled {
+  cursor: not-allowed;
+  border-style: dashed;
+  opacity: 0.4;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-destructive {
+  min-height: 48px;
+  border-radius: var(--radius-md);
+  padding-inline: 24px;
+  font-family: var(--font-heading);
+  font-size: var(--fs-button);
+  font-weight: 600;
+}
+
+.btn-primary {
+  border: 0;
+  background: var(--action-primary-bg);
+  color: var(--action-primary-text);
+  box-shadow: var(--shadow-1);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--gold-300);
+  box-shadow: var(--shadow-2);
+}
+
+.btn-secondary {
+  border: 1px solid var(--purple-300);
+  background: transparent;
+  color: var(--purple-300);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--purple-300) 10%, transparent);
+}
+
+.btn-destructive {
+  border: 1px solid var(--error-base);
+  background: transparent;
+  color: var(--error-base);
+}
+
+.btn-destructive:hover:not(:disabled) {
+  background: rgba(255, 82, 82, 0.1);
 }
 
 /* Numeric figures — prevent layout shift on dynamic numbers — design.md §3 */
@@ -566,7 +684,14 @@ KEYFRAMES
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sheen::after { animation: none; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* ================================================================
@@ -768,7 +893,7 @@ BLOKI 1–10 — NOWE KLASY @utility I REGUŁY GLOBALNE
     calc(var(--elevation-z) * 0.2)
     color-mix(in oklch, var(--bg-surface, var(--teal-800)) 70%, #000),
     0 0 calc(var(--elevation-z) * 0.8)
-    color-mix(in oklch, var(--bg-surface, var(--teal-800)) 85%, #000, var(--ambient-intensity));
+    color-mix(in oklch, var(--bg-surface, var(--teal-800)) calc(85% * var(--ambient-intensity)), #000);
 }
 
 .emissive-glow {
@@ -801,7 +926,7 @@ BLOKI 1–10 — NOWE KLASY @utility I REGUŁY GLOBALNE
 /* ----- Blok 2: Materiał i efekty szklane ----- */
 .glass-liquid {
   background: var(--glass-overlay);
-  backdrop-filter: blur(var(--glass-blur, 20px)) saturate(var(--glass-saturate));
+  backdrop-filter: var(--glass-blur);
   border: var(--glass-border);
   transform: translateZ(0);
   will-change: transform;
@@ -835,21 +960,12 @@ BLOKI 1–10 — NOWE KLASY @utility I REGUŁY GLOBALNE
   isolation: isolate;
 }
 
-.texture-paper {
-  background-image: paint(procedural-noise);
-}
 .texture-chrome {
   background: linear-gradient(135deg, #e0e0e0 0%, #b0b0b0 50%, #f0f0f0 100%);
   background-blend-mode: overlay;
 }
 
 /* ----- Blok 3: Adaptacja środowiskowa i biometryczna ----- */
-.safe-bottom {
-  padding-bottom: calc(72px + var(--safe-area-bottom));
-}
-.safe-bottom-sm {
-  padding-bottom: calc(64px + var(--safe-area-bottom));
-}
 .safe-top {
   padding-top: calc(16px + var(--safe-area-top));
 }
@@ -954,44 +1070,6 @@ BLOKI 1–10 — NOWE KLASY @utility I REGUŁY GLOBALNE
       animation: pulse-breath 2s infinite;
     }
   }
-}
-
-/* ----- Blok 5: Wydajność i rendering sprzętowy ----- */
-.util-gpu-composited {
-  transform: translateZ(0);
-  will-change: transform;
-  backface-visibility: hidden;
-  contain: layout paint style;
-}
-
-.util-webgpu-enabled {
-  /* fallback when webgpu selector is not supported */
-  @supports not (selector(:has(webgpu))) {
-    backdrop-filter: blur(var(--gpu-fallback-blur));
-  }
-}
-
-.util-force-120fps {
-  transform: translateZ(0);
-  will-change: transform;
-  backface-visibility: hidden;
-  contain: strict;
-  isolation: isolate;
-}
-
-.util-optimize-animation {
-  will-change: transform, opacity;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-}
-
-/* Wsparcie dla volumetric-shadow (opcjonalna klasa) */
-.card-volumetric {
-  --volumetric-depth: 16px;
-  --volumetric-color: color-mix(in oklch, var(--teal-800) 70%, black);
-  --volumetric-blur: 24px;
-  --volumetric-intensity: 0.8;
-  background-image: paint(volumetric-shadow);
 }
 
 /* ----- Blok 6: Typografia i układ przestrzenny ----- */
@@ -1119,7 +1197,7 @@ BLOKI 1–10 — NOWE KLASY @utility I REGUŁY GLOBALNE
   clip-path: polygon(0 15px, 15px 0, 100% 0, 100% 100%, 0 100%);
   overflow: hidden;
   background: var(--glass-overlay);
-  backdrop-filter: blur(var(--glass-blur, 20px)) saturate(var(--glass-saturate, 200%));
+  backdrop-filter: var(--glass-blur);
   border: var(--glass-border);
 }
 
@@ -1620,315 +1698,6 @@ Inline oklch values → semantic token references
 }
 
 /* ================================================================
-CSS HOUDINI PAINT WORKLETS — companion source docs: 01_06/*.md
-Registers Typed CSSOM properties (@property) so worklet-driven
-animations (--sweep-time, --grid-time) interpolate on the compositor
-thread instead of snapping (unregistered custom properties are just
-strings to the browser). Worklet modules live in /public/worklets/*.js
-and are loaded via the hooks in src/hooks/use*Worklet.ts — call the
-matching hook once in any component tree rendering the classes below.
-================================================================ */
-
-@property --dpr {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 1;
-}
-
-/* --- chamferBorder (ChamferCard) --- */
-@property --border-color {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: #a0b0ff;
-}
-@property --border-width {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 1.5;
-}
-@property --chamfer-size {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 18;
-}
-@property --chromatic-intensity {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0.7;
-}
-@property --glow-intensity {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0.6;
-}
-@property --sweep-time {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 0;
-}
-
-/* --- frozenNetworkGrid (FrozenBackground) --- */
-@property --grid-size {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 40;
-}
-@property --line-color {
-  syntax: "<color>";
-  inherits: false;
-  initial-value: #FFD700;
-}
-@property --glitch-intensity {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 0.03;
-}
-@property --grid-opacity {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 0.09;
-}
-@property --grid-time {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 0;
-}
-
-/* --- sdfChameleonShadow (.u-shadow-chameleon) --- */
-@property --shadow-intensity {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 0.65;
-}
-@property --sdf-blur {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 24;
-}
-@property --accent-teal {
-  syntax: "<color>";
-  inherits: false;
-  initial-value: #003737;
-}
-
-/* --- chamferBorder ambient sweep loop ---
-One full sine cycle every 6s (5236 * 0.0012 ~= 2*PI radians), so the
-loop restarts seamlessly (sin(0) === sin(2*PI)). Runs continuously,
-independent of :hover — an always-on ambient "breathing" highlight,
-consistent with --animate-pulse-breath / --animate-sheen elsewhere in
-this file. Fixes the source spec, where --sweep-time only reached 1 on
-:hover, capping `phase` at 0.0012 and making the sweep invisible. */
-@keyframes chamfer-sweep-time {
-  to { --sweep-time: 5236; }
-}
-
-.chamfer-card {
-  position: relative;
-  background-color: #0a0f14;
-  clip-path: polygon(
-    18px 0, calc(100% - 18px) 0, 100% 18px, 100% calc(100% - 18px),
-    calc(100% - 18px) 100%, 18px 100%, 0 calc(100% - 18px), 0 18px
-  );
-
-  --border-color: #a0b0ff;
-  --border-width: 1.5;
-  --chamfer-size: 18;
-  --chromatic-intensity: 0.7;
-  --glow-intensity: 0.6;
-  --sweep-time: 0;
-  --dpr: 1;
-
-  animation: chamfer-sweep-time 6s linear infinite;
-}
-
-@supports (background: paint(chamferBorder)) {
-  .chamfer-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: paint(chamferBorder);
-  }
-}
-
-@supports not (background: paint(chamferBorder)) {
-  .chamfer-card::before {
-    content: "";
-    position: absolute;
-    inset: -2px;
-    background: linear-gradient(90deg, transparent, #a0b0ff 25%, #ff4d8f 50%, #4dc3ff 75%, transparent);
-    background-size: 250% 100%;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-  }
-
-  .chamfer-card:hover::before,
-  .chamfer-card.notify::before {
-    opacity: 0.75;
-    animation: chamfer-sweep-fallback 1.4s ease-in-out forwards;
-  }
-}
-
-@keyframes chamfer-sweep-fallback {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-/* --- frozenNetworkGrid ambient grid --- */
-.frozen-grid-background {
-  background-color: oklch(0.035 0.08 205);
-  background-image:
-    linear-gradient(rgba(255, 215, 0, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 215, 0, 0.025) 1px, transparent 1px);
-  background-size: 40px 40px;
-
-  --grid-size: 40;
-  --line-color: #ccf7f4;
-  --glitch-intensity: 0.1;
-  --grid-opacity: 0.09;
-  --grid-time: 0;
-  --dpr: 1;
-
-  animation: frozen-grid-time-loop 8s linear infinite;
-}
-
-@supports (background: paint(frozenNetworkGrid)) {
-  .frozen-grid-background {
-    background-image: paint(frozenNetworkGrid);
-    background-color: transparent;
-  }
-}
-
-@keyframes frozen-grid-time-loop {
-  to { --grid-time: 2500; }
-}
-
-/* --- sdfChameleonShadow (.u-shadow-chameleon) ---
-   Progressive enhancement: call useChameleonShadowWorklet() once in any
-   tree using this class. Needs an ancestor that isn't `overflow: hidden`,
-   since ::after extends beyond the element's box via a negative inset. */
-.u-shadow-chameleon {
-  position: relative;
-  box-shadow: var(--shadow-chameleon);
-  --shadow-intensity: 0.65;
-  --sdf-blur: 24;
-  --accent-teal: var(--teal-800);
-  --chamfer-size: 18;
-  --dpr: 1;
-}
-
-@supports (background: paint(sdfChameleonShadow)) {
-  .u-shadow-chameleon {
-    box-shadow: none;
-  }
-
-  .u-shadow-chameleon::after {
-    content: "";
-    position: absolute;
-    inset: calc(var(--sdf-blur) * -1px);
-    background: paint(sdfChameleonShadow);
-    z-index: -1;
-    pointer-events: none;
-  }
-}
-
-.u-shadow-card-chameleon {
-  box-shadow:
-    0 4px 6px -1px color-mix(in oklch, var(--teal-800) 60%, transparent),
-    0 2px 4px -1px color-mix(in oklch, var(--teal-800) 70%, transparent);
-}
-
-/* --- masonry Layout Worklet ---
-The CSS Layout API (registerLayout / CSS.layoutWorklet) is not
-implemented in any shipping browser as of now (unlike the Paint API
-worklets above, which do work in Chromium). This class therefore always
-renders through the CSS Grid fallback below via `@supports not`. Kept
-forward-looking per the project's positioning around cutting-edge
-platform APIs — costs nothing today, activates automatically if/when
-browser support ever lands. */
-@property --masonry-columns {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 3;
-}
-@property --masonry-gap {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 16;
-}
-@property --masonry-row-unit {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 8;
-}
-
-.masonry-container {
-  --masonry-columns: 4;
-  --masonry-gap: 20;
-  --masonry-row-unit: 8;
-}
-
-@supports (display: layout(masonry)) {
-  .masonry-container {
-    display: layout(masonry);
-  }
-}
-
-@supports not (display: layout(masonry)) {
-  .masonry-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    grid-auto-flow: dense;
-    grid-auto-rows: calc(var(--masonry-row-unit) * 1px);
-    gap: calc(var(--masonry-gap) * 1px);
-    align-items: start;
-  }
-}
-
-/* --- orbital Layout Worklet ---
-Same platform-support caveat as .masonry-container above: no shipping
-browser implements the CSS Layout API today, so this always renders
-through the flex-wrap fallback via `@supports not`. */
-@property --orbit-radius-factor {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 0.75;
-}
-@property --orbit-start-angle {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: -90deg;
-}
-@property --orbit-child-max-size {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 120px;
-}
-
-.orbital-container {
-  --orbit-radius-factor: 0.75;
-  --orbit-start-angle: -90deg;
-  --orbit-child-max-size: 120px;
-}
-
-@supports (display: layout(orbital)) {
-  .orbital-container {
-    display: layout(orbital);
-  }
-}
-
-@supports not (display: layout(orbital)) {
-  .orbital-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-}
-
 /* ================================================================
 NEW CSS PROPERTIES SHOWCASE: corner-shape
 ================================================================ */
@@ -1962,4 +1731,3 @@ corner-shape: revert;
 corner-shape: revert-layer;
 corner-shape: unset;
 */
-
