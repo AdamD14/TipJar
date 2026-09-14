@@ -52,7 +52,7 @@ export default function StartBuildingShowcase() {
   return (
     <section id="studio" className="relative w-full min-h-screen">
       <img
-        src="/5.png"
+        src="/3.png"
         alt=""
         className="pointer-events-none absolute inset-0 -z-10 w-full h-full mx-auto object-cover"
       />

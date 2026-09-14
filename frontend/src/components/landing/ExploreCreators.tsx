@@ -145,7 +145,7 @@ export default function ExploreCreators() {
   return (
     <section id="explore" className="relative w-full min-h-screen">
       <img
-        src="/3.png"
+        src="/1.png"
         alt=""
         className="pointer-events-none absolute inset-0 -z-10 w-full h-full mx-auto object-cover"
       />

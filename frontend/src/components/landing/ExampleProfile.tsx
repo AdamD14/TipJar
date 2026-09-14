@@ -103,7 +103,7 @@ export default function ExampleProfile() {
       <Button variant="tertiary" fullWidth size="lg" className="text-lg">
         Tip ${tipAmount}.00
         <Image
-          src="/assets/logo_usdc_1.png"
+          src="/assets/13.png"
           alt="USDC"
           width={20}
           height={20}

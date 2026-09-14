@@ -179,7 +179,7 @@ export default function HowItWorks() {
   return (
     <section id="how-it-works" className="relative w-full min-h-screen">
       <img
-        src="/6.png"
+        src="/3.png"
         alt=""
         className="pointer-events-none absolute inset-0 -z-10 w-full h-full mx-auto object-cover"
       />
