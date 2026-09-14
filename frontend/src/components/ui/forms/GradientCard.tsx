@@ -8,9 +8,9 @@ interface GradientCardProps {
 }
 
 const bgVariants: Record<NonNullable<GradientCardProps['variant']>, string> = {
-  1: 'linear-gradient(110deg in oklch, oklch(0.3 0.0698 198) 0%, oklch(0.4 0.0921 197) 50%, oklch(0.31 0.0715 200) 100%)',
-  2: 'linear-gradient(110deg in oklch, oklch(0.34 0.07855 200) 0%, oklch(0.425 0.095 197) 50%, oklch(0.34 0.0787 197) 100%)',
-  3: 'linear-gradient(110deg in oklch, oklch(0.3 0.06975 200) 0%, oklch(0.455 0.104 201) 50%, oklch(0.34 0.07855 200) 100%)',
+  1: 'linear-gradient(110deg in oklch, oklch(0.3699 0.0848 198.05) 0%, oklch(0.3516 0.0742 198.14) 50%, oklch(0.3699 0.0848 198.05) 100%)',
+  2: 'linear-gradient(110deg in oklch, oklch(0.3699 0.0848 196.05) 0%, oklch(0.3444 0.0794 198.05) 50%, oklch(0.3699 0.0848 196.05) 100%)',
+  3: 'linear-gradient(110deg in oklch, oklch(0.3854 0.0881 199.66) 0%, oklch(0.3444 0.0794 200.05) 50%, oklch(0.3699 0.0848 200.05) 100%)',
 
 };
 
@@ -33,7 +33,7 @@ export const GradientCard: React.FC<GradientCardProps> = ({
          box-shadow: var(--shadow-card-rest);
          contain: layout paint; 
           corner-shape: bevel;
-          border-radius: 24px;
+          border-radius: 16px;
           transform: translateZ(0);
          position: relative;
           outline: none;
@@ -53,12 +53,13 @@ export const GradientCard: React.FC<GradientCardProps> = ({
           position: absolute;
           inset: 0;
           background: radial-gradient(circle at center,
-            rgba(255, 0, 255, 1) 0%,
-            rgba(255, 0, 255, 0.5) 50%,
-            rgba(0, 31, 31, 0.97) 98%,
+            rgb(0, 76, 83) 0%,
+            rgb(0, 73, 76) 50%,
+            rgba(0, 51, 53, 0.97) 98%,
             rgba(0, 31, 31, 1) 100%
           );
           opacity: 0;
+          border: 1px solid var(--color-teal-200);
           transition: opacity 0.5s ease-in-out;
           z-index: -1;
         }

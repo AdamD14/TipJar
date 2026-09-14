@@ -10,12 +10,12 @@ export default function Hero() {
       aria-labelledby="hero-heading"
     >
       <img
-        src="/pattern.svg"
+        src="/3.png"
         alt=""
         className="pointer-events-none absolute inset-0 -z-10 w-full h-full mx-auto object-cover"
       />
       <div className="px-4 md:px-8">
-        <div className="relative min-h-screen flex flex-col justify-start pt-20 lg:pt-26">
+        <div className="relative min-h-screen flex flex-col justify-start pt-20 lg:pt-32">
           
           {/* KONTENER DLA TEKSTU I BADGE (Limit 1280px) */}
           <div className="max-w-7xl w-full flex flex-col items-start">

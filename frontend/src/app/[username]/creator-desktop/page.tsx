@@ -167,7 +167,7 @@ export default function CreatorDashboard() {
 
           {/* ── Share — 1-col ── */}
           <Link
-            href="#"
+            href={`${prefix}/studio/share`}
             className="bento-card group relative flex flex-col justify-between min-h-[180px]"
           >
             <div>
@@ -259,7 +259,7 @@ export default function CreatorDashboard() {
 
           {/* ── Monetization — 2-col ── */}
           <Link
-            href="#"
+            href={`${prefix}/studio/monetization`}
             className="bento-card group relative md:col-span-2 flex flex-col md:flex-row md:items-end md:justify-between gap-4 min-h-[200px]"
           >
             <div className="flex-1">
