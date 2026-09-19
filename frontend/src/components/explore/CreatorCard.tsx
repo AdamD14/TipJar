@@ -41,7 +41,7 @@ export default function CreatorCard({
     const url = exists ? `/tip/${displayHandle}` : '/register';
 
     return (
-      <Card>
+      <Card interactive>
         <div className="flex items-start justify-between gap-3">
           <div className="relative mr-2 h-12 w-12 shrink-0 overflow-hidden rounded-full border border-white/10">
             {avatarUrl ? (

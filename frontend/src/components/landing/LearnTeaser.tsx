@@ -95,7 +95,6 @@ export default function LearnTeaser() {
         alt=""
         className="pointer-events-none absolute inset-0 -z-10 w-full h-full mx-auto object-cover"
       />
-7
       <div className="mx-auto px-4 md:px-8 py-20 md:py-28">
         <div className="text-center mb-8 flex flex-col items-center justify-center gap-2">
           <h2

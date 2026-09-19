@@ -108,13 +108,7 @@ function SnakeTimeline({ steps, accent }: SnakeTimelineProps) {
                 onMouseEnter={() => setActiveIdx(originalIdx)}
                 onMouseLeave={() => setActiveIdx(null)}
               >
-                <Card
-                  interactive
-                  variant="base"
-                  className={`transition-all duration-300 [transition-timing-function:cubic-bezier(0.25,0.8,0.25,1)] ${
-                    isActive ? "-translate-y-1.5" : ""
-                  }`}
-                >
+                <Card interactive variant="base">
                   <div className="flex items-start gap-4">
                     <div
                       className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border-2 transition-colors duration-300 ${

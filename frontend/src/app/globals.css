@@ -888,12 +888,13 @@ BLOKI 1–10 — NOWE KLASY @utility I REGUŁY GLOBALNE
 
 .shadow-maestro {
   box-shadow:
-    calc(var(--elevation-z) * var(--light-dir-x))
-    calc(var(--elevation-z) * var(--light-dir-y))
-    calc(var(--elevation-z) * 0.2)
+    calc(var(--elevation-z, var(--elevation-z-2)) * var(--light-dir-x))
+    calc(var(--elevation-z, var(--elevation-z-2)) * var(--light-dir-y))
+    calc(var(--elevation-z, var(--elevation-z-2)) * 0.2)
     color-mix(in oklch, var(--bg-surface, var(--teal-800)) 70%, #000),
-    0 0 calc(var(--elevation-z) * 0.8)
-    color-mix(in oklch, var(--bg-surface, var(--teal-800)) calc(85% * var(--ambient-intensity)), #000);
+    0 0 calc(var(--elevation-z, var(--elevation-z-2)) * 0.8)
+    color-mix(in oklch, var(--bg-surface, var(--teal-800)) calc(85% * var(--ambient-intensity)), #000),
+    var(--inner-shadow-card);
 }
 
 .emissive-glow {
@@ -1012,6 +1013,84 @@ BLOKI 1–10 — NOWE KLASY @utility I REGUŁY GLOBALNE
 }
 .shadow-transition:hover::after {
   opacity: 1;
+}
+
+/* ----- Card interactive states — design.md Krok 3 §1.1 -----
+   Single source of truth for hover/active/focus on interactive cards.
+   Lift -6px + double-layer shadow (depth + gold glow) + gold border
+   + pseudo glow + sheen sweep. GPU-friendly: transform + opacity only. */
+.card-interactive {
+  cursor: pointer;
+  transition:
+    transform 300ms var(--ease-premium),
+    box-shadow 300ms var(--ease-premium),
+    border-color 300ms var(--ease-premium);
+}
+.card-interactive:hover {
+  --elevation-z: var(--elevation-z-3);
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: color-mix(in oklch, var(--gold-400), transparent 60%);
+}
+.card-interactive:active {
+  --elevation-z: var(--elevation-z-1);
+  transform: translateY(-2px) scale(0.99);
+  box-shadow: var(--shadow-card-rest), var(--inner-shadow-card);
+  transition-duration: 120ms;
+}
+.card-interactive:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-card-focus);
+}
+
+/* Premium glow (::before) — design.md §1.1b */
+.card-interactive::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklch, var(--gold-400), transparent 82%) 0%,
+    color-mix(in oklch, var(--purple-300), transparent 75%) 100%
+  );
+  opacity: 0;
+  transition: opacity 300ms var(--ease-premium);
+  pointer-events: none;
+  z-index: -1;
+}
+.card-interactive:hover::before {
+  opacity: 1;
+}
+
+/* Sheen sweep (::after) — animated on hover, reuses global sheen keyframes */
+.card-interactive::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+  transform: translateX(-140%);
+  opacity: 0;
+  pointer-events: none;
+}
+.card-interactive:hover::after {
+  animation: sheen 1.2s var(--ease-premium) 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-interactive,
+  .card-interactive::before {
+    transition-duration: 0.01ms;
+  }
+  .card-interactive:hover::after {
+    animation: none;
+  }
 }
 
 .double-wrapper-outer {
