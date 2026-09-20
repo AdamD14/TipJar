@@ -1,8 +1,3 @@
-// Branding left: static "TIPJAR.PLUS" text (no logo).
-// Navigation: UPPERCASE labels + gold underline (desktop + hamburger).
-// Mobile panel: /public/logo.png background right, height ≈ 5× text height.
-// Desktop: NO Sign up button (removed). Mobile: Log in / Sign up side by side; Sign up -> /register.
-
 'use client';
 
 import type React from 'react';
@@ -29,16 +24,33 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Learn about WEB3', href: '#learn', 'data-testid': 'nav-learn' },
 ];
 
-// Animated Brand Component
 function AnimatedBrand() {
   const letters = ['T', 'I', 'P', 'J', 'A', 'R', '.', 'P', 'L', 'U', 'S'];
-  
+
   return (
-    <span className="text-[24px] font-heading font-semibold tracking-[0.10em] lowercase text-text-primary transition-colors inline-flex">
+    <span
+      className="
+        inline-flex
+        text-[length:calc(var(--nav-font-size)*1.75)]
+        font-heading
+        font-semibold
+        lowercase
+        tracking-[0.10em]
+        text-text-primary
+        transition-colors
+      "
+    >
       {letters.map((letter, index) => (
         <span
           key={index}
-          className="inline-block hover:text-gold-300 transition-all duration-300 hover:scale-110 hover:-translate-y-1"
+          className="
+            inline-block
+            transition-all
+            duration-[var(--header-transition)]
+            hover:-translate-y-1
+            hover:scale-110
+            hover:text-gold-300
+          "
           style={{
             animationDelay: `${index * 0.1}s`,
             animation: 'letterFloat 3s ease-in-out infinite',
@@ -47,7 +59,6 @@ function AnimatedBrand() {
           {letter}
         </span>
       ))}
-   
     </span>
   );
 }
@@ -61,21 +72,39 @@ export default function Header() {
   useBodyScrollLock(open);
 
   useEffect(() => {
-    if (open && panelRef.current) panelRef.current.focus();
+    if (open && panelRef.current) {
+      panelRef.current.focus();
+    }
   }, [open]);
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
-    if (open) window.addEventListener('keydown', onKey);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpen(false);
+      }
+    };
+
+    if (open) {
+      window.addEventListener('keydown', onKey);
+    }
+
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
 
-  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const handleAnchorClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
     if (!href.startsWith('#')) return;
+
     const target = document.querySelector(href);
+
     if (target) {
       e.preventDefault();
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
       setOpen(false);
     }
   };
@@ -84,7 +113,19 @@ export default function Header() {
     <>
       <a
         href="#main-content"
-        className="sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:top-2 focus-visible:left-2 focus-visible:z-[100] rounded-md bg-surface-app/80 px-3 py-2 text-text-ds-primary"
+        className="
+          sr-only
+          focus-visible:not-sr-only
+          focus-visible:absolute
+          focus-visible:left-2
+          focus-visible:top-2
+          focus-visible:z-[calc(var(--z-modal)+1)]
+          rounded-md
+          bg-surface-app/80
+          px-3
+          py-2
+          text-text-ds-primary
+        "
       >
         Skip to main content
       </a>
@@ -93,71 +134,98 @@ export default function Header() {
         role="banner"
         data-testid="navbar"
         className={clsx(
-          'fixed inset-x-0 top-0 z-50 transition-all duration-300 border-b',
-          scrolled ? 'backdrop-blur-md bg-surface-app/80 border-teal-300/20' : 'bg-transparent border-transparent'
+          'fixed inset-x-0 top-0 w-full border-b',
+          'z-[var(--z-dropdown)]',
+          'transition-[background-color,border-color,backdrop-filter]',
+          'duration-[var(--header-transition)]',
+          scrolled
+            ? 'bg-surface-app/80 backdrop-blur-md border-teal-300/20'
+            : 'bg-transparent border-transparent'
         )}
-        aria-label="Primary"
       >
-        <nav className="mx-auto w-full px-4 md:px-6" aria-label="Main">
-          <div className="flex py-2 items-center justify-between">
-            {/* Left: Branding — animated text */}
-            <div className="flex-1 flex items-center justify-start">
-              <Link href="/" aria-label="tipjar.plus — homepage" className="flex items-center gap-2">
+        <nav
+          aria-label="Main"
+          className="header-shell"
+        >
+          <div className="header-inner @container/header">
+            <div className="flex min-w-0 shrink-0 items-center justify-start">
+              <Link
+                href="/"
+                aria-label="tipjar.plus — homepage"
+                className="flex min-w-0 items-center"
+              >
                 <AnimatedBrand />
               </Link>
             </div>
 
-            {/* Center: Nav links */}
-            <div className="flex-shrink-0 flex justify-center">
-              <ul className="hidden md:flex items-center gap-6 md:gap-8 text-xs">
-                {NAV_ITEMS.map((item) => (
-                  <li key={item.label}>
-                    <HeaderLink
-                      href={item.href}
-                      data-testid={item['data-testid']}
-                      onAnchorClick={handleAnchorClick}
-                    >
-                      {item.label}
-                    </HeaderLink>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <ul
+              className="
+                header-desktop-nav
+                nav-list
+              "
+            >
+              {NAV_ITEMS.map((item) => (
+                <li key={item.label}>
+                  <HeaderLink
+                    href={item.href}
+                    data-testid={item['data-testid']}
+                    onAnchorClick={handleAnchorClick}
+                  >
+                    {item.label}
+                  </HeaderLink>
+                </li>
+              ))}
+            </ul>
 
-{/* Right: Log in / Username + Hamburger (NO Sign up on desktop) */}
-          <div className="flex-1 flex justify-end items-center">
-            <div className="hidden md:block">
+            <div className="header-desktop-nav flex shrink-0 items-center justify-end">
               {user ? (
-                <Button variant="ghost" href={`/@${user.username}`} className="gap-3 px-2 tracking-wide">
+                <Button
+                  variant="ghost"
+                  href={`/@${user.username}`}
+                  className="gap-3 px-2 tracking-wide"
+                >
                   @{user.username}
                 </Button>
               ) : (
-                <Button variant="tertiary" href="/login" size="md" leftIcon={<User size={16} />} className="gap-2 px-4 text-lg tracking-wide" data-testid="desktop-login">
+                <Button
+                  variant="tertiary"
+                  href="/login"
+                  size="md"
+                  leftIcon={
+                    <User
+                      aria-hidden
+                      className="size-[var(--icon-size)]"
+                    />
+                  }
+                  className="gap-2 tracking-wide"
+                  data-testid="desktop-login"
+                >
                   Log in
                 </Button>
               )}
             </div>
+
             <Button
-            variant="ghost"
-            aria-controls="mobile-menu"
-            aria-expanded={open}
-            aria-label="Open menu"
-            onClick={() => setOpen(true)}
-            size="sm"
-            className={clsx(
-              'md:hidden',
-              open && 'pointer-events-none opacity-0'
-            )}
-            data-testid="hamburger"
-          >
-            <Menu aria-hidden size={22} />
-          </Button>
-            </div>
+              variant="ghost"
+              aria-controls="mobile-menu"
+              aria-expanded={open}
+              aria-label="Open menu"
+              onClick={() => setOpen(true)}
+              className={clsx(
+                'header-mobile-nav icon-button rounded-full',
+                open && 'pointer-events-none opacity-0'
+              )}
+              data-testid="hamburger"
+            >
+              <Menu
+                aria-hidden
+                className="size-[var(--icon-size)]"
+              />
+            </Button>
           </div>
         </nav>
       </header>
 
-      {/* Mobile Panel */}
       <div
         id="mobile-menu"
         ref={panelRef}
@@ -165,21 +233,40 @@ export default function Header() {
         aria-modal={open ? 'true' : undefined}
         role={open ? 'dialog' : undefined}
         className={clsx(
-          'md:hidden fixed inset-0 z-[60] origin-top transition-transform duration-300',
-          open ? 'pointer-events-auto opacity-100 scale-100' : 'pointer-events-none opacity-0 scale-95'
+          '@container/mobile-menu fixed inset-0 origin-top',
+          'z-[var(--z-modal)]',
+          'transition-[opacity,transform]',
+          'duration-[var(--header-transition)]',
+          open
+            ? 'pointer-events-auto scale-100 opacity-100'
+            : 'pointer-events-none scale-95 opacity-0'
         )}
         onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-          if (e.target === e.currentTarget) setOpen(false);
+          if (e.target === e.currentTarget) {
+            setOpen(false);
+          }
         }}
       >
-        {/* backdrop */}
-        <div className="absolute inset-0 bg-surface-app" aria-hidden />
-        <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" aria-hidden />
-        
-        {/* LOGO right: positioned at 85% height, more visible */}
+        <div
+          className="absolute inset-0 bg-surface-app"
+          aria-hidden
+        />
+
+        <div
+          className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+          aria-hidden
+        />
+
         <div
           aria-hidden
-          className="pointer-events-none absolute right-4 top-[15%] w-60 h-60 opacity-90"
+          className="
+            pointer-events-none
+            absolute
+            right-[var(--header-px)]
+            top-[15%]
+            size-[clamp(12rem,55cqi,15rem)]
+            opacity-90
+          "
           style={{
             backgroundImage: "url('/logo.svg')",
             backgroundSize: 'contain',
@@ -188,23 +275,52 @@ export default function Header() {
           }}
         />
 
-          <Button
-            variant="ghost"
-            size="sm"
-            aria-label="Close menu"
-            onClick={() => setOpen(false)}
-            className="absolute top-4 right-4 z-10 text-text-ds-tertiary hover:text-text-ds-primary"
-          >
-            <X size={24} />
-          </Button>
+        <Button
+          variant="ghost"
+          aria-label="Close menu"
+          onClick={() => setOpen(false)}
+          className="
+            icon-button
+            absolute
+            right-[var(--header-px)]
+            top-4
+            z-10
+            rounded-full
+            text-text-ds-tertiary
+            hover:text-text-ds-primary
+          "
+        >
+          <X
+            aria-hidden
+            className="size-[var(--icon-size)]"
+          />
+        </Button>
 
-        <div className="relative mx-auto w-full max-w-7xl px-4 pt-16 sm:pt-20">
-          <ul className="flex flex-col gap-4 border-t border-teal-300/20 pt-6">
+        <div
+          className="
+            relative
+            mx-auto
+            w-full
+            max-w-[var(--page-max)]
+            px-[var(--header-px)]
+            pt-[var(--header-height)]
+          "
+        >
+          <ul
+            className="
+              flex
+              flex-col
+              gap-[var(--nav-gap)]
+              border-t
+              border-white/10
+              pt-6
+            "
+          >
             {NAV_ITEMS.map((item) => (
               <li key={item.label}>
                 <MobileLink
                   href={item.href}
-                  onClick={(e: React.MouseEvent<HTMLAnchorElement>) => handleAnchorClick(e, item.href)}
+                  onClick={(e) => handleAnchorClick(e, item.href)}
                   data-testid={`${item['data-testid']}-mobile`}
                 >
                   {item.label}
@@ -213,15 +329,42 @@ export default function Header() {
             ))}
           </ul>
 
-          {/* Mobile CTA — kept, Sign up -> /register */}
-          <div className="mt-6 flex gap-3 border-t border-white/10 pt-6">
-            <div className="flex-1">
-                <Button variant="glass" href="/login" fullWidth leftIcon={<User size={16} />} data-testid="mobile-login">Log in</Button>
+          <div
+            className="
+              mt-6
+              flex
+              gap-[var(--header-gap)]
+              border-t
+              border-white/10
+              pt-6
+            "
+          >
+            <div className="min-w-0 flex-1">
+              <Button
+                variant="glass"
+                href="/login"
+                fullWidth
+                leftIcon={
+                  <User
+                    aria-hidden
+                    className="size-[var(--icon-size)]"
+                  />
+                }
+                data-testid="mobile-login"
+              >
+                Log in
+              </Button>
             </div>
-            <div className="flex-1">
-<Button variant="primary" href="/register" data-testid="mobile-signup" fullWidth>
-          Sign up
-        </Button>
+
+            <div className="min-w-0 flex-1">
+              <Button
+                variant="primary"
+                href="/register"
+                fullWidth
+                data-testid="mobile-signup"
+              >
+                Sign up
+              </Button>
             </div>
           </div>
         </div>
@@ -234,26 +377,53 @@ function HeaderLink(
   props: React.PropsWithChildren<{
     href: string;
     'data-testid'?: string;
-    onAnchorClick: (e: React.MouseEvent<HTMLAnchorElement>, href: string) => void;
+    onAnchorClick: (
+      e: React.MouseEvent<HTMLAnchorElement>,
+      href: string
+    ) => void;
   }>
 ) {
   const { href, onAnchorClick } = props;
+
   return (
     <Link
       href={href}
       data-testid={props['data-testid']}
-      onClick={(e: React.MouseEvent<HTMLAnchorElement>) => onAnchorClick(e, href)}
-      className={clsx(
-        'relative inline-block outline-none text-xs font-heading font-semibold tracking-[0.18em] uppercase transition-colors duration-200',
-        'focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.7)] focus-visible:rounded',
-'text-text-secondary hover:text-gold-400',
-'after:absolute after:left-0 after:bottom-[-4px] after:h-[1px] after:w-full after:rounded-full after:bg-gold-400',
-'after:scale-x-0 hover:after:scale-x-100 focus-visible:after:scale-x-100 after:origin-left after:transition-transform after:duration-200'
-)}
->
-{props.children}
-</Link>
-);
+      onClick={(e: React.MouseEvent<HTMLAnchorElement>) =>
+        onAnchorClick(e, href)
+      }
+      className="
+        nav-item
+        relative
+        rounded
+        font-heading
+        font-semibold
+        uppercase
+        tracking-[0.18em]
+        text-text-secondary
+        outline-none
+        hover:text-gold-400
+        focus-visible:ring-2
+        focus-visible:ring-[rgba(255,215,0,0.7)]
+        focus-visible:ring-offset-0
+        after:absolute
+        after:bottom-[-4px]
+        after:left-[var(--nav-item-px)]
+        after:right-[var(--nav-item-px)]
+        after:h-px
+        after:origin-left
+        after:scale-x-0
+        after:rounded-full
+        after:bg-[var(--action-primary-bg)]
+        after:transition-transform
+        after:duration-[var(--header-transition)]
+        hover:after:scale-x-100
+        focus-visible:after:scale-x-100
+      "
+    >
+      {props.children}
+    </Link>
+  );
 }
 
 function MobileLink(
@@ -268,20 +438,24 @@ function MobileLink(
       href={props.href}
       onClick={props.onClick}
       data-testid={props['data-testid']}
-      className={clsx(
-        'block rounded-md px-3 py-2 transition text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(255,215,0,0.7)] hover:bg-white/5'
-      )}
+      className="
+        nav-item
+        w-full
+        justify-start
+        rounded-md
+        font-heading
+        font-semibold
+        uppercase
+        tracking-[0.16em]
+        text-text-secondary
+        transition-colors
+        hover:bg-white/5
+        hover:text-gold-400
+        focus-visible:ring-2
+        focus-visible:ring-[rgba(255,215,0,0.7)]
+      "
     >
-      <span
-        className={clsx(
-          'relative inline-block text-sm font-heading font-semibold tracking-[0.16em] uppercase transition-colors',
-'text-text-secondary hover:text-gold-400',
-'after:absolute after:left-0 after:bottom-[-4px] after:h-[1px] after:w-full after:rounded-full after:bg-gold-400',
-          'after:scale-x-0 hover:after:scale-x-100 focus-visible:after:scale-x-100 after:origin-left after:transition-transform after:duration-200'
-        )}
-      >
-        {props.children}
-      </span>
+      {props.children}
     </Link>
   );
 }

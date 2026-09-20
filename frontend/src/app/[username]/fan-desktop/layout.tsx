@@ -9,7 +9,7 @@ export default function FanDesktopLayout({
   return (
     <RQProvider>
       <Navbar />
-      <main className="pt-14">{children}</main>
+      <main className="pt-[var(--header-height)]">{children}</main>
     </RQProvider>
   );
 }

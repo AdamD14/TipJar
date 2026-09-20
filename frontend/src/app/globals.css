@@ -160,6 +160,7 @@ e.g. bg-teal-800, text-gold-400, shadow-modal
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
 
   /* ================================================================
   BLOKI 1–10 — NOWE TOKENY W @theme
@@ -201,13 +202,6 @@ e.g. bg-teal-800, text-gold-400, shadow-modal
   --double-wrapper-color: rgba(0, 40, 40, 0.85);
   --touch-prediction-scale: 0.98;
   --touch-prediction-duration: 0.1s;
-
-  /* --- Blok 6: Typografia i układ przestrzenny --- */
-  --container-query-breakpoint-xs: 320px;
-  --container-query-breakpoint-sm: 640px;
-  --container-query-breakpoint-md: 768px;
-  --container-query-breakpoint-lg: 1024px;
-  --container-query-breakpoint-xl: 1280px;
 
   /* --- Blok 7: Iluzje percepcyjne --- */
   --illusion-bg: var(--teal-800);
@@ -385,12 +379,19 @@ and add aliases that can't be expressed in @theme.
   --touch-prediction-scale: 0.98;
   --touch-prediction-duration: 0.1s;
 
-  /* --- Blok 6: Typografia i układ przestrzenny --- */
-  --container-query-breakpoint-xs: 320px;
-  --container-query-breakpoint-sm: 640px;
-  --container-query-breakpoint-md: 768px;
-  --container-query-breakpoint-lg: 1024px;
-  --container-query-breakpoint-xl: 1280px;
+  /* --- Header / Nav layout tokens --- */
+  --page-max: 90rem;
+  --header-height: clamp(3.75rem, 4.2vw, 4.75rem);
+  --header-px: clamp(1rem, 2cqi, 2rem);
+  --header-gap: clamp(0.5rem, 1cqi, 1.25rem);
+  --nav-font-size: clamp(0.875rem, calc(0.75rem + 0.25vw), 1rem);
+  --nav-line-height: 1.25rem;
+  --nav-item-height: clamp(2.5rem, 2.8vw, 2.75rem);
+  --nav-item-px: clamp(0.625rem, 0.8vw, 1rem);
+  --nav-gap: clamp(0.125rem, 0.45vw, 0.5rem);
+  --icon-button-size: 3rem;
+  --icon-size: clamp(1.25rem, 1.5vw, 1.5rem);
+  --header-transition: 200ms;
 
   /* --- Blok 7: Iluzje percepcyjne --- */
   --illusion-bg: var(--teal-800);
@@ -419,6 +420,12 @@ html,
 body {
   margin: 0;
   padding: 0;
+}
+
+html {
+  min-width: 20rem;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
 }
 
 body {
@@ -1810,3 +1817,77 @@ corner-shape: revert;
 corner-shape: revert-layer;
 corner-shape: unset;
 */
+
+/* ================================================================
+HEADER / NAV UTILITIES — container-query driven
+================================================================ */
+
+@utility header-shell {
+  width: 100%;
+  height: var(--header-height);
+  container-type: inline-size;
+  container-name: header;
+}
+
+@utility header-inner {
+  width: 100%;
+  max-width: var(--page-max);
+  height: 100%;
+  margin-inline: auto;
+  padding-inline: var(--header-px);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--header-gap);
+}
+
+@utility nav-list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--nav-gap);
+  min-width: 0;
+}
+
+@utility nav-item {
+  min-height: var(--nav-item-height);
+  padding-inline: var(--nav-item-px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--nav-font-size);
+  line-height: var(--nav-line-height);
+  font-weight: 500;
+  white-space: nowrap;
+  transition:
+    color var(--header-transition),
+    background-color var(--header-transition);
+}
+
+@utility icon-button {
+  width: var(--icon-button-size);
+  height: var(--icon-button-size);
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+@container header (max-width: 56.25rem) {
+  .header-desktop-nav {
+    display: none;
+  }
+
+  .header-mobile-nav {
+    display: grid;
+  }
+}
+
+@container header (min-width: 56.3125rem) {
+  .header-desktop-nav {
+    display: flex;
+  }
+
+  .header-mobile-nav {
+    display: none;
+  }
+}

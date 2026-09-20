@@ -59,16 +59,17 @@ export default function Navbar() {
 
   return (
     <header
-      className="fixed top-0 inset-x-0 z-elevated h-14 flex items-center px-4 gap-4 border-b border-teal-300  backdrop-blur-[20px] saturate-[200%]"
+      className="header-shell fixed top-0 inset-x-0 z-elevated border-b border-teal-300 backdrop-blur-[20px] saturate-[200%]"
       style={{
         backgroundImage: "linear-gradient" 
       }}
     >
+    <div className="header-inner">
     {/* ── Column 1: Brand ── */}
-    <div className="flex items-center gap-2 shrink-0">
+    <div className="flex items-center gap-2">
       <Link
         href={homeHref}
-        className="flex items-center gap-2 group transition-colors duration-200 hover:text-text-primary hover:bg-surface-elevated/70 rounded-lg py-1.5 px-2"
+        className="nav-item gap-2 group rounded-lg hover:text-text-primary hover:bg-surface-elevated/70"
       >
         <span className="font-heading font-semibold text-xl text-text-primary hidden sm:inline">
           tipjar.plus
@@ -77,7 +78,7 @@ export default function Navbar() {
     </div>
 
       {/* ── Column 2: Center nav ── */}
-      <nav className="flex-1 flex items-center justify-center gap-1 min-w-0">
+      <nav className="nav-list">
       {centerItems.map((item) => {
         const Icon = item.icon;
         const fullHref = `/@${username}/${prefix}/${item.href}`;
@@ -88,7 +89,7 @@ export default function Navbar() {
           key={item.href}
           href={fullHref}
           className={[
-            "flex items-center gap-1.5 py-1.5 px-3 rounded-lg text-md font-heading font-medium transition-colors duration-200 whitespace-nowrap",
+            "nav-item gap-1.5 rounded-lg font-heading",
             active
               ? "bg-surface-elevated text-primary"
               : "text-text-primary hover:text-text-primary hover:bg-surface-elevated/70",
@@ -102,11 +103,11 @@ export default function Navbar() {
       </nav>
 
     {/* ── Column 3: Wallet · Bell · @username ── */}
-    <div className="flex items-center gap-1 shrink-0">
+    <div className="flex items-center gap-1">
       {/* Wallet + USDC Balance as one clickable element */}
       <Link
         href={`/@${username}/${prefix}/wallet`}
-        className="flex items-center gap-1 px-2 py-1.5 rounded-lg transition-colors duration-200 text-text-primary hover:text-text-primary hover:bg-surface-elevated/70"
+        className="nav-item gap-1 rounded-lg text-text-primary hover:text-text-primary hover:bg-surface-elevated/70"
         aria-label="Wallet"
       >
         <UsdcBalance />
@@ -115,7 +116,7 @@ export default function Navbar() {
 
       <Link
         href={`/@${username}/${prefix}/notifications`}
-        className="relative p-2 rounded-lg transition-colors duration-200 text-text-primary hover:text-text-primary hover:bg-surface-elevated/70"
+        className="icon-button relative rounded-lg text-text-primary hover:text-text-primary hover:bg-surface-elevated/70"
         aria-label="Notifications"
       >
         <Bell className="h-5 w-5" />
@@ -131,6 +132,7 @@ export default function Navbar() {
       >
         @{username}
       </Button>
+    </div>
     </div>
     </header>
   );
